@@ -1,0 +1,18 @@
+/*
+ * angle.h
+ *
+ *  Created on: Mar 27, 2020
+ *      Author: heitzig
+ */
+
+#ifndef INC_ANGLE_H
+#define INC_ANGLE_H
+
+#include "data_model.h"
+
+void add_or_delete_angle (event_class ec,
+        entity e1, entity_type et1, relationship_or_action_type rat12,
+        entity e2, entity_type et2, relationship_or_action_type rat23,
+        entity e3, entity_type et3);
+
+#endif
