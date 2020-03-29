@@ -25,3 +25,4 @@ add_executable(tricl
     init.cpp
     finish.cpp)
 
+target_link_libraries(tricl yaml-cpp)

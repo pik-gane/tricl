@@ -176,6 +176,11 @@ struct link
                 && left.rat13 == right.rat13
                 && left.e3 == right.e3);
     }
+    friend bool operator<(const link& left, const link& right) {
+        return ((left.e1 < right.e1)
+                || ((left.e1 == right.e1) && (left.rat13 < right.rat13))
+                || ((left.e1 == right.e1) && (left.rat13 == right.rat13) && (left.e3 < right.e3)));
+    }
 };
 template <> struct std::hash<link> {
     size_t operator()(const link& l) const {

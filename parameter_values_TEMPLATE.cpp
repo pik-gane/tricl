@@ -60,7 +60,7 @@
 // EXECUTION: //
 ////////////////
 
-const bool verbose = false, quiet = false, debug = false;
+bool verbose = false, quiet = false, debug = false;
 
 // total model time simulated:
 timepoint max_t = 1.0;
@@ -200,32 +200,3 @@ unordered_map<influence_type, probunit> inflt2delta_probunit = {
 };
 
 // END
-
-
-/*
- * YAML:
- *  entity-types:
- *   ids:    [1,     2]
- *   labels: [state, individual]
- *   ns:     [3,     10]
- *  relationship types:
- *   ids:      [1,  2]
- *   labels:   [is, meets]
- *   inverses: [-,  2]
- *  action types:
- *   ids: ...
- *   labels: ...
- *  entities:
- *   ids:    [0,           1,        2]
- *   types:  [1,           1,        1]
- *   labels: [susceptible, infected, recovered]
- *  attempts:
- *   "+ 2 -2> 2": 0.1
- *   "- 2 -2> 2": 0.01
- *   "+ 2 -2> 2 -2> 2 -2>": 1.0
- *  base_probs:
- *   "+ 2 -2> 2": 0.5
- *   "- 2 -2> 2": 0.5
- *  influences:
- *   (as in attempts)
- */

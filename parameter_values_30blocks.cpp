@@ -24,7 +24,7 @@
 // EXECUTION: //
 ////////////////
 
-const bool verbose = false, quiet = false, debug = false;
+bool verbose = false, quiet = false, debug = false;
 
 // total model time simulated:
 timepoint max_t = 6.5;

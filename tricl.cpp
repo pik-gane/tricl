@@ -20,6 +20,7 @@
  */
 
 /* TODO:
+ * as an alternative to tmax, add max_n_events
  * verify CMake build process according to https://cmake.org/cmake/help/latest/guide/tutorial/index.html
  * clarify how to deal with "assert" in production mode (all source files!)
  * add event preclasses EC_A_EST, EC_A_ACT for attempts of generic events, then allow legs to influence their success prob.
@@ -94,7 +95,7 @@
 #include "angle.h"
 #include "event.h"
 
-//#include "config.h"
+#include "config.h"
 #include "io.h"
 #include "gexf.h"
 #include "init.h"
@@ -123,7 +124,7 @@ void step ()
 
 int main ()
 {
-//    read_config();
+    read_config();
     init();
     while (current_t < max_t) step();
     if (verbose) {

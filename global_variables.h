@@ -18,7 +18,7 @@ using namespace std;
 
 // PARAMETERS
 
-extern const bool verbose, quiet, debug;
+extern bool verbose, quiet, debug;
 
 extern string gexf_filename;
 

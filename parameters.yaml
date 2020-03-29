@@ -27,22 +27,22 @@ entities:
   user:
     n: 1000
     labels:  # of some of the 1000 entities
-      Alice
-      Bob
-      Celia
+      - Alice
+      - Bob
+      - Celia
   message: 
     n: 1000
     labels:
-      bullshit
+      - bullshit
   tag: 100  # n
   url: 100
 
-relationships types:
+relationship types:
   is friends with: symmetric  # 'symmetric' cannot be the label of a rel.
   follows: is followed by
 
 action types:
-  posts: ~  # not symmetric, but without labelled inverse
+#  posts: ~  # not symmetric, but without labelled inverse
 
 past actions:  # [negative time, entity, action type, entity]
   - [-2, Alice, posts, bullshit] 
@@ -50,7 +50,7 @@ past actions:  # [negative time, entity, action type, entity]
 initial links:  # in "filter" mode, initial link types to be estimated need to be specified with value "estimate" 
   named:
     - [Alice, is friends with, Bob]  # [entity, relationship type, entity]
-    - [Celia, posts, bullshit, 10.0]  # [entity, action type, entity, impact]
+#    - [Celia, posts, bullshit, 10.0]  # [entity, action type, entity, impact]
   random:
     [user, is friends with, user]:  # [entity type, relationship type, entity type]
       blocks: 30  # -> block model
