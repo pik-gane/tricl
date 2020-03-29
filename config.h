@@ -11,9 +11,8 @@
 #include "data_model.h"
 #include "global_variables.h"
 
-/*
 void read_config ();
-*/
+
 
 
 

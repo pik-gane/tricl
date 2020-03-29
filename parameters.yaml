@@ -1,0 +1,85 @@
+metadata:
+  name: microblogging
+  description: a simple example model related to Twitter-like services 
+  author: Jobst Heitzig
+  date: 29 March 2020
+  email: heitzig@pik-potsdam.de
+
+mode: simulate  # or "filter"
+
+files:
+  gexf: /tmp/microblogging.gexf
+  log: /tmp/microblogging.log
+  # input data: # TODO: input for initial state or particle filter
+
+limits:
+  t: 0.1
+  events: 1e6
+  wall: 1h
+
+options:
+  quiet: true
+  verbose: false
+  debug: false
+  seed: 1
+
+entities:
+  user:
+    n: 1000
+    labels:  # of some of the 1000 entities
+      Alice
+      Bob
+      Celia
+  message: 
+    n: 1000
+    labels:
+      bullshit
+  tag: 100  # n
+  url: 100
+
+relationships types:
+  is friends with: symmetric  # 'symmetric' cannot be the label of a rel.
+  follows: is followed by
+
+action types:
+  posts: ~  # not symmetric, but without labelled inverse
+
+past actions:  # [negative time, entity, action type, entity]
+  - [-2, Alice, posts, bullshit] 
+
+initial links:  # in "filter" mode, initial link types to be estimated need to be specified with value "estimate" 
+  named:
+    - [Alice, is friends with, Bob]  # [entity, relationship type, entity]
+    - [Celia, posts, bullshit, 10.0]  # [entity, action type, entity, impact]
+  random:
+    [user, is friends with, user]:  # [entity type, relationship type, entity type]
+      blocks: 30  # -> block model
+      within: 0.9  # link prob. in a block
+      between: 0.1  # link prob. between blocks
+    [user, follows, user]:
+      dimension: 2  # -> random geometric graph
+      decay: 3.5  # rate of exponential decay of link prob. with eucl. dist.
+    # or [user, follows, user]: estimate
+    [user, posts, message]:  # [entity type, relationship type, entity type] -> need a "rate"
+      density: 0.01  # -> random graph
+      rate: 2  # past occurrence rate of action (gives initial impacts) 
+  
+
+dynamics:  # all values default to 0.0. in "filter" mode, parameters to be estimated need to be specified with value "estimate"
+  [user, is friends with, user]:  # relations need "establish" and/or "terminate"
+    establish:
+      attempt:
+        basic: 0.001
+        [~, is friends with, user, is friends with, ~]: 1.0  # angle
+      success:  # defaults to 0.0
+        tails: [1.0, 2.0]
+        basic: 1.0
+    terminate:
+      attempt:
+        [~, is friends with, user]: 0.1  # outgoing leg of source entity
+        [user, is friends with, ~]: 0.1  # incoming leg of destination entity
+      success:
+        tails: 3.0  # sets both left and right tail
+  [user, posts, message]:  # actions have directly "attempt" and "success"
+    attempt: ~  # as above
+    success: ~  # as above
