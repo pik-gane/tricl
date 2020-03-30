@@ -105,6 +105,8 @@
 
 using namespace std;
 
+string config_filename = "";
+
 void step ()
 {
     if (pop_next_event()) {
@@ -122,11 +124,22 @@ void step ()
     }
 }
 
-int main ()
+void parse_args (int argc, const char *argv[]) {
+    if (argc < 2) {
+        cout << "USAGE: tricl my_config.yaml" << endl;
+        assert (false);
+    }
+    config_filename = argv[1];
+}
+
+int main (int argc, const char *argv[])
 {
+    parse_args(argc, argv);
     read_config();
     init();
+
     while (current_t < max_t) step();
+
     if (verbose) {
         cout << "\nat t=" << current_t << ", " << t2be.size() << " events on stack: " << endl;
         for (auto& [t, ev] : t2be) {

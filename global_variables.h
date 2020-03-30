@@ -18,6 +18,8 @@ using namespace std;
 
 // PARAMETERS
 
+extern string config_filename;
+
 extern bool verbose, quiet, debug;
 
 extern string gexf_filename;

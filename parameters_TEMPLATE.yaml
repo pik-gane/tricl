@@ -41,11 +41,11 @@ relationship types:
   is friends with: symmetric  # 'symmetric' cannot be the label of a rel.
   follows: is followed by
 
-action types:
+#action types:
 #  posts: ~  # not symmetric, but without labelled inverse
 
-past actions:  # [negative time, entity, action type, entity]
-  - [-2, Alice, posts, bullshit] 
+#past actions:  # [negative time, entity, action type, entity]
+#  - [-2, Alice, posts, bullshit] 
 
 initial links:  # in "filter" mode, initial link types to be estimated need to be specified with value "estimate" 
   named:
@@ -60,9 +60,9 @@ initial links:  # in "filter" mode, initial link types to be estimated need to b
       dimension: 2  # -> random geometric graph
       decay: 3.5  # rate of exponential decay of link prob. with eucl. dist.
     # or [user, follows, user]: estimate
-    [user, posts, message]:  # [entity type, relationship type, entity type] -> need a "rate"
-      density: 0.01  # -> random graph
-      rate: 2  # past occurrence rate of action (gives initial impacts) 
+#    [user, posts, message]:  # [entity type, relationship type, entity type] -> need a "rate"
+#      density: 0.01  # -> random graph
+#      rate: 2  # past occurrence rate of action (gives initial impacts) 
   
 
 dynamics:  # all values default to 0.0. in "filter" mode, parameters to be estimated need to be specified with value "estimate"
@@ -72,14 +72,14 @@ dynamics:  # all values default to 0.0. in "filter" mode, parameters to be estim
         basic: 0.001
         [~, is friends with, user, is friends with, ~]: 1.0  # angle
       success:  # defaults to 0.0
-        tails: [1.0, 2.0]
+#        tails: [1.0, 2.0]
         basic: 1.0
     terminate:
       attempt:
         [~, is friends with, user]: 0.1  # outgoing leg of source entity
         [user, is friends with, ~]: 0.1  # incoming leg of destination entity
-      success:
-        tails: 3.0  # sets both left and right tail
-  [user, posts, message]:  # actions have directly "attempt" and "success"
-    attempt: ~  # as above
-    success: ~  # as above
+#      success:
+#        tails: 3.0  # sets both left and right tail
+#  [user, posts, message]:  # actions have directly "attempt" and "success"
+#    attempt: ~  # as above
+#    success: ~  # as above

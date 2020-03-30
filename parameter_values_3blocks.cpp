@@ -1,5 +1,5 @@
 /*
- * parameter_values_30blocks.cpp
+ * parameter_values_3blocks.cpp
  *
  *  Created on: Mar 27, 2020
  *      Author: heitzig
@@ -27,7 +27,7 @@
 bool verbose = false, quiet = false, debug = false;
 
 // total model time simulated:
-timepoint max_t = 100.0;
+timepoint max_t = 30.0;
 
 // where to write network evolution to:
 string gexf_filename = "/tmp/3blocks.gexf";
@@ -40,7 +40,7 @@ string gexf_filename = "/tmp/3blocks.gexf";
 // entity type labels:
 unordered_map<entity_type, label> et2label = {
 //      {et, label}
-        {1, "node"}
+        {1, "node"},
 };
 
 // no. of entities by type:
@@ -90,7 +90,7 @@ set<link> initial_links = {
 
 // random initial links:
 
-// block model:
+// symmetric block model:
 unordered_map<entity_type, int> et2n_blocks = { // no. of blocks by entity-type (if wanted)
 //      { et, n }
         { 1, 3 },
@@ -119,10 +119,10 @@ unordered_map<link_type, probability> lt2spatial_decay = { // rate of exponentia
 
 // attempt rates by influence type:
 unordered_map<influence_type, rate> inflt2attempt_rate = {
-//      { { { ec, et1, rat13, .et3 }, NO_ANGLE }, ar }  // basic attempt rate
-//      { { { ec, et1, rat13, .et3 }, { rat12, et2, rat23 } }, ar }  // additional attempt rate due to an angle from e1 to e3
-//      { { { EC_TERM, et1, rat13, .et3 }, { rat12, et2, NO_RAT } }, ar }  // termination only: additional attempt rate due to an out-leg at e1
-//      { { { EC_TERM, et1, rat13, .et3 }, { NO_RAT, et2, rat23 } }, ar }  // termination only: additional attempt rate due to an in-leg at e3
+//      { { { ec, et1, rat13, et3 }, NO_ANGLE }, ar }  // basic attempt rate
+//      { { { ec, et1, rat13, et3 }, { rat12, et2, rat23 } }, ar }  // additional attempt rate due to an angle from e1 to e3
+//      { { { EC_TERM, et1, rat13, et3 }, { rat12, et2, NO_RAT } }, ar }  // termination only: additional attempt rate due to an out-leg at e1
+//      { { { EC_TERM, et1, rat13, et3 }, { NO_RAT, et2, rat23 } }, ar }  // termination only: additional attempt rate due to an in-leg at e3
         { { { EC_EST, 1, 2, 1 }, NO_ANGLE }, 0.001 },
         { { { EC_EST, 1, 2, 1 }, { 2, 1, 2 } }, .01 },
         { { { EC_TERM, 1, 2, 1 }, NO_ANGLE }, 10.0 },
@@ -137,9 +137,9 @@ unordered_map<event_type, probunit> evt2base_probunit = {
 
 // change in success probability units:
 unordered_map<influence_type, probunit> inflt2delta_probunit = {
-//      { { { ec, et1, rat13, .et3 }, { rat12, et2, rat23 } }, pu }  // additional probunits due to an angle from e1 to e3
-//      { { { ec, et1, rat13, .et3 }, { rat12, et2, NO_RAT } }, pu }  // additional probunits due to an out-leg at e1
-//      { { { ec, et1, rat13, .et3 }, { NO_RAT, et2, rat23 } }, pu }  // additional probunits due to an in-leg at e3
+//      { { { ec, et1, rat13, et3 }, { rat12, et2, rat23 } }, pu }  // additional probunits due to an angle from e1 to e3
+//      { { { ec, et1, rat13, et3 }, { rat12, et2, NO_RAT } }, pu }  // additional probunits due to an out-leg at e1
+//      { { { ec, et1, rat13, et3 }, { NO_RAT, et2, rat23 } }, pu }  // additional probunits due to an in-leg at e3
         { { { EC_TERM, 1, 2, 1 }, { 2, 1, 2 } }, -0.3 }, // angles hamper termination
 };
 

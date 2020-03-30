@@ -7,11 +7,6 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 set(CMAKE_CXX_FLAGS "-O3 -Wall -std=gnu++17")
 
 add_executable(tricl 
-############################################################################
-# CONFIGURATION: UNCOMMENT exactly one line with parameter_values_XXX.cpp: #
-    parameter_values_3blocks.cpp 
-#    parameter_values_30blocks.cpp 
-############################################################################
     tricl.cpp 
     constants.cpp
     probability.cpp 
