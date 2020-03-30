@@ -1,0 +1,63 @@
+metadata:
+  name: 3blocks
+  description: 
+    300 entities of one type,
+    in 3 disjoint blocks fully connected by a unique symmetric relationship type,
+    slow spontaneous linking,
+    medium-speed linking due to angles (triangle closure),
+    and fast spontaneous unlinking hampered by angles (triangle staibilization),
+    leading to metastable clusters which eventually merge. 
+  author: Jobst Heitzig
+  date: 30 March 2020
+  email: heitzig@pik-potsdam.de
+
+files:
+  gexf: 3blocks.gexf
+
+limits:
+  t: 20.0
+
+options:
+  quiet: false
+  verbose: false
+  debug: false
+
+entities:
+  user:
+    n: 300
+    labels:  # of some of the entities (optional)
+      - Alice
+      - Bob
+      - Celia
+
+relationship types:
+  knows: symmetric  # indicates this is a symmetric (undirected) relationship
+#  follows: is followed by  # this would indicate an asymmetric (directed) relationship
+
+initial links: 
+  named:
+    - [Alice, knows, Bob]  # [entity, relationship type, entity]
+  random:
+    [user, knows, user]:  # [entity type, relationship type, entity type]
+      blocks: 3  # -> block model
+      within: 1.0  # link prob. in a block, defaults to 1.0
+      between: 0.0  # link prob. between blocks, defaults to 0.0
+#    [user, follows, user]:
+#      dimension: 2  # -> random geometric graph
+#      decay: 3.5  # rate of exponential decay of link probability with euclidean distance
+#    [user, knows, used]:
+#      density: 0.01  # -> simple random graph
+
+dynamics:  # all values default to 0.0
+  [user, knows, user]:
+    establish:
+      attempt:  # rates
+        basic: 0.001  # basic occurrence rate of links
+        [~, knows, user, knows, ~]: 0.01  # rate of triangle closure
+      success:  # probability units, will be translated into probability by sigmoid function.
+        basic: .inf  # infinity -> success probability is 1.0
+    terminate:
+      attempt:
+        basic: 10.0  # basic decay rate of links
+      success:  # basic probability units = 0.0 --> basic probability = 0.5
+        [~, knows, user, knows, ~]: -0.3  # triangles make decay less likely
