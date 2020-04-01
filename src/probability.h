@@ -8,11 +8,6 @@
 #ifndef INC_PROBABILITY_H
 #define INC_PROBABILITY_H
 
-// for release mode, uncomment this:
-#define NDEBUG
-#include <assert.h>
-//
-
 #include <random>
 
 #include "data_model.h"

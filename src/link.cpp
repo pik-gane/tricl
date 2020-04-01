@@ -9,11 +9,8 @@
 
 #include "global_variables.h"
 #include "probability.h"
-
 #include "event.h"
-
 #include "gexf.h"
-
 #include "link.h"
 
 using namespace std;
@@ -49,7 +46,7 @@ void do_random_link (probability p, entity_type e1, relationship_or_action_type 
         link l = { .e1 = e1, .rat13 = rat13, .e3 = e3 };
         if (!link_exists(l)) {
             event ev = { .ec = EC_EST, .e1 = e1, .rat13 = rat13, .e3 = e3 };
-            auto evd_ = &ev2data[ev];
+            auto evd_ = &ev2data.at(ev);
             if (evd_->t > -INFINITY) remove_event(ev, evd_);
             perform_event(ev);
         }

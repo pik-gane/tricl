@@ -1,8 +1,11 @@
-/*
- * data_model.h
+/** The main data model.
  *
- *  Created on: Mar 27, 2020
- *      Author: heitzig
+ * Defines all structs and their operators.
+ *
+ * @author Jobst Heitzig, Potsdam Institute for Climate Impact Research, heitzig@pik-potsdam.de
+ * @date Mar 30, 2020
+ *
+ * @file
  */
 
 #ifndef INC_DATA_MODEL_H
@@ -211,7 +214,7 @@ template <> struct std::hash<event> {
 
 struct event_data
 {
-    int n_angles;
+    int n_angles = 0;
     rate attempt_rate;
     probunit success_probunit;
     timepoint t = -INFINITY;

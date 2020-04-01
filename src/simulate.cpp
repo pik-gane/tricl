@@ -16,14 +16,11 @@ using namespace std;
 void step ()
 {
     if (pop_next_event()) {
-        if (!quiet) {
-            cout << "at t=" << current_t << " " << current_ev << ", density " << ((double)n_links)/(max_e*max_e) << endl;
-        }
         perform_event(current_ev);
         if (quiet) {
-            cout << "                          \r" << round(current_t) << ": " << ((double)n_links)/(max_e*max_e) << "  ";
+            cout << round(current_t) << ": " << ((double)n_links)/(max_e*max_e) << "                            \r";
         }
-        if (verbose) cout << " " << t2be.size() << " events on stack" << endl;
+        if (debug) cout << " " << t2be.size() << " events on stack" << endl << endl;
     }
     else {
         current_t = max_t;

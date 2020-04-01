@@ -1,11 +1,3 @@
-/*
- * entity.h
- *
- *  Created on: Mar 27, 2020
- *      Author: heitzig
- */
-
-
 #ifndef INC_ENTITY_H
 #define INC_ENTITY_H
 

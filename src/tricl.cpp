@@ -1,7 +1,9 @@
-/** tricl.cpp
+/** TriCl, a generic model of social dynamics
  *
- *  Created on: Oct 18, 2019
- *      Author: Jobst Heitzig, PIK
+ * @author Jobst Heitzig, Potsdam Institute for Climate Impact Research, heitzig@pik-potsdam.de
+ * @date Oct 18, 2019
+ *
+ * @file
  */
 
 /** USAGE.
@@ -150,7 +152,7 @@ void parse_args (int argc, const char *argv[]) {
     config_yaml_filename = argv[1];
 }
 
-/** main of executable */
+/** main function of the tricl executable */
 int main (int argc, const char *argv[]) {
     try {
         parse_args(argc, argv);

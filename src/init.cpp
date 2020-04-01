@@ -11,13 +11,10 @@
 #include "data_model.h"
 #include "global_variables.h"
 #include "probability.h"
-
 #include "entity.h"
 #include "link.h"
 #include "event.h"
-
 #include "gexf.h"
-
 #include "init.h"
 
 using namespace std;
@@ -31,18 +28,19 @@ entity_type _e2et[MAX_N_E];
 entity max_e = -1; // largest entity id in use
 set<entity> es;
 unordered_map<entity_type_pair, set<relationship_or_action_type>> ets2relations;  // possible relations
-//unordered_map<event_type, probunit> evt2base_probunit;  // basic success probunit
 
 // variable data:
 
 timepoint current_t = 0;
 event current_ev = {};
 event_data* current_evd_ = NULL;
+
 // network state:
 unordered_map<entity_type, vector<entity>> et2es = {};  // kept to equal inverse of v2vt
 unordered_map<entity, leg_set> e2outs = {};
 unordered_map<entity, leg_set> e2ins = {};
 int n_links = 0; // total no. of current (non-id.) links incl. inverse relationships
+
 // event data:
 unordered_map<event, event_data> ev2data = {};
 map<timepoint, event> t2be = {};  // kept to equal inverse of ev2data.t
@@ -83,11 +81,12 @@ void init_entities ()
         et2es[et].push_back(e);
         vt2remaining_n[et]--;
     }
+
     // generate remaining entities:
     for (auto& [et, n] : vt2remaining_n) {
-        cout << "entity type \"" << et2label[et] << "\" has " << et2n[et] << " entities" << endl;
+        cout << " entity type \"" << et2label[et] << "\" has " << et2n[et] << " entities" << endl;
         if (n < et2n[et]) {
-            cout << " of which were preregistered:" << endl;
+            cout << "  of which were preregistered:" << endl;
             for (auto& e : et2es[et]) cout << "  " << e2label[e] << endl;
         }
         assert (n >= 0);
@@ -102,50 +101,51 @@ void init_entities ()
 void init_relationship_or_action_types ()
 {
     // verify symmetry of relationship inversion map:
-    cout << "relationship types (with inverses) and action types:" << endl;
+    cout << " relationship types (with inverses) and action types:" << endl;
     assert (rat2inv[RT_ID] == RT_ID);
     for (auto& [r, la] : rat2label) {
         auto inv = rat2inv[r];
         if (inv == NO_RAT) {
             if (r_is_action_type[r]) {
-                cout << " non-symmetric action type \"" << la << "\" (no inverse)" << endl;
+                cout << "  non-symmetric action type \"" << la << "\" (no inverse)" << endl;
             } else {
-                cout << " non-symmetric relationship type \"" << la << "\" (no inverse)" << endl;
+                cout << "  non-symmetric relationship type \"" << la << "\" (no inverse)" << endl;
             }
         } else {
             if (inv == r) {
                 if (r_is_action_type[r]) {
-                    cout << " symmetric action type \"" << la << "\"" << endl;
+                    cout << "  symmetric action type \"" << la << "\"" << endl;
                 } else {
-                    cout << " symmetric relationship type \"" << la << "\"" << endl;
+                    cout << "  symmetric relationship type \"" << la << "\"" << endl;
                 }
             } else {
                 assert (rat2inv[inv] == r);
                 assert (r_is_action_type[r] == r_is_action_type[inv]);
                 if (r_is_action_type[r]) {
-                    cout << " non-symmetric action type \"" << la << "\" (inverse: \"" << rat2label[inv] << "\")" << endl;
+                    cout << "  non-symmetric action type \"" << la << "\" (inverse: \"" << rat2label[inv] << "\")" << endl;
                 } else {
-                    cout << " non-symmetric relationship type \"" << la << "\" (inverse: \"" << rat2label[inv] << "\")" << endl;
+                    cout << "  non-symmetric relationship type \"" << la << "\" (inverse: \"" << rat2label[inv] << "\")" << endl;
                 }
             }
         }
     }
+
     // register possible relationship types by entity type pair, and compute probunits:
-    cout << "base success probability units:" << endl;
+    cout << " base success probabilities:" << endl;
     for (auto& [evt, pu] : evt2base_probunit) {
         auto rat13 = evt.rat13;
         assert (rat13 != RT_ID);
         entity_type_pair ets = { evt.et1, evt.et3 };
         if (ets2relations.count(ets) == 0) ets2relations[ets] = {};
         ets2relations[ets].insert(rat13);
-        cout << " " << evt << ": " << pu << endl;
+        cout << "  " << evt << ": " << probunit2probability(pu) << endl;
     }
 }
 
-void init_generic_events ()
+void init_summary_events ()
 {
-    cout << "initial scheduling of generic events" << endl;
-    // summary events for purely spontaneous additions:
+    cout << " initial scheduling of summary events" << endl;
+    // summary events for purely spontaneous establishment without angles:
     for (auto& [ets, relations] : ets2relations) {
         auto et1 = ets.et1, et3 = ets.et3;
         for (auto& rat13 : relations) {
@@ -166,24 +166,28 @@ void init_generic_events ()
 
 void init_links ()
 {
-    cout << "performing events that add initial links" << endl;
+    cout << " performing events that add initial links" << endl;
+
     // identity relationship:
     for (auto& e : es) {
         leg l = { .e = e, .r = RT_ID };
         e2outs[e].insert(l);
         e2ins[e].insert(l);
     }
+
     // preregistered links:
     for (auto l : initial_links) {
         assert (l.rat13 != RT_ID);
         event ev = { .ec = EC_EST, .e1 = l.e1, .rat13 = l.rat13, .e3 = l.e3 };
-        auto evd_ = &ev2data[ev];
+        auto evd_ = &ev2data.at(ev);
         if (!link_exists(l)) {
             if (evd_->t > -INFINITY) remove_event(ev, evd_);
             perform_event(ev);
         }
     }
+
     // random links:
+
     // block model:
     unordered_map<entity, int> e2block = { };
     for (auto& e : es) {
@@ -203,6 +207,7 @@ void init_links ()
             }
         }
     }
+
     // random geometric model:
     unordered_map<entity, vector<float>> e2coords = { };
     for (auto& [et, dim] : et2dim) {
@@ -237,7 +242,7 @@ void init ()
     init_data();
     init_entities();
     init_relationship_or_action_types();
-    init_generic_events();
+    init_summary_events();
     init_links();
     init_gexf();
     cout << "...INITIALIZATION FINISHED." << endl << endl;

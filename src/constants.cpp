@@ -1,8 +1,9 @@
-/*
- * constants.cpp
+/** Some global constants.
  *
- *  Created on: Mar 27, 2020
- *      Author: heitzig
+ * @author Jobst Heitzig, Potsdam Institute for Climate Impact Research, heitzig@pik-potsdam.de
+ * @date Mar 30, 2020
+ *
+ * @file
  */
 
 #include "data_model.h"

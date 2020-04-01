@@ -1,20 +1,21 @@
-/*
- * config.cpp
+/** Handling of configuration files.
  *
- *  Created on: Mar 27, 2020
- *      Author: heitzig
+ * Configuration files are in YAML.
+ * See config_files/parameters_TEMPLATE.yaml for an example
+ *
+ * @author Jobst Heitzig, Potsdam Institute for Climate Impact Research, heitzig@pik-potsdam.de
+ * @date Mar 30, 2020
+ *
+ * @file
  */
 
 #include <iostream>
-
-#include "data_model.h"
-#include "global_variables.h"
 #include "yaml-cpp/yaml.h"
 
-using namespace std;
-
 #include "data_model.h"
 #include "global_variables.h"
+
+using namespace std;
 
 bool verbose = false, quiet = false, debug = false;
 timepoint max_t = 0.0;
@@ -37,7 +38,7 @@ unordered_map<event_type, probunit> evt2base_probunit = {};
 unordered_map<influence_type, probunit> inflt2delta_probunit = {};
 
 void read_config () {
-    cout << "READING CONFIG file " << config_yaml_filename << endl;
+    cout << "READING CONFIG file " << config_yaml_filename << " ..." << endl;
     YAML::Node c = YAML::LoadFile(config_yaml_filename), n, n1, n2, n3;
 
     // metadata (mandatory):
@@ -345,7 +346,7 @@ void read_config () {
                                 rat23 = label2rat.at(cause[3].as<string>());
                             } else {
                                 // TODO later
-                                throw "sorry, legs cannot influence establishment yet";
+                                throw "sorry, legs cannot influence establishment success yet";
                                 if (!(cause.size() == 3)) throw
                                         "keys in map 'success' can be 'basic', [~, rel./act.type, ent.type, rel./act.type, ~], [~, rel./act.type, ent.type], or [ent.type, rel./act.type, ~]";
                                 if (cause[0].IsNull()) { // outgoing leg
@@ -391,6 +392,8 @@ void read_config () {
                                 et2 = label2et.at(cause[2].as<string>());
                                 rat23 = label2rat.at(cause[3].as<string>());
                             } else {
+                                // TODO later
+                                throw "sorry, legs cannot attempt termination yet";
                                 if (!(cause.size() == 3)) throw
                                         "keys in map 'attempt' can be 'basic', [~, rel./act.type, ent.type, rel./act.type, ~], [~, rel./act.type, ent.type], or [ent.type, rel./act.type, ~]";
                                 if (cause[0].IsNull()) { // outgoing leg
@@ -431,6 +434,8 @@ void read_config () {
                                 et2 = label2et.at(cause[2].as<string>());
                                 rat23 = label2rat.at(cause[3].as<string>());
                             } else {
+                                // TODO later
+                                throw "sorry, legs cannot influence termination success yet";
                                 if (!(cause.size() == 3)) throw
                                         "keys in map 'success' can be 'basic', [~, rel./act.type, ent.type, rel./act.type, ~], [~, rel./act.type, ent.type], or [ent.type, rel./act.type, ~]";
                                 if (cause[0].IsNull()) { // outgoing leg
@@ -456,5 +461,6 @@ void read_config () {
             }
         }
     }
+    cout << "...READING CONFIG FINISHED." << endl << endl;
 }
 

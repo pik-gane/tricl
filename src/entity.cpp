@@ -1,10 +1,10 @@
-/*
- * entity.cpp
+/** Handling of entities.
  *
- *  Created on: Mar 27, 2020
- *      Author: heitzig
+ * @author Jobst Heitzig, Potsdam Institute for Climate Impact Research, heitzig@pik-potsdam.de
+ * @date Mar 30, 2020
+ *
+ * @file
  */
-
 
 #include <math.h>
 
@@ -14,7 +14,13 @@
 
 using namespace std;
 
-void add_entity (entity_type et)
+/** Add a new entity of a specific type.
+ *
+ * (the entity is not returned)
+ */
+void add_entity (
+        entity_type et ///< [in] Entity type of the entity to be generated anew.
+        )
 {
     auto e = ++max_e;
     es.insert(e);
@@ -23,7 +29,14 @@ void add_entity (entity_type et)
     e2label[e] = to_string(e);
     e2outs[e] = e2ins[e] = { { .e = e, .r = RT_ID } };
 }
-entity random_entity (entity_type et)
+
+/** Return a random entity of a specific type.
+ *
+ * The entity is drawn uniformly at random.
+ */
+entity random_entity (
+        entity_type et ///< [in] Entity type of which a random entity is needed
+        )
 {
     int pos = floor(uniform(random_variable) * et2es[et].size());
     auto e = et2es[et][pos];
