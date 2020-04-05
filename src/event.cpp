@@ -19,6 +19,7 @@
 #include <assert.h>
 #include <iostream>
 
+#include "debugging.h"
 #include "data_model.h"
 #include "global_variables.h"
 #include "entity.h"
@@ -26,6 +27,7 @@
 #include "link.h"
 #include "probability.h"
 #include "event.h"
+#include "io.h"
 
 using namespace std;
 
@@ -47,7 +49,7 @@ void _schedule_event (event& ev, event_data* evd_)
     auto ar = evd_->attempt_rate;
     assert (ar > 0);
     if (ev.e1 >= 0) { // particular event: use effective rate:
-        auto spu = evd_->success_probunit;
+        auto spu = evd_->success_probunits;
         if (ar < INFINITY) {
             t = current_t + exponential(random_variable) / effective_rate(ar, spu);
         } else {
@@ -70,8 +72,13 @@ void _schedule_event (event& ev, event_data* evd_)
 void schedule_event (event& ev, event_data* evd_)
 {
     assert(evd_ == &ev2data.at(ev));
+    if (event_is_scheduled(ev, evd_)) {
+        cout << "ERROR: event " << ev << " already scheduled:" << endl;
+        dump_data();
+    }
     assert (!event_is_scheduled(ev, evd_));
     _schedule_event(ev, evd_);
+    if (debug) verify_data_consistency();
     if (verbose) cout << "      scheduled " << ev << " for t=" << evd_->t << endl;
 }
 
@@ -139,7 +146,7 @@ void add_event (event& ev)
             ar += _inflt2attempt_rate[INFLT(inflt)];
             spu += _inflt2delta_probunit[INFLT(inflt)];
             assert (ev2data.count(ev) == 0);
-            ev2data[ev] = { .n_angles = na, .attempt_rate = ar, .success_probunit = spu, .t = -INFINITY };
+            ev2data[ev] = { .n_angles = na, .attempt_rate = ar, .success_probunits = spu, .t = -INFINITY };
             if (debug) cout << "      attempt rate " << ar << ", success prob. " << probunit2probability(spu) << endl;
             schedule_event(ev, &ev2data[ev]);
         } else {
@@ -157,6 +164,14 @@ void remove_event (event& ev, event_data* evd_)
     t2be.erase(evd_->t);
     ev2data.erase(ev);
     if (debug) cout << "        removed event: " << ev << " scheduled at " << evd_->t << endl;
+}
+
+void conditionally_remove_event(event& ev)
+{
+    if (ev2data.count(ev) == 1) {
+        auto evd_ = &ev2data.at(ev);
+        remove_event(ev, evd_);
+    }
 }
 
 #define IF_12 if (which == 0)
@@ -221,10 +236,10 @@ void perform_event (event& ev)
     update_adjacent_events(ev);
     // also perform companion event that affects inverse link:
     if (r31 != NO_RAT) {
-        auto companion_evd_ = &ev2data.at(companion_ev);
-        if (companion_evd_->t > -INFINITY) {
+        if (ev2data.count(companion_ev) == 1) {
+            if (debug) cout << " unscheduling companion event: " << companion_ev << endl;
+            auto companion_evd_ = &ev2data.at(companion_ev);
             remove_event(companion_ev, companion_evd_);
-            if (debug) cout << " unscheduling companion event" << endl;
         }
         if (ec == EC_EST) {
             if (verbose) cout << " performing companion event: adding inverse link \"" << e2label[e3]

@@ -1,5 +1,6 @@
 add_executable(tricl 
     tricl.cpp 
+    debugging.cpp
     constants.cpp
     probability.cpp 
     entity.cpp 

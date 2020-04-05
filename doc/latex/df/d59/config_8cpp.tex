@@ -1,0 +1,104 @@
+\hypertarget{config_8cpp}{}\section{src/config.cpp File Reference}
+\label{config_8cpp}\index{src/config.\+cpp@{src/config.\+cpp}}
+
+
+Handling of configuration files.  
+
+
+{\ttfamily \#include $<$iostream$>$}\newline
+{\ttfamily \#include \char`\"{}yaml-\/cpp/yaml.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}data\+\_\+model.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}global\+\_\+variables.\+h\char`\"{}}\newline
+Include dependency graph for config.\+cpp\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{db/d4c/config_8cpp__incl}
+\end{center}
+\end{figure}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{config_8cpp_ac8471a77a592a1fbe4b3af45fa93098a}\label{config_8cpp_ac8471a77a592a1fbe4b3af45fa93098a}} 
+void {\bfseries read\+\_\+config} ()
+\end{DoxyCompactItemize}
+\subsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{config_8cpp_ab3f078684998b83967d507d0f453f454}\label{config_8cpp_ab3f078684998b83967d507d0f453f454}} 
+bool {\bfseries verbose} = false
+\item 
+\mbox{\Hypertarget{config_8cpp_ae4426f467d61ae456b95844d4d9c2dcd}\label{config_8cpp_ae4426f467d61ae456b95844d4d9c2dcd}} 
+bool {\bfseries quiet} = false
+\item 
+\mbox{\Hypertarget{config_8cpp_a398527b3e9e358c345c5047b16871957}\label{config_8cpp_a398527b3e9e358c345c5047b16871957}} 
+bool {\bfseries debug} = false
+\item 
+\mbox{\Hypertarget{config_8cpp_a61e4a08c5309d5cd9538ce9654bdb9e9}\label{config_8cpp_a61e4a08c5309d5cd9538ce9654bdb9e9}} 
+timepoint {\bfseries max\+\_\+t} = 0.\+0
+\item 
+\mbox{\Hypertarget{config_8cpp_a0b60e3ce1fbd529d7fb44c1a3b6f2d5a}\label{config_8cpp_a0b60e3ce1fbd529d7fb44c1a3b6f2d5a}} 
+string {\bfseries gexf\+\_\+filename} = \char`\"{}\char`\"{}
+\item 
+\mbox{\Hypertarget{config_8cpp_a1b14b11720f5396f884aba602cc42602}\label{config_8cpp_a1b14b11720f5396f884aba602cc42602}} 
+unordered\+\_\+map$<$ entity\+\_\+type, label $>$ {\bfseries et2label} = \{\}
+\item 
+\mbox{\Hypertarget{config_8cpp_aba5a0104caf66faf04d0e2f4491415fb}\label{config_8cpp_aba5a0104caf66faf04d0e2f4491415fb}} 
+unordered\+\_\+map$<$ entity\+\_\+type, entity $>$ {\bfseries et2n} = \{\}
+\item 
+\mbox{\Hypertarget{config_8cpp_a16775be180de048f5d158cf6c18af175}\label{config_8cpp_a16775be180de048f5d158cf6c18af175}} 
+unordered\+\_\+map$<$ relationship\+\_\+or\+\_\+action\+\_\+type, label $>$ {\bfseries rat2label} = \{\}
+\item 
+\mbox{\Hypertarget{config_8cpp_acb03df27c0aec975d0d0a27e21f9b956}\label{config_8cpp_acb03df27c0aec975d0d0a27e21f9b956}} 
+unordered\+\_\+map$<$ relationship\+\_\+or\+\_\+action\+\_\+type, bool $>$ {\bfseries r\+\_\+is\+\_\+action\+\_\+type} = \{\}
+\item 
+\mbox{\Hypertarget{config_8cpp_a698aaa515390777326d52ab118c9f1fe}\label{config_8cpp_a698aaa515390777326d52ab118c9f1fe}} 
+unordered\+\_\+map$<$ relationship\+\_\+or\+\_\+action\+\_\+type, relationship\+\_\+or\+\_\+action\+\_\+type $>$ {\bfseries rat2inv} = \{\}
+\item 
+\mbox{\Hypertarget{config_8cpp_a12b15805ec2a70ba1781f87af3d8215b}\label{config_8cpp_a12b15805ec2a70ba1781f87af3d8215b}} 
+unordered\+\_\+map$<$ entity, entity\+\_\+type $>$ {\bfseries e2et} = \{\}
+\item 
+\mbox{\Hypertarget{config_8cpp_a1d4d2e1edc14bccb896b5dd715cba4a6}\label{config_8cpp_a1d4d2e1edc14bccb896b5dd715cba4a6}} 
+unordered\+\_\+map$<$ entity, label $>$ {\bfseries e2label} = \{\}
+\item 
+\mbox{\Hypertarget{config_8cpp_afe42a9a97fc8e959183c94fc333f2331}\label{config_8cpp_afe42a9a97fc8e959183c94fc333f2331}} 
+set$<$ \hyperlink{structlink}{link} $>$ {\bfseries initial\+\_\+links} = \{\}
+\item 
+\mbox{\Hypertarget{config_8cpp_ac3d91d4eef87cfaf1371a698513533ba}\label{config_8cpp_ac3d91d4eef87cfaf1371a698513533ba}} 
+unordered\+\_\+map$<$ entity\+\_\+type, int $>$ {\bfseries et2n\+\_\+blocks} = \{\}
+\item 
+\mbox{\Hypertarget{config_8cpp_a1cf9b4c5338052d0ac84135ecefc7d39}\label{config_8cpp_a1cf9b4c5338052d0ac84135ecefc7d39}} 
+unordered\+\_\+map$<$ \hyperlink{structlink__type}{link\+\_\+type}, probability $>$ {\bfseries lt2initial\+\_\+prob\+\_\+within} = \{\}
+\item 
+\mbox{\Hypertarget{config_8cpp_aa892b7f705910915c42a59b564850a4a}\label{config_8cpp_aa892b7f705910915c42a59b564850a4a}} 
+unordered\+\_\+map$<$ \hyperlink{structlink__type}{link\+\_\+type}, probability $>$ {\bfseries lt2initial\+\_\+prob\+\_\+between} = \{\}
+\item 
+\mbox{\Hypertarget{config_8cpp_a5022e1a1414fd07a51e1e3e6f08ab064}\label{config_8cpp_a5022e1a1414fd07a51e1e3e6f08ab064}} 
+unordered\+\_\+map$<$ entity\+\_\+type, int $>$ {\bfseries et2dim} = \{\}
+\item 
+\mbox{\Hypertarget{config_8cpp_ac075689bc4d37b273487fa22e5099b32}\label{config_8cpp_ac075689bc4d37b273487fa22e5099b32}} 
+unordered\+\_\+map$<$ \hyperlink{structlink__type}{link\+\_\+type}, probability $>$ {\bfseries lt2spatial\+\_\+decay} = \{\}
+\item 
+\mbox{\Hypertarget{config_8cpp_aa37926f8d74a0c74e47def544c4f872e}\label{config_8cpp_aa37926f8d74a0c74e47def544c4f872e}} 
+unordered\+\_\+map$<$ \hyperlink{structinfluence__type}{influence\+\_\+type}, rate $>$ {\bfseries inflt2attempt\+\_\+rate} = \{\}
+\item 
+\mbox{\Hypertarget{config_8cpp_a03d560bc5370f3ca1eacb35584ef2315}\label{config_8cpp_a03d560bc5370f3ca1eacb35584ef2315}} 
+unordered\+\_\+map$<$ \hyperlink{structevent__type}{event\+\_\+type}, probunit $>$ {\bfseries evt2base\+\_\+probunit} = \{\}
+\item 
+\mbox{\Hypertarget{config_8cpp_a7bdcf50228f66221b0b748cdc9593169}\label{config_8cpp_a7bdcf50228f66221b0b748cdc9593169}} 
+unordered\+\_\+map$<$ \hyperlink{structinfluence__type}{influence\+\_\+type}, probunit $>$ {\bfseries inflt2delta\+\_\+probunit} = \{\}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Handling of configuration files. 
+
+Configuration files are in Y\+A\+ML. See config\+\_\+files/parameters\+\_\+\+T\+E\+M\+P\+L\+A\+T\+E.\+yaml for an example
+
+\begin{DoxyAuthor}{Author}
+Jobst Heitzig, Potsdam Institute for Climate Impact Research, \href{mailto:heitzig@pik-potsdam.de}{\tt heitzig@pik-\/potsdam.\+de} 
+\end{DoxyAuthor}
+\begin{DoxyDate}{Date}
+Mar 30, 2020 
+\end{DoxyDate}

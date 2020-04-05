@@ -22,6 +22,8 @@ void add_event (event& ev);
 
 void remove_event (event& ev, event_data* evd_);
 
+void conditionally_remove_event(event& ev);
+
 void update_adjacent_events (event& ev);
 
 void add_reverse_event (event& old_ev);

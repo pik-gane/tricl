@@ -49,11 +49,17 @@ ostream& operator<< (ostream& os, const event& ev) {
     return os;
 }
 
-void dump_data () // dump ev2data to console for debugging
+ostream& operator<< (ostream& os, const event_data& evd) {
+    os << "na=" << evd.n_angles << " ar=" << evd.attempt_rate << " pu=" << evd.success_probunits << " t=" << evd.t;
+    return os;
+}
+
+void dump_data () // dump important data to stdout for debugging
 {
-    cout << "!" << endl;
-    for (auto& [ev2, evd2] : ev2data)
-        cout << ev2 << " " << evd2.attempt_rate << " " << evd2.t << endl;
+    cout << "t2be:" << endl;
+    for (auto& [t, ev] : t2be) cout << " " << t << ": " << ev << endl;
+    cout << "ev2data:" << endl;
+    for (auto& [ev2, evd2] : ev2data) cout << " " << ev2 << ": " << evd2 << endl;
 }
 
 

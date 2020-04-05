@@ -48,6 +48,12 @@ map<timepoint, event> t2be = {};  // kept to equal inverse of ev2data.t
 
 void init_data ()
 {
+    if (debug) {
+        verbose = true;
+    }
+    if (verbose) {
+        quiet = false;
+    }
     // init with zeroes:
     for (int i=0; i<MAX_N_INFLT; i++) {
         _inflt2delta_probunit[i] = _inflt2attempt_rate[i] = 0;
@@ -87,7 +93,7 @@ void init_entities ()
         cout << " entity type \"" << et2label[et] << "\" has " << et2n[et] << " entities" << endl;
         if (n < et2n[et]) {
             cout << "  of which were preregistered:" << endl;
-            for (auto& e : et2es[et]) cout << "  " << e2label[e] << endl;
+            for (auto& e : et2es[et]) cout << "   " << e2label[e] << endl;
         }
         assert (n >= 0);
         while (n > 0) {
@@ -157,7 +163,10 @@ void init_summary_events ()
             influence_type inflt = { .evt = evt, .at = NO_ANGLE };
             auto ar = _inflt2attempt_rate[INFLT(inflt)];
             if (ar > 0) {
-                ev2data[ev] = { .n_angles = 0, .attempt_rate = ar * et2n[et1] * et2n[et3], .success_probunit = evt2base_probunit[evt] + _inflt2delta_probunit[INFLT(inflt)]};
+                if (verbose) cout << "  " << et2label[et1] << " " << rat2label[rat13] << " " << et2label[et3] << endl;
+                ev2data[ev] = { .n_angles = 0,
+                        .attempt_rate = ar * et2n[et1] * et2n[et3],
+                        .success_probunits = evt2base_probunit[evt] + _inflt2delta_probunit[INFLT(inflt)] };
                 schedule_event(ev, &ev2data[ev]);
             }
         }
@@ -177,13 +186,11 @@ void init_links ()
 
     // preregistered links:
     for (auto l : initial_links) {
+        assert (!link_exists(l));
         assert (l.rat13 != RT_ID);
         event ev = { .ec = EC_EST, .e1 = l.e1, .rat13 = l.rat13, .e3 = l.e3 };
-        auto evd_ = &ev2data.at(ev);
-        if (!link_exists(l)) {
-            if (evd_->t > -INFINITY) remove_event(ev, evd_);
-            perform_event(ev);
-        }
+        conditionally_remove_event(ev);
+        perform_event(ev);
     }
 
     // random links:

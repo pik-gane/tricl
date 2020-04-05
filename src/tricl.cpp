@@ -133,6 +133,7 @@
 
 // local includes:
 
+#include "debugging.h"
 #include "global_variables.h"
 #include "config.h"
 #include "init.h"
@@ -158,6 +159,7 @@ int main (int argc, const char *argv[]) {
         parse_args(argc, argv);
         read_config();
         init();
+        if (debug) verify_data_consistency();
 
         while (current_t < max_t) step();
 

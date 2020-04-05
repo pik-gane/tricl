@@ -216,8 +216,10 @@ struct event_data
 {
     int n_angles = 0;
     rate attempt_rate;
-    probunit success_probunit;
+    probunit success_probunits;
     timepoint t = -INFINITY;
+
+    friend ostream& operator<<(ostream& os, const event_data& evd);
 };
 
 struct angle

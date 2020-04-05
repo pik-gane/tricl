@@ -1,0 +1,51 @@
+\hypertarget{angle_8cpp}{}\section{src/angle.cpp File Reference}
+\label{angle_8cpp}\index{src/angle.\+cpp@{src/angle.\+cpp}}
+
+
+Handling of angles.  
+
+
+{\ttfamily \#include $<$iostream$>$}\newline
+{\ttfamily \#include \char`\"{}global\+\_\+variables.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}probability.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}event.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}angle.\+h\char`\"{}}\newline
+Include dependency graph for angle.\+cpp\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{db/d2d/angle_8cpp__incl}
+\end{center}
+\end{figure}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \hyperlink{angle_8cpp_a47e571c470e06056cb6537dcce1de7aa}{add\+\_\+or\+\_\+delete\+\_\+angle} (event\+\_\+class ec, entity e1, entity\+\_\+type et1, relationship\+\_\+or\+\_\+action\+\_\+type rat12, entity e2, entity\+\_\+type et2, relationship\+\_\+or\+\_\+action\+\_\+type rat23, entity e3, entity\+\_\+type et3)
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Handling of angles. 
+
+An angle is an indirect connection between two entities e1, e3 via a middle entity e2. It is specified as a triple \{rat12, e2, rat23\} where rat12, rat23 are two relationship or action types.
+
+\begin{DoxyAuthor}{Author}
+Jobst Heitzig, Potsdam Institute for Climate Impact Research, \href{mailto:heitzig@pik-potsdam.de}{\tt heitzig@pik-\/potsdam.\+de} 
+\end{DoxyAuthor}
+\begin{DoxyDate}{Date}
+Mar 30, 2020 
+\end{DoxyDate}
+
+
+\subsection{Function Documentation}
+\mbox{\Hypertarget{angle_8cpp_a47e571c470e06056cb6537dcce1de7aa}\label{angle_8cpp_a47e571c470e06056cb6537dcce1de7aa}} 
+\index{angle.\+cpp@{angle.\+cpp}!add\+\_\+or\+\_\+delete\+\_\+angle@{add\+\_\+or\+\_\+delete\+\_\+angle}}
+\index{add\+\_\+or\+\_\+delete\+\_\+angle@{add\+\_\+or\+\_\+delete\+\_\+angle}!angle.\+cpp@{angle.\+cpp}}
+\subsubsection{\texorpdfstring{add\+\_\+or\+\_\+delete\+\_\+angle()}{add\_or\_delete\_angle()}}
+{\footnotesize\ttfamily void add\+\_\+or\+\_\+delete\+\_\+angle (\begin{DoxyParamCaption}\item[{event\+\_\+class}]{ec,  }\item[{entity}]{e1,  }\item[{entity\+\_\+type}]{et1,  }\item[{relationship\+\_\+or\+\_\+action\+\_\+type}]{rat12,  }\item[{entity}]{e2,  }\item[{entity\+\_\+type}]{et2,  }\item[{relationship\+\_\+or\+\_\+action\+\_\+type}]{rat23,  }\item[{entity}]{e3,  }\item[{entity\+\_\+type}]{et3 }\end{DoxyParamCaption})}
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em ec} & event class \\
+\hline
+\end{DoxyParams}

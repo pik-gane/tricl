@@ -204,18 +204,22 @@ void read_config () {
     // named initial links:
     n = c["initial links"]["named"];
     if (n) {
-        cout << "initial links" << endl;
+        cout << "named initial links:" << endl;
         for (YAML::const_iterator it = n.begin(); it != n.end(); ++it) {
             if (!it->IsSequence()) throw "yaml subfield 'named' of 'initial links' must be a sequence";
             string elabel1 = (*it)[0].as<string>(),
                     ratlabel = (*it)[1].as<string>(),
                     elabel3 = (*it)[2].as<string>();
-            auto rat = label2rat.at(ratlabel);
-            auto e1 = label2e.at(elabel1), e3 = label2e.at(elabel3);
-            initial_links.insert({ e1, rat, e3 });
             cout << " " << elabel1 << " " << ratlabel << " " << elabel3 << endl;
-            if (r_is_action_type[rat]) {
+            try {
+                auto rat = label2rat.at(ratlabel);
+                auto e1 = label2e.at(elabel1), e3 = label2e.at(elabel3);
+                initial_links.insert({ e1, rat, e3 });
+                if (r_is_action_type[rat]) {
 //                float impact = (*it)[3].as<float>(); // TODO: use!!
+                }
+            } catch (const std::exception&) {
+                throw "some entity or the relationship or action type was not declared";
             }
         }
     }
@@ -223,242 +227,255 @@ void read_config () {
     // random initial links:
     n1 = c["initial links"]["random"];
     if (n1) {
+        cout << "random initial links:" << endl;
         if (!n1.IsMap()) throw "yaml subfield 'random' of 'initial links' must be a map";
         for (YAML::const_iterator it1 = n1.begin(); it1 != n1.end(); ++it1) {
             auto lt = it1->first;
             if (!lt.IsSequence()) throw "keys in yaml map 'named' of 'initial links' must be of the form [entity type, relationship or action type, entity type]";
-            auto et1 = label2et.at(lt[0].as<string>()),
-                    et3 = label2et.at(lt[2].as<string>());
-            auto rat = label2rat.at(lt[1].as<string>());
-            auto spec = it1->second;
-            if (!spec.IsMap()) throw "values in yaml map 'named' of 'initial links' must be maps";
-            if (spec["density"]) { // Erdös-Renyi random graph, treated as block model with one block
-                auto pw = spec["density"].as<probability>();
-                if (!((0.0 <= pw) && (pw <= 1.0))) throw "'density' must be between 0.0 and 1.0";
-//                auto rate = spec["rate"] ? spec["rate"].as<float>() : 1.0; // TODO: for action types
-                et2n_blocks[et1] = et2n_blocks[et3] = 1;
-                lt2initial_prob_within[{et1, rat, et3}] = pw;
-                lt2initial_prob_between[{et1, rat, et3}] = 0.0;
-            } else if (spec["blocks"]) {
-                if (et1 == et3) { // symmetric block model
-                    auto n = spec["blocks"].as<int>();
-                    // TODO: allow list of "sizes"
-                    auto pw = spec["within"] ? spec["within"].as<probability>() : 1.0;
-                    auto pb = spec["between"] ? spec["between"].as<probability>() : 0.0;
-                    if (!(n > 0)) throw "'n' must be positive";
-                    if (!((0.0 <= pw) && (pw <= 1.0))) throw "'within' must be between 0.0 and 1.0";
-                    if (!((0.0 <= pb) && (pb <= 1.0))) throw "'between' must be between 0.0 and 1.0";
-                    et2n_blocks[et1] = n;
+            cout << " " << lt[0].as<string>() << " " << lt[1].as<string>() << " " << lt[2].as<string>() << endl;
+            try {
+                auto et1 = label2et.at(lt[0].as<string>()),
+                        et3 = label2et.at(lt[2].as<string>());
+                auto rat = label2rat.at(lt[1].as<string>());
+                auto spec = it1->second;
+                if (!spec.IsMap()) throw "values in yaml map 'named' of 'initial links' must be maps";
+                if (spec["density"]) { // Erdös-Renyi random graph, treated as block model with one block
+                    auto pw = spec["density"].as<probability>();
+                    if (!((0.0 <= pw) && (pw <= 1.0))) throw "'density' must be between 0.0 and 1.0";
+    //                auto rate = spec["rate"] ? spec["rate"].as<float>() : 1.0; // TODO: for action types
+                    et2n_blocks[et1] = et2n_blocks[et3] = 1;
                     lt2initial_prob_within[{et1, rat, et3}] = pw;
-                    lt2initial_prob_between[{et1, rat, et3}] = pb;
-                } else { // asymmetric block model
-                    // TODO
-                    throw "sorry, block model for asymmetric relationship or action types not supported yet!";
+                    lt2initial_prob_between[{et1, rat, et3}] = 0.0;
+                } else if (spec["blocks"]) {
+                    if (et1 == et3) { // symmetric block model
+                        auto n = spec["blocks"].as<int>();
+                        // TODO: allow list of "sizes"
+                        auto pw = spec["within"] ? spec["within"].as<probability>() : 1.0;
+                        auto pb = spec["between"] ? spec["between"].as<probability>() : 0.0;
+                        if (!(n > 0)) throw "'n' must be positive";
+                        if (!((0.0 <= pw) && (pw <= 1.0))) throw "'within' must be between 0.0 and 1.0";
+                        if (!((0.0 <= pb) && (pb <= 1.0))) throw "'between' must be between 0.0 and 1.0";
+                        et2n_blocks[et1] = n;
+                        lt2initial_prob_within[{et1, rat, et3}] = pw;
+                        lt2initial_prob_between[{et1, rat, et3}] = pb;
+                    } else { // asymmetric block model
+                        // TODO
+                        throw "sorry, block model for asymmetric relationship or action types not supported yet!";
+                    }
+                } else if (spec["dimension"]) {
+                    // TODO: make sure no conflicts between several spatial models for same entity types!
+                    auto dim = spec["dimension"].as<int>();
+                    // TODO: allow list of "widths"
+                    auto dec = spec["decay"] ? spec["decay"].as<float>() : 1.0;
+                    if (!(dim > 0)) throw "'dimension' must be positive";
+                    if (!(dec > 0.0)) throw "'decay' must be positive";
+                    et2dim[et1] = et2dim[et3] = dim;
+                    lt2spatial_decay[{et1, rat, et3}] = dec;
                 }
-            } else if (spec["dimension"]) {
-                // TODO: make sure no conflicts between several spatial models for same entity types!
-                auto dim = spec["dimension"].as<int>();
-                // TODO: allow list of "widths"
-                auto dec = spec["decay"] ? spec["decay"].as<float>() : 1.0;
-                if (!(dim > 0)) throw "'dimension' must be positive";
-                if (!(dec > 0.0)) throw "'decay' must be positive";
-                et2dim[et1] = et2dim[et3] = dim;
-                lt2spatial_decay[{et1, rat, et3}] = dec;
+            } catch (const std::exception&) {
+                throw "some entity or the relationship or action type was not declared";
             }
         }
     }
+
     // dynamics:
+    cout << "dynamics:" << endl;
     n1 = c["dynamics"];
     if (!n1.IsMap()) throw "yaml field 'dynamics' must be a map";
     for (YAML::const_iterator it1 = n1.begin(); it1 != n1.end(); ++it1) {
         auto lt = it1->first;
         if (!lt.IsSequence()) throw "keys in yaml map 'dynamics' must be of the form [entity type, relationship or action type, entity type]";
-        auto et1 = label2et.at(lt[0].as<string>()),
-                et3 = label2et.at(lt[2].as<string>());
-        auto rat13 = label2rat.at(lt[1].as<string>());
-        auto spec = it1->second;
-        if (!spec.IsMap()) throw "values in yaml map 'dynamics' must be maps";
-        if (r_is_action_type[rat13]) {
-            // TODO: attempt, success
-        } else {
-            auto n2 = spec["establish"];
-            auto ec = EC_EST;
-            evt2base_probunit[{ ec, et1, rat13, et3 }] = 0.0;
-            if (n2) {
-                if (!n2.IsMap()) throw "yaml field 'establish' within 'dynamics' must be a map";
-                auto n3 = n2["attempt"];
-                if (n3) {
-                    if (!n3.IsMap()) throw "yaml field 'attempt' within 'dynamics' must be a map";
-                    for (YAML::const_iterator it3 = n3.begin(); it3 != n3.end(); ++it3) {
-                        auto cause = it3->first;
-                        auto ar = it3->second.as<rate>();
-                        if (!(ar >= 0.0)) throw "values in map 'attempt' must be non-negative";
-                        entity_type et2;
-                        relationship_or_action_type rat12, rat23;
-                        if (cause.IsSequence()) {
-                            if (cause.size() == 5) { // angle
-                                if (!(cause[0].IsNull() && cause[4].IsNull())) throw
-                                        "keys in map 'attempt' can be 'basic', [~, rel./act.type, ent.type, rel./act.type, ~], [~, rel./act.type, ent.type], or [ent.type, rel./act.type, ~]";
-                                rat12 = label2rat.at(cause[1].as<string>());
-                                et2 = label2et.at(cause[2].as<string>());
-                                rat23 = label2rat.at(cause[3].as<string>());
-                            } else {
-                                // TODO later
-                                throw "sorry, legs cannot attempt establishment yet";
-                                if (!(cause.size() == 3)) throw
-                                        "keys in map 'attempt' can be 'basic', [~, rel./act.type, ent.type, rel./act.type, ~], [~, rel./act.type, ent.type], or [ent.type, rel./act.type, ~]";
-                                if (cause[0].IsNull()) { // outgoing leg
+        cout << " " << lt[0].as<string>() << " " << lt[1].as<string>() << " " << lt[2].as<string>() << endl;
+        try {
+            auto et1 = label2et.at(lt[0].as<string>()),
+                    et3 = label2et.at(lt[2].as<string>());
+            auto rat13 = label2rat.at(lt[1].as<string>());
+            auto spec = it1->second;
+            if (!spec.IsMap()) throw "values in yaml map 'dynamics' must be maps";
+            if (r_is_action_type[rat13]) {
+                // TODO: attempt, success
+            } else {
+                auto n2 = spec["establish"];
+                auto ec = EC_EST;
+                evt2base_probunit[{ ec, et1, rat13, et3 }] = 0.0;
+                if (n2) {
+                    if (!n2.IsMap()) throw "yaml field 'establish' within 'dynamics' must be a map";
+                    auto n3 = n2["attempt"];
+                    if (n3) {
+                        if (!n3.IsMap()) throw "yaml field 'attempt' within 'dynamics' must be a map";
+                        for (YAML::const_iterator it3 = n3.begin(); it3 != n3.end(); ++it3) {
+                            auto cause = it3->first;
+                            auto ar = it3->second.as<rate>();
+                            if (!(ar >= 0.0)) throw "values in map 'attempt' must be non-negative";
+                            entity_type et2;
+                            relationship_or_action_type rat12, rat23;
+                            if (cause.IsSequence()) {
+                                if (cause.size() == 5) { // angle
+                                    if (!(cause[0].IsNull() && cause[4].IsNull())) throw
+                                            "keys in map 'attempt' can be 'basic', [~, rel./act.type, ent.type, rel./act.type, ~], [~, rel./act.type, ent.type], or [ent.type, rel./act.type, ~]";
                                     rat12 = label2rat.at(cause[1].as<string>());
                                     et2 = label2et.at(cause[2].as<string>());
-                                    rat23 = NO_RAT;
-                                } else { // incoming leg
-                                    rat12 = NO_RAT;
-                                    et2 = label2et.at(cause[0].as<string>());
-                                    rat23 = label2rat.at(cause[1].as<string>());
-                                    if (!(cause[2].IsNull())) throw
+                                    rat23 = label2rat.at(cause[3].as<string>());
+                                } else {
+                                    // TODO later
+                                    throw "sorry, legs cannot attempt establishment yet";
+                                    if (!(cause.size() == 3)) throw
                                             "keys in map 'attempt' can be 'basic', [~, rel./act.type, ent.type, rel./act.type, ~], [~, rel./act.type, ent.type], or [ent.type, rel./act.type, ~]";
+                                    if (cause[0].IsNull()) { // outgoing leg
+                                        rat12 = label2rat.at(cause[1].as<string>());
+                                        et2 = label2et.at(cause[2].as<string>());
+                                        rat23 = NO_RAT;
+                                    } else { // incoming leg
+                                        rat12 = NO_RAT;
+                                        et2 = label2et.at(cause[0].as<string>());
+                                        rat23 = label2rat.at(cause[1].as<string>());
+                                        if (!(cause[2].IsNull())) throw
+                                                "keys in map 'attempt' can be 'basic', [~, rel./act.type, ent.type, rel./act.type, ~], [~, rel./act.type, ent.type], or [ent.type, rel./act.type, ~]";
+                                    }
                                 }
+                                inflt2attempt_rate[{ { ec, et1, rat13, et3 }, { rat12, et2, rat23 } }] = ar;
+                                inflt2delta_probunit[{ { ec, et1, rat13, et3 }, { rat12, et2, rat23 } }] = 0.0;
+                            } else { // basic
+                                if (cause.as<string>() != "basic") throw
+                                        "keys in map 'attempt' can be 'basic', [~, rel./act.type, ent.type, rel./act.type, ~], [~, rel./act.type, ent.type], or [ent.type, rel./act.type, ~]";
+                                inflt2attempt_rate[{ { ec, et1, rat13, et3 }, NO_ANGLE }] = ar;
                             }
-                            inflt2attempt_rate[{ { ec, et1, rat13, et3 }, { rat12, et2, rat23 } }] = ar;
-                            inflt2delta_probunit[{ { ec, et1, rat13, et3 }, { rat12, et2, rat23 } }] = 0.0;
-                        } else { // basic
-                            if (cause.as<string>() != "basic") throw
-                                    "keys in map 'attempt' can be 'basic', [~, rel./act.type, ent.type, rel./act.type, ~], [~, rel./act.type, ent.type], or [ent.type, rel./act.type, ~]";
-                            inflt2attempt_rate[{ { ec, et1, rat13, et3 }, NO_ANGLE }] = ar;
+                        }
+                    }
+                    n3 = n2["success"];
+                    if (n3) {
+                        // TODO: tails!
+                        if (!n3.IsMap()) throw "yaml field 'success' within 'dynamics' must be a map";
+                        for (YAML::const_iterator it3 = n3.begin(); it3 != n3.end(); ++it3) {
+                            auto cause = it3->first;
+                            auto pu = it3->second.as<probunit>();
+                            entity_type et2;
+                            relationship_or_action_type rat12, rat23;
+                            if (cause.IsSequence()) {
+                                if (cause.size() == 5) { // angle
+                                    if (!(cause[0].IsNull() && cause[4].IsNull())) throw
+                                            "keys in map 'success' can be 'basic', [~, rel./act.type, ent.type, rel./act.type, ~], [~, rel./act.type, ent.type], or [ent.type, rel./act.type, ~]";
+                                    rat12 = label2rat.at(cause[1].as<string>());
+                                    et2 = label2et.at(cause[2].as<string>());
+                                    rat23 = label2rat.at(cause[3].as<string>());
+                                } else {
+                                    // TODO later
+                                    throw "sorry, legs cannot influence establishment success yet";
+                                    if (!(cause.size() == 3)) throw
+                                            "keys in map 'success' can be 'basic', [~, rel./act.type, ent.type, rel./act.type, ~], [~, rel./act.type, ent.type], or [ent.type, rel./act.type, ~]";
+                                    if (cause[0].IsNull()) { // outgoing leg
+                                        rat12 = label2rat.at(cause[1].as<string>());
+                                        et2 = label2et.at(cause[2].as<string>());
+                                        rat23 = NO_RAT;
+                                    } else { // incoming leg
+                                        rat12 = NO_RAT;
+                                        et2 = label2et.at(cause[0].as<string>());
+                                        rat23 = label2rat.at(cause[1].as<string>());
+                                        if (!(cause[2].IsNull())) throw
+                                                "keys in map 'success' can be 'basic', [~, rel./act.type, ent.type, rel./act.type, ~], [~, rel./act.type, ent.type], or [ent.type, rel./act.type, ~]";
+                                    }
+                                }
+                                inflt2delta_probunit[{ { ec, et1, rat13, et3 }, { rat12, et2, rat23 } }] = pu;
+                            } else { // basic
+                                if (cause.as<string>() != "basic") throw
+                                        "keys in map 'success' can be 'basic', [~, rel./act.type, ent.type, rel./act.type, ~], [~, rel./act.type, ent.type], or [ent.type, rel./act.type, ~]";
+                                evt2base_probunit[{ ec, et1, rat13, et3 }] = pu;
+                            }
                         }
                     }
                 }
-                n3 = n2["success"];
-                if (n3) {
-                    // TODO: tails!
-                    if (!n3.IsMap()) throw "yaml field 'success' within 'dynamics' must be a map";
-                    for (YAML::const_iterator it3 = n3.begin(); it3 != n3.end(); ++it3) {
-                        auto cause = it3->first;
-                        auto pu = it3->second.as<probunit>();
-                        entity_type et2;
-                        relationship_or_action_type rat12, rat23;
-                        if (cause.IsSequence()) {
-                            if (cause.size() == 5) { // angle
-                                if (!(cause[0].IsNull() && cause[4].IsNull())) throw
-                                        "keys in map 'success' can be 'basic', [~, rel./act.type, ent.type, rel./act.type, ~], [~, rel./act.type, ent.type], or [ent.type, rel./act.type, ~]";
-                                rat12 = label2rat.at(cause[1].as<string>());
-                                et2 = label2et.at(cause[2].as<string>());
-                                rat23 = label2rat.at(cause[3].as<string>());
-                            } else {
-                                // TODO later
-                                throw "sorry, legs cannot influence establishment success yet";
-                                if (!(cause.size() == 3)) throw
-                                        "keys in map 'success' can be 'basic', [~, rel./act.type, ent.type, rel./act.type, ~], [~, rel./act.type, ent.type], or [ent.type, rel./act.type, ~]";
-                                if (cause[0].IsNull()) { // outgoing leg
+                n2 = spec["terminate"];
+                ec = EC_TERM;
+                evt2base_probunit[{ ec, et1, rat13, et3 }] = 0.0;
+                if (n2) {
+                    if (!n2.IsMap()) throw "yaml field 'terminate' within 'dynamics' must be a map";
+                    auto n3 = n2["attempt"];
+                    if (n3) {
+                        if (!n3.IsMap()) throw "yaml field 'attempt' within 'dynamics' must be a map";
+                        for (YAML::const_iterator it3 = n3.begin(); it3 != n3.end(); ++it3) {
+                            auto cause = it3->first;
+                            auto ar = it3->second.as<rate>();
+                            if (!(ar >= 0.0)) throw "values in map 'attempt' must be non-negative";
+                            entity_type et2;
+                            relationship_or_action_type rat12, rat23;
+                            if (cause.IsSequence()) {
+                                if (cause.size() == 5) { // angle
+                                    if (!(cause[0].IsNull() && cause[4].IsNull())) throw
+                                            "keys in map 'attempt' can be 'basic', [~, rel./act.type, ent.type, rel./act.type, ~], [~, rel./act.type, ent.type], or [ent.type, rel./act.type, ~]";
                                     rat12 = label2rat.at(cause[1].as<string>());
                                     et2 = label2et.at(cause[2].as<string>());
-                                    rat23 = NO_RAT;
-                                } else { // incoming leg
-                                    rat12 = NO_RAT;
-                                    et2 = label2et.at(cause[0].as<string>());
-                                    rat23 = label2rat.at(cause[1].as<string>());
-                                    if (!(cause[2].IsNull())) throw
-                                            "keys in map 'success' can be 'basic', [~, rel./act.type, ent.type, rel./act.type, ~], [~, rel./act.type, ent.type], or [ent.type, rel./act.type, ~]";
+                                    rat23 = label2rat.at(cause[3].as<string>());
+                                } else {
+                                    // TODO later
+                                    throw "sorry, legs cannot attempt termination yet";
+                                    if (!(cause.size() == 3)) throw
+                                            "keys in map 'attempt' can be 'basic', [~, rel./act.type, ent.type, rel./act.type, ~], [~, rel./act.type, ent.type], or [ent.type, rel./act.type, ~]";
+                                    if (cause[0].IsNull()) { // outgoing leg
+                                        rat12 = label2rat.at(cause[1].as<string>());
+                                        et2 = label2et.at(cause[2].as<string>());
+                                        rat23 = NO_RAT;
+                                    } else { // incoming leg
+                                        rat12 = NO_RAT;
+                                        et2 = label2et.at(cause[0].as<string>());
+                                        rat23 = label2rat.at(cause[1].as<string>());
+                                        if (!(cause[2].IsNull())) throw
+                                                "keys in map 'attempt' can be 'basic', [~, rel./act.type, ent.type, rel./act.type, ~], [~, rel./act.type, ent.type], or [ent.type, rel./act.type, ~]";
+                                    }
                                 }
+                                inflt2attempt_rate[{ { ec, et1, rat13, et3 }, { rat12, et2, rat23 } }] = ar;
+                                inflt2delta_probunit[{ { ec, et1, rat13, et3 }, { rat12, et2, rat23 } }] = 0.0;
+                            } else { // basic
+                                if (cause.as<string>() != "basic") throw
+                                        "keys in map 'attempt' can be 'basic', [~, rel./act.type, ent.type, rel./act.type, ~], [~, rel./act.type, ent.type], or [ent.type, rel./act.type, ~]";
+                                inflt2attempt_rate[{ { ec, et1, rat13, et3 }, NO_ANGLE }] = ar;
                             }
-                            inflt2delta_probunit[{ { ec, et1, rat13, et3 }, { rat12, et2, rat23 } }] = pu;
-                        } else { // basic
-                            if (cause.as<string>() != "basic") throw
-                                    "keys in map 'success' can be 'basic', [~, rel./act.type, ent.type, rel./act.type, ~], [~, rel./act.type, ent.type], or [ent.type, rel./act.type, ~]";
-                            evt2base_probunit[{ ec, et1, rat13, et3 }] = pu;
+                        }
+                    }
+                    n3 = n2["success"];
+                    if (n3) {
+                        // TODO: tails!
+                        if (!n3.IsMap()) throw "yaml field 'success' within 'dynamics' must be a map";
+                        for (YAML::const_iterator it3 = n3.begin(); it3 != n3.end(); ++it3) {
+                            auto cause = it3->first;
+                            auto pu = it3->second.as<probunit>();
+                            entity_type et2;
+                            relationship_or_action_type rat12, rat23;
+                            if (cause.IsSequence()) {
+                                if (cause.size() == 5) { // angle
+                                    if (!(cause[0].IsNull() && cause[4].IsNull())) throw
+                                            "keys in map 'success' can be 'basic', [~, rel./act.type, ent.type, rel./act.type, ~], [~, rel./act.type, ent.type], or [ent.type, rel./act.type, ~]";
+                                    rat12 = label2rat.at(cause[1].as<string>());
+                                    et2 = label2et.at(cause[2].as<string>());
+                                    rat23 = label2rat.at(cause[3].as<string>());
+                                } else {
+                                    // TODO later
+                                    throw "sorry, legs cannot influence termination success yet";
+                                    if (!(cause.size() == 3)) throw
+                                            "keys in map 'success' can be 'basic', [~, rel./act.type, ent.type, rel./act.type, ~], [~, rel./act.type, ent.type], or [ent.type, rel./act.type, ~]";
+                                    if (cause[0].IsNull()) { // outgoing leg
+                                        rat12 = label2rat.at(cause[1].as<string>());
+                                        et2 = label2et.at(cause[2].as<string>());
+                                        rat23 = NO_RAT;
+                                    } else { // incoming leg
+                                        rat12 = NO_RAT;
+                                        et2 = label2et.at(cause[0].as<string>());
+                                        rat23 = label2rat.at(cause[1].as<string>());
+                                        if (!(cause[2].IsNull())) throw
+                                                "keys in map 'success' can be 'basic', [~, rel./act.type, ent.type, rel./act.type, ~], [~, rel./act.type, ent.type], or [ent.type, rel./act.type, ~]";
+                                    }
+                                }
+                                inflt2delta_probunit[{ { ec, et1, rat13, et3 }, { rat12, et2, rat23 } }] = pu;
+                            } else { // basic
+                                if (cause.as<string>() != "basic") throw
+                                        "keys in map 'success' can be 'basic', [~, rel./act.type, ent.type, rel./act.type, ~], [~, rel./act.type, ent.type], or [ent.type, rel./act.type, ~]";
+                                evt2base_probunit[{ ec, et1, rat13, et3 }] = pu;
+                            }
                         }
                     }
                 }
             }
-            n2 = spec["terminate"];
-            ec = EC_TERM;
-            evt2base_probunit[{ ec, et1, rat13, et3 }] = 0.0;
-            if (n2) {
-                if (!n2.IsMap()) throw "yaml field 'terminate' within 'dynamics' must be a map";
-                auto n3 = n2["attempt"];
-                if (n3) {
-                    if (!n3.IsMap()) throw "yaml field 'attempt' within 'dynamics' must be a map";
-                    for (YAML::const_iterator it3 = n3.begin(); it3 != n3.end(); ++it3) {
-                        auto cause = it3->first;
-                        auto ar = it3->second.as<rate>();
-                        if (!(ar >= 0.0)) throw "values in map 'attempt' must be non-negative";
-                        entity_type et2;
-                        relationship_or_action_type rat12, rat23;
-                        if (cause.IsSequence()) {
-                            if (cause.size() == 5) { // angle
-                                if (!(cause[0].IsNull() && cause[4].IsNull())) throw
-                                        "keys in map 'attempt' can be 'basic', [~, rel./act.type, ent.type, rel./act.type, ~], [~, rel./act.type, ent.type], or [ent.type, rel./act.type, ~]";
-                                rat12 = label2rat.at(cause[1].as<string>());
-                                et2 = label2et.at(cause[2].as<string>());
-                                rat23 = label2rat.at(cause[3].as<string>());
-                            } else {
-                                // TODO later
-                                throw "sorry, legs cannot attempt termination yet";
-                                if (!(cause.size() == 3)) throw
-                                        "keys in map 'attempt' can be 'basic', [~, rel./act.type, ent.type, rel./act.type, ~], [~, rel./act.type, ent.type], or [ent.type, rel./act.type, ~]";
-                                if (cause[0].IsNull()) { // outgoing leg
-                                    rat12 = label2rat.at(cause[1].as<string>());
-                                    et2 = label2et.at(cause[2].as<string>());
-                                    rat23 = NO_RAT;
-                                } else { // incoming leg
-                                    rat12 = NO_RAT;
-                                    et2 = label2et.at(cause[0].as<string>());
-                                    rat23 = label2rat.at(cause[1].as<string>());
-                                    if (!(cause[2].IsNull())) throw
-                                            "keys in map 'attempt' can be 'basic', [~, rel./act.type, ent.type, rel./act.type, ~], [~, rel./act.type, ent.type], or [ent.type, rel./act.type, ~]";
-                                }
-                            }
-                            inflt2attempt_rate[{ { ec, et1, rat13, et3 }, { rat12, et2, rat23 } }] = ar;
-                            inflt2delta_probunit[{ { ec, et1, rat13, et3 }, { rat12, et2, rat23 } }] = 0.0;
-                        } else { // basic
-                            if (cause.as<string>() != "basic") throw
-                                    "keys in map 'attempt' can be 'basic', [~, rel./act.type, ent.type, rel./act.type, ~], [~, rel./act.type, ent.type], or [ent.type, rel./act.type, ~]";
-                            inflt2attempt_rate[{ { ec, et1, rat13, et3 }, NO_ANGLE }] = ar;
-                        }
-                    }
-                }
-                n3 = n2["success"];
-                if (n3) {
-                    // TODO: tails!
-                    if (!n3.IsMap()) throw "yaml field 'success' within 'dynamics' must be a map";
-                    for (YAML::const_iterator it3 = n3.begin(); it3 != n3.end(); ++it3) {
-                        auto cause = it3->first;
-                        auto pu = it3->second.as<probunit>();
-                        entity_type et2;
-                        relationship_or_action_type rat12, rat23;
-                        if (cause.IsSequence()) {
-                            if (cause.size() == 5) { // angle
-                                if (!(cause[0].IsNull() && cause[4].IsNull())) throw
-                                        "keys in map 'success' can be 'basic', [~, rel./act.type, ent.type, rel./act.type, ~], [~, rel./act.type, ent.type], or [ent.type, rel./act.type, ~]";
-                                rat12 = label2rat.at(cause[1].as<string>());
-                                et2 = label2et.at(cause[2].as<string>());
-                                rat23 = label2rat.at(cause[3].as<string>());
-                            } else {
-                                // TODO later
-                                throw "sorry, legs cannot influence termination success yet";
-                                if (!(cause.size() == 3)) throw
-                                        "keys in map 'success' can be 'basic', [~, rel./act.type, ent.type, rel./act.type, ~], [~, rel./act.type, ent.type], or [ent.type, rel./act.type, ~]";
-                                if (cause[0].IsNull()) { // outgoing leg
-                                    rat12 = label2rat.at(cause[1].as<string>());
-                                    et2 = label2et.at(cause[2].as<string>());
-                                    rat23 = NO_RAT;
-                                } else { // incoming leg
-                                    rat12 = NO_RAT;
-                                    et2 = label2et.at(cause[0].as<string>());
-                                    rat23 = label2rat.at(cause[1].as<string>());
-                                    if (!(cause[2].IsNull())) throw
-                                            "keys in map 'success' can be 'basic', [~, rel./act.type, ent.type, rel./act.type, ~], [~, rel./act.type, ent.type], or [ent.type, rel./act.type, ~]";
-                                }
-                            }
-                            inflt2delta_probunit[{ { ec, et1, rat13, et3 }, { rat12, et2, rat23 } }] = pu;
-                        } else { // basic
-                            if (cause.as<string>() != "basic") throw
-                                    "keys in map 'success' can be 'basic', [~, rel./act.type, ent.type, rel./act.type, ~], [~, rel./act.type, ent.type], or [ent.type, rel./act.type, ~]";
-                            evt2base_probunit[{ ec, et1, rat13, et3 }] = pu;
-                        }
-                    }
-                }
-            }
+        } catch (const std::exception&) {
+            throw "some entity or the relationship or action type was not declared";
         }
     }
     cout << "...READING CONFIG FINISHED." << endl << endl;

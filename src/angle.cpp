@@ -52,14 +52,14 @@ void add_or_delete_angle (
                         auto evd_ = &ev2data[ev];  // generates a new event_data object
                         evd_->n_angles = 1;
                         evd_->attempt_rate = dar;
-                        evd_->success_probunit = dsl;
+                        evd_->success_probunits = dsl;
                         schedule_event(ev, evd_);
                     } else {
                         if (debug) cout << "       event was scheduled already, will be rescheduled" << endl;
                         auto evd_ = &ev2data.at(ev);
                         evd_->n_angles += 1;
                         evd_->attempt_rate += dar;
-                        evd_->success_probunit += dsl;
+                        evd_->success_probunits += dsl;
 //                        auto& told = evd_->t;
 //                        if (told > -INFINITY) t2be.erase(told);
                         reschedule_event(ev, evd_);
@@ -68,14 +68,14 @@ void add_or_delete_angle (
                     auto evd_ = &ev2data.at(ev);
                     evd_->n_angles -= 1;
                     evd_->attempt_rate -= dar;
-                    evd_->success_probunit -= dsl;
+                    evd_->success_probunits -= dsl;
                     if ((ec13 != EC_TERM) && (evd_->n_angles == 0)) { // only spontaneous non-termination event is left:
                         // remove specific event:
                         remove_event(ev, evd_); // FIXME: sometimes event was not scheduled before...
                     } else {
 //                        auto& told = evd_->t;
 //                        if (told > -INFINITY) t2be.erase(told);
-                        schedule_event(ev, evd_);
+                        reschedule_event(ev, evd_);
                     }
                 }
             } else {
