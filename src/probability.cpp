@@ -27,20 +27,17 @@ double tail2scale(double tail)
     return 1 / (1 + 1 / tail) / pow(1 + log(1 + 1 / tail), tail + 1) / 2;
 }
 
-probability probunit2probability (probunit pu)
+probability probunit2probability (probunit pu, double left_tail, double right_tail)
 {
-//    return 1.0 / (1.0 + exp(-l));
-    double  left_tail = 1, // 1/sigma0 from paper. larger means heavier tail
-            right_tail = 1,  // 1/sigma1
-            scale = tail2scale(left_tail) + tail2scale(right_tail);
+    double scale = tail2scale(left_tail) + tail2scale(right_tail);
     return (1 / pow(1 + log(1 + exp(- pu / scale) / left_tail), left_tail)
             + 1
             - 1 / pow(1 + log(1 + exp(pu / scale) / right_tail), right_tail) ) / 2;
 }
 
-rate effective_rate (rate attempt_rate, probunit success_probunit)
+rate effective_rate (rate attempt_rate, probunit success_probunit, double left_tail, double right_tail)
 {
-    rate r = attempt_rate * probunit2probability(success_probunit);
+    rate r = attempt_rate * probunit2probability(success_probunit, left_tail, right_tail);
     assert (r >= 0);
     return r;
 }

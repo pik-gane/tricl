@@ -32,13 +32,11 @@ void add_or_delete_angle (
     for (auto& rat13 : ets2relations[{ et1, et3 }]) {
         event_class ec13 = (e2outs[e1].count({ .e = e3, .r = rat13 }) == 0) ? EC_EST : EC_TERM;
         event ev = { .ec = ec13, .e1 = e1, .rat13 = rat13, .e3 = e3 };
-
-        // FIXME: deal with case where event is not scheduled yet!!!
-
         event_type evt = { .ec = ec13, .et1 = et1, .rat13 = rat13, .et3 = et3 };
         if (debug) cout << "     possibly updating event: " << ec2label[ec13] <<  " \"" << e2label[e1] << " " << rat2label[rat13] << " " << e2label[e3] << "\"" << endl;
         if (evt2base_probunit.count(evt) > 0) {
-            if (debug) cout << "      event type " << evt << " has a base success prob. of " << probunit2probability(evt2base_probunit[evt]) << endl;
+            if (debug) cout << "      event type " << evt << " has a base success prob. of "
+                    << probunit2probability(evt2base_probunit.at(evt), evt2left_tail.at(evt), evt2right_tail.at(evt)) << endl;
             influence_type inflt = {
                     .evt = evt,
                     .at = { .rat12 = rat12, .et2 = et2, .rat23 = rat23 }
@@ -53,7 +51,7 @@ void add_or_delete_angle (
                         evd_->n_angles = 1;
                         evd_->attempt_rate = dar;
                         evd_->success_probunits = dsl;
-                        schedule_event(ev, evd_);
+                        schedule_event(ev, evd_, evt2left_tail.at(evt), evt2right_tail.at(evt));
                     } else {
                         if (debug) cout << "       event was scheduled already, will be rescheduled" << endl;
                         auto evd_ = &ev2data.at(ev);
@@ -62,7 +60,7 @@ void add_or_delete_angle (
                         evd_->success_probunits += dsl;
 //                        auto& told = evd_->t;
 //                        if (told > -INFINITY) t2be.erase(told);
-                        reschedule_event(ev, evd_);
+                        reschedule_event(ev, evd_, evt2left_tail.at(evt), evt2right_tail.at(evt));
                     }
                 } else { // angle is removed:
                     auto evd_ = &ev2data.at(ev);
@@ -71,11 +69,9 @@ void add_or_delete_angle (
                     evd_->success_probunits -= dsl;
                     if ((ec13 != EC_TERM) && (evd_->n_angles == 0)) { // only spontaneous non-termination event is left:
                         // remove specific event:
-                        remove_event(ev, evd_); // FIXME: sometimes event was not scheduled before...
+                        remove_event(ev, evd_);
                     } else {
-//                        auto& told = evd_->t;
-//                        if (told > -INFINITY) t2be.erase(told);
-                        reschedule_event(ev, evd_);
+                        reschedule_event(ev, evd_, evt2left_tail.at(evt), evt2right_tail.at(evt));
                     }
                 }
             } else {

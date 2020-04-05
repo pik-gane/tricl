@@ -50,9 +50,9 @@ extern unordered_map<link_type, probability> lt2spatial_decay;
 // dynamic parameters:
 
 extern unordered_map<influence_type, rate> inflt2attempt_rate; // note that legs may only attempt removals, not additions!
+extern unordered_map<event_type, double> evt2left_tail, evt2right_tail; // tail indices for sigmoid function transforming probunits into probabilities
 extern unordered_map<event_type, probunit> evt2base_probunit; // basic success probability unit
 extern unordered_map<influence_type, probunit> inflt2delta_probunit; // change in success probunit (legs can also influence additions)
-
 
 // DATA:
 

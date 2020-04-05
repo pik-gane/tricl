@@ -144,7 +144,7 @@ void init_relationship_or_action_types ()
         entity_type_pair ets = { evt.et1, evt.et3 };
         if (ets2relations.count(ets) == 0) ets2relations[ets] = {};
         ets2relations[ets].insert(rat13);
-        cout << "  " << evt << ": " << probunit2probability(pu) << endl;
+        cout << "  " << evt << ": " << probunit2probability(pu, evt2left_tail.at(evt), evt2right_tail.at(evt)) << endl;
     }
 }
 
@@ -167,7 +167,7 @@ void init_summary_events ()
                 ev2data[ev] = { .n_angles = 0,
                         .attempt_rate = ar * et2n[et1] * et2n[et3],
                         .success_probunits = evt2base_probunit[evt] + _inflt2delta_probunit[INFLT(inflt)] };
-                schedule_event(ev, &ev2data[ev]);
+                schedule_event(ev, &ev2data[ev], evt2left_tail.at(evt), evt2right_tail.at(evt));
             }
         }
     }

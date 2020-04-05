@@ -34,6 +34,8 @@ unordered_map<link_type, probability> lt2initial_prob_between = {};
 unordered_map<entity_type, int> et2dim = {};
 unordered_map<link_type, probability> lt2spatial_decay = {};
 unordered_map<influence_type, rate> inflt2attempt_rate = {};
+unordered_map<event_type, double> evt2left_tail = {}, evt2right_tail = {};
+#define TAIL_DEFAULT 1.0
 unordered_map<event_type, probunit> evt2base_probunit = {};
 unordered_map<influence_type, probunit> inflt2delta_probunit = {};
 
@@ -297,11 +299,13 @@ void read_config () {
             } else {
                 auto n2 = spec["establish"];
                 auto ec = EC_EST;
-                evt2base_probunit[{ ec, et1, rat13, et3 }] = 0.0;
                 if (n2) {
+                    event_type evt = { ec, et1, rat13, et3 };
                     if (!n2.IsMap()) throw "yaml field 'establish' within 'dynamics' must be a map";
                     auto n3 = n2["attempt"];
                     if (n3) {
+                        evt2left_tail[evt] = evt2right_tail[evt] = TAIL_DEFAULT;
+                        evt2base_probunit[evt] = 0.0;
                         if (!n3.IsMap()) throw "yaml field 'attempt' within 'dynamics' must be a map";
                         for (YAML::const_iterator it3 = n3.begin(); it3 != n3.end(); ++it3) {
                             auto cause = it3->first;
@@ -333,25 +337,24 @@ void read_config () {
                                                 "keys in map 'attempt' can be 'basic', [~, rel./act.type, ent.type, rel./act.type, ~], [~, rel./act.type, ent.type], or [ent.type, rel./act.type, ~]";
                                     }
                                 }
-                                inflt2attempt_rate[{ { ec, et1, rat13, et3 }, { rat12, et2, rat23 } }] = ar;
-                                inflt2delta_probunit[{ { ec, et1, rat13, et3 }, { rat12, et2, rat23 } }] = 0.0;
+                                inflt2attempt_rate[{ evt, { rat12, et2, rat23 } }] = ar;
+                                inflt2delta_probunit[{ evt, { rat12, et2, rat23 } }] = 0.0;
                             } else { // basic
                                 if (cause.as<string>() != "basic") throw
                                         "keys in map 'attempt' can be 'basic', [~, rel./act.type, ent.type, rel./act.type, ~], [~, rel./act.type, ent.type], or [ent.type, rel./act.type, ~]";
-                                inflt2attempt_rate[{ { ec, et1, rat13, et3 }, NO_ANGLE }] = ar;
+                                inflt2attempt_rate[{ evt, NO_ANGLE }] = ar;
                             }
                         }
                     }
                     n3 = n2["success"];
                     if (n3) {
-                        // TODO: tails!
                         if (!n3.IsMap()) throw "yaml field 'success' within 'dynamics' must be a map";
                         for (YAML::const_iterator it3 = n3.begin(); it3 != n3.end(); ++it3) {
                             auto cause = it3->first;
-                            auto pu = it3->second.as<probunit>();
                             entity_type et2;
                             relationship_or_action_type rat12, rat23;
                             if (cause.IsSequence()) {
+                                auto pu = it3->second.as<probunit>();
                                 if (cause.size() == 5) { // angle
                                     if (!(cause[0].IsNull() && cause[4].IsNull())) throw
                                             "keys in map 'success' can be 'basic', [~, rel./act.type, ent.type, rel./act.type, ~], [~, rel./act.type, ent.type], or [ent.type, rel./act.type, ~]";
@@ -375,22 +378,35 @@ void read_config () {
                                                 "keys in map 'success' can be 'basic', [~, rel./act.type, ent.type, rel./act.type, ~], [~, rel./act.type, ent.type], or [ent.type, rel./act.type, ~]";
                                     }
                                 }
-                                inflt2delta_probunit[{ { ec, et1, rat13, et3 }, { rat12, et2, rat23 } }] = pu;
-                            } else { // basic
-                                if (cause.as<string>() != "basic") throw
-                                        "keys in map 'success' can be 'basic', [~, rel./act.type, ent.type, rel./act.type, ~], [~, rel./act.type, ent.type], or [ent.type, rel./act.type, ~]";
-                                evt2base_probunit[{ ec, et1, rat13, et3 }] = pu;
+                                inflt2delta_probunit[{ evt, { rat12, et2, rat23 } }] = pu;
+                            } else if (cause.as<string>() == "basic") {
+                                evt2base_probunit[{ ec, et1, rat13, et3 }] = it3->second.as<probunit>();
+                            } else if (cause.as<string>() == "tails") {
+                                if (it3->second.IsSequence()) { // separate tail indices
+                                    if (!(it3->second.size() ==2 )) throw
+                                            "tail specification must be either a number or a pair of numbers.";
+                                    evt2left_tail[evt] = it3->second[0].as<double>();
+                                    evt2right_tail[evt] = it3->second[1].as<double>();
+                                } else { // same tail index
+                                    evt2left_tail[evt] = evt2right_tail[evt] = it3->second.as<double>();
+                                }
+                                if ((!(evt2left_tail[evt]>0.0)) || (!(evt2right_tail[evt]>0.0)) || (!(evt2left_tail[evt]<INFINITY)) || (!(evt2right_tail[evt]<INFINITY))) throw
+                                        "tail indices must be positive finite numbers";
+                            } else {
+                                throw "keys in map 'success' can be 'tails', 'basic', [~, rel./act.type, ent.type, rel./act.type, ~], [~, rel./act.type, ent.type], or [ent.type, rel./act.type, ~]";
                             }
                         }
                     }
                 }
                 n2 = spec["terminate"];
                 ec = EC_TERM;
-                evt2base_probunit[{ ec, et1, rat13, et3 }] = 0.0;
                 if (n2) {
+                    event_type evt = { ec, et1, rat13, et3 };
                     if (!n2.IsMap()) throw "yaml field 'terminate' within 'dynamics' must be a map";
                     auto n3 = n2["attempt"];
                     if (n3) {
+                        evt2left_tail[evt] = evt2right_tail[evt] = TAIL_DEFAULT;
+                        evt2base_probunit[evt] = 0.0;
                         if (!n3.IsMap()) throw "yaml field 'attempt' within 'dynamics' must be a map";
                         for (YAML::const_iterator it3 = n3.begin(); it3 != n3.end(); ++it3) {
                             auto cause = it3->first;
@@ -422,25 +438,24 @@ void read_config () {
                                                 "keys in map 'attempt' can be 'basic', [~, rel./act.type, ent.type, rel./act.type, ~], [~, rel./act.type, ent.type], or [ent.type, rel./act.type, ~]";
                                     }
                                 }
-                                inflt2attempt_rate[{ { ec, et1, rat13, et3 }, { rat12, et2, rat23 } }] = ar;
-                                inflt2delta_probunit[{ { ec, et1, rat13, et3 }, { rat12, et2, rat23 } }] = 0.0;
+                                inflt2attempt_rate[{ evt, { rat12, et2, rat23 } }] = ar;
+                                inflt2delta_probunit[{ evt, { rat12, et2, rat23 } }] = 0.0;
                             } else { // basic
                                 if (cause.as<string>() != "basic") throw
                                         "keys in map 'attempt' can be 'basic', [~, rel./act.type, ent.type, rel./act.type, ~], [~, rel./act.type, ent.type], or [ent.type, rel./act.type, ~]";
-                                inflt2attempt_rate[{ { ec, et1, rat13, et3 }, NO_ANGLE }] = ar;
+                                inflt2attempt_rate[{ evt, NO_ANGLE }] = ar;
                             }
                         }
                     }
                     n3 = n2["success"];
                     if (n3) {
-                        // TODO: tails!
                         if (!n3.IsMap()) throw "yaml field 'success' within 'dynamics' must be a map";
                         for (YAML::const_iterator it3 = n3.begin(); it3 != n3.end(); ++it3) {
                             auto cause = it3->first;
-                            auto pu = it3->second.as<probunit>();
                             entity_type et2;
                             relationship_or_action_type rat12, rat23;
                             if (cause.IsSequence()) {
+                                auto pu = it3->second.as<probunit>();
                                 if (cause.size() == 5) { // angle
                                     if (!(cause[0].IsNull() && cause[4].IsNull())) throw
                                             "keys in map 'success' can be 'basic', [~, rel./act.type, ent.type, rel./act.type, ~], [~, rel./act.type, ent.type], or [ent.type, rel./act.type, ~]";
@@ -464,11 +479,22 @@ void read_config () {
                                                 "keys in map 'success' can be 'basic', [~, rel./act.type, ent.type, rel./act.type, ~], [~, rel./act.type, ent.type], or [ent.type, rel./act.type, ~]";
                                     }
                                 }
-                                inflt2delta_probunit[{ { ec, et1, rat13, et3 }, { rat12, et2, rat23 } }] = pu;
-                            } else { // basic
-                                if (cause.as<string>() != "basic") throw
-                                        "keys in map 'success' can be 'basic', [~, rel./act.type, ent.type, rel./act.type, ~], [~, rel./act.type, ent.type], or [ent.type, rel./act.type, ~]";
-                                evt2base_probunit[{ ec, et1, rat13, et3 }] = pu;
+                                inflt2delta_probunit[{ evt, { rat12, et2, rat23 } }] = pu;
+                            } else if (cause.as<string>() == "basic") {
+                                evt2base_probunit[evt] = it3->second.as<probunit>();
+                            } else if (cause.as<string>() == "tails") {
+                                if (it3->second.IsSequence()) { // separate tail indices
+                                    if (!(it3->second.size() ==2 )) throw
+                                            "tail specification must be either a number or a pair of numbers.";
+                                    evt2left_tail[evt] = it3->second[0].as<double>();
+                                    evt2right_tail[evt] = it3->second[1].as<double>();
+                                } else { // same tail index
+                                    evt2left_tail[evt] = evt2right_tail[evt] = it3->second.as<double>();
+                                }
+                                if ((!(evt2left_tail[evt]>0.0)) || (!(evt2right_tail[evt]>0.0)) || (!(evt2left_tail[evt]<INFINITY)) || (!(evt2right_tail[evt]<INFINITY))) throw
+                                        "tail indices must be positive finite numbers";
+                            } else {
+                                throw "keys in map 'success' can be 'tails', 'basic', [~, rel./act.type, ent.type, rel./act.type, ~], [~, rel./act.type, ent.type], or [ent.type, rel./act.type, ~]";
                             }
                         }
                     }

@@ -42,7 +42,7 @@ bool event_is_scheduled (
     return (evd_->t > -INFINITY);
 }
 
-void _schedule_event (event& ev, event_data* evd_)
+void _schedule_event (event& ev, event_data* evd_, double left_tail, double right_tail)
 {
     assert(evd_ == &ev2data.at(ev));
     timepoint t;
@@ -51,7 +51,9 @@ void _schedule_event (event& ev, event_data* evd_)
     if (ev.e1 >= 0) { // particular event: use effective rate:
         auto spu = evd_->success_probunits;
         if (ar < INFINITY) {
-            t = current_t + exponential(random_variable) / effective_rate(ar, spu);
+            t = current_t
+                    + exponential(random_variable)
+                    / effective_rate(ar, spu, left_tail, right_tail);
         } else {
             if (spu > -INFINITY) {
                 // event should happen "right away". to make sure all those events
@@ -69,7 +71,7 @@ void _schedule_event (event& ev, event_data* evd_)
     evd_->t = t;
 }
 
-void schedule_event (event& ev, event_data* evd_)
+void schedule_event (event& ev, event_data* evd_, double left_tail, double right_tail)
 {
     assert(evd_ == &ev2data.at(ev));
     if (event_is_scheduled(ev, evd_)) {
@@ -77,17 +79,17 @@ void schedule_event (event& ev, event_data* evd_)
         dump_data();
     }
     assert (!event_is_scheduled(ev, evd_));
-    _schedule_event(ev, evd_);
+    _schedule_event(ev, evd_, left_tail, right_tail);
     if (debug) verify_data_consistency();
     if (verbose) cout << "      scheduled " << ev << " for t=" << evd_->t << endl;
 }
 
-void reschedule_event (event& ev, event_data* evd_)
+void reschedule_event (event& ev, event_data* evd_, double left_tail, double right_tail)
 {
     assert(evd_ == &ev2data.at(ev));
     assert (event_is_scheduled(ev, evd_));
     t2be.erase(evd_->t);
-    _schedule_event(ev, evd_);
+    _schedule_event(ev, evd_, left_tail, right_tail);
     if (verbose) cout << "      rescheduled " << ev << " for t=" << evd_->t << endl;
 }
 
@@ -147,8 +149,8 @@ void add_event (event& ev)
             spu += _inflt2delta_probunit[INFLT(inflt)];
             assert (ev2data.count(ev) == 0);
             ev2data[ev] = { .n_angles = na, .attempt_rate = ar, .success_probunits = spu, .t = -INFINITY };
-            if (debug) cout << "      attempt rate " << ar << ", success prob. " << probunit2probability(spu) << endl;
-            schedule_event(ev, &ev2data[ev]);
+            if (debug) cout << "      attempt rate " << ar << ", success prob. " << probunit2probability(spu, evt2left_tail.at(evt), evt2right_tail.at(evt)) << endl;
+            schedule_event(ev, &ev2data[ev], evt2left_tail.at(evt), evt2right_tail.at(evt));
         } else {
             if (debug) cout << "      covered by summary event, not scheduled separately" << endl;
         }
@@ -300,6 +302,7 @@ bool pop_next_event ()
             // draw actual entities at random from given types:
             auto e1 = random_entity(et1), e3 = random_entity(et3);
             auto rat13 = summary_ev.rat13;
+            event_type evt = { .ec = EC_EST, .et1 = et1, .rat13 = rat13, .et3 = et3 };
             link l = { .e1 = e1, .rat13 = rat13, .e3 = e3 };
 
             if (link_exists(l)) {
@@ -312,7 +315,6 @@ bool pop_next_event ()
                     // the event was scheduled separately, e.g. due to an angle, so we do not perform it now.
                     if (verbose) cout << "at t=" << current_t << " " << actual_ev << " is scheduled separately at t=" << ev2data.at(actual_ev).t << ", so not performed now." << endl;
                 } else { // check if attempt succeeds
-                    event_type evt = { .ec = EC_EST, .et1 = et1, .rat13 = rat13, .et3 = et3 };
                     // compile success units:
                     auto spu = evt2base_probunit.at(evt);
                     for (auto& [e2, rat12] : e2outs[e1]) {
@@ -324,7 +326,7 @@ bool pop_next_event ()
                         if (inflt2delta_probunit.count(inflt) > 0) spu += inflt2delta_probunit.at(inflt);
                     }
                     // check if success:
-                    if (uniform(random_variable) < probunit2probability(spu)) { // success
+                    if (uniform(random_variable) < probunit2probability(spu, evt2left_tail.at(evt), evt2right_tail.at(evt))) { // success
                         // "return" event:
                         current_ev = actual_ev;
                         if (!quiet) {
@@ -337,7 +339,7 @@ bool pop_next_event ()
                 }
             }
             // set next_occurrence of this summary event:
-            reschedule_event(summary_ev, &ev2data.at(summary_ev));
+            reschedule_event(summary_ev, &ev2data.at(summary_ev), evt2left_tail.at(evt), evt2right_tail.at(evt));
 
         } else { // event has specific entities
 

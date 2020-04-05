@@ -24,9 +24,9 @@ extern exponential_distribution<> exponential;
 
 double tail2scale(double tail);
 
-probability probunit2probability (probunit pu);
+probability probunit2probability (probunit pu, double left_tail, double right_tail);
 
-rate effective_rate (rate attempt_rate, probunit success_probunit);
+rate effective_rate (rate attempt_rate, probunit success_probunit, double left_tail, double right_tail);
 
 #endif
 

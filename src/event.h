@@ -14,9 +14,9 @@ using namespace std;
 
 bool event_is_scheduled (event& ev, event_data* evd_);
 
-void schedule_event (event& ev, event_data* evd_);
+void schedule_event (event& ev, event_data* evd_, double left_tail, double right_tail);
 
-void reschedule_event (event& ev, event_data* evd_);
+void reschedule_event (event& ev, event_data* evd_, double left_tail, double right_tail);
 
 void add_event (event& ev);
 
