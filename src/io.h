@@ -20,6 +20,8 @@ ostream& operator<< (ostream& os, const event_type& evt);
 
 ostream& operator<< (ostream& os, const event& ev);
 
+void dump_links ();
+
 void dump_data ();
 
 #endif

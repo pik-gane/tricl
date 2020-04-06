@@ -8,6 +8,9 @@
 #ifndef INC_GLOBAL_VARIABLES_H
 #define INC_GLOBAL_VARIABLES_H
 
+// during debugging, you may sometimes want to set the following to true:
+#define COUNT_ALL_ANGLES false
+
 #include <string>
 #include <map>
 #include <unordered_map>
@@ -30,6 +33,7 @@ extern timepoint max_t;
 
 extern unordered_map<entity_type, label> et2label;
 extern unordered_map<entity_type, entity> et2n; // no. of entities by type
+extern int n_rats; // number of distinct relationship_or_action_types
 extern unordered_map<relationship_or_action_type, label> rat2label; // relationship_or_action_type labels are verbs or math symbols
 extern unordered_map<relationship_or_action_type, bool> r_is_action_type; // whether it is an action type
 extern unordered_map<relationship_or_action_type, relationship_or_action_type> rat2inv; // inverse relations
@@ -73,8 +77,8 @@ extern event current_ev;
 extern event_data* current_evd_;
 // network state:
 extern unordered_map<entity_type, vector<entity>> et2es;  // kept to equal inverse of v2vt
-extern unordered_map<entity, leg_set> e2outs;
-extern unordered_map<entity, leg_set> e2ins;
+extern unordered_map<entity, outleg_set> e2outs;
+extern unordered_map<entity, inleg_set> e2ins;
 extern int n_links; // total no. of current (non-id.) links incl. inverse relationships
 // event data:
 extern unordered_map<event, event_data> ev2data;

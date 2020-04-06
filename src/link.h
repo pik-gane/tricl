@@ -16,6 +16,6 @@ void add_link (link& l);
 
 void del_link (link& l);
 
-void do_random_link (probability p, entity_type e1, relationship_or_action_type rat13, entity_type e3);
+void do_random_link (probability p, entity e1, relationship_or_action_type rat13, entity e3);
 
 #endif

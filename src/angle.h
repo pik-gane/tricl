@@ -9,6 +9,6 @@ void add_or_delete_angle (
         entity e2, entity_type et2, relationship_or_action_type rat23,
         entity e3, entity_type et3);
 
-angles leg_intersection (entity e1, leg_set& out, leg_set& in, entity e3);
+angles leg_intersection (entity e1, outleg_set& out1, inleg_set& in3, entity e3);
 
 #endif

@@ -58,7 +58,7 @@ void gexf_output_edge (link& l) {
 void finish_gexf () {
     current_t = max_t;
     for (auto& [e1, outs] : e2outs) {
-        for (auto& [e3, rat13] : outs) {
+        for (auto& [rat13, e3] : outs) {
             link l = { .e1 = e1, .rat13 = rat13, .e3 = e3 };
             gexf_output_edge(l);
         }

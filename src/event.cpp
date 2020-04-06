@@ -47,7 +47,8 @@ void _schedule_event (event& ev, event_data* evd_, double left_tail, double righ
     assert(evd_ == &ev2data.at(ev));
     timepoint t;
     auto ar = evd_->attempt_rate;
-    assert (ar > 0);
+    if (ar < 0.0) cout << "AR < 0.0:" << ar << endl;
+    assert (ar >= 0.0);
     if (ev.e1 >= 0) { // particular event: use effective rate:
         auto spu = evd_->success_probunits;
         if (ar < INFINITY) {
@@ -67,8 +68,15 @@ void _schedule_event (event& ev, event_data* evd_, double left_tail, double righ
     } else { // summary event: use only attempt rate:
         t = current_t + exponential(random_variable) / ar;
     }
-    t2be[t] = ev;
-    evd_->t = t;
+    if (t == INFINITY) {
+//        ev2data.erase(ev);
+//        if (verbose) cout << "     not (re-)scheduled since effective rate is zero" << endl;
+        // or only replace by some non-reached finite time point?:
+        t = max_t + uniform(random_variable);
+    } //else {
+        t2be[t] = ev;
+        evd_->t = t;
+    //}
 }
 
 void schedule_event (event& ev, event_data* evd_, double left_tail, double right_tail)
@@ -81,7 +89,7 @@ void schedule_event (event& ev, event_data* evd_, double left_tail, double right
     assert (!event_is_scheduled(ev, evd_));
     _schedule_event(ev, evd_, left_tail, right_tail);
     if (debug) verify_data_consistency();
-    if (verbose) cout << "      scheduled " << ev << " for t=" << evd_->t << endl;
+    if (verbose && (evd_->t < INFINITY)) cout << "      scheduled " << ev << " for t=" << evd_->t << endl;
 }
 
 void reschedule_event (event& ev, event_data* evd_, double left_tail, double right_tail)
@@ -90,7 +98,7 @@ void reschedule_event (event& ev, event_data* evd_, double left_tail, double rig
     assert (event_is_scheduled(ev, evd_));
     t2be.erase(evd_->t);
     _schedule_event(ev, evd_, left_tail, right_tail);
-    if (verbose) cout << "      rescheduled " << ev << " for t=" << evd_->t << endl;
+    if (verbose && (evd_->t < INFINITY)) cout << "      rescheduled " << ev << " for t=" << evd_->t << endl;
 }
 
 void add_event (event& ev)
@@ -104,12 +112,13 @@ void add_event (event& ev)
 
         if (debug) cout << "     adding event: " << ev << endl;
         // find and store attempt rate and success probunit by looping through adjacent legs and angles:
-        rate ar = 0;
+        rate ar = 0.0;
         auto spu = evt2base_probunit[evt];
-        auto outs1 = e2outs[e1], ins3 = e2ins[e3];
+        auto outs1 = e2outs[e1];
+        auto ins3 = e2ins[e3];
         // legs:
         if (ec == EC_TERM) {
-            for (auto& [e2, rat12] : outs1) {
+            for (auto& [rat12, e2] : outs1) {
                 influence_type inflt = { .evt = evt, .at = { .rat12 = rat12, .et2 = _e2et[E(e2)], .rat23 = NO_RAT } };
                 ar += _inflt2attempt_rate[INFLT(inflt)];
                 spu += _inflt2delta_probunit[INFLT(inflt)];
@@ -121,19 +130,26 @@ void add_event (event& ev)
             }
         }
 
+        if (debug) {
+            cout << "outs:" << endl;
+            for (auto& [rat13, e3] : outs1) cout << " " << e2label[e1] << " " << rat2label[rat13] << " " << e2label[e3] << endl;
+            cout << "ins:" << endl;
+            for (auto& [e1, rat13] : ins3) cout << " " << e2label[e1] << " " << rat2label[rat13] << " " << e2label[e3] << endl;
+        }
+
         // angles:
         int na = 0; // number of influencing angles
         angles as = leg_intersection(e1, outs1, ins3, e3);
-        for (auto a_it = as.begin(); a_it < as.end(); a_it++) {
+        for (auto a_it = as.begin(); a_it != as.end(); a_it++) {
             influence_type inflt = { .evt = evt, .at = { .rat12 = a_it->rat12, .et2 = _e2et[E(a_it->e2)], .rat23 = a_it->rat23 } };
             if (debug) cout << "      influences of angle \"" << e2label[e1] << " " << rat2label[a_it->rat12] << " " << e2label[a_it->e2] << " " << rat2label[a_it->rat23] << " " << e2label[e3] << "\":" << endl;
             auto dar = _inflt2attempt_rate[INFLT(inflt)];
             auto dsl = _inflt2delta_probunit[INFLT(inflt)];
-            if (dar != 0 || dsl != 0) { // angle can influence event
+            if (COUNT_ALL_ANGLES || (dar != 0.0) || (dsl != 0.0)) { // angle can influence event
                 na++;
                 if (debug) {
-                    if (dar != 0) cout << "       on attempt rate:" << dar << endl;
-                    if (dsl != 0) cout << "       on success probunit:" << dsl << endl;
+                    if (dar != 0.0) cout << "       on attempt rate:" << dar << endl;
+                    if (dsl != 0.0) cout << "       on success probunit:" << dsl << endl;
                 }
                 ar += dar;
                 spu += dsl;
@@ -148,9 +164,10 @@ void add_event (event& ev)
             ar += _inflt2attempt_rate[INFLT(inflt)];
             spu += _inflt2delta_probunit[INFLT(inflt)];
             assert (ev2data.count(ev) == 0);
-            ev2data[ev] = { .n_angles = na, .attempt_rate = ar, .success_probunits = spu, .t = -INFINITY };
+            ev2data[ev] = { .n_angles = na, .attempt_rate = max(0.0, ar), .success_probunits = spu, .t = -INFINITY };
             if (debug) cout << "      attempt rate " << ar << ", success prob. " << probunit2probability(spu, evt2left_tail.at(evt), evt2right_tail.at(evt)) << endl;
             schedule_event(ev, &ev2data[ev], evt2left_tail.at(evt), evt2right_tail.at(evt));
+            if (debug) verify_angle_consistency();
         } else {
             if (debug) cout << "      covered by summary event, not scheduled separately" << endl;
         }
@@ -183,32 +200,28 @@ void update_adjacent_events (event& ev)
 {
     auto ec_ab = ev.ec; auto ea = ev.e1, eb = ev.e3; auto rab = ev.rat13;
     entity e1, e2, e3; entity_type et1, et2, et3; relationship_or_action_type rat12, rat23;
-    leg_set legs;
     if (debug) cout << "  updating adjacent events of " << ev << endl;
     // loop through all adjacent events e1->e3:
-    for (int which = 0; which < 2; which++) {
-        IF_12 { // ea->eb plays role of e1->e2:
-            if (debug) cout << "   angles with this as 1st leg:" << endl;
-            e1 = ea; rat12 = rab; e2 = eb;
-            et1 = _e2et[E(e1)]; et2 = _e2et[E(e2)];
-            legs = e2outs[eb]; // rat23, e3
+
+    if (debug) cout << "   angles with this as 1st leg:" << endl;
+    e1 = ea; rat12 = rab; e2 = eb;
+    et1 = _e2et[E(e1)]; et2 = _e2et[E(e2)];
+    auto outlegs = e2outs[eb]; // rat23, e3
+    for (auto& l : outlegs) {
+        rat23 = l.rat_out; e3 = l.e_other; et3 = _e2et[E(e3)];
+        if (e1 != e3) { // since we allow no self-links except identity
+            add_or_delete_angle(ec_ab, e1, et1, rat12, e2, et2, rat23, e3, et3);
         }
-        IF_23 { // ea->eb plays role of e2->e3:
-            if (debug) cout << "   angles with this as 2nd leg:" << endl;
-            legs = e2ins[ea]; // e1, rat12
-            e2 = ea; rat23 = rab; e3 = eb;
-            et2 = _e2et[E(e2)]; et3 = _e2et[E(e3)];
-        }
-        for (auto& l : legs) {
-            IF_12 {
-                rat23 = l.r; e3 = l.e; et3 = _e2et[E(e3)];
-            }
-            IF_23 {
-                e1 = l.e; rat12 = l.r; et1 = _e2et[E(e1)];
-            }
-            if (e1 != e3) { // since we allow no self-links except identity
-                add_or_delete_angle(ec_ab, e1, et1, rat12, e2, et2, rat23, e3, et3);
-            }
+    }
+
+    if (debug) cout << "   angles with this as 2nd leg:" << endl;
+    auto inlegs = e2ins[ea]; // e1, rat12
+    e2 = ea; rat23 = rab; e3 = eb;
+    et2 = _e2et[E(e2)]; et3 = _e2et[E(e3)];
+    for (auto& l : inlegs) {
+        e1 = l.e_other; rat12 = l.rat_in; et1 = _e2et[E(e1)];
+        if (e1 != e3) { // since we allow no self-links except identity
+            add_or_delete_angle(ec_ab, e1, et1, rat12, e2, et2, rat23, e3, et3);
         }
     }
 }
@@ -225,35 +238,48 @@ void add_reverse_event (event& old_ev)
 void perform_event (event& ev)
 {
     if (debug) cout << " performing event: " << ev << endl;
-    auto ec = ev.ec; auto e1 = ev.e1, e3 = ev.e3; auto rat13 = ev.rat13, r31 = rat2inv[rat13];
-    event companion_ev = { .ec = ec, .e1 = e3, .rat13 = r31, .e3 = e1 };
-    link l = { .e1 = e1, .rat13 = rat13, .e3 = e3 }, inv_l = { .e1 = e3, .rat13 = r31, .e3 = e1 };
-    // add or remove link:
+
+    auto ec = ev.ec; auto e1 = ev.e1, e3 = ev.e3; auto rat13 = ev.rat13, rat31 = rat2inv[rat13];
+    link l = { .e1 = e1, .rat13 = rat13, .e3 = e3 };
+
+    // FIRST add the reverse event, so that its n_angles will reflect the situation before the change:
+    add_reverse_event(ev);
+    // THEN add or remove the link to perform the change:
     if (ec == EC_EST) {
         add_link(l);
     } else {
         del_link(l);
     }
-    add_reverse_event(ev);
+    // FINALLY update all adjacent events (including the reverse event) to reflect the change:
     update_adjacent_events(ev);
+
     // also perform companion event that affects inverse link:
-    if (r31 != NO_RAT) {
+    if (rat31 != NO_RAT) {
+        event companion_ev = { .ec = ec, .e1 = e3, .rat13 = rat31, .e3 = e1 };
+        link inv_l = { .e1 = e3, .rat13 = rat31, .e3 = e1 }; // inverse link
         if (ev2data.count(companion_ev) == 1) {
             if (debug) cout << " unscheduling companion event: " << companion_ev << endl;
             auto companion_evd_ = &ev2data.at(companion_ev);
             remove_event(companion_ev, companion_evd_);
         }
+        // FIRST add the reverse event, so that its n_angles will reflect the situation before the change:
+        add_reverse_event(companion_ev);
+        // THEN add or remove the link to perform the change:
         if (ec == EC_EST) {
             if (verbose) cout << " performing companion event: adding inverse link \"" << e2label[e3]
-                << " " << rat2label[r31] << " " << e2label[e1] << "\"" << endl;
+                << " " << rat2label[rat31] << " " << e2label[e1] << "\"" << endl;
             add_link(inv_l);
         } else {
             if (verbose) cout << " performing companion event: deleting inverse link \"" << e2label[e3]
-                << " " << rat2label[r31] << " " << e2label[e1] << "\"" << endl;
+                << " " << rat2label[rat31] << " " << e2label[e1] << "\"" << endl;
             del_link(inv_l);
         }
-        add_reverse_event(companion_ev);
+        // FINALLY update all adjacent events (including the reverse event) to reflect the change:
         update_adjacent_events(companion_ev);
+    }
+    if (debug) {
+        dump_links();
+        verify_angle_consistency();
     }
 }
 
@@ -317,7 +343,7 @@ bool pop_next_event ()
                 } else { // check if attempt succeeds
                     // compile success units:
                     auto spu = evt2base_probunit.at(evt);
-                    for (auto& [e2, rat12] : e2outs[e1]) {
+                    for (auto& [rat12, e2] : e2outs[e1]) {
                         influence_type inflt = { .evt = evt, .at = { .rat12 = rat12, .et2 = _e2et[E(e2)], .rat23 = NO_RAT } };
                         if (inflt2delta_probunit.count(inflt) > 0) spu += inflt2delta_probunit.at(inflt);
                     }

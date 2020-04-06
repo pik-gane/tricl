@@ -54,8 +54,19 @@ ostream& operator<< (ostream& os, const event_data& evd) {
     return os;
 }
 
+void dump_links () {
+    cout << "e2outs:" << endl;
+    for (auto& [e1, outs1] : e2outs) {
+        for (auto& [rat13, e3] : outs1) cout << " " << e2label[e1] << " " << rat2label[rat13] << " " << e2label[e3] << endl;
+    }
+    cout << "e2ins:" << endl;
+    for (auto& [e3, ins3] : e2ins) {
+        for (auto& [e1, rat13] : ins3) cout << " " << e2label[e1] << " " << rat2label[rat13] << " " << e2label[e3] << endl;
+    }
+}
 void dump_data () // dump important data to stdout for debugging
 {
+    dump_links();
     cout << "t2be:" << endl;
     for (auto& [t, ev] : t2be) cout << " " << t << ": " << ev << endl;
     cout << "ev2data:" << endl;

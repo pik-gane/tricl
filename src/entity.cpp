@@ -27,7 +27,8 @@ void add_entity (
     _e2et[E(e)] = et;
     et2es[et].push_back(e);
     e2label[e] = to_string(e);
-    e2outs[e] = e2ins[e] = { { .e = e, .r = RT_ID } };
+    e2outs[e] = { { .rat_out = RT_ID, .e_other = e } };
+    e2ins[e] = { { .e_other = e, .rat_in = RT_ID } };
 }
 
 /** Return a random entity of a specific type.

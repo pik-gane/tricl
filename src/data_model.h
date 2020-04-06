@@ -147,26 +147,48 @@ template <> struct std::hash<influence_type> {
     }
 };
 
-struct leg // occurs in out-link and in-link sets
+struct inleg
 {
-    const entity e;
-    const relationship_or_action_type r;
+    const entity e_other;
+    const relationship_or_action_type rat_in;
 
-    friend bool operator==(const leg& left, const leg& right) {
-        return (left.e == right.e
-                && left.r == right.r);
+    friend bool operator==(const inleg& left, const inleg& right) {
+        return (left.e_other == right.e_other
+                && left.rat_in == right.rat_in);
     }
-    friend bool operator<(const leg& left, const leg& right) {
-        return ((left.e < right.e) || ((left.e == right.e) && (left.r < right.r)));
+    friend bool operator<(const inleg& left, const inleg& right) {
+        // order must be lexicographic with e_other leading (otherwise leg_intersection won't work!):
+        return ((left.e_other < right.e_other) || ((left.e_other == right.e_other) && (left.rat_in < right.rat_in)));
     }
 };
-template <> struct std::hash<leg> {
-    size_t operator()(const leg& l) const {
-        return (l.e ^ (l.r << E_BITS));
+template <> struct std::hash<inleg> {
+    size_t operator()(const inleg& l) const {
+        return (l.e_other ^ (l.rat_in << E_BITS));
     }
 };
 
-typedef set<leg> leg_set;
+struct outleg
+{
+    const relationship_or_action_type rat_out;
+    const entity e_other;
+
+    friend bool operator==(const outleg& left, const outleg& right) {
+        return (left.e_other == right.e_other
+                && left.rat_out == right.rat_out);
+    }
+    friend bool operator<(const outleg& left, const outleg& right) {
+        // order must be lexicographic with e_other leading (otherwise leg_intersection won't work!):
+        return ((left.e_other < right.e_other) || ((left.e_other == right.e_other) && (left.rat_out < right.rat_out)));
+    }
+};
+template <> struct std::hash<outleg> {
+    size_t operator()(const outleg& l) const {
+        return (l.e_other ^ (l.rat_out << E_BITS));
+    }
+};
+
+typedef set<inleg> inleg_set;
+typedef set<outleg> outleg_set;
 
 struct link
 {

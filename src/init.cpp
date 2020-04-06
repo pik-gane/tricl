@@ -8,6 +8,7 @@
 #include <assert.h>
 #include <iostream>
 
+#include "debugging.h"
 #include "data_model.h"
 #include "global_variables.h"
 #include "probability.h"
@@ -16,8 +17,11 @@
 #include "event.h"
 #include "gexf.h"
 #include "init.h"
+#include "io.h"
 
 using namespace std;
+
+int n_rats = 0;
 
 // arrays of parameters:
 rate _inflt2attempt_rate[MAX_N_INFLT];
@@ -37,8 +41,8 @@ event_data* current_evd_ = NULL;
 
 // network state:
 unordered_map<entity_type, vector<entity>> et2es = {};  // kept to equal inverse of v2vt
-unordered_map<entity, leg_set> e2outs = {};
-unordered_map<entity, leg_set> e2ins = {};
+unordered_map<entity, outleg_set> e2outs = {};
+unordered_map<entity, inleg_set> e2ins = {};
 int n_links = 0; // total no. of current (non-id.) links incl. inverse relationships
 
 // event data:
@@ -84,6 +88,7 @@ void init_entities ()
         if (e2outs.count(e) == 0) e2outs[e] = {};
         if (e2ins.count(e) == 0) e2ins[e] = {};
         if (et2es.count(et) == 0) et2es[et] = {};
+        _e2et[E(e)] = et;
         et2es[et].push_back(e);
         vt2remaining_n[et]--;
     }
@@ -146,6 +151,8 @@ void init_relationship_or_action_types ()
         ets2relations[ets].insert(rat13);
         cout << "  " << evt << ": " << probunit2probability(pu, evt2left_tail.at(evt), evt2right_tail.at(evt)) << endl;
     }
+
+    n_rats = rat2label.size();
 }
 
 void init_summary_events ()
@@ -179,9 +186,8 @@ void init_links ()
 
     // identity relationship:
     for (auto& e : es) {
-        leg l = { .e = e, .r = RT_ID };
-        e2outs[e].insert(l);
-        e2ins[e].insert(l);
+        e2outs[e].insert({ RT_ID, e });
+        e2ins[e].insert({ e, RT_ID });
     }
 
     // preregistered links:
@@ -241,6 +247,7 @@ void init_links ()
             }
         }
     }
+    if (debug) verify_angle_consistency();
 }
 
 void init ()
@@ -252,6 +259,10 @@ void init ()
     init_summary_events();
     init_links();
     init_gexf();
+    if (debug) {
+        dump_data();
+        verify_data_consistency();
+    }
     cout << "...INITIALIZATION FINISHED." << endl << endl;
 }
 
