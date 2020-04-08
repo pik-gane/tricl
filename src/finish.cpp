@@ -5,6 +5,7 @@
  *      Author: heitzig
  */
 
+#include "global_variables.h"
 #include "debugging.h"
 #include "gexf.h"
 #include "finish.h"
@@ -12,5 +13,5 @@
 void finish ()
 {
     finish_gexf();
-    verify_data_consistency();
+    if (debug) verify_data_consistency();
 }

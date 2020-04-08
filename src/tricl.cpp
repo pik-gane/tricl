@@ -46,9 +46,10 @@
  *
  * convenience:
  * - add --help message and potential parameter overrides on the command line
+ * - remove redundant output from init that is already printed in config
  *
  * optimization:
- * - use const args as much as possible
+ * - use const args as much as possible in inner loops
  *
  */
 
@@ -161,7 +162,9 @@ int main (int argc, const char *argv[]) {
         init();
         if (debug) verify_data_consistency();
 
-        while (current_t < max_t) step();
+        while (true) {
+            if (!step()) break;
+        }
 
         if (verbose) {
             cout << "\nat t=" << current_t << ", " << t2be.size() << " events on stack: " << endl;

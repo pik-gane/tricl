@@ -7,9 +7,11 @@
 
 #include <iostream>
 #include <ostream>
+#include "3rdparty/rapidcsv.h"
 
 #include "data_model.h"
 #include "global_variables.h"
+#include "entity.h"
 #include "io.h"
 
 using namespace std;
@@ -54,6 +56,55 @@ ostream& operator<< (ostream& os, const event_data& evd) {
     return os;
 }
 
+void read_links_csv (
+        string filename,    ///< name of infile
+        int skip_rows,      ///< no. of rows to skip at start of file (e.g. header lines)
+        int max_rows,       ///< no. of rows to read at most
+        char delimiter,     ///< delimiter, e.g. " " or "," or "\t"
+        int e1_col,         ///< no. of column containing e1 labels
+        int rat13_col,      ///< no. of column containing rat13 labels (or -1 if type is fixed to value of "rat13_fixed")
+        int e3_col,         ///< no. of column containing e3 labels
+        entity_type et1_default, ///< default entity-type for previously unregistered e1s (if -1, no new e1s are allowed)
+        relationship_or_action_type rat13_fixed, ///< fixed type if rat13_col == -1 (otherwise NO_RAT)
+        entity_type et3_default, ///< default entity-type for previously unregistered e3s (if -1, no new e3s are allowed)
+        string e_prefix     ///< prefix to prepend to entity labels before storing them
+        )
+{
+    rapidcsv::Document doc(filename,
+            rapidcsv::LabelParams(-1, -1), // access all rows and cols
+            rapidcsv::SeparatorParams(delimiter)
+        );
+
+    auto e1labels = doc.GetColumn<string>(e1_col);
+    auto e3labels = doc.GetColumn<string>(e3_col);
+    int nrows = e1labels.size();
+    std::vector<string> rat13labels;
+    if (rat13_col >= 0) rat13labels = doc.GetColumn<string>(rat13_col);
+    for (int row = skip_rows; row < min(nrows, skip_rows+max_rows); row++) {
+        if (debug) cout << "row " << row << " " << e1labels[row] << " " << e3labels[row] << endl;
+        auto e1label = e_prefix + e1labels[row], e3label = e_prefix + e3labels[row];
+        entity e1, e3;
+        if (label2e.count(e1label) == 0) {
+            if (et1_default == -1) throw "unknown entity " + e1label;
+            e1 = add_entity(et1_default, e1label);
+            if (verbose) cout << "  entity " << e1 << ": " << et2label.at(et1_default) << ": " << e1label << endl;
+        } else {
+            e1 = label2e.at(e1label);
+        }
+        if (label2e.count(e3label) == 0) {
+            if (et3_default == -1) throw "unknown entity " + e3label;
+            e3 = add_entity(et3_default, e3label);
+            if (verbose) cout << "  entity " << e3 << ": " << et2label.at(et3_default) << ": " << e3label << endl;
+        } else {
+            e3 = label2e.at(e3label);
+        }
+        if (debug) cout << e1 << " " << e3 << endl;
+        auto rat13 = (rat13_col >= 0) ? label2rat.at(rat13labels[row]) : rat13_fixed;
+        if (debug) cout << rat13 << endl;
+        initial_links.insert({ e1, rat13, e3 });
+    }
+}
+
 void dump_links () {
     cout << "e2outs:" << endl;
     for (auto& [e1, outs1] : e2outs) {
@@ -64,6 +115,7 @@ void dump_links () {
         for (auto& [e1, rat13] : ins3) cout << " " << e2label[e1] << " " << rat2label[rat13] << " " << e2label[e3] << endl;
     }
 }
+
 void dump_data () // dump important data to stdout for debugging
 {
     dump_links();

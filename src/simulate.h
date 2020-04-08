@@ -5,4 +5,4 @@
  *      Author: Jobst Heitzig, PIK
  */
 
-void step ();
+bool step ();

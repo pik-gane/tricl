@@ -9,24 +9,36 @@
  * @file
  */
 
+#include <limits.h>
+#include <math.h>
 #include <iostream>
 #include "yaml-cpp/yaml.h"
 
 #include "data_model.h"
 #include "global_variables.h"
+#include "entity.h"
+#include "io.h"
 
 using namespace std;
 
-bool verbose = false, quiet = false, debug = false;
-timepoint max_t = 0.0;
+// scalar parameters and their default values:
 string gexf_filename = "";
+bool verbose = false, quiet = false, debug = false;
+timepoint max_t = INFINITY;
+long int max_n_events = LONG_MAX;
+unsigned seed = 0;
+
+// maps and sets of parameters with some defaults:
 unordered_map<entity_type, label> et2label = {};
+unordered_map<string, entity_type> label2et = {};
 unordered_map<entity_type, entity> et2n = {};
-unordered_map<relationship_or_action_type, label> rat2label = {};
+unordered_map<relationship_or_action_type, label> rat2label = { {RT_ID, "="} };
+unordered_map<string, relationship_or_action_type> label2rat = { {"=", RT_ID} };
 unordered_map<relationship_or_action_type, bool> r_is_action_type = {};
 unordered_map<relationship_or_action_type, relationship_or_action_type> rat2inv = {};
 unordered_map<entity, entity_type> e2et = {};
 unordered_map<entity, label> e2label = {};
+unordered_map<string, entity> label2e = {};
 set<link> initial_links = {};
 unordered_map<entity_type, int> et2n_blocks = {};
 unordered_map<link_type, probability> lt2initial_prob_within = {};
@@ -35,11 +47,25 @@ unordered_map<entity_type, int> et2dim = {};
 unordered_map<link_type, probability> lt2spatial_decay = {};
 unordered_map<influence_type, rate> inflt2attempt_rate = {};
 unordered_map<event_type, double> evt2left_tail = {}, evt2right_tail = {};
-#define TAIL_DEFAULT 1.0
 unordered_map<event_type, probunit> evt2base_probunit = {};
 unordered_map<influence_type, probunit> inflt2delta_probunit = {};
 
-void read_config () {
+// further default values:
+#define TAIL_DEFAULT 1.0
+
+entity max_e = 0;
+
+void read_entity_labels (YAML::Node n, entity_type et)
+{
+    for (YAML::const_iterator it3 = n.begin(); it3 != n.end(); ++it3) {
+        auto elabel = it3->as<string>();
+        entity e = add_entity(et, elabel);
+        cout << "  entity " << e << ": " << elabel << endl;
+    }
+}
+
+void read_config ()
+{
     cout << "READING CONFIG file " << config_yaml_filename << " ..." << endl;
     YAML::Node c = YAML::LoadFile(config_yaml_filename), n, n1, n2, n3;
 
@@ -60,28 +86,24 @@ void read_config () {
     // limits (at least one):
     n = c["limits"];
     if (!n.IsMap()) throw "yaml field 'limits' must be a map";
-    max_t = n["t"] ? n["t"].as<timepoint>() : INFINITY;
-    // max_n_events = n["events"] ? n["events"].as<int>() : INFINITY;
+    if (n["t"]) max_t = n["t"].as<timepoint>();
+    if (n["events"]) max_n_events = floor(n["events"].as<double>());
     // max_wall_time = n["wall"] ? n["wall"].as<float>() : INFINITY;
+    if ((max_t==INFINITY) && (max_n_events==LONG_MAX)) throw
+            "must specify at least one of limits:t, limits:events";
 
     // options:
     n = c["options"];
     if (n) {
         if (!n.IsMap()) throw "yaml field 'options' must be a map";
-        quiet = n["quiet"] ? n["quiet"].as<bool>() : false;
-        verbose = n["verbose"] ? n["verbose"].as<bool>() : false;
-        debug = n["debug"] ? n["debug"].as<bool>() : false;
-        // seed = n["seed"]     ? n["seed"].as<???>() : 0;
-    } else { // defaults:
-        quiet = verbose = false;
-        // seed = 0;
+        if (n["quiet"]) quiet = n["quiet"].as<bool>();
+        if (n["verbose"]) verbose = n["verbose"].as<bool>();
+        if (n["debug"]) debug = n["debug"].as<bool>();
+        if (n["seed"]) n["seed"].as<unsigned>();
     }
 
     // entities:
-    map<string, entity_type> label2et = {};
-    map<string, entity> label2e = {};
     entity_type et = 1;
-    entity e = 0;
     n1 = c["entities"];
     if (!n1.IsMap()) throw "yaml field 'entities' must be a map";
     for (YAML::const_iterator it1 = n1.begin(); it1 != n1.end(); ++it1) {
@@ -92,24 +114,19 @@ void read_config () {
         n2 = it1->second;
         if (n2.IsMap()) {
             et2n[et] = n2["n"].as<entity>();
-            n3 = n2["labels"];
-            if (n3) {
-                for (YAML::const_iterator it3 = n3.begin(); it3 != n3.end(); ++it3) {
-                    auto elabel = it3->as<string>();
-                    cout << "  entity " << e << ": " << elabel << endl;
-                    label2e[elabel] = e;
-                    e2label[e] = elabel;
-                    e2et[e] = et;
-                    e++;
-                }
-            }
+            n3 = n2["labels"] ? n2["labels"] : n2["names"] ? n2["names"] : n2["named"];
+            if (n3) read_entity_labels(n3, et);
+        } else if (n2.IsSequence()) {  // only a list of labels is specified
+            // read and count them:
+            entity last_e = max_e;
+            read_entity_labels(n2, et);
+            et2n[et] = max_e - last_e;
         } else {
             et2n[et] = n2.as<entity>();
         }
         et++;
     }
 
-    map<string, relationship_or_action_type> label2rat = { {"=", RT_ID} };
     rat2label = { {RT_ID, "="} };
     r_is_action_type = { {RT_ID, false} };
     rat2inv = { {RT_ID, RT_ID} };
@@ -209,15 +226,15 @@ void read_config () {
         cout << "named initial links:" << endl;
         for (YAML::const_iterator it = n.begin(); it != n.end(); ++it) {
             if (!it->IsSequence()) throw "yaml subfield 'named' of 'initial links' must be a sequence";
-            string elabel1 = (*it)[0].as<string>(),
-                    ratlabel = (*it)[1].as<string>(),
-                    elabel3 = (*it)[2].as<string>();
-            cout << " " << elabel1 << " " << ratlabel << " " << elabel3 << endl;
+            string e1label = (*it)[0].as<string>(),
+                    rat13label = (*it)[1].as<string>(),
+                    e3label = (*it)[2].as<string>();
+            cout << " " << e1label << " " << rat13label << " " << e3label << endl;
             try {
-                auto rat = label2rat.at(ratlabel);
-                auto e1 = label2e.at(elabel1), e3 = label2e.at(elabel3);
-                initial_links.insert({ e1, rat, e3 });
-                if (r_is_action_type[rat]) {
+                auto e1 = label2e.at(e1label), e3 = label2e.at(e3label);
+                auto rat13 = label2rat.at(rat13label);
+                initial_links.insert({ e1, rat13, e3 });
+                if (r_is_action_type[rat13]) {
 //                float impact = (*it)[3].as<float>(); // TODO: use!!
                 }
             } catch (const std::exception&) {
@@ -268,7 +285,7 @@ void read_config () {
                     // TODO: make sure no conflicts between several spatial models for same entity types!
                     auto dim = spec["dimension"].as<int>();
                     // TODO: allow list of "widths"
-                    auto dec = spec["decay"] ? spec["decay"].as<float>() : 1.0;
+                    auto dec = spec["decay"] ? spec["decay"].as<double>() : 1.0;
                     if (!(dim > 0)) throw "'dimension' must be positive";
                     if (!(dec > 0.0)) throw "'decay' must be positive";
                     et2dim[et1] = et2dim[et3] = dim;
@@ -276,6 +293,66 @@ void read_config () {
                 }
             } catch (const std::exception&) {
                 throw "some entity or the relationship or action type was not declared";
+            }
+        }
+    }
+
+    // initial links read from files:
+    n1 = c["initial links"];
+    if (n1) {
+        if (!n1.IsMap()) throw "yaml field 'initial links' must be a map";
+        for (YAML::const_iterator it1 = n1.begin(); it1 != n1.end(); ++it1) {
+            auto key = (it1->first).as<string>();
+            auto n2 = it1->second;
+            if ((key != "named") && (key != "random")) {
+                auto filename = key;
+                if (!quiet) cout << "reading initial links from file " << filename << " ..." << endl;
+                auto ext = filename.substr(filename.find_last_of(".") + 1);
+                if (ext == "csv") {
+                    string et1label, rat13label, et3label;
+                    entity_type et1_default = -1, et3_default = -1;
+                    auto rat13 = NO_RAT;
+                    if (n2["type"]) {
+                        et1label = n2["type"][0].as<string>();
+                        rat13label = n2["type"][1].as<string>();
+                        et3label = n2["type"][2].as<string>();
+                        if ((label2et.count(et1label) == 0) || (label2et.count(et3label) == 0)) throw
+                                "unregistered entity type";
+                        if (label2rat.count(rat13label) == 0) throw "unregistered relationship or action type";
+                        et1_default = label2et.at(et1label);
+                        rat13 = label2rat.at(rat13label);
+                        et3_default = label2et.at(et3label);
+                    } else {
+                        if (n2["entity types"]) {
+                            et1label = n2["entity types"][0].as<string>();
+                            et3label = n2["entity types"][1].as<string>();
+                            if ((label2et.count(et1label) == 0) || (label2et.count(et3label) == 0)) throw
+                                    "unregistered entity type";
+                            et1_default = label2et.at(et1label);
+                            et3_default = label2et.at(et3label);
+                        }
+                        // TODO: action type
+                        if (n2["relationship type"]) {
+                            rat13label = n2["relationship type"].as<string>();
+                            if (label2rat.count(rat13label) == 0) throw "unregistered relationship type";
+                            rat13 = label2rat.at(rat13label);
+                        }
+                    }
+                    int skip = n2["skip"] ? n2["skip"].as<int>() : 0;
+                    int max = n2["max"] ? n2["max"].as<int>() : INT_MAX;
+                    char delimiter = n2["delimiter"] ? n2["delimiter"].as<char>() : ',';
+                    string prefix = n2["prefix"] ? n2["prefix"].as<string>() : "";
+                    auto cols = n2["cols"];
+                    read_links_csv (filename, skip, max, delimiter,
+                            cols[0].as<int>(),
+                            (rat13 == NO_RAT) ? cols[1].as<int>() : -1,
+                            (rat13 == NO_RAT) ? cols[2].as<int>() : cols[1].as<int>(),
+                            et1_default, rat13, et3_default,
+                            prefix);
+                } else {
+                    throw "unsupported file extension";
+                }
+                if (!quiet) cout << " ...done." << endl;
             }
         }
     }

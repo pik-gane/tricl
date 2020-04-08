@@ -17,10 +17,11 @@ using namespace std;
 // MATH:
 
 // random generators:
-extern random_device ran_dev;
 extern mt19937 random_variable;
 extern uniform_real_distribution<> uniform;
 extern exponential_distribution<> exponential;
+
+void init_randomness ();
 
 double tail2scale(double tail);
 

@@ -6,6 +6,7 @@
  * @file
  */
 
+#include <iostream>
 #include <math.h>
 
 #include "global_variables.h"
@@ -18,17 +19,32 @@ using namespace std;
  *
  * (the entity is not returned)
  */
-void add_entity (
-        entity_type et ///< [in] Entity type of the entity to be generated anew.
+entity add_entity (
+        entity_type et, ///< [in] entity type of the entity to be generated anew.
+        string elabel   ///< [in] entity label (if "", will be generated)
         )
 {
+    // generate id and register in list:
     auto e = ++max_e;
     es.insert(e);
+
+    // register type:
+    e2et[e] = et;
     _e2et[E(e)] = et;
     et2es[et].push_back(e);
-    e2label[e] = to_string(e);
+
+    // register label:
+    if (elabel == "") {
+        elabel = et2label.at(et) + "_" + to_string(e);
+    }
+    e2label[e] = elabel;
+    label2e[elabel] = e;
+
+    // register identity relation:
     e2outs[e] = { { .rat_out = RT_ID, .e_other = e } };
     e2ins[e] = { { .e_other = e, .rat_in = RT_ID } };
+
+    return e;
 }
 
 /** Return a random entity of a specific type.

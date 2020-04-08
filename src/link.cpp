@@ -6,6 +6,7 @@
  */
 
 #include <assert.h>
+#include <iostream>
 
 #include "global_variables.h"
 #include "probability.h"

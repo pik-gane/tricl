@@ -5,7 +5,10 @@
 
 using namespace std;
 
-void add_entity (entity_type et);
+entity add_entity (
+        entity_type et, ///< [in] entity type of the entity to be generated anew.
+        string label    ///< [in] entity label (if "", will be generated)
+        );
 
 entity random_entity (entity_type et);
 

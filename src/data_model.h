@@ -19,6 +19,17 @@
 
 using namespace std;
 
+// bit sizes for hashs:
+// must have
+// 2 + 2*E_BITS + RAT_BITS <= no. of bits in size_t (32 or 64)
+// 2^E_BITS + 2^(6 + 3*RAT_BITS + 3*ET_BITS) <= available memory bytes
+
+// version 1 for 64 bit system and >= 1 GB available memory
+#define E_BITS 20  // max. 1 mio. entities
+#define ET_BITS 4  // max. 16 entity types
+#define RAT_BITS 4  // max. 16 relationship or action types
+
+
 // TYPES AND STRUCTS:
 
 // basic types:
@@ -29,7 +40,7 @@ typedef size_t relationship_or_action_type;
 
 typedef int entity; // actual entities >= 0. can be used to store entity types as negative numbers.
 #define E(e) e
-#define MAX_N_E 1000
+#define MAX_N_E ((1<<E_BITS)-1)
 
 #define EPS 1e-20;
 
@@ -45,13 +56,11 @@ typedef string label;
 
 // complex types:
 
-typedef entity entity_type; // >=1 so that -entity_type can be stored in entity fields
+//typedef entity entity_type; // >=1 so that -entity_type can be stored in entity fields
+typedef short unsigned int entity_type; // >=1 so that -entity_type can be stored in entity fields
 
-// bit sizes for hashs:
-#define E_BITS 12
-#define RAT_BITS 2
-#define ET_BITS 2
-// must have 2*E_BITS+RAT_BITS <= 30 and RAT_BITS+ET_BITS <= 10
+
+
 
 struct entity_type_pair
 {

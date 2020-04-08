@@ -239,7 +239,7 @@ void perform_event (event& ev)
 {
     if (debug) cout << " performing event: " << ev << endl;
 
-    auto ec = ev.ec; auto e1 = ev.e1, e3 = ev.e3; auto rat13 = ev.rat13, rat31 = rat2inv[rat13];
+    auto ec = ev.ec; auto e1 = ev.e1, e3 = ev.e3; auto rat13 = ev.rat13, rat31 = rat2inv.at(rat13);
     link l = { .e1 = e1, .rat13 = rat13, .e3 = e3 };
 
     // FIRST add the reverse event, so that its n_angles will reflect the situation before the change:
@@ -254,7 +254,7 @@ void perform_event (event& ev)
     update_adjacent_events(ev);
 
     // also perform companion event that affects inverse link:
-    if (rat31 != NO_RAT) {
+    if ((rat31 != NO_RAT) && (rat31 != rat13)) {
         event companion_ev = { .ec = ec, .e1 = e3, .rat13 = rat31, .e3 = e1 };
         link inv_l = { .e1 = e3, .rat13 = rat31, .e3 = e1 }; // inverse link
         if (ev2data.count(companion_ev) == 1) {
@@ -293,7 +293,7 @@ bool pop_next_event ()
         // get handle of earliest next scheduled event:
         auto tev = t2be.begin();
         if (tev == t2be.end()) { // no events are scheduled --> model has converged
-            cout << "at t=" << current_t << " the model has converged, density " << ((double)n_links)/(max_e*max_e) << endl;
+            cout << "at t=" << current_t << " the model has converged, density " << ((double)n_links)/((double)max_e*(double)max_e) << endl;
             // jump to end
             current_t = max_t;
             return false;
@@ -356,7 +356,7 @@ bool pop_next_event ()
                         // "return" event:
                         current_ev = actual_ev;
                         if (!quiet) {
-                            cout << "at t=" << current_t << " " << current_ev << ", density " << ((double)n_links)/(max_e*max_e) << endl;
+                            cout << "at t=" << current_t << " " << current_ev << ", density " << ((double)n_links)/((double)max_e*(double)max_e) << endl;
                         }
                         found = true;
                     } else {
@@ -372,7 +372,7 @@ bool pop_next_event ()
             // "return" event:
             current_ev = ev;
             if (!quiet) {
-                cout << "at t=" << current_t << " " << current_ev << ", density " << ((double)n_links)/(max_e*max_e) << endl;
+                cout << "at t=" << current_t << " " << current_ev << ", density " << ((double)n_links)/((double)max_e*(double)max_e) << endl;
             }
             auto evd_ = current_evd_ = &ev2data.at(ev);
             // remove it from all relevant data:

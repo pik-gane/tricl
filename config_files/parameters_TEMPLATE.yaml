@@ -1,54 +1,53 @@
 metadata:
-  name: microblogging
-  description: a simple example model related to Twitter-like services 
+  name: template for a tricl config file
+  description: copy, adjust and use with "tricl myconfig.yaml" 
   author: Jobst Heitzig
-  date: 29 March 2020
+  date: 8 April 2020
   email: heitzig@pik-potsdam.de
 
-mode: simulate  # or "filter"
+# features not yet supported are marked with a ##
+## mode: simulate  # or "filter"
 
 files:
   gexf: /tmp/microblogging.gexf
   log: /tmp/microblogging.log
-  # input data: # TODO: input for initial state or particle filter
 
 limits:
-  t: 0.1
-  events: 1e6
-  wall: 1h
+  t: 1.0  # max model time to simulate
+  events: 1e6  # max. no. of events to perform
+##  wall: 1h  # max. wall time to execute
 
 options:
-  quiet: true
+  quiet: false
   verbose: false
   debug: false
-  seed: 1
+  seed: 1  # random seed to use (0: generate seed randomly; >0: use reproducible random sequence; default: 0)
 
 entities:
-  user:
-    n: 1000
-    labels:  # of some of the 1000 entities
+  user:  # label of entity type
+    n: 300  # default: no. of labels specified
+    named:  # optional list of first entity labels (other entities will be enumerated)
       - Alice
       - Bob
       - Celia
-  message: 
-    n: 1000
-    labels:
+  message:  # use this form to specify labels only
       - bullshit
-  tag: 100  # n
-  url: 100
+      - some fact
+  tag: 10  # use this form to specify a no. only
+  url: 10
 
 relationship types:
   is friends with: symmetric  # 'symmetric' cannot be the label of a rel.
   follows: is followed by
 
-#action types:
-#  posts: ~  # not symmetric, but without labelled inverse
+##action types:
+##  posts: ~  # not symmetric, but without labelled inverse
 
-#past actions:  # [negative time, entity, action type, entity]
-#  - [-2, Alice, posts, bullshit] 
+##past actions:  # [negative time, entity, action type, entity]
+##  - [-2, Alice, posts, bullshit] 
 
 initial links:  # in "filter" mode, initial link types to be estimated need to be specified with value "estimate" 
-  named:
+  named:  # list of individual links
     - [Alice, is friends with, Bob]  # [entity, relationship type, entity]
 #    - [Celia, posts, bullshit, 10.0]  # [entity, action type, entity, impact]
   random:
@@ -58,12 +57,28 @@ initial links:  # in "filter" mode, initial link types to be estimated need to b
       between: 0.1  # link prob. between blocks
     [user, follows, user]:
       dimension: 2  # -> random geometric graph
-      decay: 3.5  # rate of exponential decay of link prob. with eucl. dist.
+      decay: 10.0  # rate of exponential decay of link prob. with eucl. dist.
     # or [user, follows, user]: estimate
 #    [user, posts, message]:  # [entity type, relationship type, entity type] -> need a "rate"
 #      density: 0.01  # -> random graph
 #      rate: 2  # past occurrence rate of action (gives initial impacts) 
-  
+  "links.csv":  # read links from a csv file
+    relationship type: is friends with  # optionally name the relationship type
+##    action type: posts  # optionally name the action type
+##    impact: 1.0  # optionally name the impact of all actions (if action type)
+    entity types: [user, user]  # optionally name the entity types for entities that were not named above
+#   type: [user, follows, user]  # shortcut for relationship type/action type and entity types
+    skip: 2  # no. of rows to skip (default: 0)
+    max: 3  # max. no. of rows to read (default: inf)
+#    delimiter: ";"  # default: ","
+    cols: [1, 3]  
+      # list of column numbers for 
+      # source entity label, 
+      # relationship or action type (if not named under "type"), 
+      # target entity label,
+      # impact (if action type and not named under "impact")
+      # (default: [0,1,2,3] or [0,1,2] or [0,1])
+#    prefix: user_  # prefix to prepend to entity labels in file    
 
 dynamics:  # all values default to 0.0. in "filter" mode, parameters to be estimated need to be specified with value "estimate"
   [user, is friends with, user]:  # relations need "establish" and/or "terminate"
@@ -74,10 +89,10 @@ dynamics:  # all values default to 0.0. in "filter" mode, parameters to be estim
       success:  # defaults to 0.0
 #        tails: [1.0, 2.0]
         basic: 1.0
-    terminate:
-      attempt:
-        [~, is friends with, user]: 0.1  # outgoing leg of source entity
-        [user, is friends with, ~]: 0.1  # incoming leg of destination entity
+#    terminate:
+#      attempt:
+#        [~, is friends with, user]: 0.1  # outgoing leg of source entity
+#        [user, is friends with, ~]: 0.1  # incoming leg of destination entity
 #      success:
 #        tails: 3.0  # sets both left and right tail
 #  [user, posts, message]:  # actions have directly "attempt" and "success"

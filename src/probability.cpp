@@ -10,6 +10,7 @@
 #include <random>
 
 #include "data_model.h"
+#include "global_variables.h"
 #include "probability.h"
 
 using namespace std;
@@ -18,9 +19,14 @@ using namespace std;
 
 // random generators:
 random_device ran_dev;
-mt19937 random_variable(ran_dev());
+mt19937 random_variable;
 uniform_real_distribution<> uniform(0, 1);
 exponential_distribution<> exponential(1);
+
+void init_randomness ()
+{
+    random_variable = mt19937((seed == 0) ? ran_dev() : seed);
+}
 
 double tail2scale(double tail)
 {

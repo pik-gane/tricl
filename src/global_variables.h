@@ -22,24 +22,26 @@ using namespace std;
 // PARAMETERS
 
 extern string config_yaml_filename;
-
 extern bool verbose, quiet, debug;
-
 extern string gexf_filename;
-
 extern timepoint max_t;
+extern long int max_n_events;
+extern unsigned seed;
 
 // structure parameters:
 
 extern unordered_map<entity_type, label> et2label;
+extern unordered_map<string, entity_type> label2et;
 extern unordered_map<entity_type, entity> et2n; // no. of entities by type
 extern int n_rats; // number of distinct relationship_or_action_types
 extern unordered_map<relationship_or_action_type, label> rat2label; // relationship_or_action_type labels are verbs or math symbols
+extern unordered_map<string, relationship_or_action_type> label2rat;
 extern unordered_map<relationship_or_action_type, bool> r_is_action_type; // whether it is an action type
 extern unordered_map<relationship_or_action_type, relationship_or_action_type> rat2inv; // inverse relations
 // any preregistered entities:
 extern unordered_map<entity, entity_type> e2et;
 extern unordered_map<entity, label> e2label;
+extern unordered_map<string, entity> label2e;
 // any preregistered initial links:
 extern set<link> initial_links;
 // random initial links:
@@ -73,13 +75,14 @@ extern unordered_map<entity_type_pair, set<relationship_or_action_type>> ets2rel
 // variable data:
 
 extern timepoint current_t;
+extern long int n_events;
 extern event current_ev;
 extern event_data* current_evd_;
 // network state:
 extern unordered_map<entity_type, vector<entity>> et2es;  // kept to equal inverse of v2vt
 extern unordered_map<entity, outleg_set> e2outs;
 extern unordered_map<entity, inleg_set> e2ins;
-extern int n_links; // total no. of current (non-id.) links incl. inverse relationships
+extern long int n_links; // total no. of current (non-id.) links incl. inverse relationships
 // event data:
 extern unordered_map<event, event_data> ev2data;
 extern map<timepoint, event> t2be;  // kept to equal inverse of ev2data.t

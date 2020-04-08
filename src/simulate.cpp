@@ -13,16 +13,17 @@
 
 using namespace std;
 
-void step ()
+bool step ()
 {
-    if (pop_next_event()) {
+    if ((n_events < max_n_events) && pop_next_event()) {
+        ++n_events;
         perform_event(current_ev);
         if (quiet) {
-            cout << round(current_t) << ": " << ((double)n_links)/(max_e*max_e) << "                            \r";
+            cout << round(current_t) << ": " << ((double)n_links)/((double)max_e*(double)max_e) << "                            \r";
         }
         if (debug) cout << " " << t2be.size() << " events on stack" << endl << endl;
-    }
-    else {
-        current_t = max_t;
+        return true;
+    } else {
+        return false;
     }
 }
