@@ -35,6 +35,7 @@ unordered_map<entity_type_pair, set<relationship_or_action_type>> ets2relations;
 
 timepoint current_t = 0;
 long int n_events = 0;
+long int n_angles = 0;
 event current_ev = {};
 event_data* current_evd_ = NULL;
 

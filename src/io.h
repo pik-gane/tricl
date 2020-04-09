@@ -20,6 +20,8 @@ ostream& operator<< (ostream& os, const event_type& evt);
 
 ostream& operator<< (ostream& os, const event& ev);
 
+void log_status ();
+
 void read_links_csv (
         string filename,    ///< name of infile
         int skip_rows,      ///< no. of rows to skip at start of file (e.g. header lines)

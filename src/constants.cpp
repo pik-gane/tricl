@@ -9,9 +9,9 @@
 #include "data_model.h"
 
 unordered_map<event_class, string> ec2label = {
-    { EC_EST, "establish" },
-    { EC_TERM, "terminate" },
-    { EC_ACT, "act" }
+    { EC_EST, "est." },
+    { EC_TERM, "term." },
+    { EC_ACT, "let" }
 };
 
 

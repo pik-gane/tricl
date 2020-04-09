@@ -27,7 +27,7 @@ void init_gexf () {
             <attribute id="0" title="entity type" type="string"/>
         </attributes>
         <attributes class="edge">
-            <attribute id="1" title="relationship_or_action_type" type="string"/>
+            <attribute id="1" title="relationship or action type" type="string"/>
         </attributes>
         <nodes>
 )V0G0N";
@@ -44,7 +44,8 @@ void init_gexf () {
 }
 
 void gexf_output_edge (link& l) {
-    entity e1 = l.e1, e3 = l.e3; relationship_or_action_type rat13 = l.rat13;
+    auto e1 = l.e1, e3 = l.e3;
+    auto rat13 = l.rat13;
     if (rat13 != RT_ID) {
         gexf << "\t\t\t<edge id=\"" << e1 << "_" << rat13 << "_" << e3 << "_" << current_t
              << "\" source=\"" << e1 << "\" target=\"" << e3

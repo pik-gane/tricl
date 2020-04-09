@@ -5,6 +5,7 @@
  *      Author: heitzig
  */
 
+#include <iostream>
 #include <assert.h>
 #include <math.h>
 #include <random>
@@ -25,7 +26,9 @@ exponential_distribution<> exponential(1);
 
 void init_randomness ()
 {
-    random_variable = mt19937((seed == 0) ? ran_dev() : seed);
+    auto theseed = (seed == 0) ? ran_dev() : seed;
+    if (!quiet) cout << " using random seed " << theseed << endl;
+    random_variable = mt19937(theseed);
 }
 
 double tail2scale(double tail)

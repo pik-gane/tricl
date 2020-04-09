@@ -99,7 +99,7 @@ void read_config ()
         if (n["quiet"]) quiet = n["quiet"].as<bool>();
         if (n["verbose"]) verbose = n["verbose"].as<bool>();
         if (n["debug"]) debug = n["debug"].as<bool>();
-        if (n["seed"]) n["seed"].as<unsigned>();
+        if (n["seed"]) seed = n["seed"].as<unsigned>();
     }
 
     // entities:
@@ -339,7 +339,7 @@ void read_config ()
                         }
                     }
                     int skip = n2["skip"] ? n2["skip"].as<int>() : 0;
-                    int max = n2["max"] ? n2["max"].as<int>() : INT_MAX;
+                    int max = n2["max"] ? n2["max"].as<int>() : (INT_MAX - 1);
                     char delimiter = n2["delimiter"] ? n2["delimiter"].as<char>() : ',';
                     string prefix = n2["prefix"] ? n2["prefix"].as<string>() : "";
                     auto cols = n2["cols"];

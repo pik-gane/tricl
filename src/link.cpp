@@ -24,11 +24,11 @@ bool link_exists (link& l)
 
 void add_link (link& l)
 {
-    assert ((!link_exists(l)) && ((l.e1 != l.e3) || (l.rat13 == RT_ID)));
+    assert ((!link_exists(l)) && (l.e1 != l.e3));
     auto e1 = l.e1, e3 = l.e3; auto rat13 = l.rat13;
     e2outs[e1].insert({ .rat_out = rat13, .e_other = e3 });
     e2ins[e3].insert({ .e_other = e1, .rat_in = rat13 });
-    if (rat13 != RT_ID) gexf_edge2start[l] = current_t;
+    if (rat13 != RT_ID) gexf_edge2start[{e1, rat13, e3}] = current_t;
     n_links++;
 }
 

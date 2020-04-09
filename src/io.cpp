@@ -16,8 +16,6 @@
 
 using namespace std;
 
-// I/O:
-
 ostream& operator<< (ostream& os, const link_type& lt) {
     os << et2label[lt.et1]
         << " " << rat2label[lt.rat13] << " "
@@ -27,26 +25,23 @@ ostream& operator<< (ostream& os, const link_type& lt) {
 
 ostream& operator<< (ostream& os, const event_type& evt) {
     os << ec2label[evt.ec]
-            << " \"" << et2label[evt.et1]
+            << " " << et2label[evt.et1]
             << " " << rat2label[evt.rat13] << " "
-            << et2label[evt.et3]
-            << "\"";
+            << et2label[evt.et3];
     return os;
 }
 
 ostream& operator<< (ostream& os, const event& ev) {
     if (ev.e1 < 0) {
         os << ec2label[ev.ec]
-                << " \"some " << et2label[-ev.e1]
+                << " some " << et2label[-ev.e1]
                 << " " << rat2label[ev.rat13] << " some "
-                << et2label[-ev.e3]
-                << "\"";
+                << et2label[-ev.e3];
     } else {
         os << ec2label[ev.ec]
-                << " \"" << e2label[ev.e1]
+                << " " << e2label[ev.e1]
                 << " " << rat2label[ev.rat13] << " "
-                << e2label[ev.e3]
-                << "\"";
+                << e2label[ev.e3];
     }
     return os;
 }
@@ -54,6 +49,20 @@ ostream& operator<< (ostream& os, const event& ev) {
 ostream& operator<< (ostream& os, const event_data& evd) {
     os << "na=" << evd.n_angles << " ar=" << evd.attempt_rate << " pu=" << evd.success_probunits << " t=" << evd.t;
     return os;
+}
+
+void log_status ()
+{
+    double
+        ne = (double) max_e,
+        nl = (double) n_links,
+        na = (double) n_angles,
+        ld = nl / (ne * ne),
+        ad = na / (ne * ne * ne),
+        q = (ld > 0.0) ? ad / ld : 0.0
+        ;
+    cout << fixed << n_events << ": ld " << ld << ", ad " << ad << ", q " << q <<
+            ".  t " << current_t << ": " << current_ev << endl;
 }
 
 void read_links_csv (
