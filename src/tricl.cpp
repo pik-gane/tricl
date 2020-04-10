@@ -136,6 +136,7 @@
 
 #include "debugging.h"
 #include "global_variables.h"
+#include "io.h"
 #include "config.h"
 #include "init.h"
 #include "simulate.h"
@@ -173,7 +174,6 @@ int main (int argc, const char *argv[]) {
             }
         }
         finish();
-        cout << endl;
     } catch (const char* msg) {
       cerr << "ERROR: exiting with message: " << msg << endl;
     }

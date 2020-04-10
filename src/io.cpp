@@ -62,7 +62,7 @@ void log_status ()
         q = (ld > 0.0) ? ad / ld : 0.0
         ;
     cout << fixed << n_events << ": ld " << ld << ", ad " << ad << ", q " << q <<
-            ".  t " << current_t << ": " << current_ev << endl;
+            ".  t " << current_t << ": " << current_ev << defaultfloat << endl;
 }
 
 void read_links_csv (

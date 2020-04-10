@@ -47,58 +47,53 @@ void _schedule_event (event& ev, event_data* evd_, double left_tail, double righ
     assert(evd_ == &ev2data.at(ev));
     timepoint t;
     auto ar = evd_->attempt_rate;
-    if (ar < 0.0) cout << "AR < 0.0:" << ar << endl;
+    if (ar < 0.0) throw "negative attempt rate";
     assert (ar >= 0.0);
+    if (verbose) cout << "    (re)scheduling " << ev << ": ";
     if (ev.e1 >= 0) { // particular event: use effective rate:
         auto spu = evd_->success_probunits;
-        if (ar < INFINITY) {
-            t = current_t
-                    + exponential(random_variable)
-                    / effective_rate(ar, spu, left_tail, right_tail);
+        if (spu == -INFINITY) {
+            t = INFINITY;
+            if (verbose) cout << "zero success probability → t=" << t << endl;
+        } else if (ar < INFINITY) {
+            auto er = effective_rate(ar, spu, left_tail, right_tail);
+            t = current_t + exponential(random_variable) / er;
+            if (verbose) cout << "ar " << ar << ", spu " << spu << " → eff. rate " << er << " → next at t=" << t << endl;
         } else {
-            if (spu > -INFINITY) {
-                // event should happen "right away". to make sure all those events
-                // occur in random order, we formally schedule them at some
-                // random "past" time instead:
-                t = current_t - uniform(random_variable);
-            } else {
-                t = INFINITY;
-            }
+            // event should happen "right away". to make sure all those events
+            // occur in random order, we formally schedule them at some
+            // random "past" time instead:
+            t = current_t - uniform(random_variable);
+            if (verbose) cout << "inf. attempt rate, success probability > 0 → \"immediate\" t=" << t << endl;
         }
-    } else { // summary event: use only attempt rate:
+    } else { // summary event: use only attempt rate (success will be tested in pop_next_event):
         t = current_t + exponential(random_variable) / ar;
+        if (verbose) cout << "summary event, attempt rate " << ar << " → attempt at t=" << t << ", test success then" << endl;
     }
     if (t == INFINITY) {
-//        ev2data.erase(ev);
-//        if (verbose) cout << "     not (re-)scheduled since effective rate is zero" << endl;
-        // or only replace by some non-reached finite time point?:
+        // replace INFINITY by some unique finite but non-reached time point:
         t = max_t + uniform(random_variable);
-    } //else {
-        t2be[t] = ev;
-        evd_->t = t;
-    //}
+    }
+    t2be[t] = ev;
+    evd_->t = t;
 }
 
 void schedule_event (event& ev, event_data* evd_, double left_tail, double right_tail)
 {
     assert(evd_ == &ev2data.at(ev));
-    if (event_is_scheduled(ev, evd_)) {
-        cout << "ERROR: event " << ev << " already scheduled:" << endl;
-        dump_data();
-    }
-    assert (!event_is_scheduled(ev, evd_));
+    if (event_is_scheduled(ev, evd_)) throw "event already scheduled";
+    assert(!event_is_scheduled(ev, evd_));
     _schedule_event(ev, evd_, left_tail, right_tail);
     if (debug) verify_data_consistency();
-    if (verbose && (evd_->t < INFINITY)) cout << "      scheduled " << ev << " for t=" << evd_->t << endl;
 }
 
 void reschedule_event (event& ev, event_data* evd_, double left_tail, double right_tail)
 {
     assert(evd_ == &ev2data.at(ev));
-    assert (event_is_scheduled(ev, evd_));
+    assert(event_is_scheduled(ev, evd_));
     t2be.erase(evd_->t);
     _schedule_event(ev, evd_, left_tail, right_tail);
-    if (verbose && (evd_->t < INFINITY)) cout << "      rescheduled " << ev << " for t=" << evd_->t << endl;
+    if (debug) verify_data_consistency();
 }
 
 void add_event (event& ev)
@@ -267,11 +262,11 @@ void perform_event (event& ev)
         add_reverse_event(companion_ev);
         // THEN add or remove the link to perform the change:
         if (ec == EC_EST) {
-            if (verbose) cout << " performing companion event: adding inverse link \"" << e2label[e3]
+            if (debug) cout << " performing companion event: adding inverse link \"" << e2label[e3]
                 << " " << rat2label[rat31] << " " << e2label[e1] << "\"" << endl;
             add_link(inv_l);
         } else {
-            if (verbose) cout << " performing companion event: deleting inverse link \"" << e2label[e3]
+            if (debug) cout << " performing companion event: deleting inverse link \"" << e2label[e3]
                 << " " << rat2label[rat31] << " " << e2label[e1] << "\"" << endl;
             del_link(inv_l);
         }
@@ -288,7 +283,6 @@ bool pop_next_event ()
 {
     bool found = false;
     // find next event:
-
     while ((!found) && (current_t < max_t)) {
 
         // get handle of earliest next scheduled event:
@@ -303,6 +297,10 @@ bool pop_next_event ()
         // get corresponding timepoint:
         timepoint t = tev->first;
         if (t >= max_t) { // no events before max_t are scheduled
+            if (!quiet) {
+                if (t < INFINITY) cout << "next event would happen after time limit at t=" << t << endl;
+                else cout << "no further events are scheduled." << endl;
+            }
             // jump to end:
             current_t = max_t;
             return false;
@@ -315,16 +313,14 @@ bool pop_next_event ()
             current_t = t;
         } // otherwise it's an event happening "right now" scheduled formally for a past time to ensure a random order of those events.
 
-        if (ev.e1 < 0) { // event is a purely spontaneous establishment attempt, so has only types specified
+        if (ev.e1 < 0) { // event is the attempt of a summary event, so has only types specified
 
             assert (ev.e3 < 0);
             assert (ev.ec == EC_EST);
 
             event summary_ev = ev;
             entity_type et1 = -summary_ev.e1, et3 = -summary_ev.e3;
-            if (debug) {
-                cout << "at t=" << current_t << " summary event " << summary_ev << " :" << endl;
-            }
+            if (debug) cout << "at t=" << current_t << " summary event " << summary_ev << " :" << endl;
 
             // draw actual entities at random from given types:
             auto e1 = random_entity(et1), e3 = random_entity(et3);

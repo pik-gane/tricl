@@ -31,7 +31,9 @@ void add_or_delete_angle (
 {
     if (debug) cout << "    " << ec2label[ec_angle] << " angle \"" << e2label[e1] << " " << rat2label[rat12] << " "
             << e2label[e2] << " " << rat2label[rat23] << " " << e2label[e3] << "\"" << endl;
-    n_angles += (ec_angle == EC_EST) ? 1 : -1;
+    if ((e1 != e2) && (e2 != e3) && (e3 != e1)) {
+        n_angles += (ec_angle == EC_EST) ? 1 : -1;
+    }
     for (auto& rat13 : ets2relations[{ et1, et3 }]) {
         event_class ec13 = (e2outs[e1].count({ .rat_out = rat13, .e_other = e3 }) == 0) ? EC_EST : EC_TERM;
         event ev = { .ec = ec13, .e1 = e1, .rat13 = rat13, .e3 = e3 };
