@@ -49,7 +49,7 @@ void _schedule_event (event& ev, event_data* evd_, double left_tail, double righ
     auto ar = evd_->attempt_rate;
     if (ar < 0.0) throw "negative attempt rate";
     assert (ar >= 0.0);
-    if (verbose) cout << "    (re)scheduling " << ev << ": ";
+    if (verbose) cout << "         (re)scheduling " << ev << ": ";
     if (ev.e1 >= 0) { // particular event: use effective rate:
         auto spu = evd_->success_probunits;
         if (spu == -INFINITY) {

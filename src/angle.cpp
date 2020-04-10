@@ -59,7 +59,7 @@ void add_or_delete_angle (
                         evd_->success_probunits = dsl;
                         schedule_event(ev, evd_, evt2left_tail.at(evt), evt2right_tail.at(evt));
                     } else {
-                        if (debug) cout << "        event was scheduled already, will be rescheduled" << endl;
+                        if (debug) cout << "        event will be rescheduled" << endl;
                         auto evd_ = &(ev2data.at(ev));
                         evd_->n_angles += 1;
                         evd_->attempt_rate += dar;
@@ -70,7 +70,7 @@ void add_or_delete_angle (
                     auto evd_ = &(ev2data.at(ev));
                     assert (evd_->n_angles > 0);
                     evd_->n_angles -= 1;
-                    evd_->attempt_rate = max(evd_->attempt_rate, evd_->attempt_rate - dar);
+                    evd_->attempt_rate = max(0.0, evd_->attempt_rate - dar);
                     evd_->success_probunits -= dsl;
                     if ((ec13 != EC_TERM) && (evd_->n_angles == 0)) { // only spontaneous non-termination event is left:
                         if (debug) cout << "        last angle was removed, so event will be removed" << endl;
@@ -132,7 +132,7 @@ angles leg_intersection (entity e1, outleg_set& out1, inleg_set& in3, entity e3)
               }
           }
       }
-      if (debug) cout << "         checking " << rat2label[out1_it->rat_out] << " " << e2label[out1_it->e_other] << ", "
+      if (debug) cout << "         checking: " << rat2label[out1_it->rat_out] << " " << e2label[out1_it->e_other] << ", "
               << e2label[in3_it->e_other] << " " << rat2label[in3_it->rat_in] << endl;
       if (out1_it->e_other < in3_it->e_other) {
           ++out1_it;

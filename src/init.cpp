@@ -43,8 +43,8 @@ event_data* current_evd_ = NULL;
 unordered_map<entity_type, vector<entity>> et2es = {};  // kept to equal inverse of e2et
 unordered_map<entity, outleg_set> e2outs = {};
 unordered_map<entity, inleg_set> e2ins = {};
+unordered_map<link_type, long int> lt2n = {};
 long int n_links = 0; // total no. of current (non-id.) links incl. inverse relationships
-
 
 // event data:
 unordered_map<event, event_data> ev2data = {};

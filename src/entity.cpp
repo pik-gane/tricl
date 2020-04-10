@@ -35,7 +35,7 @@ entity add_entity (
 
     // register label:
     if (elabel == "") {
-        elabel = et2label.at(et) + "_" + to_string(e);
+        elabel = et2label.at(et) + " " + to_string(e);
     }
     e2label[e] = elabel;
     label2e[elabel] = e;

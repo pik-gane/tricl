@@ -82,6 +82,7 @@ extern event_data* current_evd_;
 extern unordered_map<entity_type, vector<entity>> et2es;  // kept to equal inverse of v2vt
 extern unordered_map<entity, outleg_set> e2outs;
 extern unordered_map<entity, inleg_set> e2ins;
+extern unordered_map<link_type, long int> lt2n;
 extern long int n_links; // total no. of current (non-id.) links incl. inverse relationships
 extern long int n_angles; // total no. of angles
 // event data:

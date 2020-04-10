@@ -61,8 +61,15 @@ void log_status ()
         ad = na / (ne * ne * ne),
         q = (ld > 0.0) ? ad / ld : 0.0
         ;
-    cout << fixed << n_events << ": ld " << ld << ", ad " << ad << ", q " << q <<
-            ".  t " << current_t << ": " << current_ev << defaultfloat << endl;
+    if (lt2n.size() > 1) {
+        cout << fixed << n_events;
+        for (auto& [lt, n] : lt2n) if (n > 1) cout << " | " << lt << " " << n;
+        cout << endl << "        ld " << ld << ", ad " << ad << ", q " << q <<
+                ".  t " << current_t << ": " << current_ev << defaultfloat << endl;
+    } else {
+        cout << fixed << n_events << ": ld " << ld << ", ad " << ad << ", q " << q <<
+                ".  t " << current_t << ": " << current_ev << defaultfloat << endl;
+    }
 }
 
 void read_links_csv (
