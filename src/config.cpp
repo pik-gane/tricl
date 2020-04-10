@@ -467,8 +467,8 @@ void read_config ()
                                 } else { // same tail index
                                     evt2left_tail[evt] = evt2right_tail[evt] = it3->second.as<double>();
                                 }
-                                if ((!(evt2left_tail[evt]>0.0)) || (!(evt2right_tail[evt]>0.0)) || (!(evt2left_tail[evt]<INFINITY)) || (!(evt2right_tail[evt]<INFINITY))) throw
-                                        "tail indices must be positive finite numbers";
+                                if ((!(evt2left_tail[evt]>=0.0)) || (!(evt2right_tail[evt]>=0.0)) || (!(evt2left_tail[evt]<INFINITY)) || (!(evt2right_tail[evt]<INFINITY))) throw
+                                        "tail indices must be non-negative finite numbers";
                             } else {
                                 throw "keys in map 'success' can be 'tails', 'basic', [~, rel./act.type, ent.type, rel./act.type, ~], [~, rel./act.type, ent.type], or [ent.type, rel./act.type, ~]";
                             }
@@ -568,7 +568,7 @@ void read_config ()
                                 } else { // same tail index
                                     evt2left_tail[evt] = evt2right_tail[evt] = it3->second.as<double>();
                                 }
-                                if ((!(evt2left_tail[evt]>0.0)) || (!(evt2right_tail[evt]>0.0)) || (!(evt2left_tail[evt]<INFINITY)) || (!(evt2right_tail[evt]<INFINITY))) throw
+                                if ((!(evt2left_tail[evt]>=0.0)) || (!(evt2right_tail[evt]>=0.0)) || (!(evt2left_tail[evt]<INFINITY)) || (!(evt2right_tail[evt]<INFINITY))) throw
                                         "tail indices must be positive finite numbers";
                             } else {
                                 throw "keys in map 'success' can be 'tails', 'basic', [~, rel./act.type, ent.type, rel./act.type, ~], [~, rel./act.type, ent.type], or [ent.type, rel./act.type, ~]";

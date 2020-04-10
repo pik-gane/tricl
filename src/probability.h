@@ -22,19 +22,25 @@ extern mt19937 random_variable;
 extern uniform_real_distribution<> uniform;
 extern exponential_distribution<> exponential;
 
+const double scale0 =  1 / 2 / exp(1);
+
 void init_randomness ();
 
 inline double tail2scale(double tail)
 {
-    return 1 / (1 + tail) / pow(1 + log(1 + tail), 1 + 1 / tail) / 2;
+    return (tail == 0) ? scale0 : 1 / (1 + tail) / pow(1 + log(1 + tail), 1 + 1 / tail) / 2;
 }
 
 inline probability probunit2probability (probunit pu, double left_tail, double right_tail)
 {
-    double scale = tail2scale(left_tail) + tail2scale(right_tail);
-    return (1 / pow(1 + log(1 + left_tail * exp(- pu / scale)), 1 / left_tail)
-            + 1
-            - 1 / pow(1 + log(1 + right_tail * exp(pu / scale)), 1 / right_tail) ) / 2;
+    if ((left_tail == 0) && (right_tail == 0)) {
+        return 1 / (1 + exp(-pu));
+    } else {
+        double scale = tail2scale(left_tail) + tail2scale(right_tail);
+        return (1 / pow(1 + log(1 + left_tail * exp(- pu / scale)), 1 / left_tail)
+                + 1
+                - 1 / pow(1 + log(1 + right_tail * exp(pu / scale)), 1 / right_tail) ) / 2;
+    }
 }
 
 inline rate effective_rate (rate attempt_rate, probunit success_probunit, double left_tail, double right_tail)
