@@ -1,0 +1,48 @@
+metadata:
+    name: SI epidemiological model
+    description: 
+    author: Jobst Heitzig
+    date: 10 April 2020
+    email: heitzig@pik-potsdam.de
+
+files:
+    gexf: si.gexf
+
+limits:
+    t: .inf
+    events: 5000
+
+options:
+    quiet: false
+    verbose: false
+    debug: false
+
+entities:
+    infected:
+        - infected  # this entity represents the state of being infected and has its own entity type
+    agent: 1000
+
+relationship types:
+    regularly meets: symmetric  # the social tie that enables mutual infection
+    is: ~  # used in "<agent> is infected"
+
+initial links: 
+  random:
+    [agent, regularly meets, agent]:
+        dimension: 2  # planar embedding
+        decay: 20.0  # characteristic range of influence is 1/20 of the diameter of the territory
+
+dynamics:  # all values default to 0.0 (only tail indices default to 1.0)
+    [agent, is, infected]:
+        terminate:  # recovery is independent of social ties
+            attempt:
+                basic: 1.0  # the recovery rate sets the time scale
+            success: 
+                basic: .inf
+        establish:  # infection
+            attempt:
+                basic: 0.001  # rare initial infection from outside the network
+                [agent, regularly meets, agent, is, infected]: 0.1  # VARY: transmission rate
+            success:
+                basic: .inf
+

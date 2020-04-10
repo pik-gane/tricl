@@ -258,9 +258,9 @@ void read_config ()
                 auto rat = label2rat.at(lt[1].as<string>());
                 auto spec = it1->second;
                 if (!spec.IsMap()) throw "values in yaml map 'named' of 'initial links' must be maps";
-                if (spec["density"]) { // Erdös-Renyi random graph, treated as block model with one block
-                    auto pw = spec["density"].as<probability>();
-                    if (!((0.0 <= pw) && (pw <= 1.0))) throw "'density' must be between 0.0 and 1.0";
+                if (spec["density"] || spec["probability"]) { // Erdös-Renyi random graph, treated as block model with one block
+                    auto pw = (spec["density"] ? spec["density"] : spec["probability"]).as<probability>();
+                    if (!((0.0 <= pw) && (pw <= 1.0))) throw "'density'/'probability' must be between 0.0 and 1.0";
     //                auto rate = spec["rate"] ? spec["rate"].as<float>() : 1.0; // TODO: for action types
                     et2n_blocks[et1] = et2n_blocks[et3] = 1;
                     lt2initial_prob_within[{et1, rat, et3}] = pw;

@@ -62,10 +62,15 @@ void log_status ()
         q = (ld > 0.0) ? ad / ld : 0.0
         ;
     if (lt2n.size() > 1) {
-        cout << fixed << n_events;
-        for (auto& [lt, n] : lt2n) if (n > 1) cout << " | " << lt << " " << n;
-        cout << endl << "        ld " << ld << ", ad " << ad << ", q " << q <<
-                ".  t " << current_t << ": " << current_ev << defaultfloat << endl;
+        cout << endl << fixed << n_events;
+        for (auto& [lt, n] : lt2n) {
+            auto rat13 = lt.rat13, rat31 = rat2inv.at(rat13);
+            if ((n > 0) && ((rat31 == NO_RAT) || (rat31 >= rat13))) {
+                cout << " | " << n << " " << lt;
+            }
+        }
+        cout << " | stats: ld " << ld << ", ad " << ad << ", q " << q << endl
+                << "at t=" << current_t << " " << current_ev << defaultfloat << endl;
     } else {
         cout << fixed << n_events << ": ld " << ld << ", ad " << ad << ", q " << q <<
                 ".  t " << current_t << ": " << current_ev << defaultfloat << endl;

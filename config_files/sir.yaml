@@ -1,0 +1,91 @@
+metadata:
+    name: SIR epidemiological model
+    description: 
+    author: Jobst Heitzig
+    date: 10 April 2020
+    email: heitzig@pik-potsdam.de
+
+files:
+    gexf: sir.gexf
+
+limits:
+    t: .inf
+    events: 100000
+
+options:
+    quiet: false
+    verbose: false
+    debug: false
+
+
+entities:
+
+    # first list entity types and entities representing possible epidemiological states an agent can be in.
+    # each agent will be linked to exactly one of these entities, or to none of them if in state "susceptible". 
+    infectious:
+        - infectious  # this entity represents the state of being infectious and has its own entity type
+    recovered:
+        - recovered  # this entity represents the state of being recovered and has its own entity type
+
+    # then list the other (regular) entity types:
+    agent: 
+        n: 1000
+        named:
+            - patient zero  # the first infected one
+
+
+relationship types:
+
+    regularly meets: symmetric  # the social tie that enables mutual infection
+    is: ~  # used in "<agent> is <state entity>"
+    may lead to: ~  # used in "<state> may lead to <state>"
+    is incompatible with: symmetric  # used in "<state> is incompatible with <state>"
+
+initial links: 
+
+    named:
+        # here we list the possible transitions between states:
+        - [infectious, may lead to, recovered]
+        - [infectious, is incompatible with, recovered]
+
+        # and here some initial states (if any):
+        - [patient zero, is, infectious]
+
+    random:
+        [agent, regularly meets, agent]:
+            dimension: 2  # planar embedding
+            decay: 20.0  # characteristic range of influence is 1/10 of the diameter of the territory
+
+
+dynamics:
+
+    # the transition between states is modeled as follows:
+    # when i is linked to some state A and A may lead to B, i it may get linked to B.
+    # when i is linked to both A and B, one of the two links will break immediately because they are mutually incompatible.
+    # since the latter occurs for both links with probability 1/2, the resulting transition rate equals half the attempt rate.
+    # hence one must specify twice the desired transition rate as the attempt rate. 
+
+    [agent, is, infectious]:
+        establish:  # infection
+            attempt:
+#                basic: 0.001  # rare initial infection from outside the network
+                [agent, regularly meets, agent, is, infectious]: 0.1  # transmission rate of infection by transmission (VARY!)
+            success: .inf  # if only one number is specified, it is the "basic" success probunits
+        terminate:  # this link will only be terminated when a link to "recovered" exists:
+            attempt:
+                [agent, is, recovered, is incompatible with, infectious]: .inf  # -> one of the two links breaks immediately, each with probability 1/2 
+            success: .inf
+
+    [agent, is, recovered]:
+        establish:  # recovery
+            attempt:
+                [agent, is, infectious, may lead to, recovered]: 1.0  # = recovery rate 0.5 times two 
+                    # this is twice (!) the rate of transition from infectious to recovered (VARY!) 
+                    # twice because with probability 1/2 the established link will break away again immediately
+                    # and with the other 1/2 probability the previous link to "infectious" will break away instead. 
+            success: .inf
+        terminate:  # this link will only be terminated when a link to "infectious" exists:
+            attempt:
+                [agent, is, infectious, is incompatible with, recovered]: .inf  # -> one of the two links breaks immediately, each with probability 1/2 
+            success: .inf
+
