@@ -50,7 +50,10 @@ void _schedule_event (event& ev, event_data* evd_, double left_tail, double righ
     if (ar < 0.0) throw "negative attempt rate";
     assert (ar >= 0.0);
     if (verbose) cout << "         (re)scheduling " << ev << ": ";
-    if (ev.e1 >= 0) { // particular event: use effective rate:
+    if (event_is_summary(ev)) { // summary event: use only attempt rate (success will be tested in pop_next_event):
+        t = current_t + exponential(random_variable) / (ar * ev2max_sp[ev]);
+        if (verbose) cout << "summary event, attempt rate " << ar << " → attempt at t=" << t << ", test success then" << endl;
+    } else { // particular event: use effective rate:
         auto spu = evd_->success_probunits;
         if (spu == -INFINITY) {
             t = INFINITY;
@@ -66,9 +69,6 @@ void _schedule_event (event& ev, event_data* evd_, double left_tail, double righ
             t = current_t - uniform(random_variable);
             if (verbose) cout << "inf. attempt rate, success probability > 0 → \"immediate\" t=" << t << endl;
         }
-    } else { // summary event: use only attempt rate (success will be tested in pop_next_event):
-        t = current_t + exponential(random_variable) / ar;
-        if (verbose) cout << "summary event, attempt rate " << ar << " → attempt at t=" << t << ", test success then" << endl;
     }
     if (t == INFINITY) {
         // replace INFINITY by some unique finite but non-reached time point:
@@ -103,12 +103,12 @@ void add_event (event& ev)
     auto et1 = _e2et[E(e1)], et3 = _e2et[E(e3)];
     event_type evt = { .ec = ec, .et1 = et1, .rat13 = rat13, .et3 = et3 };
 
-    if (evt2base_probunit.count(evt) > 0) { // event can happen at all:
+    if (evt2base_probunits.count(evt) > 0) { // event can happen at all:
 
         if (debug) cout << "     adding event: " << ev << endl;
         // find and store attempt rate and success probunit by looping through adjacent legs and angles:
         rate ar = 0.0;
-        auto spu = evt2base_probunit[evt];
+        auto spu = evt2base_probunits[evt];
         auto outs1 = e2outs[e1];
         auto ins3 = e2ins[e3];
         // legs:
@@ -160,7 +160,7 @@ void add_event (event& ev)
             spu += _inflt2delta_probunit[INFLT(inflt)];
             assert (ev2data.count(ev) == 0);
             ev2data[ev] = { .n_angles = na, .attempt_rate = max(0.0, ar), .success_probunits = spu, .t = -INFINITY };
-            if (debug) cout << "      attempt rate " << ar << ", success prob. " << probunit2probability(spu, evt2left_tail.at(evt), evt2right_tail.at(evt)) << endl;
+            if (debug) cout << "      attempt rate " << ar << ", success prob. " << probunits2probability(spu, evt2left_tail.at(evt), evt2right_tail.at(evt)) << endl;
             schedule_event(ev, &ev2data[ev], evt2left_tail.at(evt), evt2right_tail.at(evt));
             if (debug) verify_angle_consistency();
         } else {
@@ -313,13 +313,10 @@ bool pop_next_event ()
             current_t = t;
         } // otherwise it's an event happening "right now" scheduled formally for a past time to ensure a random order of those events.
 
-        if (ev.e1 < 0) { // event is the attempt of a summary event, so has only types specified
-
-            assert (ev.e3 < 0);
-            assert (ev.ec == EC_EST);
+        if (event_is_summary(ev)) { // event is the attempt of a summary event, so has only types specified
 
             event summary_ev = ev;
-            entity_type et1 = -summary_ev.e1, et3 = -summary_ev.e3;
+            entity_type et1 = summary_et1(summary_ev), et3 = summary_et3(summary_ev);
             if (debug) cout << "at t=" << current_t << " summary event " << summary_ev << " :" << endl;
 
             // draw actual entities at random from given types:
@@ -339,17 +336,21 @@ bool pop_next_event ()
                     if (verbose) cout << "at t=" << current_t << " " << actual_ev << " is scheduled separately at t=" << ev2data.at(actual_ev).t << ", so not performed now." << endl;
                 } else { // check if attempt succeeds
                     // compile success units:
-                    auto spu = evt2base_probunit.at(evt);
+                    auto spu = evt2base_probunits.at(evt);
                     for (auto& [rat12, e2] : e2outs[e1]) {
                         influence_type inflt = { .evt = evt, .at = { .rat12 = rat12, .et2 = _e2et[E(e2)], .rat23 = NO_RAT } };
-                        if (inflt2delta_probunit.count(inflt) > 0) spu += inflt2delta_probunit.at(inflt);
+                        if (inflt2delta_probunits.count(inflt) > 0) spu += inflt2delta_probunits.at(inflt);
                     }
                     for (auto& [e2, rat23] : e2ins[e3]) {
                         influence_type inflt = { .evt = evt, .at = { .rat12 = NO_RAT, .et2 = _e2et[E(e2)], .rat23 = rat23 } };
-                        if (inflt2delta_probunit.count(inflt) > 0) spu += inflt2delta_probunit.at(inflt);
+                        if (inflt2delta_probunits.count(inflt) > 0) spu += inflt2delta_probunits.at(inflt);
                     }
+                    // since the scheduling rate already contained the factor ev2max_sp[ev],
+                    // we need to divide the success probability by it here:
+                    probability conditional_success_probability =
+                            probunits2probability(spu, evt2left_tail.at(evt), evt2right_tail.at(evt)) / ev2max_sp[ev];
                     // check if success:
-                    if (uniform(random_variable) < probunit2probability(spu, evt2left_tail.at(evt), evt2right_tail.at(evt))) { // success
+                    if (uniform(random_variable) < conditional_success_probability) { // success
                         // "return" event:
                         current_ev = actual_ev;
                         if (!quiet) log_status();

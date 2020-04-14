@@ -31,7 +31,7 @@ inline double tail2scale(double tail)
     return (tail == 0) ? scale0 : 1 / (1 + tail) / pow(1 + log(1 + tail), 1 + 1 / tail) / 2;
 }
 
-inline probability probunit2probability (probunit pu, double left_tail, double right_tail)
+inline probability probunits2probability (probunits pu, double left_tail, double right_tail)
 {
     if ((left_tail == 0) && (right_tail == 0)) {
         return 1 / (1 + exp(-pu));
@@ -43,9 +43,9 @@ inline probability probunit2probability (probunit pu, double left_tail, double r
     }
 }
 
-inline rate effective_rate (rate attempt_rate, probunit success_probunit, double left_tail, double right_tail)
+inline rate effective_rate (rate attempt_rate, probunits success_pus, double left_tail, double right_tail)
 {
-    rate r = attempt_rate * probunit2probability(success_probunit, left_tail, right_tail);
+    rate r = attempt_rate * probunits2probability(success_pus, left_tail, right_tail);
     assert (r >= 0);
     return r;
 }

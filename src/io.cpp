@@ -12,6 +12,7 @@
 #include "data_model.h"
 #include "global_variables.h"
 #include "entity.h"
+#include "event.h"
 #include "io.h"
 
 using namespace std;
@@ -32,11 +33,11 @@ ostream& operator<< (ostream& os, const event_type& evt) {
 }
 
 ostream& operator<< (ostream& os, const event& ev) {
-    if (ev.e1 < 0) {
+    if (event_is_summary(ev)) {
         os << ec2label[ev.ec]
-                << " some " << et2label[-ev.e1]
+                << " some " << et2label[summary_et1(ev)]
                 << " " << rat2label[ev.rat13] << " some "
-                << et2label[-ev.e3];
+                << et2label[summary_et3(ev)];
     } else {
         os << ec2label[ev.ec]
                 << " " << e2label[ev.e1]
@@ -59,7 +60,7 @@ void log_status ()
         na = (double) n_angles,
         ld = nl / (ne * ne),
         ad = na / (ne * ne * ne),
-        q = (ld > 0.0) ? ad / ld : 0.0
+        q = (ld > 0.0) ? ad / (ld*ld) : 0.0
         ;
     if (lt2n.size() > 1) {
         cout << endl << fixed << n_events;
@@ -145,5 +146,4 @@ void dump_data () // dump important data to stdout for debugging
     cout << "ev2data:" << endl;
     for (auto& [ev2, evd2] : ev2data) cout << " " << ev2 << ": " << evd2 << endl;
 }
-
 

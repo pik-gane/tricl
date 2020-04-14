@@ -31,17 +31,16 @@ void add_or_delete_angle (
 {
     if (debug) cout << "    " << ec2label[ec_angle] << " angle \"" << e2label[e1] << " " << rat2label[rat12] << " "
             << e2label[e2] << " " << rat2label[rat23] << " " << e2label[e3] << "\"" << endl;
-    if ((e1 != e2) && (e2 != e3) && (e3 != e1)) {
-        n_angles += (ec_angle == EC_EST) ? 1 : -1;
-    }
+    // update total n_angles:
+    n_angles += ((e1 == e2) || (e2 == e3) || (e3 == e1)) ? 0 : (ec_angle == EC_EST) ? 1 : -1;
     for (auto& rat13 : ets2relations[{ et1, et3 }]) {
         event_class ec13 = (e2outs[e1].count({ .rat_out = rat13, .e_other = e3 }) == 0) ? EC_EST : EC_TERM;
-        event ev = { .ec = ec13, .e1 = e1, .rat13 = rat13, .e3 = e3 };
         event_type evt = { .ec = ec13, .et1 = et1, .rat13 = rat13, .et3 = et3 };
         if (debug) cout << "     possibly updating event: " << ec2label[ec13] <<  " \"" << e2label[e1] << " " << rat2label[rat13] << " " << e2label[e3] << "\"" << endl;
-        if (evt2base_probunit.count(evt) > 0) {
+        if (evt2base_probunits.count(evt) > 0) {
+            event ev = { .ec = ec13, .e1 = e1, .rat13 = rat13, .e3 = e3 };
             if (debug) cout << "      event type " << evt << " has a base success prob. of "
-                    << probunit2probability(evt2base_probunit.at(evt), evt2left_tail.at(evt), evt2right_tail.at(evt)) << endl;
+                    << probunits2probability(evt2base_probunits.at(evt), evt2left_tail.at(evt), evt2right_tail.at(evt)) << endl;
             influence_type inflt = {
                     .evt = evt,
                     .at = { .rat12 = rat12, .et2 = et2, .rat23 = rat23 }

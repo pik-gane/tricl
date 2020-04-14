@@ -24,13 +24,13 @@
  */
 
 // DEBUG or RELEASE mode?
-// for debug mode comment the following line, for release mode leave it uncommented it:
+// for debug mode comment the following line, for release mode leave it uncommented:
 //#define NDEBUG
 
 /** TODO:
  *
  * model capabilities:
- * - allow legs to influence success prob. of establishment (add event preclasses EC_A_EST, EC_A_ACT for attempts)
+ * - allow legs to influence success prob. of establishment
  * - allow legs to attempt establishment
  * - add acts
  *
@@ -41,7 +41,7 @@
  * - add particle filtering mode
  *
  * network theory stuff:
- * - output clustering coefficient(s)
+ * - output triangle counts clustering coefficient(s)
  * - add more random network models
  *
  * convenience:

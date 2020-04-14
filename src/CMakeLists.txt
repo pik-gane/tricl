@@ -9,6 +9,7 @@ add_executable(tricl
     event.cpp
     config.cpp 
     io.cpp 
+    graphviz.cpp
     gexf.cpp 
     init.cpp
     simulate.cpp

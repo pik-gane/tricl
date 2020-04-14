@@ -7,6 +7,7 @@ metadata:
 
 files:
     gexf: sir.gexf
+    diagram prefix: sir
 
 limits:
     t: .inf

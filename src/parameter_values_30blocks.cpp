@@ -129,14 +129,14 @@ unordered_map<influence_type, rate> inflt2attempt_rate = {
 };
 
 // basic success probability units:
-unordered_map<event_type, probunit> evt2base_probunit = {
+unordered_map<event_type, probunits> evt2base_probunits = {
 //      { { ec, et1, rat13, et3 }, p },
         { { EC_EST, 1, 2, 1 }, INFINITY },
         { { EC_TERM, 1, 2, 1 }, 0 },
 };
 
 // change in success probability units:
-unordered_map<influence_type, probunit> inflt2delta_probunit = {
+unordered_map<influence_type, probunits> inflt2delta_probunits = {
 //      { { { ec, et1, rat13, .et3 }, { rat12, et2, rat23 } }, pu }  // additional probunits due to an angle from e1 to e3
 //      { { { ec, et1, rat13, .et3 }, { rat12, et2, NO_RAT } }, pu }  // additional probunits due to an out-leg at e1
 //      { { { ec, et1, rat13, .et3 }, { NO_RAT, et2, rat23 } }, pu }  // additional probunits due to an in-leg at e3

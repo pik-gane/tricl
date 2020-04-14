@@ -15,6 +15,7 @@
 #include "entity.h"
 #include "link.h"
 #include "event.h"
+#include "graphviz.h"
 #include "gexf.h"
 #include "init.h"
 #include "io.h"
@@ -24,18 +25,18 @@ using namespace std;
 // parameters:
 int n_rats = 0; // total no. of rats
 rate _inflt2attempt_rate[MAX_N_INFLT];
-probunit _inflt2delta_probunit[MAX_N_INFLT];
+probunits _inflt2delta_probunit[MAX_N_INFLT];
 entity_type _e2et[MAX_N_E];
 
 // derived constants:
 set<entity> es;
 unordered_map<entity_type_pair, set<relationship_or_action_type>> ets2relations;  // possible relations
+unordered_map<event, rate> ev2max_sp; // max possible effective rate of summary events
 
 // variable data:
 
 timepoint current_t = 0;
 long int n_events = 0;
-long int n_angles = 0;
 event current_ev = {};
 event_data* current_evd_ = NULL;
 
@@ -44,7 +45,7 @@ unordered_map<entity_type, vector<entity>> et2es = {};  // kept to equal inverse
 unordered_map<entity, outleg_set> e2outs = {};
 unordered_map<entity, inleg_set> e2ins = {};
 unordered_map<link_type, long int> lt2n = {};
-long int n_links = 0; // total no. of current (non-id.) links incl. inverse relationships
+long int n_links = 0, n_angles = 0;
 
 // event data:
 unordered_map<event, event_data> ev2data = {};
@@ -68,7 +69,7 @@ void init_data ()
         assert (!( inflt.evt.ec == EC_EST && ( inflt.at.rat12 == NO_RAT || inflt.at.rat23 == NO_RAT ) && !(inflt.at == NO_ANGLE)));
         _inflt2attempt_rate[INFLT(inflt)] = ar;
     }
-    for (auto& [inflt, spu] : inflt2delta_probunit) {
+    for (auto& [inflt, spu] : inflt2delta_probunits) {
         assert (!( inflt.evt.ec == EC_EST && ( inflt.at.rat12 == NO_RAT || inflt.at.rat23 == NO_RAT ) ));
         _inflt2delta_probunit[INFLT(inflt)] = spu;
     }
@@ -149,13 +150,14 @@ void init_relationship_or_action_types ()
 
     // register possible relationship types by entity type pair, and compute probunits:
     cout << " base success probabilities:" << endl;
-    for (auto& [evt, pu] : evt2base_probunit) {
+    for (auto& [evt, pu] : evt2base_probunits) {
         auto rat13 = evt.rat13;
         assert (rat13 != RT_ID);
         entity_type_pair ets = { evt.et1, evt.et3 };
         if (ets2relations.count(ets) == 0) ets2relations[ets] = {};
         ets2relations[ets].insert(rat13);
-        cout << "  " << evt << ": " << probunit2probability(pu, evt2left_tail.at(evt), evt2right_tail.at(evt)) << endl;
+        lt2n[{evt.et1, rat13, evt.et3}] = 0;
+        cout << "  " << evt << ": " << probunits2probability(pu, evt2left_tail.at(evt), evt2right_tail.at(evt)) << endl;
     }
 
     n_rats = rat2label.size();
@@ -168,7 +170,7 @@ void init_summary_events ()
     for (auto& [ets, relations] : ets2relations) {
         auto et1 = ets.et1, et3 = ets.et3;
         for (auto& rat13 : relations) {
-            event ev = { .ec = EC_EST,
+            event summary_ev = { .ec = EC_EST,
                     .e1 = (entity)-et1, // in spontaneous events, fields e1 and e3 are used to store entity types with negative sign
                     .rat13 = rat13,
                     .e3 = (entity)-et3 };
@@ -176,11 +178,21 @@ void init_summary_events ()
             influence_type inflt = { .evt = evt, .at = NO_ANGLE };
             auto ar = _inflt2attempt_rate[INFLT(inflt)];
             if (ar > 0) {
+                // compile maximal success units. if no influences can increase the success units,
+                // this equals the base_probunits, otherwise it is infinite:
+                probunits max_spu = evt2base_probunits.at(evt);
+                for (auto& [inflt, pu] : inflt2delta_probunits) {
+                    if ((inflt.evt == evt) && (pu > 0.0)) {
+                        max_spu = INFINITY;
+                        break;
+                    }
+                }
+                ev2max_sp[summary_ev] = probunits2probability(max_spu, evt2left_tail.at(evt), evt2right_tail.at(evt));
                 if (verbose) cout << "  " << et2label[et1] << " " << rat2label[rat13] << " " << et2label[et3] << endl;
-                ev2data[ev] = { .n_angles = 0,
+                ev2data[summary_ev] = { .n_angles = 0,
                         .attempt_rate = ar * et2n[et1] * et2n[et3],
-                        .success_probunits = evt2base_probunit[evt] + _inflt2delta_probunit[INFLT(inflt)] };
-                schedule_event(ev, &ev2data[ev], evt2left_tail.at(evt), evt2right_tail.at(evt));
+                        .success_probunits = evt2base_probunits[evt] + _inflt2delta_probunit[INFLT(inflt)] };
+                schedule_event(summary_ev, &ev2data[summary_ev], evt2left_tail.at(evt), evt2right_tail.at(evt));
             }
         }
     }
@@ -274,6 +286,7 @@ void init ()
     init_summary_events();
     init_links();
     init_gexf();
+    do_graphviz_diagrams();
     if (debug) {
         dump_data();
         verify_data_consistency();

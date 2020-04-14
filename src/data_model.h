@@ -46,7 +46,7 @@ typedef int entity; // actual entities >= 0. can be used to store entity types a
 
 typedef double timepoint;
 typedef double rate;
-typedef double probunit;
+typedef double probunits;
 typedef double probability;
 
 enum event_class { EC_EST, EC_TERM, EC_ACT };
@@ -247,7 +247,7 @@ struct event_data
 {
     int n_angles = 0;
     rate attempt_rate;
-    probunit success_probunits;
+    probunits success_probunits;
     timepoint t = -INFINITY;
 
     friend ostream& operator<<(ostream& os, const event_data& evd);
