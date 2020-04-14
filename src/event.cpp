@@ -107,7 +107,7 @@ void add_event (event& ev)
 
         if (debug) cout << "     adding event: " << ev << endl;
         // find and store attempt rate and success probunit by looping through adjacent legs and angles:
-        rate ar = 0.0;
+        rate ar = inflt2attempt_rate[{evt, NO_ANGLE}];
         auto spu = evt2base_probunits[evt];
         auto outs1 = e2outs[e1];
         auto ins3 = e2ins[e3];

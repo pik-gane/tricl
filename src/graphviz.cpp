@@ -87,7 +87,7 @@ void do_graphviz_dynamics_diagram ()
             if (spu != 0.0) dot << ", SPU " << ((spu > 0.0) ? "+" : "") << spu;
             dot << "\"; style=bold]" << endl;
             for (auto& [inflt, ar] : inflt2attempt_rate) {
-                if (inflt.evt == evt) {
+                if ((inflt.evt == evt) && (!(inflt.at == NO_ANGLE))) {
                     auto rat12 = inflt.at.rat12, rat23 = inflt.at.rat23;
                     auto et2 = inflt.at.et2;
                     string v2 = subsub + "_" + to_string(rat12) + "_" + to_string(et2) + "_" + to_string(rat23);

@@ -1,0 +1,100 @@
+metadata:
+    name: Granovetter simple micromodel 
+    description: 
+        simple implementation of Wiedermann's micro-version 
+        of the Granovetter model
+    author: Jobst Heitzig
+    date: 14 April 2020
+    email: heitzig@pik-potsdam.de
+
+files:
+    gexf: granovetter_simple.gexf
+    diagram prefix: granovetter_simple
+
+limits:
+    t: 100.0
+    events: 10000 # use an even number since events come in pairs in this model
+
+options:
+    quiet: false
+    verbose: false
+    debug: false
+    seed: 0
+
+entities:
+
+    # regular entity types:
+    agent: 1000
+
+    # single-entity types:
+    active:
+        - active
+
+relationship types:
+    knows: symmetric
+    is always: ~
+    is never: ~
+    is: ~
+    is not: ~
+
+initial links: 
+    random:
+        [agent, knows, agent]:
+            dimension: 2  # random geometric
+            decay: 15.0
+        [agent, is always, active]:
+            probability: 0.25  # share of certainly actives ("a" in the paper)
+        [agent, is never, active]:
+            probability: 0.15 / (1 - 0.25)  
+                # share of certainly inactives divided by 1-a 
+                # (since a share of  a  of these will switch to certainly active at t=0 
+                # to avoid overlap between the two groups, see below) 
+        [agent, is not, active]:
+            probability: 1.0  # but this will change immediately for the certainly actives at time 0
+
+dynamics:
+
+    [agent, is, active]:
+        establish:
+            attempt:
+                base: 1.0 *2  # twice (!) the individual rate of "updating" (since only half the updates succeed)
+                [agent, =, agent, is always, active]: inf
+            success:
+                tails: 0  # -> use expit sigmoid function
+                base: +5
+                [agent, knows, agent, is, active]: +20
+                [agent, knows, agent, is not, active]: -10
+                # -> for every active nb. we need two inactive nbs. to get the success units to +5
+                # -> when at least than a share of 10/(10+40) = 1/5 of nbs is active, 
+                #    the success units are >= +5, hence the probability approx. 1,
+                #    when less than 1/5 are active, success units are <= -5, hence prob. approx 0
+                # -> threshold for becoming active is 1/5 actives
+        terminate:
+            attempt:
+                [agent, =, agent, is not, active]: inf
+
+    [agent, is not, active]:
+        establish:
+            attempt:
+                base: 1.0 *2  # twice (!) the individual rate of "updating" (since only half the updates succeed)
+                [agent, =, agent, is never, active]: inf
+            success:
+                tails: 0  # -> use expit sigmoid function
+                base: +5
+                [agent, knows, agent, is not, active]: +30
+                [agent, knows, agent, is, active]: -20
+                # -> for every two inactive nb. we need three active nbs. to get the success units to +5
+                # -> when at least than a share of 20/(20+30) = 2/5 of nbs is inactive, 
+                #    the success units are >= +5, hence the probability approx. 1,
+                #    when less than 2/5 are inactive, success units are <= -5, hence prob. approx 0
+                # -> threshold for stopping to be active is 2/5 inactives
+        terminate:
+            attempt:
+                [agent, =, agent, is, active]: inf
+
+    # this only ensures that at t=0, those who have randomly been deemed both
+    # certainly active and certainly inactive switch to certainly active:
+    [agent, is never, active]:
+        terminate:
+            attempt:
+                [agent, =, agent, is always, active]: inf

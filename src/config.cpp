@@ -9,10 +9,15 @@
  * @file
  */
 
+/*
+ * TODO:
+ * - allow expressions as numerical values, e.g. 2*3.0
+ */
 #include <limits.h>
 #include <math.h>
 #include <iostream>
 #include "yaml-cpp/yaml.h"
+#include "3rdparty/tinyexpr.h"
 
 #include "data_model.h"
 #include "global_variables.h"
@@ -61,6 +66,15 @@ unordered_map<relationship_or_action_type, int> rat2gexf_r = {}, rat2gexf_g = {}
 
 entity max_e = 0;
 
+static double myinf(void) {return INFINITY;}
+te_variable te_vars[] = {
+    {"inf", (const void*)myinf, TE_FUNCTION0}
+};
+double parse_double (string expr)
+{
+    return te_eval(te_compile(expr.c_str(), te_vars, 1, 0));
+}
+
 void read_entity_labels (YAML::Node n, entity_type et)
 {
     for (YAML::const_iterator it3 = n.begin(); it3 != n.end(); ++it3) {
@@ -94,8 +108,8 @@ void read_config ()
     n = c["limits"];
     if (!n.IsMap()) throw "yaml field 'limits' must be a map";
     if (n["t"]) max_t = n["t"].as<timepoint>();
-    if (n["events"]) max_n_events = floor(n["events"].as<double>());
-    // max_wall_time = n["wall"] ? n["wall"].as<float>() : INFINITY;
+    if (n["events"]) max_n_events = floor(parse_double(n["events"].as<string>()));
+    // max_wall_time = n["wall"] ? n["wall"].as<double>() : INFINITY;
     if ((max_t==INFINITY) && (max_n_events==LONG_MAX)) throw
             "must specify at least one of limits:t, limits:events";
 
@@ -243,7 +257,7 @@ void read_config ()
                 auto rat13 = label2rat.at(rat13label);
                 initial_links.insert({ e1, rat13, e3 });
                 if (r_is_action_type[rat13]) {
-//                float impact = (*it)[3].as<float>(); // TODO: use!!
+//                float impact = (*it)[3].as<double>(); // TODO: use!!
                 }
             } catch (const std::exception&) {
                 throw "some entity or the relationship or action type was not declared";
@@ -267,9 +281,9 @@ void read_config ()
                 auto spec = it1->second;
                 if (!spec.IsMap()) throw "values in yaml map 'named' of 'initial links' must be maps";
                 if (spec["density"] || spec["probability"]) { // Erdös-Renyi random graph, treated as block model with one block
-                    auto pw = (spec["density"] ? spec["density"] : spec["probability"]).as<probability>();
+                    auto pw = parse_double((spec["density"] ? spec["density"] : spec["probability"]).as<string>());
                     if (!((0.0 <= pw) && (pw <= 1.0))) throw "'density'/'probability' must be between 0.0 and 1.0";
-    //                auto rate = spec["rate"] ? spec["rate"].as<float>() : 1.0; // TODO: for action types
+    //                auto rate = spec["rate"] ? spec["rate"].as<double>() : 1.0; // TODO: for action types
                     et2n_blocks[et1] = et2n_blocks[et3] = 1;
                     lt2initial_prob_within[{et1, rat, et3}] = pw;
                     lt2initial_prob_between[{et1, rat, et3}] = 0.0;
@@ -277,8 +291,8 @@ void read_config ()
                     if (et1 == et3) { // symmetric block model
                         auto n = spec["blocks"].as<int>();
                         // TODO: allow list of "sizes"
-                        auto pw = spec["within"] ? spec["within"].as<probability>() : 1.0;
-                        auto pb = spec["between"] ? spec["between"].as<probability>() : 0.0;
+                        auto pw = spec["within"] ? parse_double(spec["within"].as<string>()) : 1.0;
+                        auto pb = spec["between"] ? parse_double(spec["between"].as<string>()) : 0.0;
                         if (!(n > 0)) throw "'n' must be positive";
                         if (!((0.0 <= pw) && (pw <= 1.0))) throw "'within' must be between 0.0 and 1.0";
                         if (!((0.0 <= pb) && (pb <= 1.0))) throw "'between' must be between 0.0 and 1.0";
@@ -293,7 +307,7 @@ void read_config ()
                     // TODO: make sure no conflicts between several spatial models for same entity types!
                     auto dim = spec["dimension"].as<int>();
                     // TODO: allow list of "widths"
-                    auto dec = spec["decay"] ? spec["decay"].as<double>() : 1.0;
+                    auto dec = spec["decay"] ? parse_double(spec["decay"].as<string>()) : 1.0;
                     if (!(dim > 0)) throw "'dimension' must be positive";
                     if (!(dec > 0.0)) throw "'decay' must be positive";
                     et2dim[et1] = et2dim[et3] = dim;
@@ -393,11 +407,11 @@ void read_config ()
                         evt2base_probunits[evt] = 0.0;
                         if (!n3.IsMap()) {
                             if (!n3.IsScalar()) throw "yaml field 'attempt' within 'dynamics' must be a scalar (base attempt rate) or a map";
-                            inflt2attempt_rate[{ evt, NO_ANGLE }] = n3.as<probunits>();
+                            inflt2attempt_rate[{ evt, NO_ANGLE }] = parse_double(n3.as<string>());
                         } else {
                             for (YAML::const_iterator it3 = n3.begin(); it3 != n3.end(); ++it3) {
                                 auto cause = it3->first;
-                                auto ar = it3->second.as<rate>();
+                                auto ar = parse_double(it3->second.as<string>());
                                 if (!(ar >= 0.0)) throw "values in map 'attempt' must be non-negative";
                                 entity_type et2;
                                 relationship_or_action_type rat12, rat23;
@@ -439,14 +453,14 @@ void read_config ()
                     if (n3) {
                         if (!n3.IsMap()) {
                             if (!n3.IsScalar()) throw "yaml field 'success' within 'dynamics' must be a scalar (base probunits) or a map";
-                            evt2base_probunits[{ ec, et1, rat13, et3 }] = n3.as<probunits>();
+                            evt2base_probunits[{ ec, et1, rat13, et3 }] = parse_double(n3.as<string>());
                         } else {
                             for (YAML::const_iterator it3 = n3.begin(); it3 != n3.end(); ++it3) {
                                 auto cause = it3->first;
                                 entity_type et2;
                                 relationship_or_action_type rat12, rat23;
                                 if (cause.IsSequence()) {
-                                    auto pu = it3->second.as<probunits>();
+                                    auto pu = parse_double(it3->second.as<string>());
                                     if (cause.size() == 5) { // angle
                                         if (!((cause[0].IsNull() || (cause[0].as<string>() == et1l)) && (cause[4].IsNull() || (cause[4].as<string>() == et3l)))) throw
                                                 "keys in map 'success' can be 'basic'/'base', [~, rel./act.type, ent.type, rel./act.type, ~], [~, rel./act.type, ent.type], or [ent.type, rel./act.type, ~]";
@@ -472,15 +486,15 @@ void read_config ()
                                     }
                                     inflt2delta_probunits[{ evt, { rat12, et2, rat23 } }] = pu;
                                 } else if ((cause.as<string>() == "basic") || (cause.as<string>() == "base")) {
-                                    evt2base_probunits[{ ec, et1, rat13, et3 }] = it3->second.as<probunits>();
+                                    evt2base_probunits[{ ec, et1, rat13, et3 }] = parse_double(it3->second.as<string>());
                                 } else if (cause.as<string>() == "tails") {
                                     if (it3->second.IsSequence()) { // separate tail indices
                                         if (!(it3->second.size() ==2 )) throw
                                                 "tail specification must be either a number or a pair of numbers.";
-                                        evt2left_tail[evt] = it3->second[0].as<double>();
-                                        evt2right_tail[evt] = it3->second[1].as<double>();
+                                        evt2left_tail[evt] = parse_double(it3->second[0].as<string>());
+                                        evt2right_tail[evt] = parse_double(it3->second[1].as<string>());
                                     } else { // same tail index
-                                        evt2left_tail[evt] = evt2right_tail[evt] = it3->second.as<double>();
+                                        evt2left_tail[evt] = evt2right_tail[evt] = parse_double(it3->second.as<string>());
                                     }
                                     if ((!(evt2left_tail[evt]>=0.0)) || (!(evt2right_tail[evt]>=0.0)) || (!(evt2left_tail[evt]<INFINITY)) || (!(evt2right_tail[evt]<INFINITY))) throw
                                             "tail indices must be non-negative finite numbers";
@@ -502,11 +516,11 @@ void read_config ()
                         evt2base_probunits[evt] = 0.0;
                         if (!n3.IsMap()) {
                             if (!n3.IsScalar()) throw "yaml field 'attempt' within 'dynamics' must be a scalar (base attempt rate) or a map";
-                            inflt2attempt_rate[{ evt, NO_ANGLE }] = n3.as<probunits>();
+                            inflt2attempt_rate[{ evt, NO_ANGLE }] = parse_double(n3.as<string>());
                         } else {
                             for (YAML::const_iterator it3 = n3.begin(); it3 != n3.end(); ++it3) {
                                 auto cause = it3->first;
-                                auto ar = it3->second.as<rate>();
+                                auto ar = parse_double(it3->second.as<string>());
                                 if (!(ar >= 0.0)) throw "values in map 'attempt' must be non-negative";
                                 entity_type et2;
                                 relationship_or_action_type rat12, rat23;
@@ -548,14 +562,14 @@ void read_config ()
                     if (n3) {
                         if (!n3.IsMap()) {
                             if (!n3.IsScalar()) throw "yaml field 'success' within 'dynamics' must be a scalar (base probunits) or a map";
-                            evt2base_probunits[{ ec, et1, rat13, et3 }] = n3.as<probunits>();
+                            evt2base_probunits[{ ec, et1, rat13, et3 }] = parse_double(n3.as<string>());
                         } else {
                             for (YAML::const_iterator it3 = n3.begin(); it3 != n3.end(); ++it3) {
                                 auto cause = it3->first;
                                 entity_type et2;
                                 relationship_or_action_type rat12, rat23;
                                 if (cause.IsSequence()) {
-                                    auto pu = it3->second.as<probunits>();
+                                    auto pu = parse_double(it3->second.as<string>());
                                     if (cause.size() == 5) { // angle
                                         if (!((cause[0].IsNull() || (cause[0].as<string>() == et1l)) && (cause[4].IsNull() || (cause[4].as<string>() == et3l)))) throw
                                                 "keys in map 'success' can be 'basic'/'base', [~, rel./act.type, ent.type, rel./act.type, ~], [~, rel./act.type, ent.type], or [ent.type, rel./act.type, ~]";
@@ -581,15 +595,15 @@ void read_config ()
                                     }
                                     inflt2delta_probunits[{ evt, { rat12, et2, rat23 } }] = pu;
                                 } else if ((cause.as<string>() == "basic") || (cause.as<string>() == "base")) {
-                                    evt2base_probunits[evt] = it3->second.as<probunits>();
+                                    evt2base_probunits[evt] = parse_double(it3->second.as<string>());
                                 } else if (cause.as<string>() == "tails") {
                                     if (it3->second.IsSequence()) { // separate tail indices
                                         if (!(it3->second.size() ==2 )) throw
                                                 "tail specification must be either a number or a pair of numbers.";
-                                        evt2left_tail[evt] = it3->second[0].as<double>();
-                                        evt2right_tail[evt] = it3->second[1].as<double>();
+                                        evt2left_tail[evt] = parse_double(it3->second[0].as<string>());
+                                        evt2right_tail[evt] = parse_double(it3->second[1].as<string>());
                                     } else { // same tail index
-                                        evt2left_tail[evt] = evt2right_tail[evt] = it3->second.as<double>();
+                                        evt2left_tail[evt] = evt2right_tail[evt] = parse_double(it3->second.as<string>());
                                     }
                                     if ((!(evt2left_tail[evt]>=0.0)) || (!(evt2right_tail[evt]>=0.0)) || (!(evt2left_tail[evt]<INFINITY)) || (!(evt2right_tail[evt]<INFINITY))) throw
                                             "tail indices must be positive finite numbers";
@@ -616,21 +630,21 @@ void read_config ()
                     "yaml value fields under 'visualization' must be type: [size/thickness, shape, red, green, blue, alpha]";
             if (label2et.count(label) > 0) {
                 auto et = label2et.at(label);
-                et2gexf_size[et] = n2[0].as<double>();
+                et2gexf_size[et] = parse_double(n2[0].as<string>());
                 et2gexf_shape[et] = n2[1].as<string>();
                 et2gexf_r[et] = n2[2].as<int>();
                 et2gexf_g[et] = n2[3].as<int>();
                 et2gexf_b[et] = n2[4].as<int>();
-                et2gexf_a[et] = n2[5].as<double>();
+                et2gexf_a[et] = parse_double(n2[5].as<string>());
             } else {
                 if (label2rat.count(label) == 0) throw "relationship/action type has not been declared";
                 auto rat = label2rat.at(label);
-                rat2gexf_thickness[rat] = n2[0].as<double>();
+                rat2gexf_thickness[rat] = parse_double(n2[0].as<string>());
                 rat2gexf_shape[rat] = n2[1].as<string>();
                 rat2gexf_r[rat] = n2[2].as<int>();
                 rat2gexf_g[rat] = n2[3].as<int>();
                 rat2gexf_b[rat] = n2[4].as<int>();
-                rat2gexf_a[rat] = n2[5].as<double>();
+                rat2gexf_a[rat] = parse_double(n2[5].as<string>());
             }
         }
     }

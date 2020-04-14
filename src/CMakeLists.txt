@@ -1,5 +1,6 @@
 add_executable(tricl 
     tricl.cpp 
+    3rdparty/tinyexpr.c
     debugging.cpp
     constants.cpp
     probability.cpp 

@@ -12,7 +12,7 @@ files:
     diagram prefix: sir_sd
 
 limits:
-    t: .inf
+    t: inf
     events: 100000
 
 options:
@@ -91,12 +91,12 @@ dynamics:
         terminate: 
             attempt:
                 # this link will be terminated immediately when an "infectious" link to "covid-19" exists:
-                [agent, is infectious for, covid-19, =, covid-19]: .inf 
+                [agent, is infectious for, covid-19, =, covid-19]: inf 
                 # this link will be also terminated immediately when any other link to "covid-19" exists 
                 # (since this might initially be the case for some agents!):
-                [agent, has recovered from, covid-19, =, covid-19]: .inf 
-                [agent, has died of, covid-19, =, covid-19]: .inf 
-            success: .inf
+                [agent, has recovered from, covid-19, =, covid-19]: inf 
+                [agent, has died of, covid-19, =, covid-19]: inf 
+            success: inf
 
     [agent, is infectious for, covid-19]:
         establish: # infection
@@ -105,12 +105,12 @@ dynamics:
                 [agent, regularly meets, agent, is infectious for, covid-19]: 0.1  # = once the transmission rate of infection by transmission (VARY!)
                     # this is only once (!) the infection rate 
                     # because the transition cannot go back to "susceptible" and hence the newly formed "infectious" link cannot break immediately.
-            success: .inf  # if only one number is specified, it is the "basic" success probunits
+            success: inf  # if only one number is specified, it is the "basic" success probunits
         terminate:  # this link will be terminated immediately when a "recovered" or "died" link to "covid-19" exists:
             attempt:
-                [agent, has recovered from, covid-19, =, covid-19]: .inf 
-                [agent, has died of, covid-19, =, covid-19]: .inf 
-            success: .inf
+                [agent, has recovered from, covid-19, =, covid-19]: inf 
+                [agent, has died of, covid-19, =, covid-19]: inf 
+            success: inf
 
     [agent, has recovered from, covid-19]:
         establish:  # recovery
@@ -118,14 +118,14 @@ dynamics:
                 [agent, is infectious for, covid-19, =, covid-19]: 0.4  # = once the recovery rate (VARY!) 
                     # this is only once (!) the rate of transition from infectious to recovered 
                     # because the transition cannot go back to "infectious" and hence the newly "recovered" link cannot break immediately.
-            success: .inf
+            success: inf
             # since "recovered" is a terminal state, this link type cannot be terminated
  
     [agent, has died of, covid-19]:
         establish:  # death
             attempt:
                 [agent, is infectious for, covid-19, =, covid-19]: 0.1  # = once the death rate (VARY!) 
-            success: .inf
+            success: inf
             # since death is a terminal state, this link type cannot be terminated either 
 
     # SOCIAL DYNAMICS:

@@ -45,6 +45,9 @@ inline probability probunits2probability (probunits pu, double left_tail, double
 
 inline rate effective_rate (rate attempt_rate, probunits success_pus, double left_tail, double right_tail)
 {
+    assert (attempt_rate >= 0);
+    if (attempt_rate == 0) return 0;
+    if (attempt_rate == INFINITY) return INFINITY;
     rate r = attempt_rate * probunits2probability(success_pus, left_tail, right_tail);
     assert (r >= 0);
     return r;

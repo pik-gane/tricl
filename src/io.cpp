@@ -32,6 +32,11 @@ ostream& operator<< (ostream& os, const event_type& evt) {
     return os;
 }
 
+ostream& operator<< (ostream& os, const angle_type& at) {
+    os << rat2label[at.rat12] << " " << et2label[at.et2] << " " << rat2label[at.rat23];
+    return os;
+}
+
 ostream& operator<< (ostream& os, const event& ev) {
     if (event_is_summary(ev)) {
         os << ec2label[ev.ec]

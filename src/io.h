@@ -18,6 +18,8 @@ ostream& operator<< (ostream& os, const link_type& lt);
 
 ostream& operator<< (ostream& os, const event_type& evt);
 
+ostream& operator<< (ostream& os, const angle_type& at);
+
 ostream& operator<< (ostream& os, const event& ev);
 
 void log_status ();

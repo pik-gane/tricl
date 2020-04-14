@@ -52,8 +52,9 @@ map name:
 
 # comment
 ~  # empty value
-.inf  # infinity
+inf  # infinity
 ```
+In addition, numerical values can not only be specified as numeric lieterals but also via simple mathematical expressions such as ``3 * sin(pi/5)^2`` (thanks to tinyexpr, <https://github.com/codeplea/tinyexpr>).
 
 A tricl config file has this overall structure (where stuff in ``<this kind of brackets>`` is a placeholder):
 ```yaml
