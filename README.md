@@ -63,6 +63,10 @@ metadata: <model and simulation metadata>
 files: <where to get and put stuff>
 options: <...>
 
+metaparameters: <optional definition of values to be used further down>
+
+limits: <how long to run etc.>
+
 entities: <specification of entity types and named entities>
 relationship types: <spec. of rel.types and their inverses>
 
@@ -91,14 +95,22 @@ files:
     diagram prefix: <filename prefix for structural diagram output>
     # files not listed are not generated
 
-limits:
-    t: <max. simulation time>  # default: .inf
-    events: <max. no. of simulated events>  # default: .inf
-
 options:
     quiet: <true or false>  # default: false
     verbose: <true or false>  # default: false
     debug: <true or false>  # default: false
+
+metaparameters:  
+    # will be substituted for their values 
+    # in expressions occurring in the rest of the config file
+
+    <token>: <value or expression>   # <explanation>
+    <token>: <value or expression, maybe using earlier tokens>
+    <token>: <value or expression, maybe using earlier tokens>
+
+limits:
+    t: <max. simulation time>  # default: .inf
+    events: <max. no. of simulated events>  # default: .inf
 ```
 ```yaml
 entities:  
