@@ -11,9 +11,19 @@ files:
     gexf: granovetter_simple.gexf
     diagram prefix: granovetter_simple
 
+metaparameters:  
+    # will be substituted for their values 
+    # in expressions occurring in the rest of the config file
+
+    N: 1000   # total numbers of agents
+    a: 0.25   # share of certainly active
+    b: 0.2    # share of certainly inactive
+    k: 10     # mean degree
+    rho: 0.5  # threshold fraction
+
 limits:
     t: 100.0
-    events: 10000 # use an even number since events come in pairs in this model
+    events: 30001 # use an odd number since events come in pairs in this model
 
 options:
     quiet: false
@@ -24,7 +34,7 @@ options:
 entities:
 
     # regular entity types:
-    agent: 1000
+    agent: N
 
     # single-entity types:
     active:
@@ -40,12 +50,13 @@ relationship types:
 initial links: 
     random:
         [agent, knows, agent]:
-            dimension: 2  # random geometric
-            decay: 15.0
+            probability: k / (N-1)  # ER model
+#            dimension: 2  # random geometric model
+#            decay: 15.0
         [agent, is always, active]:
-            probability: 0.25  # share of certainly actives ("a" in the paper)
+            probability: a  # share of certainly actives
         [agent, is never, active]:
-            probability: 0.15 / (1 - 0.25)  
+            probability: b / (1 - a)  
                 # share of certainly inactives divided by 1-a 
                 # (since a share of  a  of these will switch to certainly active at t=0 
                 # to avoid overlap between the two groups, see below) 
@@ -61,14 +72,13 @@ dynamics:
                 [agent, =, agent, is always, active]: inf
             success:
                 tails: 0  # -> use expit sigmoid function
-                base: +5
-                [agent, knows, agent, is, active]: +20
-                [agent, knows, agent, is not, active]: -10
-                # -> for every active nb. we need two inactive nbs. to get the success units to +5
-                # -> when at least than a share of 10/(10+40) = 1/5 of nbs is active, 
-                #    the success units are >= +5, hence the probability approx. 1,
-                #    when less than 1/5 are active, success units are <= -5, hence prob. approx 0
-                # -> threshold for becoming active is 1/5 actives
+                base: +10  # chosen so that base probability is approx. 1
+                [agent, knows, agent, is, active]: +20*(1-rho)
+                [agent, knows, agent, is not, active]: -20*rho
+                # if ki*rho many nbs are active and ki*(1-rho) many are inactive,
+                # total success units are +10 + ki*rho * 20*(1-rho) - ki*(1-rho) * 20*rho = +10, hence prob. is approx 1.
+                # if one less is active and one more is inactive,
+                # total success units are +10 + (ki*rho - 1) * 20*(1-rho) - (ki*(1-rho) + 1) * 20*rho = -10, hence prob. is approx 0.
         terminate:
             attempt:
                 [agent, =, agent, is not, active]: inf
@@ -80,14 +90,13 @@ dynamics:
                 [agent, =, agent, is never, active]: inf
             success:
                 tails: 0  # -> use expit sigmoid function
-                base: +5
-                [agent, knows, agent, is not, active]: +30
-                [agent, knows, agent, is, active]: -20
-                # -> for every two inactive nb. we need three active nbs. to get the success units to +5
-                # -> when at least than a share of 20/(20+30) = 2/5 of nbs is inactive, 
-                #    the success units are >= +5, hence the probability approx. 1,
-                #    when less than 2/5 are inactive, success units are <= -5, hence prob. approx 0
-                # -> threshold for stopping to be active is 2/5 inactives
+                base: -10  # chosen so that base probability is approx. 0
+                [agent, knows, agent, is, active]: -20*(1-rho)
+                [agent, knows, agent, is not, active]: +20*rho
+                # if ki*rho many nbs are active and ki*(1-rho) many are inactive,
+                # total success units are -10 - ki*rho * 20*(1-rho) + ki*(1-rho) * 20*rho = -10, hence prob. is approx 0.
+                # if one less is active and one more is inactive,
+                # total success units are -10 - (ki*rho - 1) * 20*(1-rho) + (ki*(1-rho) + 1) * 20*rho = +10, hence prob. is approx 1.
         terminate:
             attempt:
                 [agent, =, agent, is, active]: inf

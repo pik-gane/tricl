@@ -64,15 +64,39 @@ unordered_map<relationship_or_action_type, int> rat2gexf_r = {}, rat2gexf_g = {}
 // further default values:
 #define TAIL_DEFAULT 1.0
 
+// internal data:
 entity max_e = 0;
 
-static double myinf(void) {return INFINITY;}
-te_variable te_vars[] = {
-    {"inf", (const void*)myinf, TE_FUNCTION0}
-};
+// stuff for parsing expressions:
+#define MAX_N_TE_VARS 1000
+string te_syms[MAX_N_TE_VARS];
+double te_vals[MAX_N_TE_VARS];
+te_variable te_vars[MAX_N_TE_VARS];
+int n_te_vars = 0;
 double parse_double (string expr)
 {
-    return te_eval(te_compile(expr.c_str(), te_vars, 1, 0));
+    return te_eval(te_compile(expr.c_str(), te_vars, n_te_vars, 0));
+}
+double parse_int (string expr)
+{
+    double dblv = parse_double(expr);
+    return (dblv == INFINITY) ? INT_MAX : (dblv == -INFINITY) ? INT_MIN : round(dblv);
+}
+double register_te_var (string symbol, string expr)
+{
+    if (n_te_vars >= MAX_N_TE_VARS) throw "too many metaparameters";
+    te_syms[n_te_vars] = symbol;
+    // compute and append value to te_vals:
+    double value = parse_double(expr);
+    te_vals[n_te_vars] = {value};
+    // register symbol and value as new subexpression to be substituted:
+    te_vars[n_te_vars] = {te_syms[n_te_vars].c_str(), (const void*)(&te_vals[n_te_vars]), TE_VARIABLE};
+    n_te_vars++;
+//    for (int i=0; i<n_te_vars; i++) {
+//        te_variable v = te_vars[i];
+//        cout << v.name << " @ " << v.address << "(" << *((double*)v.address) << ") " << v.type << endl;
+//    }
+    return value;
 }
 
 void read_entity_labels (YAML::Node n, entity_type et)
@@ -88,6 +112,31 @@ void read_config ()
 {
     cout << "READING CONFIG file " << config_yaml_filename << " ..." << endl;
     YAML::Node c = YAML::LoadFile(config_yaml_filename), n, n1, n2, n3;
+
+    // options:
+    n = c["options"];
+    if (n) {
+        if (!n.IsMap()) throw "yaml field 'options' must be a map";
+        if (n["quiet"]) quiet = n["quiet"].as<bool>();
+        if (n["verbose"]) verbose = n["verbose"].as<bool>();
+        if (n["debug"]) debug = n["debug"].as<bool>();
+        if (n["seed"]) seed = n["seed"].as<unsigned>();
+    }
+
+    // metaparameters:
+    te_vals[0] = { INFINITY };
+    te_vars[0] = {"inf", (const void*)(&te_vals[0]), TE_VARIABLE};
+    n_te_vars = 1;
+    n = c["metaparameters"];
+    if (n) {
+        if (!quiet) cout << " metaparameters:" << endl;
+        if (!n.IsMap()) throw "yaml field 'metaparameters' must be a map";
+        for (YAML::const_iterator it = n.begin(); it != n.end(); ++it) {
+            string symbol = it->first.as<string>(), expression = it->second.as<string>();
+            double value = register_te_var(symbol, expression);
+            if (!quiet) cout << "  " << symbol << " = " << expression << " = " << value << endl;
+        }
+    }
 
     // metadata (mandatory):
     n = c["metadata"];
@@ -107,21 +156,11 @@ void read_config ()
     // limits (at least one):
     n = c["limits"];
     if (!n.IsMap()) throw "yaml field 'limits' must be a map";
-    if (n["t"]) max_t = n["t"].as<timepoint>();
+    if (n["t"]) max_t = parse_double(n["t"].as<string>());
     if (n["events"]) max_n_events = floor(parse_double(n["events"].as<string>()));
     // max_wall_time = n["wall"] ? n["wall"].as<double>() : INFINITY;
     if ((max_t==INFINITY) && (max_n_events==LONG_MAX)) throw
             "must specify at least one of limits:t, limits:events";
-
-    // options:
-    n = c["options"];
-    if (n) {
-        if (!n.IsMap()) throw "yaml field 'options' must be a map";
-        if (n["quiet"]) quiet = n["quiet"].as<bool>();
-        if (n["verbose"]) verbose = n["verbose"].as<bool>();
-        if (n["debug"]) debug = n["debug"].as<bool>();
-        if (n["seed"]) seed = n["seed"].as<unsigned>();
-    }
 
     // entities:
     entity_type et = 1;
@@ -134,7 +173,7 @@ void read_config ()
         et2label[et] = etlabel;
         n2 = it1->second;
         if (n2.IsMap()) {
-            et2n[et] = n2["n"].as<entity>();
+            et2n[et] = parse_int(n2["n"].as<string>());
             n3 = n2["labels"] ? n2["labels"] : n2["names"] ? n2["names"] : n2["named"];
             if (n3) read_entity_labels(n3, et);
         } else if (n2.IsSequence()) {  // only a list of labels is specified
@@ -143,7 +182,7 @@ void read_config ()
             read_entity_labels(n2, et);
             et2n[et] = max_e - last_e;
         } else {
-            et2n[et] = n2.as<entity>();
+            et2n[et] = parse_int(n2.as<string>());
         }
         // defaults:
         et++;
@@ -289,7 +328,7 @@ void read_config ()
                     lt2initial_prob_between[{et1, rat, et3}] = 0.0;
                 } else if (spec["blocks"]) {
                     if (et1 == et3) { // symmetric block model
-                        auto n = spec["blocks"].as<int>();
+                        int n = parse_int(spec["blocks"].as<string>());
                         // TODO: allow list of "sizes"
                         auto pw = spec["within"] ? parse_double(spec["within"].as<string>()) : 1.0;
                         auto pb = spec["between"] ? parse_double(spec["between"].as<string>()) : 0.0;
@@ -305,7 +344,7 @@ void read_config ()
                     }
                 } else if (spec["dimension"]) {
                     // TODO: make sure no conflicts between several spatial models for same entity types!
-                    auto dim = spec["dimension"].as<int>();
+                    int dim = parse_int(spec["dimension"].as<string>());
                     // TODO: allow list of "widths"
                     auto dec = spec["decay"] ? parse_double(spec["decay"].as<string>()) : 1.0;
                     if (!(dim > 0)) throw "'dimension' must be positive";
@@ -360,15 +399,15 @@ void read_config ()
                             rat13 = label2rat.at(rat13label);
                         }
                     }
-                    int skip = n2["skip"] ? n2["skip"].as<int>() : 0;
-                    int max = n2["max"] ? n2["max"].as<int>() : (INT_MAX - 1);
+                    int skip = n2["skip"] ? (parse_int(n2["skip"].as<string>())) : 0;
+                    int max = n2["max"] ? (parse_int(n2["max"].as<string>())) : (INT_MAX - 1);
                     char delimiter = n2["delimiter"] ? n2["delimiter"].as<char>() : ',';
                     string prefix = n2["prefix"] ? n2["prefix"].as<string>() : ""; // TODO: distinguish source, target prefixes
                     auto cols = n2["cols"];
                     read_links_csv (filename, skip, max, delimiter,
                             cols[0].as<int>(),
-                            (rat13 == NO_RAT) ? cols[1].as<int>() : -1,
-                            (rat13 == NO_RAT) ? cols[2].as<int>() : cols[1].as<int>(),
+                            (rat13 == NO_RAT) ? parse_int(cols[1].as<string>()) : -1,
+                            (rat13 == NO_RAT) ? parse_int(cols[2].as<string>()) : parse_int(cols[1].as<string>()),
                             et1_default, rat13, et3_default,
                             prefix);
                 } else {
@@ -632,18 +671,18 @@ void read_config ()
                 auto et = label2et.at(label);
                 et2gexf_size[et] = parse_double(n2[0].as<string>());
                 et2gexf_shape[et] = n2[1].as<string>();
-                et2gexf_r[et] = n2[2].as<int>();
-                et2gexf_g[et] = n2[3].as<int>();
-                et2gexf_b[et] = n2[4].as<int>();
+                et2gexf_r[et] = parse_int(n2[2].as<string>());
+                et2gexf_g[et] = parse_int(n2[3].as<string>());
+                et2gexf_b[et] = parse_int(n2[4].as<string>());
                 et2gexf_a[et] = parse_double(n2[5].as<string>());
             } else {
                 if (label2rat.count(label) == 0) throw "relationship/action type has not been declared";
                 auto rat = label2rat.at(label);
                 rat2gexf_thickness[rat] = parse_double(n2[0].as<string>());
                 rat2gexf_shape[rat] = n2[1].as<string>();
-                rat2gexf_r[rat] = n2[2].as<int>();
-                rat2gexf_g[rat] = n2[3].as<int>();
-                rat2gexf_b[rat] = n2[4].as<int>();
+                rat2gexf_r[rat] = parse_int(n2[2].as<string>());
+                rat2gexf_g[rat] = parse_int(n2[3].as<string>());
+                rat2gexf_b[rat] = parse_int(n2[4].as<string>());
                 rat2gexf_a[rat] = parse_double(n2[5].as<string>());
             }
         }

@@ -75,11 +75,12 @@ void log_status ()
                 cout << " | " << n << " " << lt;
             }
         }
-        cout << " | stats: ld " << ld << ", ad " << ad << ", q " << q << endl
-                << "at t=" << current_t << " " << current_ev << defaultfloat << endl;
+        cout << " | stats: ld " << ld << ", ad " << ad << ", q " << q << endl;
+        if (current_t < max_t) cout << "at t=" << current_t << " " << current_ev << defaultfloat << endl;
     } else {
-        cout << fixed << n_events << ": ld " << ld << ", ad " << ad << ", q " << q <<
-                ".  t " << current_t << ": " << current_ev << defaultfloat << endl;
+        cout << fixed << n_events << ": ld " << ld << ", ad " << ad << ", q " << q;
+        if (current_t < max_t) cout << ".  t " << current_t << ": " << current_ev << defaultfloat;
+        cout << endl;
     }
 }
 
