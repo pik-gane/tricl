@@ -1,25 +1,52 @@
 /*
- * gexf.cpp
+ * *gexf.cpp
  *
  *  Created on: Mar 27, 2020
  *      Author: heitzig
  */
 
-#include <fstream>
-
-#include "data_model.h"
+/*
+ * TODO:
+ * - include metadata into gexf files
+ */
 #include "global_variables.h"
 #include "gexf.h"
+#include <boost/iostreams/filtering_streambuf.hpp>
+#include <boost/iostreams/filter/gzip.hpp>
 
-using namespace std;
-
-ofstream gexf;
-unordered_map<link, timepoint> gexf_edge2start = {};
+unordered_map<string, bool> gexf_is_gz;
+unordered_map<string, ofstream> gexf_direct, gexf_indirect;
+unordered_map<string, boost::iostreams::filtering_streambuf<boost::iostreams::output>> gexf_buf;
+ostream* gexf(NULL);
+unordered_map<tricl::link, timepoint> gexf_edge2start = {};
 
 void init_gexf () {
-    if (gexf_filename == "") return;
-    gexf.open(gexf_filename);
-    gexf << R"V0G0N(<?xml version="1.0" encoding="UTF-8"?>
+    // open files:
+    for (auto& [rat13, fn] : gexf_filename) {
+        if ((fn != "") && (gexf_is_gz.count(fn)==0)) {
+            auto ext = fn.substr(fn.find_last_of(".") + 1);
+            if (ext == "gexf") {
+                gexf_is_gz[fn] = false;
+                gexf_direct[fn].open(fn);
+            } else {
+                gexf_is_gz[fn] = true;
+                if (ext != "gz") throw "files:gexf must end with .gexf or .gexf.gz";
+                gexf_indirect[fn] = ofstream(fn, std::ios_base::out | std::ios_base::binary | std::ios_base::trunc);
+                gexf_buf[fn].push(boost::iostreams::gzip_compressor());
+                gexf_buf[fn].push(gexf_indirect[fn]);
+            }
+        }
+    }
+    // output all nodes into all files:
+    for (auto& [fn, is_gz] : gexf_is_gz) {
+        if (fn != "") {
+            if (is_gz) {
+                ostream gexf_gz(&(gexf_buf[fn]));
+                gexf = (ostream*)(&gexf_gz);
+            } else {
+                gexf = (ostream*)(&(gexf_direct[fn]));
+            }
+            *gexf << R"V0G0N(<?xml version="1.0" encoding="UTF-8"?>
 <gexf xmlns="http://www.gexf.net/1.2draft" version="1.2" xmlns:viz="http://www.gexf.net/1.1draft/viz">
     <meta>
         <creator>tricl</creator>
@@ -34,61 +61,81 @@ void init_gexf () {
         </attributes>
         <nodes>
 )V0G0N";
-    for (auto& e : es) {
-        auto et = _e2et[E(e)];
-        gexf << "<node id=\"" << e << "\" label=\"" << e2label[e]
-             << "\" start=\"0.0\" end=\"" << max_t
-             << "\"><attvalues><attvalue for=\"0\" value=\""
-             << et2label[et] << "\"/></attvalues>";
-        if (et2gexf_size.count(et) > 0) gexf
-             << "<viz:size value=\"" << et2gexf_size[et] << "\"/>";
-        if (et2gexf_shape.count(et) > 0) gexf
-             << "<viz:shape value=\"" << et2gexf_shape[et] << "\"/>";
-        if (et2gexf_r.count(et) > 0) gexf
-             << "<viz:color r=\"" << et2gexf_r[et] << "\" g=\"" << et2gexf_g[et] << "\" b=\"" << et2gexf_b[et] << "\" a=\"" << et2gexf_a[et] << "\"/>";
-        gexf << "</node>" ;
-    }
-    gexf << R"V0G0N(
+            for (auto& e : es) {
+                auto et = _e2et[E(e)];
+                *gexf << "<node id=\"" << e << "\" label=\"" << e2label[e]
+                     << "\" start=\"0.0\" end=\"" << max_t
+                     << "\"><attvalues><attvalue for=\"0\" value=\""
+                     << et2label[et] << "\"/></attvalues>";
+                if (et2gexf_size.count(et) > 0) *gexf
+                     << "<viz:size value=\"" << et2gexf_size[et] << "\"/>";
+                if (et2gexf_shape.count(et) > 0) *gexf
+                     << "<viz:shape value=\"" << et2gexf_shape[et] << "\"/>";
+                if (et2gexf_r.count(et) > 0) *gexf
+                     << "<viz:color r=\"" << et2gexf_r[et] << "\" g=\"" << et2gexf_g[et] << "\" b=\"" << et2gexf_b[et] << "\" a=\"" << et2gexf_a[et] << "\"/>";
+                *gexf << "</node>" ;
+            }
+            *gexf << R"V0G0N(
         </nodes>
         <edges>
 )V0G0N";
+        }
+    }
 }
 
-void gexf_output_edge (link& l) {
-    if (gexf_filename == "") return;
+void gexf_output_edge (tricl::link& l) {
     auto e1 = l.e1, e3 = l.e3;
     auto rat13 = l.rat13;
     if (rat13 != RT_ID) {
-        gexf << "\t\t\t<edge id=\"" << e1 << "_" << rat13 << "_" << e3 << "_" << current_t
-             << "\" source=\"" << e1 << "\" target=\"" << e3
-             << "\" start=\"" << gexf_edge2start.at(l) << "\" end=\"" << current_t
-             << "\"><attvalues><attvalue for=\"1\" value=\"" << rat2label[rat13]
-             << "\"/></attvalues>";
-        if (rat2gexf_thickness.count(rat13) > 0) gexf
-             << "<viz:thickness value=\"" << rat2gexf_thickness[rat13] << "\"/>";
-        if (rat2gexf_shape.count(rat13) > 0) gexf
-             << "<viz:shape value=\"" << rat2gexf_shape[rat13] << "\"/>";
-        if (rat2gexf_r.count(rat13) > 0) gexf
-             << "<viz:color r=\"" << rat2gexf_r[rat13] << "\" g=\"" << rat2gexf_g[rat13] << "\" b=\"" << rat2gexf_b[rat13] << "\" a=\"" << rat2gexf_a[rat13] << "\"/>";
-        gexf << "</edge>" << endl;
+        string fn = gexf_filename[rat13];
+        if (fn != "") {
+            if (gexf_is_gz[fn]) {
+                ostream gexf_gz(&(gexf_buf[fn]));
+                gexf = (ostream*)(&gexf_gz);
+            } else {
+                gexf = (ostream*)(&(gexf_direct[fn]));
+            }
+            // unique edge id is <n_events>_<et1>_<rat13>_<et3>:
+            *gexf << "\t\t\t<edge id=\"" << e1 << "_" << rat13 << "_" << e3 << "_" << n_events
+                 << "\" source=\"" << e1 << "\" target=\"" << e3
+                 << "\" start=\"" << gexf_edge2start.at(l) << "\" end=\"" << current_t
+                 << "\"><attvalues><attvalue for=\"1\" value=\"" << rat2label[rat13]
+                 << "\"/></attvalues>";
+            if (rat2gexf_thickness.count(rat13) > 0) *gexf
+                 << "<viz:thickness value=\"" << rat2gexf_thickness[rat13] << "\"/>";
+            if (rat2gexf_shape.count(rat13) > 0) *gexf
+                 << "<viz:shape value=\"" << rat2gexf_shape[rat13] << "\"/>";
+            if (rat2gexf_r.count(rat13) > 0) *gexf
+                 << "<viz:color r=\"" << rat2gexf_r[rat13] << "\" g=\"" << rat2gexf_g[rat13] << "\" b=\"" << rat2gexf_b[rat13] << "\" a=\"" << rat2gexf_a[rat13] << "\"/>";
+            *gexf << "</edge>" << endl;
+        }
     }
-    gexf_edge2start.erase(l);
+    if (gexf_edge2start.erase(l) != 1) throw "ups";
 }
 
 void finish_gexf () {
-    if (gexf_filename == "") return;
     current_t = max_t;
     for (auto& [e1, outs] : e2outs) {
         for (auto& [rat13, e3] : outs) {
-            link l = { .e1 = e1, .rat13 = rat13, .e3 = e3 };
-            gexf_output_edge(l);
+            tricl::link l = { .e1 = e1, .rat13 = rat13, .e3 = e3 };
+            if (rat13 != RT_ID) gexf_output_edge(l);
         }
     }
-    gexf << R"V0G0N(
-        </edges>
+    // output footer to all files:
+    for (auto& [fn, is_gz] : gexf_is_gz) {
+        if (fn != "") {
+            if (is_gz) {
+                ostream gexf_gz(&(gexf_buf[fn]));
+                gexf = (ostream*)(&gexf_gz);
+            } else {
+                gexf = (ostream*)(&(gexf_direct[fn]));
+            }
+            *gexf << R"V0G0N(        </edges>
     </graph>
 </gexf>
 )V0G0N";
-    gexf.close();
+            if (!is_gz) gexf_direct[fn].close();
+        }
+    }
 }
 

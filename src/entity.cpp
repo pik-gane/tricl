@@ -13,8 +13,6 @@
 #include "entity.h"
 #include "probability.h"
 
-using namespace std;
-
 /** Add a new entity of a specific type.
  *
  * (the entity is not returned)

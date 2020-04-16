@@ -8,7 +8,7 @@ metadata:
     email: heitzig@pik-potsdam.de
 
 files:
-    gexf: granovetter_simple.gexf
+    gexf: granovetter_simple.gexf.gz
     diagram prefix: granovetter_simple
 
 metaparameters:  
@@ -16,14 +16,15 @@ metaparameters:
     # in expressions occurring in the rest of the config file
 
     N: 1000   # total numbers of agents
-    a: 0.25   # share of certainly active
+    a: 0.01   # share of certainly active
     b: 0.2    # share of certainly inactive
-    k: 10     # mean degree
+#    k: 10     # mean degree in ER model
+    d: 40     # decay in random geometric model
     rho: 0.5  # threshold fraction
 
 limits:
     t: 100.0
-    events: 30001 # use an odd number since events come in pairs in this model
+    events: 15001 # use an odd number since events come in pairs in this model
 
 options:
     quiet: false
@@ -42,17 +43,20 @@ entities:
 
 relationship types:
     knows: symmetric
-    is always: ~
-    is never: ~
+    is always:
+        gexf: granovetter_simple_is_always.gexf.gz  # write to separate output
+    is never: 
+        gexf: granovetter_simple_is_never.gexf.gz
     is: ~
-    is not: ~
+    is not: 
+        gexf: ~  # suppresses output
 
 initial links: 
     random:
         [agent, knows, agent]:
-            probability: k / (N-1)  # ER model
-#            dimension: 2  # random geometric model
-#            decay: 15.0
+#            probability: k / (N-1)  # ER model
+            dimension: 2  # random geometric model
+            decay: d
         [agent, is always, active]:
             probability: a  # share of certainly actives
         [agent, is never, active]:

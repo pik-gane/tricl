@@ -5,11 +5,6 @@
  *      Author: heitzig
  */
 
-#include <assert.h>
-#include <iostream>
-
-#include "debugging.h"
-#include "data_model.h"
 #include "global_variables.h"
 #include "probability.h"
 #include "entity.h"
@@ -19,8 +14,7 @@
 #include "gexf.h"
 #include "init.h"
 #include "io.h"
-
-using namespace std;
+#include "debugging.h"
 
 // parameters:
 int n_rats = 0; // total no. of rats

@@ -5,16 +5,8 @@
  *      Author: heitzig
  */
 
-#include <iostream>
-#include <assert.h>
-#include <math.h>
-#include <random>
-
-#include "data_model.h"
 #include "global_variables.h"
 #include "probability.h"
-
-using namespace std;
 
 // random generators:
 random_device ran_dev;

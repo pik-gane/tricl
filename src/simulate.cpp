@@ -5,13 +5,9 @@
  *      Author: Jobst Heitzig, PIK
  */
 
-#include <iostream>
-
 #include "global_variables.h"
 #include "event.h"
 #include "simulate.h"
-
-using namespace std;
 
 bool step ()
 {

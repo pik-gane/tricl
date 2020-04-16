@@ -12,8 +12,6 @@
 
 #include "data_model.h"
 
-using namespace std;
-
 inline bool event_is_summary(const event& ev) {
     // summary events are encoded by using the negative entity type id as "entity id":
     bool res = ((ev.e1 < 0) || (ev.e3 < 0));

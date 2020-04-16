@@ -130,20 +130,18 @@
 
 // libraries:
 
-#include <iostream>
+//#include <iostream>
 
 // local includes:
 
-#include "debugging.h"
 #include "global_variables.h"
 #include "io.h"
 #include "config.h"
 #include "init.h"
 #include "simulate.h"
 #include "finish.h"
+#include "debugging.h"
 //#include "pfilter.h"
-
-using namespace std;
 
 string config_yaml_filename; ///< filename of configuration file
 

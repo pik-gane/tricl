@@ -19,17 +19,15 @@
 #include "yaml-cpp/yaml.h"
 #include "3rdparty/tinyexpr.h"
 
-#include "data_model.h"
 #include "global_variables.h"
 #include "entity.h"
 #include "io.h"
 
-using namespace std;
-
 // scalar parameters and their default values:
-string gexf_filename = "", diagram_fileprefix = "";
+unordered_map<relationship_or_action_type, string> gexf_filename = {};
+string diagram_fileprefix = "", gexf_default_filename = "";
 bool verbose = false, quiet = false, debug = false;
-timepoint max_t = INFINITY;
+timepoint max_t = 0.0;
 long int max_n_events = LONG_MAX;
 unsigned seed = 0;
 
@@ -149,14 +147,17 @@ void read_config ()
     // files (mandatory):
     n = c["files"];
     if (!n.IsMap()) throw "yaml field 'files' must be a map";
-    if (n["gexf"]) gexf_filename = n["gexf"].as<string>();
+    if (n["gexf"]) gexf_default_filename = n["gexf"].as<string>();
     // log_filename = n["log"].as<string>();
     if (n["diagram prefix"]) diagram_fileprefix = n["diagram prefix"].as<string>();
 
     // limits (at least one):
     n = c["limits"];
     if (!n.IsMap()) throw "yaml field 'limits' must be a map";
-    if (n["t"]) max_t = parse_double(n["t"].as<string>());
+    if (n["t"]) {
+        max_t = parse_double(n["t"].as<string>());
+        if (max_t == INFINITY) throw "limit: t must be finite";
+    }
     if (n["events"]) max_n_events = floor(parse_double(n["events"].as<string>()));
     // max_wall_time = n["wall"] ? n["wall"].as<double>() : INFINITY;
     if ((max_t==INFINITY) && (max_n_events==LONG_MAX)) throw
@@ -197,6 +198,7 @@ void read_config ()
     n1 = c["relationship types"];
     if (n1) {
         if (!n1.IsMap()) throw "yaml field 'relationship types' must be a map";
+        // go through list once to collect labels:
         for (YAML::const_iterator it1 = n1.begin(); it1 != n1.end(); ++it1) {
             auto ratlabel = (it1->first).as<string>();
             label2rat[ratlabel] = nextrat;
@@ -204,15 +206,26 @@ void read_config ()
             r_is_action_type[nextrat] = false;
             nextrat++;
         }
+        // go through it again to collect further information:
         for (YAML::const_iterator it1 = n1.begin(); it1 != n1.end(); ++it1) {
             auto ratlabel = (it1->first).as<string>();
             if (ratlabel == "symmetric") throw "'symmetric' is not a valid label";
             rat1 = label2rat[ratlabel];
             n2 = it1->second;
+            string ratlabel2 = "";
             if (n2.IsNull()) {
+                gexf_filename[rat1] = gexf_default_filename;
+            } else if (n2.IsScalar()) {
+                ratlabel2 = n2.as<string>();
+                gexf_filename[rat1] = gexf_default_filename;
+            } else if (n2.IsMap()) {
+                ratlabel2 = n2["inverse"] ? n2["inverse"].as<string>() : "";
+                gexf_filename[rat1] = (!n2["gexf"]) ? gexf_default_filename : n2["gexf"].IsNull() ? "" : n2["gexf"].as<string>();
+            } else throw "field values under 'relationship types' must be strings or maps";
+            if (ratlabel2 == "") {
                 cout << " relationship type " << rat1 << ": " << ratlabel << endl;
             } else {
-                auto ratlabel2 = n2.as<string>();
+                relationship_or_action_type rat2;
                 if (ratlabel2 == "symmetric") ratlabel2 = ratlabel;
                 if (label2rat.count(ratlabel2)) {
                     rat2 = label2rat[ratlabel2];
@@ -221,13 +234,19 @@ void read_config ()
                     rat2 = nextrat;
                     label2rat[ratlabel2] = rat2;
                     rat2label[rat2] = ratlabel2;
+                    gexf_filename[rat2] = ""; // don't output rats that are only inverses
                     r_is_action_type[nextrat] = false;
                     nextrat++;
-                    cout << " relationship type " << rat1 << ": " << ratlabel << " (inverse: " << ratlabel2 << ")" << endl;
                     cout << " relationship type " << rat2 << ": " << ratlabel2 << " (inverse: " << ratlabel << ")" << endl;
+                    cout << " relationship type " << rat1 << ": " << ratlabel << " (inverse: " << ratlabel2 << ")" << endl;
                 }
                 rat2inv[rat1] = rat2;
                 rat2inv[rat2] = rat1;
+            }
+            if (gexf_filename[rat1] == "") {
+                cout << "  (omitted in gexf output)" << endl;
+            } else if (gexf_filename[rat1] != gexf_default_filename) {
+                cout << "  written to separate file " << gexf_filename[rat1] << endl;
             }
         }
     }

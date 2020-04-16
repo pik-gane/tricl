@@ -11,23 +11,17 @@
 // during debugging, you may sometimes want to set the following to true:
 #define COUNT_ALL_ANGLES false
 
-#include <string>
-#include <map>
-#include <unordered_map>
-
 #include "data_model.h"
-
-using namespace std;
 
 // PARAMETERS
 
 extern string config_yaml_filename;
 extern bool verbose, quiet, debug;
-extern string gexf_filename;
 extern string diagram_fileprefix;
 extern timepoint max_t;
 extern long int max_n_events;
 extern unsigned seed;
+extern unordered_map<relationship_or_action_type, string> gexf_filename;
 
 // structure parameters:
 

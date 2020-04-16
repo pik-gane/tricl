@@ -16,4 +16,4 @@ add_executable(tricl
     simulate.cpp
     finish.cpp)
 
-target_link_libraries(tricl yaml-cpp)
+target_link_libraries(tricl yaml-cpp boost_iostreams)

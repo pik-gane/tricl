@@ -19,8 +19,6 @@
 #include <assert.h>
 #include <iostream>
 
-#include "debugging.h"
-#include "data_model.h"
 #include "global_variables.h"
 #include "entity.h"
 #include "angle.h"
@@ -28,8 +26,7 @@
 #include "probability.h"
 #include "event.h"
 #include "io.h"
-
-using namespace std;
+#include "debugging.h"
 
 /** Return whether a future instance of the event is scheduled.
  */
@@ -61,7 +58,7 @@ void _schedule_event (event& ev, event_data* evd_, double left_tail, double righ
         } else if (ar < INFINITY) {
             auto er = effective_rate(ar, spu, left_tail, right_tail);
             t = current_t + exponential(random_variable) / er;
-            if (verbose) cout << "ar " << ar << ", spu " << spu << " → eff. rate " << er << " → next at t=" << t << endl;
+            if (verbose) cout << "ar " << ar << ", spu " << spu << " → eff. rate " << er << " → next at t=" << t << ((t==INFINITY) ? " (never)" : "") << endl;
         } else {
             // event should happen "right away". to make sure all those events
             // occur in random order, we formally schedule them at some
@@ -72,7 +69,7 @@ void _schedule_event (event& ev, event_data* evd_, double left_tail, double righ
     }
     if (t == INFINITY) {
         // replace INFINITY by some unique finite but non-reached time point:
-        t = max_t + uniform(random_variable);
+        t = max_t * (1 + uniform(random_variable));
     }
     t2be[t] = ev;
     evd_->t = t;

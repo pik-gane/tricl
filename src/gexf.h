@@ -10,8 +10,6 @@
 
 #include "data_model.h"
 
-using namespace std;
-
 extern unordered_map<link, timepoint> gexf_edge2start;
 
 void init_gexf ();

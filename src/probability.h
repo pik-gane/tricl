@@ -8,14 +8,14 @@
 #ifndef INC_PROBABILITY_H
 #define INC_PROBABILITY_H
 
-#include <assert.h>
-#include <math.h>
 #include <random>
 
-#include "data_model.h"
 #include "global_variables.h"
 
-using namespace std;
+using std::mt19937;
+using std::random_device;
+using std::uniform_real_distribution;
+using std::exponential_distribution;
 
 // random generators:
 extern mt19937 random_variable;

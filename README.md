@@ -5,6 +5,7 @@ Dependencies
 ------------
 * C++ language standard >=17
 * rapidcsv: <https://github.com/d99kris/rapidcsv>
+* libboost_iostreams: <https://www.boost.org/doc/libs/1_72_0/libs/iostreams/doc/index.html>
 
 Building
 --------
@@ -91,7 +92,8 @@ metadata:
     email: <...>
 
 files:   
-    gexf: <where to output the resulting temporal network>.gexf 
+    gexf: <where to output the resulting temporal network>  
+        # must end in either .gexf or .gexf.gz (recommended) 
     diagram prefix: <filename prefix for structural diagram output>
     # files not listed are not generated
 
@@ -140,6 +142,9 @@ relationship types:
     <relationship label>: symmetric  # a symmetric (undirected) relationship type
     <relationship label>: <inverse relationship label>  # a non-symmetric (directed) relationship type with a named inverse
     <relationship label>: ~  # a non-symmetric (directed) relationship type without any named inverse
+    <relationship label>: 
+        inverse: <~ or inverse relationship label>
+        gexf: <~ or filename>  # suppress or redirect output of this type to separate file
 ```
 ```yaml
 initial links: 
@@ -210,3 +215,8 @@ visualization:
 
     <relationship label>: [<thickness>, <shape>, <r>,<g>,<b>,<a>]  # thickness: float. shape: solid (default), dotted, dashed, double
 ```
+
+Change log
+----------
+
+2020-04-16: added support for gzipped output (.gexz.gz) and separate output of individual relationship types

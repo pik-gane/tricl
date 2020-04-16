@@ -4,16 +4,23 @@ metadata:
         alternative implementation of the SIR model 
         that allows to add social distancing
     author: Jobst Heitzig
-    date: 10 April 2020
+    date: 16 April 2020
     email: heitzig@pik-potsdam.de
 
 files:
-    gexf: sir_sd.gexf
+    gexf: sir_sd.gexf.gz
     diagram prefix: sir_sd
 
+metaparameters:
+    initialrate: 0.001
+    transmissionrate: 1.0
+    recoveryrate: 0.4
+    deathrate: 0.1
+    sdrate: 500.0
+
 limits:
-    t: inf
-    events: 100000
+    t: 20
+    events: 1000000
 
 options:
     quiet: false
@@ -43,13 +50,18 @@ relationship types:
     # the epidemiological state of an agent w.r.t. a disease 
     # is now encoded in the relationship type.
     # to each disease, an agent has exactly one link of one of the following types:
-    is susceptible to: ~
+    is susceptible to: 
+        gexf: ~
     is infectious for: has infected  # here we need an inverse to be able to specify the social dynamics 
-    has recovered from: ~
-    has died of: ~
+    has recovered from:
+        gexf: sir_sd_recovered.gexf.gz
+    has died of:
+        gexf: sir_sd_died.gexf.gz
 
     # other relationships:
-    is acqu. with: symmetric  # permanent social tie
+    is acqu. with:  # permanent social tie
+        inverse: symmetric
+        gexf: sir_sd_acqu.gexf.gz
     regularly meets: symmetric  # variable due to social distancing
 
 initial links: 
@@ -68,7 +80,7 @@ initial links:
         # initially, agents' ties form a random geometric graph:
         [agent, is acqu. with, agent]:
             dimension: 2  # planar embedding
-            decay: 10.0 #20.0  # characteristic range of influence is 1/20 of the diameter of the territory
+            decay: 20.0  # characteristic range of influence is 1/20 of the diameter of the territory
         # we do not specify that they also meet regularly 
         # since these links will form immediately due to our specification below
 
@@ -101,8 +113,8 @@ dynamics:
     [agent, is infectious for, covid-19]:
         establish: # infection
             attempt:
-#                base: 0.001  # rare initial infection from outside the network
-                [agent, regularly meets, agent, is infectious for, covid-19]: 0.1  # = once the transmission rate of infection by transmission (VARY!)
+#                base: initialrate  # rare initial infection from outside the network
+                [agent, regularly meets, agent, is infectious for, covid-19]: transmissionrate  # = once the transmission rate of infection by transmission (VARY!)
                     # this is only once (!) the infection rate 
                     # because the transition cannot go back to "susceptible" and hence the newly formed "infectious" link cannot break immediately.
             success: inf  # if only one number is specified, it is the "basic" success probunits
@@ -115,7 +127,7 @@ dynamics:
     [agent, has recovered from, covid-19]:
         establish:  # recovery
             attempt:
-                [agent, is infectious for, covid-19, =, covid-19]: 0.4  # = once the recovery rate (VARY!) 
+                [agent, is infectious for, covid-19, =, covid-19]: recoveryrate  # = once the recovery rate (VARY!) 
                     # this is only once (!) the rate of transition from infectious to recovered 
                     # because the transition cannot go back to "infectious" and hence the newly "recovered" link cannot break immediately.
             success: inf
@@ -124,7 +136,7 @@ dynamics:
     [agent, has died of, covid-19]:
         establish:  # death
             attempt:
-                [agent, is infectious for, covid-19, =, covid-19]: 0.1  # = once the death rate (VARY!) 
+                [agent, is infectious for, covid-19, =, covid-19]: deathrate  # = once the death rate (VARY!) 
             success: inf
             # since death is a terminal state, this link type cannot be terminated either 
 
@@ -140,7 +152,8 @@ dynamics:
                 [agent, is susceptible to, covid-19, has infected, agent]: -1000.0  # VARY! 
         terminate:  # social distancing
             attempt:
-                [agent, is susceptible to, covid-19, has infected, agent]: 5.0  # social distancing rate. VARY!
+                [agent, is susceptible to, covid-19, has infected, agent]: sdrate  # social distancing rate. VARY!
+            success: inf
 
 
 visualization:  

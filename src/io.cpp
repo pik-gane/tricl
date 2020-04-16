@@ -5,17 +5,12 @@
  *      Author: heitzig
  */
 
-#include <iostream>
-#include <ostream>
 #include "3rdparty/rapidcsv.h"
 
-#include "data_model.h"
 #include "global_variables.h"
 #include "entity.h"
 #include "event.h"
 #include "io.h"
-
-using namespace std;
 
 ostream& operator<< (ostream& os, const link_type& lt) {
     os << et2label[lt.et1]

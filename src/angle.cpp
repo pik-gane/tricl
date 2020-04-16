@@ -11,17 +11,12 @@
 
 // TODO: add influence of legs!
 
-#include <assert.h>
-#include <iostream>
-
 #include "global_variables.h"
 #include "probability.h"
 
 #include "debugging.h"
 #include "event.h"
 #include "angle.h"
-
-using namespace std;
 
 void add_or_delete_angle (
         event_class ec_angle, ///< [in] event class: EC_EST adds an angle, EC_TERM deletes one
@@ -39,8 +34,9 @@ void add_or_delete_angle (
         if (debug) cout << "     possibly updating event: " << ec2label[ec13] <<  " \"" << e2label[e1] << " " << rat2label[rat13] << " " << e2label[e3] << "\"" << endl;
         if (evt2base_probunits.count(evt) > 0) {
             event ev = { .ec = ec13, .e1 = e1, .rat13 = rat13, .e3 = e3 };
-            if (debug) cout << "      event type " << evt << " has a base success prob. of "
-                    << probunits2probability(evt2base_probunits.at(evt), evt2left_tail.at(evt), evt2right_tail.at(evt)) << endl;
+// strangely, the following use of << evt gives a compile error since i introduced namespaces:
+//            if (debug) cout << "      event type " << evt << " has a base success prob. of "
+//                    << probunits2probability(evt2base_probunits.at(evt), evt2left_tail.at(evt), evt2right_tail.at(evt)) << endl;
             influence_type inflt = {
                     .evt = evt,
                     .at = { .rat12 = rat12, .et2 = et2, .rat23 = rat23 }
@@ -54,7 +50,7 @@ void add_or_delete_angle (
                         if (debug) cout << "        event will be scheduled newly" << endl;
                         auto evd_ = &ev2data[ev];  // generates a new event_data object
                         evd_->n_angles = 1;
-                        evd_->attempt_rate = inflt2attempt_rate.at({evt, NO_ANGLE}) + dar;
+                        evd_->attempt_rate = inflt2attempt_rate[{evt, NO_ANGLE}] + dar;
                         evd_->success_probunits = evt2base_probunits.at(evt) + dspu;
                         schedule_event(ev, evd_, evt2left_tail.at(evt), evt2right_tail.at(evt));
                     } else {

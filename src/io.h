@@ -8,11 +8,7 @@
 #ifndef INC_IO_H
 #define INC_IO_H
 
-#include <ostream>
-
 #include "data_model.h"
-
-using namespace std;
 
 ostream& operator<< (ostream& os, const link_type& lt);
 
@@ -21,6 +17,8 @@ ostream& operator<< (ostream& os, const event_type& evt);
 ostream& operator<< (ostream& os, const angle_type& at);
 
 ostream& operator<< (ostream& os, const event& ev);
+
+ostream& operator<< (ostream& os, const event_data& evd);
 
 void log_status ();
 

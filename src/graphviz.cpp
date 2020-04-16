@@ -10,14 +10,8 @@
  * - action types dashed
  */
 
-#include <iostream>
-#include <fstream>
-
-#include "data_model.h"
 #include "global_variables.h"
 #include "graphviz.h"
-
-using namespace std;
 
 ofstream dot;
 

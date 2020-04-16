@@ -5,16 +5,11 @@
  *      Author: heitzig
  */
 
-#include <assert.h>
-#include <iostream>
-
 #include "global_variables.h"
 #include "probability.h"
 #include "event.h"
 #include "gexf.h"
 #include "link.h"
-
-using namespace std;
 
 bool link_exists (link& l)
 {
@@ -28,7 +23,7 @@ void add_link (link& l)
     auto e1 = l.e1, e3 = l.e3; auto rat13 = l.rat13;
     e2outs[e1].insert({ .rat_out = rat13, .e_other = e3 });
     e2ins[e3].insert({ .e_other = e1, .rat_in = rat13 });
-    if (rat13 != RT_ID) gexf_edge2start[{e1, rat13, e3}] = current_t;
+    if (rat13 != RT_ID) gexf_edge2start[l] = current_t;
     lt2n[{_e2et[E(e1)], rat13, _e2et[E(e3)]}]++;
     n_links++;
 }
