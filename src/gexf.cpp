@@ -57,10 +57,12 @@ void init_gexf () {
     </meta>
     <graph mode="dynamic" defaultedgetype="directed">
         <attributes class="node">
-            <attribute id="0" title="entity type" type="string"/>
+            <attribute id="T" title="entity type" type="string"/>
         </attributes>
         <attributes class="edge">
-            <attribute id="1" title="relationship or action type" type="string"/>
+            <attribute id="R" title="relationship or action type" type="string"/>
+            <attribute id="S" title="start" type="float"/>
+            <attribute id="E" title="end" type="float"/>
         </attributes>
         <nodes>
 )V0G0N";
@@ -68,7 +70,7 @@ void init_gexf () {
                 auto et = _e2et[E(e)];
                 *gexf << "<node id=\"" << e << "\" label=\"" << e2label[e]
                      << "\" start=\"0.0\" end=\"" << max_t
-                     << "\"><attvalues><attvalue for=\"0\" value=\""
+                     << "\"><attvalues><attvalue for=\"T\" value=\""
                      << et2label[et] << "\"/></attvalues>";
                 if (et2gexf_size.count(et) > 0) *gexf
                      << "<viz:size value=\"" << et2gexf_size[et] << "\"/>";
@@ -98,11 +100,16 @@ void gexf_output_edge (tricl::link& l) {
             } else {
                 gexf = (ostream*)(&(gexf_direct[fn]));
             }
+            double start = gexf_edge2start.at(l), end = current_t;
             // unique edge id is <n_events>_<et1>_<rat13>_<et3>:
             *gexf << "\t\t\t<edge id=\"" << e1 << "_" << rat13 << "_" << e3 << "_" << n_events
-                 << "\" source=\"" << e1 << "\" target=\"" << e3
-                 << "\" start=\"" << gexf_edge2start.at(l) << "\" end=\"" << current_t
-                 << "\"><attvalues><attvalue for=\"1\" value=\"" << rat2label[rat13]
+                 << "\" source=\"" << e1
+                 << "\" target=\"" << e3
+                 << "\" start=\"" << start
+                 << "\" end=\"" << end
+                 << "\"><attvalues><attvalue for=\"R\" value=\"" << rat2label[rat13]
+                 << "\"/><attvalue for=\"S\" value=\"" << start
+                 << "\"/><attvalue for=\"E\" value=\"" << end
                  << "\"/></attvalues>";
             if (rat2gexf_thickness.count(rat13) > 0) *gexf
                  << "<viz:thickness value=\"" << rat2gexf_thickness[rat13] << "\"/>";

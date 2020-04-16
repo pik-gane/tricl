@@ -1,0 +1,54 @@
+metadata:
+  name: minimal model for varying parameters starting with the moreno health dataset
+  description: needs about 1 GB of memory
+  author: Jobst Heitzig
+  date: 8 April 2020
+  email: heitzig@pik-potsdam.de
+
+files:
+  gexf: socio_ps.gexf.gz
+  diagram prefix: socio_ps
+
+limits:
+  t: 2.0
+  events: 30000
+
+options:
+  quiet: false
+  verbose: false
+  debug: false
+  seed: 1
+
+entities:
+  node: 0
+
+relationship types:
+    –: symmetric
+
+initial links: 
+  "/home/heitzig/data/networks/socio_ps_final.csv":  # file extension must be ".csv"
+    type: [node, –, node]
+    skip: 0  # no. of rows to skip (default: 0)
+    max: 100000
+    delimiter: ","  # single space character (default: ",")
+    cols: [0, 1]  # column indices for source and target entity labels 
+
+dynamics:  # all values default to 0.0 (only tail indices default to 1.0)
+  [node, –, node]:
+    establish:
+      attempt:
+#            basic: 0
+            [~, –, node, –, ~]: 1  # leave at 1 (triangle closure sets the time scale)
+#      success:
+#            tails: [0.0, 0.0] 
+#            basic: 0
+#            [~, –, node, –, ~]: 0
+    terminate:
+      attempt:
+            basic: 1000
+#            [~, –, node, –, ~]: 0
+      success:
+#            tails: [0.0, 0.0]
+            basic: 30
+            [~, –, node, –, ~]: -10
+
