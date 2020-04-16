@@ -1,6 +1,8 @@
 add_executable(tricl 
     tricl.cpp 
     3rdparty/tinyexpr.c
+    3rdparty/gzip.cpp
+    3rdparty/zlib.cpp
     debugging.cpp
     constants.cpp
     probability.cpp 
@@ -16,4 +18,4 @@ add_executable(tricl
     simulate.cpp
     finish.cpp)
 
-target_link_libraries(tricl yaml-cpp boost_iostreams)
+target_link_libraries(tricl yaml-cpp z)  #boost_iostreams

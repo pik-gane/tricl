@@ -9,6 +9,9 @@
  * TODO:
  * - include metadata into gexf files
  */
+
+#define BOOST_IOSTREAMS_NO_LIB
+
 #include "global_variables.h"
 #include "gexf.h"
 #include <boost/iostreams/filtering_streambuf.hpp>

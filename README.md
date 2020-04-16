@@ -19,6 +19,7 @@ After cloning to some place, e.g. to ``git/tricl``,
    cmake --build .
    cp src/tricl wherever_you_want_the_binary
 ```
+(if necessary, first set CC, CXX, CPATH, LIBRARY_PATH, LD_LIBRARY_PATH environmental variables properly)
 
 Profiling
 ---------   
