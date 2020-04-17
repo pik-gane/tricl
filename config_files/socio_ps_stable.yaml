@@ -1,0 +1,59 @@
+metadata:
+  name: emulation of legs via another, fully connected relationship
+  description: 
+  author: Jobst Heitzig
+  date: 17 April 2020
+  email: heitzig@pik-potsdam.de
+
+files:
+  gexf: socio_ps_stable.gexf.gz
+  diagram prefix: socio_ps_stable
+
+metaparameters:
+  D: 0.002  # dampening due to one leg
+#  N: 243  # no. of nodes
+
+limits:
+  t: 5.0
+  events: 100000
+
+options:
+  quiet: false
+  verbose: false
+  debug: false
+  seed: 2 
+
+entities:
+  node: 0
+
+relationship types:
+    –: symmetric
+    ≠: 
+      inverse: symmetric
+      gexf: ~
+
+initial links: 
+  "/home/heitzig/data/networks/socio_ps_final.csv":  # file extension must be ".csv"
+    type: [node, –, node]
+    skip: 0  # no. of rows to skip (default: 0)
+    max: 100000
+    delimiter: ","  # single space character (default: ",")
+    cols: [0, 1]  # column indices for source and target entity labels 
+  random:
+    [node, ≠, node]:
+      probability: 1
+
+dynamics:  # all values default to 0.0 (only tail indices default to 1.0)
+  [node, –, node]:
+    establish:
+      attempt:
+            [~, –, node, –, ~]: 1  # leave at 1 (triangle closure sets the time scale)
+      success:
+            [~, –, node, ≠, ~]: -D
+            [~, ≠, node, –, ~]: -D
+    terminate:
+      attempt:
+            basic: 1000
+      success:
+            basic: 30
+            [~, –, node, –, ~]: -10

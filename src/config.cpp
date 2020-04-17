@@ -18,10 +18,13 @@
 #include <iostream>
 #include "yaml-cpp/yaml.h"
 #include "3rdparty/tinyexpr.h"
+#include "3rdparty/cxxopts.hpp"
 
 #include "global_variables.h"
 #include "entity.h"
 #include "io.h"
+
+cxxopts::Options options("tricl", "a generic network-based social simulation model");
 
 // scalar parameters and their default values:
 unordered_map<relationship_or_action_type, string> gexf_filename = {};
@@ -106,10 +109,53 @@ void read_entity_labels (YAML::Node n, entity_type et)
     }
 }
 
-void read_config ()
+void read_config (int argc, char *argv[])
 {
-    cout << "READING CONFIG file " << config_yaml_filename << " ..." << endl;
+    // parse command line:
+
+    if (argc<2) {
+        cout << "Usage:  tricl config_file.yaml  OR  tricl config_file.yaml [options]  OR  tricl config_file.yaml --help";
+        exit(1);
+    }
+    config_yaml_filename = argv[1];
     YAML::Node c = YAML::LoadFile(config_yaml_filename), n, n1, n2, n3;
+    options.add_options()("help", "Print help for " + config_yaml_filename);
+
+    // register command line options for all metaparameters in config file:
+    n = c["metaparameters"];
+    if (n) {
+        if (!n.IsMap()) {
+            cout << options.help() << endl;
+            throw "field 'metaparameters' in config file must be a map";
+        }
+        for (YAML::const_iterator it = n.begin(); it != n.end(); ++it) {
+            string symbol = it->first.as<string>(), deflt = it->second.as<string>();
+            options.add_options()(symbol, "value or expression for metaparameter " + symbol,
+                    cxxopts::value<std::string>()->default_value(deflt));
+        }
+    }
+    // parse command line:
+    auto cmdlineopts = options.parse(argc, argv);
+    if ((cmdlineopts.count("help") >= 1)) {
+        cout << options.help() << endl;
+        exit(0);
+    }
+
+    cout << "READING CONFIG file " << config_yaml_filename << " ..." << endl;
+
+    // metaparameters:
+    te_vals[0] = { INFINITY };
+    te_vars[0] = {"inf", (const void*)(&te_vals[0]), TE_VARIABLE};
+    n_te_vars = 1;
+    n = c["metaparameters"];
+    if (n) {
+        if (!quiet) cout << " metaparameters:" << endl;
+        for (YAML::const_iterator it = n.begin(); it != n.end(); ++it) {
+            auto symbol = it->first.as<string>(), expression = cmdlineopts[symbol].as<string>();
+            double value = register_te_var(symbol, expression);
+            if (!quiet) cout << "  " << symbol << " = " << expression << " = " << value << endl;
+        }
+    }
 
     // options:
     n = c["options"];
@@ -119,21 +165,6 @@ void read_config ()
         if (n["verbose"]) verbose = n["verbose"].as<bool>();
         if (n["debug"]) debug = n["debug"].as<bool>();
         if (n["seed"]) seed = n["seed"].as<unsigned>();
-    }
-
-    // metaparameters:
-    te_vals[0] = { INFINITY };
-    te_vars[0] = {"inf", (const void*)(&te_vals[0]), TE_VARIABLE};
-    n_te_vars = 1;
-    n = c["metaparameters"];
-    if (n) {
-        if (!quiet) cout << " metaparameters:" << endl;
-        if (!n.IsMap()) throw "yaml field 'metaparameters' must be a map";
-        for (YAML::const_iterator it = n.begin(); it != n.end(); ++it) {
-            string symbol = it->first.as<string>(), expression = it->second.as<string>();
-            double value = register_te_var(symbol, expression);
-            if (!quiet) cout << "  " << symbol << " = " << expression << " = " << value << endl;
-        }
     }
 
     // metadata (mandatory):

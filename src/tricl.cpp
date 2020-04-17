@@ -35,9 +35,8 @@
  * - add acts
  *
  * simulation options:
- * - as an alternative to tmax, add max_n_events and max_wall
- * - add control over random seed
- * - allow to read initial state from csv files (one for each link type) or gexf file
+ * - add command line setting of metaparameters
+ * - as an alternative to tmax and max_n_events, add max_wall
  * - add particle filtering mode
  *
  * network theory stuff:
@@ -45,6 +44,7 @@
  * - add more random network models
  *
  * convenience:
+ * - improve quiet status output
  * - add --help message and potential parameter overrides on the command line
  * - remove redundant output from init that is already printed in config
  *
@@ -145,19 +145,10 @@
 
 string config_yaml_filename; ///< filename of configuration file
 
-/** parse the command line arguments */
-void parse_args (int argc, const char *argv[]) {
-    if (argc < 2) {
-        throw "USAGE: tricl my_config.yaml";
-    }
-    config_yaml_filename = argv[1];
-}
-
 /** main function of the tricl executable */
-int main (int argc, const char *argv[]) {
+int main (int argc, char *argv[]) {
     try {
-        parse_args(argc, argv);
-        read_config();
+        read_config(argc, argv);
         init();
         if (debug) verify_data_consistency();
 

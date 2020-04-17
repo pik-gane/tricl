@@ -1,4 +1,4 @@
-void read_config ();
+void read_config (int argc, char *argv[]);
 
 
 

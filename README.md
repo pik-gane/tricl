@@ -30,7 +30,7 @@ Profiling
 Usage
 -----
 * write some config file ``someconfigfile.yaml`` (see below)
-* run model with ``tricl someconfigfile.yaml``
+* run model with ``tricl someconfigfile.yaml [options]`` (or first list options with ``tricl someconfigfile.yaml --help``)
 * visualize or analyse output gexf-file, e.g. with gephi <https://gephi.org/>
 
 Caution: output files might get large! Try with small ``limits:events`` first.
@@ -105,7 +105,9 @@ options:
 
 metaparameters:  
     # will be substituted for their values 
-    # in expressions occurring in the rest of the config file
+    # in expressions occurring in the rest of the config file.
+    # a metaparameter XY can be overwritten by specifying 
+    # an option -XY <value or expression> on the command line 
 
     <token>: <value or expression>   # <explanation>
     <token>: <value or expression, maybe using earlier tokens>
