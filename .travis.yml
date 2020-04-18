@@ -1,6 +1,10 @@
+before_install:
+  - sudo apt-get -y install doxygen doxygen-doc doxygen-gui graphviz
+
 branches:
   only:
   - master
+
 after_success:
   # Generate the docs only if master, the travis_build_docs is true and we can use secure variables
   - >-
