@@ -5,17 +5,17 @@
 Handling of events.  
 
 
-{\ttfamily \#include $<$assert.\+h$>$}\\*
-{\ttfamily \#include $<$iostream$>$}\\*
-{\ttfamily \#include \char`\"{}debugging.\+h\char`\"{}}\\*
-{\ttfamily \#include \char`\"{}data\+\_\+model.\+h\char`\"{}}\\*
-{\ttfamily \#include \char`\"{}global\+\_\+variables.\+h\char`\"{}}\\*
-{\ttfamily \#include \char`\"{}entity.\+h\char`\"{}}\\*
-{\ttfamily \#include \char`\"{}angle.\+h\char`\"{}}\\*
-{\ttfamily \#include \char`\"{}link.\+h\char`\"{}}\\*
-{\ttfamily \#include \char`\"{}probability.\+h\char`\"{}}\\*
-{\ttfamily \#include \char`\"{}event.\+h\char`\"{}}\\*
-{\ttfamily \#include \char`\"{}io.\+h\char`\"{}}\\*
+{\ttfamily \#include $<$assert.\+h$>$}\newline
+{\ttfamily \#include $<$iostream$>$}\newline
+{\ttfamily \#include \char`\"{}debugging.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}data\+\_\+model.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}global\+\_\+variables.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}entity.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}angle.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}link.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}probability.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}event.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}io.\+h\char`\"{}}\newline
 Include dependency graph for event.\+cpp\+:
 \nopagebreak
 \begin{figure}[H]
@@ -27,46 +27,46 @@ Include dependency graph for event.\+cpp\+:
 \subsection*{Macros}
 \begin{DoxyCompactItemize}
 \item 
-\#define {\bfseries I\+F\+\_\+12}~if (which == 0)\hypertarget{event_8cpp_ac1e75a2e1d58d4f43aaa35324bb26538}{}\label{event_8cpp_ac1e75a2e1d58d4f43aaa35324bb26538}
-
+\mbox{\Hypertarget{event_8cpp_ac1e75a2e1d58d4f43aaa35324bb26538}\label{event_8cpp_ac1e75a2e1d58d4f43aaa35324bb26538}} 
+\#define {\bfseries I\+F\+\_\+12}~if (which == 0)
 \item 
-\#define {\bfseries I\+F\+\_\+23}~if (which == 1)\hypertarget{event_8cpp_a0add313a6fd3d8fae54c55f125be6f0f}{}\label{event_8cpp_a0add313a6fd3d8fae54c55f125be6f0f}
-
+\mbox{\Hypertarget{event_8cpp_a0add313a6fd3d8fae54c55f125be6f0f}\label{event_8cpp_a0add313a6fd3d8fae54c55f125be6f0f}} 
+\#define {\bfseries I\+F\+\_\+23}~if (which == 1)
 \end{DoxyCompactItemize}
 \subsection*{Functions}
 \begin{DoxyCompactItemize}
 \item 
 bool \hyperlink{event_8cpp_ab8644632b851d99741826fb61fb703bd}{event\+\_\+is\+\_\+scheduled} (\hyperlink{structevent}{event} \&ev, \hyperlink{structevent__data}{event\+\_\+data} $\ast$evd\+\_\+)
 \begin{DoxyCompactList}\small\item\em Return whether a future instance of the event is scheduled. \end{DoxyCompactList}\item 
-void {\bfseries \+\_\+schedule\+\_\+event} (\hyperlink{structevent}{event} \&ev, \hyperlink{structevent__data}{event\+\_\+data} $\ast$evd\+\_\+, double left\+\_\+tail, double right\+\_\+tail)\hypertarget{event_8cpp_a4048cb830821ab767f91d751e7bd1f37}{}\label{event_8cpp_a4048cb830821ab767f91d751e7bd1f37}
-
+\mbox{\Hypertarget{event_8cpp_a4048cb830821ab767f91d751e7bd1f37}\label{event_8cpp_a4048cb830821ab767f91d751e7bd1f37}} 
+void {\bfseries \+\_\+schedule\+\_\+event} (\hyperlink{structevent}{event} \&ev, \hyperlink{structevent__data}{event\+\_\+data} $\ast$evd\+\_\+, double left\+\_\+tail, double right\+\_\+tail)
 \item 
-void {\bfseries schedule\+\_\+event} (\hyperlink{structevent}{event} \&ev, \hyperlink{structevent__data}{event\+\_\+data} $\ast$evd\+\_\+, double left\+\_\+tail, double right\+\_\+tail)\hypertarget{event_8cpp_a269d75ea7ef6f98c60705a062e98f4e0}{}\label{event_8cpp_a269d75ea7ef6f98c60705a062e98f4e0}
-
+\mbox{\Hypertarget{event_8cpp_a269d75ea7ef6f98c60705a062e98f4e0}\label{event_8cpp_a269d75ea7ef6f98c60705a062e98f4e0}} 
+void {\bfseries schedule\+\_\+event} (\hyperlink{structevent}{event} \&ev, \hyperlink{structevent__data}{event\+\_\+data} $\ast$evd\+\_\+, double left\+\_\+tail, double right\+\_\+tail)
 \item 
-void {\bfseries reschedule\+\_\+event} (\hyperlink{structevent}{event} \&ev, \hyperlink{structevent__data}{event\+\_\+data} $\ast$evd\+\_\+, double left\+\_\+tail, double right\+\_\+tail)\hypertarget{event_8cpp_ad37a5884bb4d210596ad150d6efafed0}{}\label{event_8cpp_ad37a5884bb4d210596ad150d6efafed0}
-
+\mbox{\Hypertarget{event_8cpp_ad37a5884bb4d210596ad150d6efafed0}\label{event_8cpp_ad37a5884bb4d210596ad150d6efafed0}} 
+void {\bfseries reschedule\+\_\+event} (\hyperlink{structevent}{event} \&ev, \hyperlink{structevent__data}{event\+\_\+data} $\ast$evd\+\_\+, double left\+\_\+tail, double right\+\_\+tail)
 \item 
-void {\bfseries add\+\_\+event} (\hyperlink{structevent}{event} \&ev)\hypertarget{event_8cpp_aef94fa11ff43b90a11586d18670f2700}{}\label{event_8cpp_aef94fa11ff43b90a11586d18670f2700}
-
+\mbox{\Hypertarget{event_8cpp_aef94fa11ff43b90a11586d18670f2700}\label{event_8cpp_aef94fa11ff43b90a11586d18670f2700}} 
+void {\bfseries add\+\_\+event} (\hyperlink{structevent}{event} \&ev)
 \item 
-void {\bfseries remove\+\_\+event} (\hyperlink{structevent}{event} \&ev, \hyperlink{structevent__data}{event\+\_\+data} $\ast$evd\+\_\+)\hypertarget{event_8cpp_a55e7ed06ea3900949b3bb7a464670054}{}\label{event_8cpp_a55e7ed06ea3900949b3bb7a464670054}
-
+\mbox{\Hypertarget{event_8cpp_a55e7ed06ea3900949b3bb7a464670054}\label{event_8cpp_a55e7ed06ea3900949b3bb7a464670054}} 
+void {\bfseries remove\+\_\+event} (\hyperlink{structevent}{event} \&ev, \hyperlink{structevent__data}{event\+\_\+data} $\ast$evd\+\_\+)
 \item 
-void {\bfseries conditionally\+\_\+remove\+\_\+event} (\hyperlink{structevent}{event} \&ev)\hypertarget{event_8cpp_a875f0862466ff1b831fee64602d92d76}{}\label{event_8cpp_a875f0862466ff1b831fee64602d92d76}
-
+\mbox{\Hypertarget{event_8cpp_a875f0862466ff1b831fee64602d92d76}\label{event_8cpp_a875f0862466ff1b831fee64602d92d76}} 
+void {\bfseries conditionally\+\_\+remove\+\_\+event} (\hyperlink{structevent}{event} \&ev)
 \item 
-void {\bfseries update\+\_\+adjacent\+\_\+events} (\hyperlink{structevent}{event} \&ev)\hypertarget{event_8cpp_adc013b33a8b8afbb4f75c8c95dc3b93a}{}\label{event_8cpp_adc013b33a8b8afbb4f75c8c95dc3b93a}
-
+\mbox{\Hypertarget{event_8cpp_adc013b33a8b8afbb4f75c8c95dc3b93a}\label{event_8cpp_adc013b33a8b8afbb4f75c8c95dc3b93a}} 
+void {\bfseries update\+\_\+adjacent\+\_\+events} (\hyperlink{structevent}{event} \&ev)
 \item 
-void {\bfseries add\+\_\+reverse\+\_\+event} (\hyperlink{structevent}{event} \&old\+\_\+ev)\hypertarget{event_8cpp_aec4dd06c452378363b04a58a0cfe8f8b}{}\label{event_8cpp_aec4dd06c452378363b04a58a0cfe8f8b}
-
+\mbox{\Hypertarget{event_8cpp_aec4dd06c452378363b04a58a0cfe8f8b}\label{event_8cpp_aec4dd06c452378363b04a58a0cfe8f8b}} 
+void {\bfseries add\+\_\+reverse\+\_\+event} (\hyperlink{structevent}{event} \&old\+\_\+ev)
 \item 
-void {\bfseries perform\+\_\+event} (\hyperlink{structevent}{event} \&ev)\hypertarget{event_8cpp_af13ceffde477e67e6d9418750ce45107}{}\label{event_8cpp_af13ceffde477e67e6d9418750ce45107}
-
+\mbox{\Hypertarget{event_8cpp_af13ceffde477e67e6d9418750ce45107}\label{event_8cpp_af13ceffde477e67e6d9418750ce45107}} 
+void {\bfseries perform\+\_\+event} (\hyperlink{structevent}{event} \&ev)
 \item 
-bool {\bfseries pop\+\_\+next\+\_\+event} ()\hypertarget{event_8cpp_ad57de4475b376dedfc003a1b09cfece8}{}\label{event_8cpp_ad57de4475b376dedfc003a1b09cfece8}
-
+\mbox{\Hypertarget{event_8cpp_ad57de4475b376dedfc003a1b09cfece8}\label{event_8cpp_ad57de4475b376dedfc003a1b09cfece8}} 
+bool {\bfseries pop\+\_\+next\+\_\+event} ()
 \end{DoxyCompactItemize}
 
 
@@ -88,14 +88,12 @@ Mar 30, 2020
 
 
 \subsection{Function Documentation}
+\mbox{\Hypertarget{event_8cpp_ab8644632b851d99741826fb61fb703bd}\label{event_8cpp_ab8644632b851d99741826fb61fb703bd}} 
 \index{event.\+cpp@{event.\+cpp}!event\+\_\+is\+\_\+scheduled@{event\+\_\+is\+\_\+scheduled}}
 \index{event\+\_\+is\+\_\+scheduled@{event\+\_\+is\+\_\+scheduled}!event.\+cpp@{event.\+cpp}}
-\subsubsection[{\texorpdfstring{event\+\_\+is\+\_\+scheduled(event \&ev, event\+\_\+data $\ast$evd\+\_\+)}{event_is_scheduled(event &ev, event_data *evd_)}}]{\setlength{\rightskip}{0pt plus 5cm}bool event\+\_\+is\+\_\+scheduled (
-\begin{DoxyParamCaption}
-\item[{{\bf event} \&}]{ev, }
-\item[{{\bf event\+\_\+data} $\ast$}]{evd\+\_\+}
-\end{DoxyParamCaption}
-)}\hypertarget{event_8cpp_ab8644632b851d99741826fb61fb703bd}{}\label{event_8cpp_ab8644632b851d99741826fb61fb703bd}
+\subsubsection{\texorpdfstring{event\+\_\+is\+\_\+scheduled()}{event\_is\_scheduled()}}
+{\footnotesize\ttfamily bool event\+\_\+is\+\_\+scheduled (\begin{DoxyParamCaption}\item[{\hyperlink{structevent}{event} \&}]{ev,  }\item[{\hyperlink{structevent__data}{event\+\_\+data} $\ast$}]{evd\+\_\+ }\end{DoxyParamCaption})}
+
 
 
 Return whether a future instance of the event is scheduled. 
