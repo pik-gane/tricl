@@ -17,7 +17,7 @@ before_install:
       ls
       source .ci/setup-ssh.sh
       echo "setup ssh done"
-      .ci/generateDocumentation.sh
+      source .ci/generateDocumentation.sh
       echo "generate doc done"
     fi
 script: cmake . && cmake --build .
