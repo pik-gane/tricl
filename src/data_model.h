@@ -1,11 +1,6 @@
-/** The main data model.
+/** The main data model
  *
- * Defines all structs and their operators.
- *
- * @author Jobst Heitzig, Potsdam Institute for Climate Impact Research, heitzig@pik-potsdam.de
- * @date Mar 30, 2020
- *
- * @file
+ * \file
  *
  * Data architecture
  * -------------------
@@ -31,8 +26,8 @@
  * #E_BITS, #ET_BITS, and #RAT_BITS,
  * which could be adapted in dependence on system architecture,
  * but must fulfil the following constraints:
- *   2 + 2*E_BITS + RAT_BITS <= no. of bits in size_t (32 or 64)
- *   2^E_BITS + 2^(6 + 3*RAT_BITS + 3*ET_BITS) <= available memory bytes
+ *   2 + 2 * #E_BITS + #RAT_BITS <= no. of bits in size_t (32 or 64)
+ *   2^#E_BITS + 2^(6 + 3 * #RAT_BITS + 3 * #ET_BITS) <= available memory bytes
  */
 
 #ifndef INC_DATA_MODEL_H
@@ -50,7 +45,8 @@
 #include <map>
 #include <math.h>
 
-namespace tricl { // we use our own namespace to avoid clashes with 3rdparty names, e.g. "link"
+/// We use our own namespace to avoid clashes with 3rdparty names, e.g. "link"
+namespace tricl {
 
 using std::ofstream;
 using std::ostream;
@@ -69,9 +65,9 @@ using std::round;
 
 
 // the following choices seem adequate for 64 bit system and >= 1 GB available memory:
-#define E_BITS 20   ///< no. of bits used for entity ids --> max. 1 mio. entities
-#define ET_BITS 4   ///< no. of bits used for entity types --> max. 16 entity types
-#define RAT_BITS 4  ///< no. of bits used for relationship or action types --> max. 16 relationship or action types
+#define E_BITS 20   ///< No. of bits used for entities --> max. 1 mio. entities
+#define ET_BITS 4   ///< No. of bits used for entity types --> max. 16 entity types
+#define RAT_BITS 4  ///< No. of bits used for relationship or action types --> max. 16 relationship or action types
 
 #define MAX_N_E ((1<<E_BITS)-1)  ///< resulting max. no. of entities
 
@@ -80,12 +76,12 @@ using std::round;
 
 // basic types:
 
-typedef double timepoint;    ///< a point in continuous model time, 0...inf
-typedef double probunits;    ///< -inf...inf, will be mapped to probabilities by means of the function probunits2probability()
+typedef double timepoint;    ///< A point in continuous model time, 0...inf
+typedef double probunits;    ///< -inf...inf, will be mapped to probabilities by means of the function \ref probunits2probability()
 typedef double probability;  ///< 0...1
-typedef double rate;         ///< probability per time, 0...inf. (inf is used for things happening "immediately")
+typedef double rate;         ///< Probability per time, 0...inf. (inf is used for things happening "immediately")
 
-typedef string label;  ///< labels of things
+typedef string label;  ///< Labels of things
 
 
 /** Entities are used to encode all physical and abstract objects of the modeled social dynamics
@@ -119,26 +115,19 @@ typedef short unsigned int entity_type; ///< >=1 so that -entity_type can be sto
  */
 typedef size_t relationship_or_action_type;  ///< >= 1
 
-#define NO_RAT 0  ///< missing value for relationship or action type, used in angles to encode legs
-#define RT_ID 1   ///< relationship type for identity relationship "=", always present
+#define NO_RAT 0  ///< Missing value for relationship or action type, used in angles to encode legs
+#define RT_ID 1   ///< Relationship type for identity relationship "=", always present
 
-/// (don't confuse with event_type!)
-enum event_class {
-    EC_EST,   ///< establishment of a relationship
-    EC_TERM,  ///< termination of a relationship
-    EC_ACT    ///< occurrence of an action
-};
-
-extern unordered_map<event_class, label> ec2label;
 
 
 // complex types:
 
-
+/** Pair of entity types (rarely used)
+ */
 struct entity_type_pair
 {
-    const entity_type et1;  ///< type of source entity e1
-    const entity_type et3;  ///< type of target entity e3
+    const entity_type et1;  ///< Type of source entity e1
+    const entity_type et3;  ///< Type of target entity e3
 
     friend bool operator== (const entity_type_pair& left, const entity_type_pair& right) {
         return (left.et1 == right.et1
@@ -146,11 +135,35 @@ struct entity_type_pair
     }
 };
 
+/** A link encodes either the existence of a certain relationship between two entities
+ *  (or the cumulative impact of all past actions of a certain type between two entities -- not yet implemented).
+ */
+struct link
+{
+    const entity e1;                          //< Source entity (or, if <0, source entity type of a summary event)
+    const relationship_or_action_type rat13;  //< Type of relationship or action represented by this link
+    const entity e3;                          //< Target entity (or, if <0, target entity type of a summary event)
+
+    friend bool operator== (const link& left, const link& right) {
+        return ((left.e1 == right.e1)
+                && (left.rat13 == right.rat13)
+                && (left.e3 == right.e3));
+    }
+    // since links are used in sets, they must provide a comparison operator:
+    friend bool operator< (const link& left, const link& right) {
+        return ((left.e1 < right.e1)
+                || ((left.e1 == right.e1) && (left.rat13 < right.rat13))
+                || ((left.e1 == right.e1) && (left.rat13 == right.rat13) && (left.e3 < right.e3)));
+    }
+};
+
+/** The type of a \ref link is given by two entity types and a relationship or action type.
+ */
 struct link_type
 {
-    const entity_type et1;                    ///< type of source entity e1
-    const relationship_or_action_type rat13;  ///< type of relationship or action
-    const entity_type et3;                    ///< type of target entity e3
+    const entity_type et1;                    ///< Type of source entity e1
+    const relationship_or_action_type rat13;  ///< Type of relationship or action
+    const entity_type et3;                    ///< Type of target entity e3
 
     friend bool operator== (const link_type& left, const link_type& right) {
         return (left.et1 == right.et1
@@ -159,12 +172,44 @@ struct link_type
     }
 };
 
+/** (don't confuse with event_type!) The event class encodes what kind of change to the system state an \ref event represents.
+ */
+enum event_class {
+    EC_EST,   ///< Establishment of a relationship
+    EC_TERM,  ///< Termination of a relationship
+    EC_ACT    ///< Occurrence of an action (not yet implemented)
+};
+
+extern unordered_map<event_class, label> ec2label;
+
+/** An event encodes a possible atomic change in the system state involving exactly one link.
+ *
+ *  For simplicity, the link is not encoded by an attribute of type \ref link
+ *  but rather by a copy of its three attributes e1, rat13, e3.
+ */
+struct event
+{
+    event_class ec;
+    entity e1;
+    relationship_or_action_type rat13;
+    entity e3;
+
+    friend bool operator== (const event& left, const event& right) {
+        return (left.ec == right.ec
+                && left.e1 == right.e1
+                && left.rat13 == right.rat13
+                && left.e3 == right.e3);
+    }
+};
+
+/** The type of an \ref event is given by an event class, two entity types and a relationship or action type.
+ */
 struct event_type
 {
     const event_class ec;
-    const entity_type et1;  // type of source entity e1
-    const relationship_or_action_type rat13;  // relation of link e1 -> e3
-    const entity_type et3;  // type of destination entity e3
+    const entity_type et1;
+    const relationship_or_action_type rat13;
+    const entity_type et3;
 
     friend bool operator== (const event_type& left, const event_type& right) {
         return (left.ec == right.ec
@@ -174,30 +219,16 @@ struct event_type
     }
 };
 
-struct angle_type
+/** For performance reasons, the mutable data of an \ref event is stored in a separate struct.
+ *
+ *  These structs appear as values in a map whose key is the corresponding event.
+ */
+struct event_data
 {
-    const relationship_or_action_type rat12;  // relationship_or_action_type of link e1 -> e2, or NO_RT if in-leg
-    const entity_type et2;  // type of middle entity e3
-    const relationship_or_action_type rat23;  // relationship_or_action_type of link e2 -> e3, or NO_RT if out-leg
-
-    friend bool operator== (const angle_type& left, const angle_type& right) {
-        return (left.rat12 == right.rat12
-                && left.et2 == right.et2
-                && left.rat23 == right.rat23);
-    }
-};
-
-const angle_type NO_ANGLE = { .rat12 = NO_RAT, .et2 = 0, .rat23 = NO_RAT }; // signifying spontaneous events
-
-struct influence_type
-{
-    const event_type evt;
-    const angle_type at; // or NO_ANGLE if event is spontaneous
-
-    friend bool operator== (const influence_type& left, const influence_type& right) {
-        return (left.evt == right.evt
-                && left.at == right.at);
-    }
+    int n_angles = 0;             //< Current no. of angles influencing this event
+    rate attempt_rate;            //< Current attempt rate of this event
+    probunits success_probunits;  //< Current success probunits of this event
+    timepoint t = -INFINITY;      //< When this event would next happen if the system state does not chance in between
 };
 
 struct inleg
@@ -235,48 +266,6 @@ struct outleg
 typedef set<inleg> inleg_set;
 typedef set<outleg> outleg_set;
 
-struct link
-{
-    const entity e1;  // source entity (or, if <0, source entity type of spontaneous addition)
-    const relationship_or_action_type rat13;  // relationship (!) type of link e1 -> e3
-    const entity e3;  // destination entity (or, if <0, dest. entity type of spontaneous addition)
-
-    friend bool operator== (const link& left, const link& right) {
-        return ((left.e1 == right.e1)
-                && (left.rat13 == right.rat13)
-                && (left.e3 == right.e3));
-    }
-    // since links are used in sets, they must provide a comparison operator:
-    friend bool operator< (const link& left, const link& right) {
-        return ((left.e1 < right.e1)
-                || ((left.e1 == right.e1) && (left.rat13 < right.rat13))
-                || ((left.e1 == right.e1) && (left.rat13 == right.rat13) && (left.e3 < right.e3)));
-    }
-};
-
-struct event
-{
-    event_class ec;
-    entity e1;  // source entity (or, if <0, source entity type of spontaneous addition)
-    relationship_or_action_type rat13;  // relationship_or_action_type of link e1 -> e3
-    entity e3;  // destination entity (or, if <0, dest. entity type of spontaneous addition)
-
-    friend bool operator== (const event& left, const event& right) {
-        return (left.ec == right.ec
-                && left.e1 == right.e1
-                && left.rat13 == right.rat13
-                && left.e3 == right.e3);
-    }
-};
-
-struct event_data
-{
-    int n_angles = 0;
-    rate attempt_rate;
-    probunits success_probunits;
-    timepoint t = -INFINITY;
-};
-
 struct angle
 {
     relationship_or_action_type rat12;  // relationship_or_action_type of link e1 -> e2
@@ -290,7 +279,37 @@ struct angle
     }
 };
 
+struct angle_type
+{
+    const relationship_or_action_type rat12;  // relationship_or_action_type of link e1 -> e2, or NO_RT if in-leg
+    const entity_type et2;  // type of middle entity e3
+    const relationship_or_action_type rat23;  // relationship_or_action_type of link e2 -> e3, or NO_RT if out-leg
+
+    friend bool operator== (const angle_type& left, const angle_type& right) {
+        return (left.rat12 == right.rat12
+                && left.et2 == right.et2
+                && left.rat23 == right.rat23);
+    }
+};
+
+const angle_type NO_ANGLE = { .rat12 = NO_RAT, .et2 = 0, .rat23 = NO_RAT }; // signifying spontaneous events
+
 typedef vector<angle> angles;
+
+
+struct influence_type
+{
+    const event_type evt;
+    const angle_type at; // or NO_ANGLE if event is spontaneous
+
+    friend bool operator== (const influence_type& left, const influence_type& right) {
+        return (left.evt == right.evt
+                && left.at == right.at);
+    }
+};
+
+
+
 
 } // namespace tricl
 

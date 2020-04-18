@@ -8,25 +8,17 @@ Dependencies
 * zlib <https://www.zlib.net/> (instead of using the heavier and harder to install libboost_iostreams shared library)
 * boost::iostreams header files: <https://www.boost.org/doc/libs/1_72_0/libs/iostreams/doc/index.html> 
 
-Building
---------
-After cloning to some place, e.g. to ``git/tricl``,
-
-```shell
-   cd git/tricl
-   mkdir -p build/default
-   cd build/default
-   cmake ../../
-   cmake --build .
-   cp src/tricl wherever_you_want_the_binary
-```
-(if necessary, first set CC, CXX, CPATH, LIBRARY_PATH, LD_LIBRARY_PATH environmental variables properly)
-
-Profiling
----------   
-```shell
-   valgrind --tool=callgrind --callgrind-out-file=/tmp/callgrind.out tricl; kcachegrind /tmp/callgrind.out
-```
+Installation
+------------
+* ``cd`` to some place
+* ``git clone https://github.com/mensch72/tricl.git``
+* ``cd tricl``
+* ``mkdir -p build/default``
+* ``cd build/default``
+* if necessary, set the environmental variables CC, CXX, CPATH, LIBRARY_PATH, LD_LIBRARY_PATH to point to your C compiler, C++ compiler, static library path, an shared library path
+* ``cmake ../../``
+* ``cmake --build .``
+* ``cp src/tricl`` to wherever you want the binary
 
 Usage
 -----
@@ -34,7 +26,7 @@ Usage
 * run model with ``tricl someconfigfile.yaml [options]`` (or first list options with ``tricl someconfigfile.yaml --help``)
 * visualize or analyse output gexf-file, e.g. with gephi <https://gephi.org/>
 
-Caution: output files might get large! Try with small ``limits:events`` first.
+Caution: output files might get large! Try with small ``limits:events`` first and use gexf.gz file format!
 
 Config file syntax
 ------------------
@@ -234,9 +226,27 @@ License
 Change log
 ----------
 
+2020-04-18
+- automatically generate code documentation and publish it to <https://mensch72.github.io/tricl/html/index.html>
+
 2020-04-17
 - metaparameters can now be overwritten on the command line
 
 2020-04-16
 - added utility scripts for making videos with gephi (folder ``gephi``)
 - added support for gzipped output (.gexz.gz, not on the cluster yet) and separate output of individual relationship types
+
+Development
+-----------
+
+Code documentation is here: <https://mensch72.github.io/tricl/html/index.html>
+(automatically updated after each commit to the master branch).
+ 
+To profile:
+```shell
+   valgrind --tool=callgrind --callgrind-out-file=/tmp/callgrind.out tricl; kcachegrind /tmp/callgrind.out
+```
+
+To generate a local copy of the documentation:
+* execute ``doxygen`` in the top repository folder
+* find the documentation in the folder ``doc`` (will be ignored by git)
