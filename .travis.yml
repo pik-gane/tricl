@@ -1,3 +1,9 @@
+env:
+  global:
+    - DOXYFILE=Doxyfile
+    - GH_REPO_NAME=tricl
+    - TRAVIS_BUILD_DIR=src
+    
 before_install:
   - sudo apt-get -y install doxygen doxygen-doc doxygen-gui graphviz
 
