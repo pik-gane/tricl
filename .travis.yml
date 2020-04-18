@@ -4,9 +4,7 @@ env:
   - GH_REPO_NAME=tricl
   - TRAVIS_BUILD_DIR=src
 before_install:
-- openssl aes-256-cbc -K $encrypted_5ac97451e563_key -iv $encrypted_5ac97451e563_iv
-  -in traviskey.enc -out ~\/traviskey -d
-- sudo apt-get -y install doxygen doxygen-doc doxygen-gui graphviz
+  - sudo apt-get -y install doxygen doxygen-doc doxygen-gui graphviz
 branches:
   only:
   - master
@@ -14,6 +12,6 @@ after_success:
 - |-
   if [[ "$TRAVIS_BRANCH" = "master" && -n "$TRAVIS_BUILD_DOCS" && "$TRAVIS_PULL_REQUEST" = "false" ]] ; then
     cd $TRAVIS_BUILD_DIR
-    # source .ci/setup-ssh.sh || travis_terminate 1
+    source .ci/setup-ssh.sh || travis_terminate 1
     .ci/generateDocumentation.sh || travis_terminate 1
   fi
