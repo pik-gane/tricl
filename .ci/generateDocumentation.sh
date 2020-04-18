@@ -42,18 +42,11 @@ set -e
 GH_REPO_ORG=`echo $TRAVIS_REPO_SLUG | cut -d "/" -f 1`
 GH_REPO_NAME=`echo $TRAVIS_REPO_SLUG | cut -d "/" -f 2`
 GH_REPO_REF="github.com/$GH_REPO_ORG/$GH_REPO_NAME.git"
-DOXYFILE=$TRAVIS_BUILD_DIR/Doxyfile
-
 
 # Get the current gh-pages branch
-git clone -b gh-pages git@github.com:$GH_REPO_ORG/$GH_REPO_NAME.git code_docs
-cd code_docs
-ls
+git clone -b gh-pages git@github.com:$GH_REPO_ORG/$GH_REPO_NAME.git doc
 
-# Copy DoxygenLayout.xml here
-#cp $TRAVIS_BUILD_DIR/DoxygenLayout.xml .
-
-##### Configure git.
+##### Configure ghttps://en.wikipedia.org/wiki/Travis_CIit.
 # Set the push default to simple i.e. push only the current branch.
 git config --global push.default simple
 # Pretend to be an user called Travis CI.
@@ -73,13 +66,15 @@ echo "" > .nojekyll
 ##### Generate the Doxygen code documentation and log the output.          #####
 echo 'Generating Doxygen code documentation...'
 # Redirect both stderr and stdout to the log file AND the console.
-doxygen ../$DOXYFILE 2>&1 | tee doxygen.log
+doxygen Doxyfile 2>&1 | tee doxygen.log
 
 ################################################################################
 ##### Upload the documentation to the gh-pages branch of the repository.   #####
 # Only upload if Doxygen successfully created the documentation.
 # Check this by verifying that the html directory and the file html/index.html
 # both exist. This is a good indication that Doxygen did it's work.
+cd doc
+ls
 if [ -d "html" ] && [ -f "html/index.html" ]; then
     echo 'Uploading documentation to the gh-pages branch...'
     # Add everything in this directory (the Doxygen code documentation) to the
