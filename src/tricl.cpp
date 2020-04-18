@@ -1,4 +1,4 @@
-/** TriCl, a generic model of social dynamics (!)
+/** TriCl, a generic model of social dynamics (!?)
  *
  * @author Jobst Heitzig, Potsdam Institute for Climate Impact Research, heitzig@pik-potsdam.de
  * @date Oct 18, 2019
