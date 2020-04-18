@@ -13,6 +13,7 @@
 
 #include "data_model.h"
 
+
 // PARAMETERS
 
 extern string config_yaml_filename;
@@ -34,7 +35,6 @@ extern unordered_map<string, relationship_or_action_type> label2rat;
 extern unordered_map<relationship_or_action_type, bool> r_is_action_type; // whether it is an action type
 extern unordered_map<relationship_or_action_type, relationship_or_action_type> rat2inv; // inverse relations
 // any preregistered entities:
-extern unordered_map<entity, entity_type> e2et;
 extern unordered_map<entity, label> e2label;
 extern unordered_map<string, entity> label2e;
 // any preregistered initial links:
@@ -68,7 +68,7 @@ extern unordered_map<relationship_or_action_type, int> rat2gexf_r, rat2gexf_g, r
 // arrays of parameters:
 extern rate _inflt2attempt_rate[MAX_N_INFLT];
 extern probunits _inflt2delta_probunit[MAX_N_INFLT];
-extern entity_type _e2et[MAX_N_E];
+extern entity_type e2et[MAX_N_E];
 
 // derived constants:
 extern entity max_e; // largest entity id in use

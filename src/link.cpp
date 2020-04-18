@@ -24,7 +24,7 @@ void add_link (link& l)
     e2outs[e1].insert({ .rat_out = rat13, .e_other = e3 });
     e2ins[e3].insert({ .e_other = e1, .rat_in = rat13 });
     if (rat13 != RT_ID) gexf_edge2start[l] = current_t;
-    lt2n[{_e2et[E(e1)], rat13, _e2et[E(e3)]}]++;
+    lt2n[{e2et[e1], rat13, e2et[e3]}]++;
     n_links++;
 }
 
@@ -35,7 +35,7 @@ void del_link (link& l)
     e2outs[e1].erase({ .rat_out = rat13, .e_other = e3 });
     e2ins[e3].erase({ .e_other = e1, .rat_in = rat13 });
     if (rat13 != RT_ID) gexf_output_edge(l);
-    lt2n[{_e2et[E(e1)], rat13, _e2et[E(e3)]}]--;
+    lt2n[{e2et[e1], rat13, e2et[e3]}]--;
     n_links--;
 }
 

@@ -1,0 +1,137 @@
+\hypertarget{namespacetricl}{}\section{tricl Namespace Reference}
+\label{namespacetricl}\index{tricl@{tricl}}
+
+
+Data architecture.  
+
+
+\subsection*{Data Structures}
+\begin{DoxyCompactItemize}
+\item 
+struct \hyperlink{structtricl_1_1angle}{angle}
+\item 
+struct \hyperlink{structtricl_1_1angle__type}{angle\+\_\+type}
+\item 
+struct \hyperlink{structtricl_1_1entity__type__pair}{entity\+\_\+type\+\_\+pair}
+\item 
+struct \hyperlink{structtricl_1_1event}{event}
+\item 
+struct \hyperlink{structtricl_1_1event__data}{event\+\_\+data}
+\item 
+struct \hyperlink{structtricl_1_1event__type}{event\+\_\+type}
+\item 
+struct \hyperlink{structtricl_1_1influence__type}{influence\+\_\+type}
+\item 
+struct \hyperlink{structtricl_1_1inleg}{inleg}
+\item 
+struct \hyperlink{structtricl_1_1link}{link}
+\item 
+struct \hyperlink{structtricl_1_1link__type}{link\+\_\+type}
+\item 
+struct \hyperlink{structtricl_1_1outleg}{outleg}
+\end{DoxyCompactItemize}
+\subsection*{Typedefs}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{namespacetricl_a720ff6a29f998e11e1d3622fc8df64b1}\label{namespacetricl_a720ff6a29f998e11e1d3622fc8df64b1}} 
+typedef double \hyperlink{namespacetricl_a720ff6a29f998e11e1d3622fc8df64b1}{timepoint}
+\begin{DoxyCompactList}\small\item\em a point in continuous model time, 0...inf \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{namespacetricl_af8f8f9076e92e1c664ffa96f18d038a5}\label{namespacetricl_af8f8f9076e92e1c664ffa96f18d038a5}} 
+typedef double \hyperlink{namespacetricl_af8f8f9076e92e1c664ffa96f18d038a5}{probunits}
+\begin{DoxyCompactList}\small\item\em -\/inf...inf, will be mapped to probabilities by means of the function probunits2probability() \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{namespacetricl_af2e8973ba58a3dad9061296d8bee16a2}\label{namespacetricl_af2e8973ba58a3dad9061296d8bee16a2}} 
+typedef double \hyperlink{namespacetricl_af2e8973ba58a3dad9061296d8bee16a2}{probability}
+\begin{DoxyCompactList}\small\item\em 0...1 \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{namespacetricl_ae42d2696f294300a43e0f5edf4875479}\label{namespacetricl_ae42d2696f294300a43e0f5edf4875479}} 
+typedef double \hyperlink{namespacetricl_ae42d2696f294300a43e0f5edf4875479}{rate}
+\begin{DoxyCompactList}\small\item\em 0...inf. physical unit\+: probability per time \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{namespacetricl_a57273122278e8b301844e2a2e1f0742f}\label{namespacetricl_a57273122278e8b301844e2a2e1f0742f}} 
+typedef int {\bfseries entity}
+\item 
+\mbox{\Hypertarget{namespacetricl_a2d01894944fb58a8fedc0912a48d13f8}\label{namespacetricl_a2d01894944fb58a8fedc0912a48d13f8}} 
+typedef size\+\_\+t \hyperlink{namespacetricl_a2d01894944fb58a8fedc0912a48d13f8}{relationship\+\_\+or\+\_\+action\+\_\+type}
+\begin{DoxyCompactList}\small\item\em relationship or action types are ints $>$= 1 \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{namespacetricl_a77e7daffafa870e5786b344119da9b15}\label{namespacetricl_a77e7daffafa870e5786b344119da9b15}} 
+typedef string {\bfseries label}
+\item 
+\mbox{\Hypertarget{namespacetricl_afd4de3aedd5e48cf955f03457386e98f}\label{namespacetricl_afd4de3aedd5e48cf955f03457386e98f}} 
+typedef short unsigned int {\bfseries entity\+\_\+type}
+\item 
+\mbox{\Hypertarget{namespacetricl_a703ed53fa2dba74d8f51ede5fd46038d}\label{namespacetricl_a703ed53fa2dba74d8f51ede5fd46038d}} 
+typedef set$<$ \hyperlink{structtricl_1_1inleg}{inleg} $>$ {\bfseries inleg\+\_\+set}
+\item 
+\mbox{\Hypertarget{namespacetricl_ac36fc4606da3d7f9ffd1764942fe5940}\label{namespacetricl_ac36fc4606da3d7f9ffd1764942fe5940}} 
+typedef set$<$ \hyperlink{structtricl_1_1outleg}{outleg} $>$ {\bfseries outleg\+\_\+set}
+\item 
+\mbox{\Hypertarget{namespacetricl_a4ec9b46d6dae5a1d114387bca4029ce5}\label{namespacetricl_a4ec9b46d6dae5a1d114387bca4029ce5}} 
+typedef vector$<$ \hyperlink{structtricl_1_1angle}{angle} $>$ {\bfseries angles}
+\end{DoxyCompactItemize}
+\subsection*{Enumerations}
+\begin{DoxyCompactItemize}
+\item 
+enum \hyperlink{namespacetricl_a6967089e2c0837f273d8cb5fd9f7e46d}{event\+\_\+class} \{ \hyperlink{namespacetricl_a6967089e2c0837f273d8cb5fd9f7e46da928305067790de15396de8fcc92b72b9}{E\+C\+\_\+\+E\+ST}, 
+\hyperlink{namespacetricl_a6967089e2c0837f273d8cb5fd9f7e46da16f53be37a75a1cdfc726014c7f3810a}{E\+C\+\_\+\+T\+E\+RM}, 
+\hyperlink{namespacetricl_a6967089e2c0837f273d8cb5fd9f7e46dac508c68c92ee059322cb644dd330bbcf}{E\+C\+\_\+\+A\+CT}
+ \}
+\end{DoxyCompactItemize}
+\subsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+unordered\+\_\+map$<$ \hyperlink{namespacetricl_a6967089e2c0837f273d8cb5fd9f7e46d}{event\+\_\+class}, string $>$ {\bfseries ec2label}
+\item 
+\mbox{\Hypertarget{namespacetricl_a1d25690adbc3921709bd3b3e16415713}\label{namespacetricl_a1d25690adbc3921709bd3b3e16415713}} 
+const \hyperlink{structtricl_1_1angle__type}{angle\+\_\+type} {\bfseries N\+O\+\_\+\+A\+N\+G\+LE} = \{ .rat12 = \hyperlink{data__model_8h_ae71ff63a5bdb6bfc09a18840c8df4e54}{N\+O\+\_\+\+R\+AT}, .et2 = 0, .rat23 = \hyperlink{data__model_8h_ae71ff63a5bdb6bfc09a18840c8df4e54}{N\+O\+\_\+\+R\+AT} \}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Data architecture. 
+
+most data is kept in unordered maps (what would be dictionaries in python) whose keys are entity types, entities, link types, links, legs, angles, event types, events, influence types and influences. the latter types of things are encoded as structs, most of which are basically tuples of integer ids.
+
+for fast access to map entries, these are automatically turned into integer hashs via the hash structs at the end of this file.
+
+some data (which is accessed most often) is instead kept in vectors whose indices are either entities (which are ints) or integer hash values of influence types (constructed via the macro I\+N\+F\+LT).
+
+all hashs are constructed as logical O\+Rs of properly shifted ids, hence valid ids are restricted by the respective numbers of bits reserved for this id in the hash.
+
+this hash construction is governed by the following bit size macros, which could be adapted in dependence on system architecture, but must fulfil the following constraints\+: 2 + 2$\ast$\+E\+\_\+\+B\+I\+TS + R\+A\+T\+\_\+\+B\+I\+TS $<$= no. of bits in size\+\_\+t (32 or 64) 2$^\wedge$\+E\+\_\+\+B\+I\+TS + 2$^\wedge$(6 + 3$\ast$\+R\+A\+T\+\_\+\+B\+I\+TS + 3$\ast$\+E\+T\+\_\+\+B\+I\+TS) $<$= available memory bytes 
+
+\subsection{Enumeration Type Documentation}
+\mbox{\Hypertarget{namespacetricl_a6967089e2c0837f273d8cb5fd9f7e46d}\label{namespacetricl_a6967089e2c0837f273d8cb5fd9f7e46d}} 
+\index{tricl@{tricl}!event\+\_\+class@{event\+\_\+class}}
+\index{event\+\_\+class@{event\+\_\+class}!tricl@{tricl}}
+\subsubsection{\texorpdfstring{event\+\_\+class}{event\_class}}
+{\footnotesize\ttfamily enum \hyperlink{namespacetricl_a6967089e2c0837f273d8cb5fd9f7e46d}{tricl\+::event\+\_\+class}}
+
+\begin{DoxyEnumFields}{Enumerator}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{E\+C\+\_\+\+E\+ST@{E\+C\+\_\+\+E\+ST}!tricl@{tricl}}\index{tricl@{tricl}!E\+C\+\_\+\+E\+ST@{E\+C\+\_\+\+E\+ST}}}\mbox{\Hypertarget{namespacetricl_a6967089e2c0837f273d8cb5fd9f7e46da928305067790de15396de8fcc92b72b9}\label{namespacetricl_a6967089e2c0837f273d8cb5fd9f7e46da928305067790de15396de8fcc92b72b9}} 
+E\+C\+\_\+\+E\+ST&(don\textquotesingle{}t confuse with event\+\_\+type!) establishment of a relationship \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{E\+C\+\_\+\+T\+E\+RM@{E\+C\+\_\+\+T\+E\+RM}!tricl@{tricl}}\index{tricl@{tricl}!E\+C\+\_\+\+T\+E\+RM@{E\+C\+\_\+\+T\+E\+RM}}}\mbox{\Hypertarget{namespacetricl_a6967089e2c0837f273d8cb5fd9f7e46da16f53be37a75a1cdfc726014c7f3810a}\label{namespacetricl_a6967089e2c0837f273d8cb5fd9f7e46da16f53be37a75a1cdfc726014c7f3810a}} 
+E\+C\+\_\+\+T\+E\+RM&termination of a relationship \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{E\+C\+\_\+\+A\+CT@{E\+C\+\_\+\+A\+CT}!tricl@{tricl}}\index{tricl@{tricl}!E\+C\+\_\+\+A\+CT@{E\+C\+\_\+\+A\+CT}}}\mbox{\Hypertarget{namespacetricl_a6967089e2c0837f273d8cb5fd9f7e46dac508c68c92ee059322cb644dd330bbcf}\label{namespacetricl_a6967089e2c0837f273d8cb5fd9f7e46dac508c68c92ee059322cb644dd330bbcf}} 
+E\+C\+\_\+\+A\+CT&occurrence of an action \\
+\hline
+
+\end{DoxyEnumFields}
+
+
+\subsection{Variable Documentation}
+\mbox{\Hypertarget{namespacetricl_a9f4cb99ed8a0723da68503403d270bf7}\label{namespacetricl_a9f4cb99ed8a0723da68503403d270bf7}} 
+\index{tricl@{tricl}!ec2label@{ec2label}}
+\index{ec2label@{ec2label}!tricl@{tricl}}
+\subsubsection{\texorpdfstring{ec2label}{ec2label}}
+{\footnotesize\ttfamily unordered\+\_\+map$<$ \hyperlink{namespacetricl_a6967089e2c0837f273d8cb5fd9f7e46d}{event\+\_\+class}, string $>$ tricl\+::ec2label}
+
+{\bfseries Initial value\+:}
+\begin{DoxyCode}
+= \{
+        \{ \hyperlink{namespacetricl_a6967089e2c0837f273d8cb5fd9f7e46da928305067790de15396de8fcc92b72b9}{EC\_EST}, \textcolor{stringliteral}{"establish that"} \},
+        \{ \hyperlink{namespacetricl_a6967089e2c0837f273d8cb5fd9f7e46da16f53be37a75a1cdfc726014c7f3810a}{EC\_TERM}, \textcolor{stringliteral}{"terminate that"} \},
+        \{ \hyperlink{namespacetricl_a6967089e2c0837f273d8cb5fd9f7e46dac508c68c92ee059322cb644dd330bbcf}{EC\_ACT}, \textcolor{stringliteral}{"let"} \}
+    \}
+\end{DoxyCode}

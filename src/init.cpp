@@ -20,7 +20,7 @@
 int n_rats = 0; // total no. of rats
 rate _inflt2attempt_rate[MAX_N_INFLT];
 probunits _inflt2delta_probunit[MAX_N_INFLT];
-entity_type _e2et[MAX_N_E];
+entity_type e2et[MAX_N_E];
 
 // derived constants:
 set<entity> es;
@@ -73,7 +73,8 @@ void init_entities ()
 {
     // inspect pre-registered entities:
     auto et2remaining_n = et2n;
-    for (auto& [e, et] : e2et) {
+    for (auto& [e, l] : e2label) {
+        auto et = e2et[e];
         if (et >= 1<<ET_BITS) throw "too many entity types (recompile with larger ET_BITS?)";
         assert(e >= 0);
 //        es.insert(e);
@@ -82,7 +83,7 @@ void init_entities ()
 //        if (e2outs.count(e) == 0) e2outs[e] = {};
 //        if (e2ins.count(e) == 0) e2ins[e] = {};
 //        if (et2es.count(et) == 0) et2es[et] = {};
-//        _e2et[E(e)] = et;
+//        _e2et[e] = et;
 //        et2es[et].push_back(e);
         if (et2remaining_n[et] > 0) {
             et2remaining_n[et]--;
@@ -217,7 +218,7 @@ void init_links ()
     // block model:
     unordered_map<entity, int> e2block = { };
     for (auto& e : es) {
-        e2block[e] = floor(uniform(random_variable) * et2n_blocks[_e2et[E(e)]]);
+        e2block[e] = floor(uniform(random_variable) * et2n_blocks[e2et[e]]);
     }
     for (auto& [lt, pw] : lt2initial_prob_within) { // TODO: add lt2initial_prob_between
         if (pw > 0) {

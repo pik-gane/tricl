@@ -97,7 +97,7 @@ void add_event (event& ev)
 {
     auto ec = ev.ec; auto e1 = ev.e1, e3 = ev.e3; auto rat13 = ev.rat13;
     assert ((rat13 != RT_ID) && (e1 != e3));
-    auto et1 = _e2et[E(e1)], et3 = _e2et[E(e3)];
+    auto et1 = e2et[e1], et3 = e2et[e3];
     event_type evt = { .ec = ec, .et1 = et1, .rat13 = rat13, .et3 = et3 };
 
     if (evt2base_probunits.count(evt) > 0) { // event can happen at all:
@@ -111,12 +111,12 @@ void add_event (event& ev)
         // legs:
         if (ec == EC_TERM) {
             for (auto& [rat12, e2] : outs1) {
-                influence_type inflt = { .evt = evt, .at = { .rat12 = rat12, .et2 = _e2et[E(e2)], .rat23 = NO_RAT } };
+                influence_type inflt = { .evt = evt, .at = { .rat12 = rat12, .et2 = e2et[e2], .rat23 = NO_RAT } };
                 ar += _inflt2attempt_rate[INFLT(inflt)];
                 spu += _inflt2delta_probunit[INFLT(inflt)];
             }
             for (auto& [e2, rat23] : ins3) {
-                influence_type inflt = { .evt = evt, .at = { .rat12 = NO_RAT, .et2 = _e2et[E(e2)], .rat23 = rat23 } };
+                influence_type inflt = { .evt = evt, .at = { .rat12 = NO_RAT, .et2 = e2et[e2], .rat23 = rat23 } };
                 ar += _inflt2attempt_rate[INFLT(inflt)];
                 spu += _inflt2delta_probunit[INFLT(inflt)];
             }
@@ -133,7 +133,7 @@ void add_event (event& ev)
         int na = 0; // number of influencing angles
         angles as = leg_intersection(e1, outs1, ins3, e3);
         for (auto a_it = as.begin(); a_it != as.end(); a_it++) {
-            influence_type inflt = { .evt = evt, .at = { .rat12 = a_it->rat12, .et2 = _e2et[E(a_it->e2)], .rat23 = a_it->rat23 } };
+            influence_type inflt = { .evt = evt, .at = { .rat12 = a_it->rat12, .et2 = e2et[a_it->e2], .rat23 = a_it->rat23 } };
             if (debug) cout << "      influences of angle \"" << e2label[e1] << " " << rat2label[a_it->rat12] << " " << e2label[a_it->e2] << " " << rat2label[a_it->rat23] << " " << e2label[e3] << "\":" << endl;
             auto dar = _inflt2attempt_rate[INFLT(inflt)];
             auto dsl = _inflt2delta_probunit[INFLT(inflt)];
@@ -197,10 +197,10 @@ void update_adjacent_events (event& ev)
 
     if (debug) cout << "   angles with this as 1st leg:" << endl;
     e1 = ea; rat12 = rab; e2 = eb;
-    et1 = _e2et[E(e1)]; et2 = _e2et[E(e2)];
+    et1 = e2et[e1]; et2 = e2et[e2];
     auto outlegs = e2outs[eb]; // rat23, e3
     for (auto& l : outlegs) {
-        rat23 = l.rat_out; e3 = l.e_other; et3 = _e2et[E(e3)];
+        rat23 = l.rat_out; e3 = l.e_other; et3 = e2et[e3];
         if (e1 != e3) { // since we allow no self-links except identity
             add_or_delete_angle(ec_ab, e1, et1, rat12, e2, et2, rat23, e3, et3);
         }
@@ -209,9 +209,9 @@ void update_adjacent_events (event& ev)
     if (debug) cout << "   angles with this as 2nd leg:" << endl;
     auto inlegs = e2ins[ea]; // e1, rat12
     e2 = ea; rat23 = rab; e3 = eb;
-    et2 = _e2et[E(e2)]; et3 = _e2et[E(e3)];
+    et2 = e2et[e2]; et3 = e2et[e3];
     for (auto& l : inlegs) {
-        e1 = l.e_other; rat12 = l.rat_in; et1 = _e2et[E(e1)];
+        e1 = l.e_other; rat12 = l.rat_in; et1 = e2et[e1];
         if (e1 != e3) { // since we allow no self-links except identity
             add_or_delete_angle(ec_ab, e1, et1, rat12, e2, et2, rat23, e3, et3);
         }
@@ -335,11 +335,11 @@ bool pop_next_event ()
                     // compile success units:
                     auto spu = evt2base_probunits.at(evt);
                     for (auto& [rat12, e2] : e2outs[e1]) {
-                        influence_type inflt = { .evt = evt, .at = { .rat12 = rat12, .et2 = _e2et[E(e2)], .rat23 = NO_RAT } };
+                        influence_type inflt = { .evt = evt, .at = { .rat12 = rat12, .et2 = e2et[e2], .rat23 = NO_RAT } };
                         if (inflt2delta_probunits.count(inflt) > 0) spu += inflt2delta_probunits.at(inflt);
                     }
                     for (auto& [e2, rat23] : e2ins[e3]) {
-                        influence_type inflt = { .evt = evt, .at = { .rat12 = NO_RAT, .et2 = _e2et[E(e2)], .rat23 = rat23 } };
+                        influence_type inflt = { .evt = evt, .at = { .rat12 = NO_RAT, .et2 = e2et[e2], .rat23 = rat23 } };
                         if (inflt2delta_probunits.count(inflt) > 0) spu += inflt2delta_probunits.at(inflt);
                     }
                     // since the scheduling rate already contained the factor ev2max_sp[ev],

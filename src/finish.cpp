@@ -14,6 +14,12 @@
 void finish ()
 {
     current_t = max_t;
+    if (verbose) {
+        cout << "\nat t=" << current_t << ", " << t2be.size() << " events on stack: " << endl;
+        for (auto& [t, ev] : t2be) {
+            cout << " " << ev << " at " << t << endl;
+        }
+    }
     log_status();
     finish_gexf();
     if (debug) verify_data_consistency();

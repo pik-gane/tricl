@@ -67,7 +67,7 @@ void init_gexf () {
         <nodes>
 )V0G0N";
             for (auto& e : es) {
-                auto et = _e2et[E(e)];
+                auto et = e2et[e];
                 *gexf << "<node id=\"" << e << "\" label=\"" << e2label[e]
                      << "\" start=\"0.0\" end=\"" << max_t
                      << "\"><attvalues><attvalue for=\"T\" value=\""

@@ -42,7 +42,6 @@ unordered_map<relationship_or_action_type, label> rat2label = { {RT_ID, "="} };
 unordered_map<string, relationship_or_action_type> label2rat = { {"=", RT_ID} };
 unordered_map<relationship_or_action_type, bool> r_is_action_type = {};
 unordered_map<relationship_or_action_type, relationship_or_action_type> rat2inv = {};
-unordered_map<entity, entity_type> e2et = {};
 unordered_map<entity, label> e2label = {};
 unordered_map<string, entity> label2e = {};
 set<link> initial_links = {};
@@ -130,6 +129,7 @@ void read_config (int argc, char *argv[])
         }
         for (YAML::const_iterator it = n.begin(); it != n.end(); ++it) {
             string symbol = it->first.as<string>(), deflt = it->second.as<string>();
+            // TODO: validate symbol is both a valid command line option name and a valid tinyexpr variable name!
             options.add_options()(symbol, "value or expression for metaparameter " + symbol,
                     cxxopts::value<std::string>()->default_value(deflt));
         }

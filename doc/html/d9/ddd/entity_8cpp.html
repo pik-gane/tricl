@@ -72,7 +72,8 @@ $(function() {
 
 <p>Handling of entities.  
 <a href="#details">More...</a></p>
-<div class="textblock"><code>#include &lt;math.h&gt;</code><br />
+<div class="textblock"><code>#include &lt;iostream&gt;</code><br />
+<code>#include &lt;math.h&gt;</code><br />
 <code>#include &quot;global_variables.h&quot;</code><br />
 <code>#include &quot;entity.h&quot;</code><br />
 <code>#include &quot;probability.h&quot;</code><br />
@@ -81,19 +82,19 @@ Include dependency graph for entity.cpp:</div>
 <div class="dyncontent">
 <div class="center"><img src="../../d8/d92/entity_8cpp__incl.png" border="0" usemap="#src_2entity_8cpp" alt=""/></div>
 <map name="src_2entity_8cpp" id="src_2entity_8cpp">
-<area shape="rect" id="node3" href="../../d5/dfb/global__variables_8h_source.html" title="global_variables.h" alt="" coords="116,80,243,107"/>
-<area shape="rect" id="node10" href="../../d8/d83/entity_8h_source.html" title="entity.h" alt="" coords="267,80,332,107"/>
-<area shape="rect" id="node11" href="../../d5/d87/probability_8h_source.html" title="probability.h" alt="" coords="372,80,464,107"/>
-<area shape="rect" id="node7" href="../../d5/d44/data__model_8h.html" title="The main data model. " alt="" coords="227,155,327,181"/>
+<area shape="rect" id="node4" href="../../d5/dfb/global__variables_8h_source.html" title="global_variables.h" alt="" coords="130,155,257,181"/>
+<area shape="rect" id="node13" href="../../d8/d83/entity_8h_source.html" title="entity.h" alt="" coords="350,80,415,107"/>
+<area shape="rect" id="node14" href="../../d5/d87/probability_8h_source.html" title="probability.h" alt="" coords="233,80,325,107"/>
+<area shape="rect" id="node5" href="../../d5/d44/data__model_8h.html" title="The main data model. " alt="" coords="325,229,425,256"/>
 </map>
 </div>
 </div><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:a0a67173d5c9f37b411e4d461f9932365"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d9/ddd/entity_8cpp.html#a0a67173d5c9f37b411e4d461f9932365">add_entity</a> (entity_type et)</td></tr>
-<tr class="memdesc:a0a67173d5c9f37b411e4d461f9932365"><td class="mdescLeft">&#160;</td><td class="mdescRight">Add a new entity of a specific type.  <a href="#a0a67173d5c9f37b411e4d461f9932365">More...</a><br /></td></tr>
-<tr class="separator:a0a67173d5c9f37b411e4d461f9932365"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a98c686b5512ec703bd0da855cd296f24"><td class="memItemLeft" align="right" valign="top">entity&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d9/ddd/entity_8cpp.html#a98c686b5512ec703bd0da855cd296f24">random_entity</a> (entity_type et)</td></tr>
+<tr class="memitem:a0a2d9d57b1737f98889d96db80b44ea4"><td class="memItemLeft" align="right" valign="top"><a class="el" href="../../d5/d44/data__model_8h.html#a57273122278e8b301844e2a2e1f0742f">entity</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d9/ddd/entity_8cpp.html#a0a2d9d57b1737f98889d96db80b44ea4">add_entity</a> (<a class="el" href="../../d5/d44/data__model_8h.html#afd4de3aedd5e48cf955f03457386e98f">entity_type</a> et, string elabel)</td></tr>
+<tr class="memdesc:a0a2d9d57b1737f98889d96db80b44ea4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Add a new entity of a specific type.  <a href="#a0a2d9d57b1737f98889d96db80b44ea4">More...</a><br /></td></tr>
+<tr class="separator:a0a2d9d57b1737f98889d96db80b44ea4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a98c686b5512ec703bd0da855cd296f24"><td class="memItemLeft" align="right" valign="top"><a class="el" href="../../d5/d44/data__model_8h.html#a57273122278e8b301844e2a2e1f0742f">entity</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d9/ddd/entity_8cpp.html#a98c686b5512ec703bd0da855cd296f24">random_entity</a> (<a class="el" href="../../d5/d44/data__model_8h.html#afd4de3aedd5e48cf955f03457386e98f">entity_type</a> et)</td></tr>
 <tr class="memdesc:a98c686b5512ec703bd0da855cd296f24"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return a random entity of a specific type.  <a href="#a98c686b5512ec703bd0da855cd296f24">More...</a><br /></td></tr>
 <tr class="separator:a98c686b5512ec703bd0da855cd296f24"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
@@ -102,18 +103,28 @@ Functions</h2></td></tr>
 <dl class="section author"><dt>Author</dt><dd>Jobst Heitzig, Potsdam Institute for Climate Impact Research, <a href="#" onclick="location.href='mai'+'lto:'+'hei'+'tz'+'ig@'+'pi'+'k-p'+'ot'+'sda'+'m.'+'de'; return false;">heitz<span style="display: none;">.nosp@m.</span>ig@p<span style="display: none;">.nosp@m.</span>ik-po<span style="display: none;">.nosp@m.</span>tsda<span style="display: none;">.nosp@m.</span>m.de</a> </dd></dl>
 <dl class="section date"><dt>Date</dt><dd>Mar 30, 2020 </dd></dl>
 </div><h2 class="groupheader">Function Documentation</h2>
-<a id="a0a67173d5c9f37b411e4d461f9932365"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a0a67173d5c9f37b411e4d461f9932365">&#9670;&nbsp;</a></span>add_entity()</h2>
+<a id="a0a2d9d57b1737f98889d96db80b44ea4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0a2d9d57b1737f98889d96db80b44ea4">&#9670;&nbsp;</a></span>add_entity()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void add_entity </td>
+          <td class="memname"><a class="el" href="../../d5/d44/data__model_8h.html#a57273122278e8b301844e2a2e1f0742f">entity</a> add_entity </td>
           <td>(</td>
-          <td class="paramtype">entity_type&#160;</td>
-          <td class="paramname"><em>et</em></td><td>)</td>
+          <td class="paramtype"><a class="el" href="../../d5/d44/data__model_8h.html#afd4de3aedd5e48cf955f03457386e98f">entity_type</a>&#160;</td>
+          <td class="paramname"><em>et</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
           <td></td>
+          <td class="paramtype">string&#160;</td>
+          <td class="paramname"><em>elabel</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -122,7 +133,8 @@ Functions</h2></td></tr>
 <p>(the entity is not returned) </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">et</td><td>Entity type of the entity to be generated anew. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">et</td><td>entity type of the entity to be generated anew. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">elabel</td><td>entity label (if "", will be generated) </td></tr>
   </table>
   </dd>
 </dl>
@@ -136,9 +148,9 @@ Functions</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">entity random_entity </td>
+          <td class="memname"><a class="el" href="../../d5/d44/data__model_8h.html#a57273122278e8b301844e2a2e1f0742f">entity</a> random_entity </td>
           <td>(</td>
-          <td class="paramtype">entity_type&#160;</td>
+          <td class="paramtype"><a class="el" href="../../d5/d44/data__model_8h.html#afd4de3aedd5e48cf955f03457386e98f">entity_type</a>&#160;</td>
           <td class="paramname"><em>et</em></td><td>)</td>
           <td></td>
         </tr>

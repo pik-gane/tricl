@@ -5,12 +5,13 @@
 Tri\+Cl, a generic model of social dynamics.  
 
 
-{\ttfamily \#include $<$iostream$>$}\newline
 {\ttfamily \#include \char`\"{}global\+\_\+variables.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}io.\+h\char`\"{}}\newline
 {\ttfamily \#include \char`\"{}config.\+h\char`\"{}}\newline
 {\ttfamily \#include \char`\"{}init.\+h\char`\"{}}\newline
 {\ttfamily \#include \char`\"{}simulate.\+h\char`\"{}}\newline
 {\ttfamily \#include \char`\"{}finish.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}debugging.\+h\char`\"{}}\newline
 Include dependency graph for tricl.\+cpp\+:\nopagebreak
 \begin{figure}[H]
 \begin{center}
@@ -21,18 +22,14 @@ Include dependency graph for tricl.\+cpp\+:\nopagebreak
 \subsection*{Functions}
 \begin{DoxyCompactItemize}
 \item 
-\mbox{\Hypertarget{tricl_8cpp_ade42974a32e89c168c97127bbc971da4}\label{tricl_8cpp_ade42974a32e89c168c97127bbc971da4}} 
-void \hyperlink{tricl_8cpp_ade42974a32e89c168c97127bbc971da4}{parse\+\_\+args} (int argc, const char $\ast$argv\mbox{[}$\,$\mbox{]})
-\begin{DoxyCompactList}\small\item\em parse the command line arguments \end{DoxyCompactList}\item 
-\mbox{\Hypertarget{tricl_8cpp_ac0f2228420376f4db7e1274f2b41667c}\label{tricl_8cpp_ac0f2228420376f4db7e1274f2b41667c}} 
-int \hyperlink{tricl_8cpp_ac0f2228420376f4db7e1274f2b41667c}{main} (int argc, const char $\ast$argv\mbox{[}$\,$\mbox{]})
+\mbox{\Hypertarget{tricl_8cpp_a0ddf1224851353fc92bfbff6f499fa97}\label{tricl_8cpp_a0ddf1224851353fc92bfbff6f499fa97}} 
+int \hyperlink{tricl_8cpp_a0ddf1224851353fc92bfbff6f499fa97}{main} (int argc, char $\ast$argv\mbox{[}$\,$\mbox{]})
 \begin{DoxyCompactList}\small\item\em main function of the tricl executable \end{DoxyCompactList}\end{DoxyCompactItemize}
 \subsection*{Variables}
 \begin{DoxyCompactItemize}
 \item 
-\mbox{\Hypertarget{tricl_8cpp_a6ff215d62218bc381c50ab2e7ef4731d}\label{tricl_8cpp_a6ff215d62218bc381c50ab2e7ef4731d}} 
 string \hyperlink{tricl_8cpp_a6ff215d62218bc381c50ab2e7ef4731d}{config\+\_\+yaml\+\_\+filename}
-\begin{DoxyCompactList}\small\item\em filename of configuration file \end{DoxyCompactList}\end{DoxyCompactItemize}
+\begin{DoxyCompactList}\small\item\em T\+O\+DO\+: \end{DoxyCompactList}\end{DoxyCompactItemize}
 
 
 \subsection{Detailed Description}
@@ -44,3 +41,125 @@ Jobst Heitzig, Potsdam Institute for Climate Impact Research, \href{mailto:heitz
 \begin{DoxyDate}{Date}
 Oct 18, 2019 
 \end{DoxyDate}
+
+
+\subsection{Variable Documentation}
+\mbox{\Hypertarget{tricl_8cpp_a6ff215d62218bc381c50ab2e7ef4731d}\label{tricl_8cpp_a6ff215d62218bc381c50ab2e7ef4731d}} 
+\index{tricl.\+cpp@{tricl.\+cpp}!config\+\_\+yaml\+\_\+filename@{config\+\_\+yaml\+\_\+filename}}
+\index{config\+\_\+yaml\+\_\+filename@{config\+\_\+yaml\+\_\+filename}!tricl.\+cpp@{tricl.\+cpp}}
+\subsubsection{\texorpdfstring{config\+\_\+yaml\+\_\+filename}{config\_yaml\_filename}}
+{\footnotesize\ttfamily string config\+\_\+yaml\+\_\+filename}
+
+
+
+T\+O\+DO\+: 
+
+model capabilities\+:
+\begin{DoxyItemize}
+\item allow legs to influence success prob. of establishment
+\item allow legs to attempt establishment
+\item add acts
+\end{DoxyItemize}
+
+simulation options\+:
+\begin{DoxyItemize}
+\item add command line setting of metaparameters
+\item as an alternative to tmax and max\+\_\+n\+\_\+events, add max\+\_\+wall
+\item add particle filtering mode
+\end{DoxyItemize}
+
+network theory stuff\+:
+\begin{DoxyItemize}
+\item output triangle counts clustering coefficient(s)
+\item add more random network models
+\end{DoxyItemize}
+
+convenience\+:
+\begin{DoxyItemize}
+\item improve quiet status output
+\item add --help message and potential parameter overrides on the command line
+\item remove redundant output from init that is already printed in config
+\end{DoxyItemize}
+
+optimization\+:
+\begin{DoxyItemize}
+\item use const args as much as possible in inner loops T\+E\+R\+M\+I\+N\+O\+L\+O\+GY (see also overleaf document).
+\end{DoxyItemize}
+
+entity type\+: a type of concrete or abstract entity (see below), e.\+g. \char`\"{}an individual\char`\"{}, \char`\"{}a news channel\char`\"{}, \char`\"{}a social group\char`\"{}, \char`\"{}an opinion\char`\"{}, or \char`\"{}an infection state\char`\"{}
+
+entity\+: any concrete or abstract object that can stand in a relationship with other entities, e.\+g. \char`\"{}\+John\char`\"{}, \char`\"{}the B\+B\+C\char`\"{}, \char`\"{}catholics\char`\"{}, \char`\"{}\+Elvis lives\char`\"{}, or \char`\"{}infected with Dengue\char`\"{}
+
+relationship type\+: any concrete or abstract type of directed relationship two entities can stand in, e.\+g. \char`\"{}is friends with\char`\"{}, \char`\"{}is a subscriber of\char`\"{}, \char`\"{}belongs to\char`\"{}, \char`\"{}holds\char`\"{}, or \char`\"{}is\char`\"{}. the special relationship type \char`\"{}=\char`\"{} (with id R\+T\+\_\+\+ID) encodes the identity of an entity with itself.
+
+action type\+: any type of thing that can happen at a singular time point between two entities, e.\+g. \char`\"{}kisses\char`\"{} or \char`\"{}utters that\char`\"{}
+
+act\+: a pair of entities plus an action type plus a time-\/point. we say the act \char`\"{}occurs\char`\"{} at that time.
+
+link type\+: a pair of entity types plus a relationship or action type, e.\+g. \char`\"{}an individual -\/ is a subscriber of -\/ a news channel\char`\"{} or \char`\"{}an individual -\/ utters -\/ an opinion\char`\"{}
+
+link\+: a pair of entities plus a relationship or action type, e.\+g. \char`\"{}\+John -\/ is a subscriber of -\/ the B\+B\+C\char`\"{}. if it has a relationship type, a link \char`\"{}exists\char`\"{} as long as the entities stand in the respective relationship. if it has an action type, a link \char`\"{}flashes\char`\"{} whenever a corresponding act occurs. the source entity id is called \char`\"{}e1\char`\"{} in code, the destination entity id \char`\"{}e3\char`\"{} (because of angles, see below)
+
+relationship\+: a link of relationship type
+
+action\+: a link of action type (not to be confused with an act!)
+
+impact of an action\+: a nonnegative real number that is increased by one whenever the link flashes and decays exponentially at a certain rate. a link\textquotesingle{}s impact determines the link\textquotesingle{}s influence on adjacent events.
+
+event\+: an event class plus a link, e.\+g.
+\begin{DoxyItemize}
+\item \char`\"{}establishment of the link \textquotesingle{}\+John -\/ is a subscriber of -\/ the B\+B\+C\textquotesingle{}\char`\"{} (event class E\+C\+\_\+\+E\+ST)
+\item \char`\"{}termination of the link \textquotesingle{}\+John -\/ is friends with -\/ Alice\textquotesingle{}\char`\"{} (event class E\+C\+\_\+\+T\+E\+RM)
+\item \char`\"{}occurrence of the act \textquotesingle{}\+Alice -\/ utters that -\/ Elvis lives\textquotesingle{}\char`\"{} (event class E\+C\+\_\+\+A\+CT)
+\end{DoxyItemize}
+
+leg\+: a relationship or action type rat plus an entity. a leg can influence an adjacent termination event but no establishment or act occurrence events
+
+angle\+: a middle entity plus pair of relationship or action types. an angle can influence any adjacent event. an angle can also encode a leg if either relationship or action type equals the special value N\+O\+\_\+\+RT
+
+influence\+: a event plus a leg or angle that influences it (or the special value N\+O\+\_\+\+A\+N\+G\+LE if the event happens spontaneously)
+
+attempt rate of an influence\+: the probability rate with which the influence attempts the corresponding event
+
+success probability units of an event\+: probability that an attempted event actually happens, transformed via a sigmoidal function.
+
+the following diagrams show the relationships between these types of things\+: \begin{DoxyVerb}  e1 –––––––––rat13–––––––––> e3
+entity     relationship     entity
+  .       or action type       .
+  .             .              .
+  .       \______________________/
+  .           an out-leg for e1
+  .             .              .
+\______________________/       .
+    an in-leg for e3           .
+  .             .              .
+\________________________________/
+              a link
+
+
+  e1 ––rat12––> e2 ––rat23––> e3
+ \______________________________/
+             an angle\end{DoxyVerb}
+ A\+B\+B\+R\+E\+V\+I\+A\+T\+I\+O\+NS used in variable naming.
+
+e\+: entity e1\+: source entity of a link or event e2\+: middle entity of an angle or influence, or \char`\"{}other\char`\"{} entity of a leg e3\+: target entity of a link or event
+
+et\+: entity type et1\+: source entity type of a link or event type et2\+: middle entity type of an angle or influence type, or other entity type of a leg type et3\+: target entity type of a link or event type
+
+ev\+: event evt\+: event type
+
+infl\+: influence inflt\+: influence type
+
+l\+: link lt\+: link type
+
+rat\+: relationship or action type rat13\+: type of rel. or action from source to target of a link or event rat12\+: type of rel. or action from source to middle/other entity rat23\+: type of rel. or action from middle/other entity to target
+
+t\+: timepoint
+
+trailing \+\_\+\+: pointer trailing \+\_\+it\+: pointer used as iterator
+
+x2y\+: map mapping xs to ys (typically a map, unordered\+\_\+map, or vector)
+
+O\+T\+H\+ER N\+A\+M\+I\+NG C\+O\+N\+V\+E\+N\+T\+I\+O\+NS\+:
+
+void functions are named by imperatives (e.\+g., \char`\"{}do\+\_\+this\char`\"{}) non-\/void functions are named by nouns (e.\+g., \char`\"{}most\+\_\+important\+\_\+thing\char`\"{})filename of configuration file 

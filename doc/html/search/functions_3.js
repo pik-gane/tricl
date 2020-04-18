@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['parse_5fargs',['parse_args',['../d2/d27/tricl_8cpp.html#ade42974a32e89c168c97127bbc971da4',1,'tricl.cpp']]]
+  ['main',['main',['../d2/d27/tricl_8cpp.html#a0ddf1224851353fc92bfbff6f499fa97',1,'tricl.cpp']]]
 ];

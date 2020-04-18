@@ -6,23 +6,6 @@
  * @file
  */
 
-/** USAGE.
- *
- * BUILD:
- *   cd tricl
- *   mkdir -p build/default
- *   cd build/default
- *   cmake ../../
- *   cmake --build .
- *
- * CONFIGURE: copy parameters_TEMPLATE.yaml to some file my_parameters.yaml and edit it
- *
- * RUN: ./tricl my_parameters.yaml
- *
- * PROFILE: valgrind --tool=callgrind --callgrind-out-file=/tmp/callgrind.out ./tricl my_parameters.yaml; kcachegrind /tmp/callgrind.out
- *
- */
-
 // DEBUG or RELEASE mode?
 // for debug mode comment the following line, for release mode leave it uncommented:
 //#define NDEBUG
@@ -87,10 +70,10 @@
  * impact of an action: a nonnegative real number that is increased by one whenever the link flashes and decays exponentially at a certain rate.
  *                      a link's impact determines the link's influence on adjacent events.
  *
- * basic event: an event class plus a link, e.g.
- *              - "establishment of the link 'John - is a subscriber of - the BBC'" (event class EC_EST)
- *              - "termination of the link 'John - is friends with - Alice'" (event class EC_TERM)
- *              - "occurrence of the act 'Alice - utters that - Elvis lives'" (event class EC_ACT)
+ * event: an event class plus a link, e.g.
+ *        - "establishment of the link 'John - is a subscriber of - the BBC'" (event class EC_EST)
+ *        - "termination of the link 'John - is friends with - Alice'" (event class EC_TERM)
+ *        - "occurrence of the act 'Alice - utters that - Elvis lives'" (event class EC_ACT)
  *
  * leg: a relationship or action type rat plus an entity.
  *      a leg can influence an adjacent termination event but no establishment or act occurrence events
@@ -99,25 +82,65 @@
  *        an angle can influence any adjacent event.
  *        an angle can also encode a leg if either relationship or action type equals the special value NO_RT
  *
- * influence: a basic event plus a leg or angle that influences it (or the special value NO_ANGLE if the basic event happens spontaneously)
+ * influence: a event plus a leg or angle that influences it (or the special value NO_ANGLE if the event happens spontaneously)
  *
  * attempt rate of an influence: the probability rate with which the influence attempts the corresponding event
  *
- * success probability units of a basic event: probability that an attempted event actually happens, transformed via a sigmoidal function.
+ * success probability units of an event: probability that an attempted event actually happens, transformed via a sigmoidal function.
  *
+ * the following diagrams show the relationships between these types of things:
+ *
+ *       e1 –––––––––rat13–––––––––> e3
+ *     entity     relationship     entity
+ *       .       or action type       .
+ *       .             .              .
+ *       .       \______________________/
+ *       .           an out-leg for e1
+ *       .             .              .
+ *     \______________________/       .
+ *         an in-leg for e3           .
+ *       .             .              .
+ *     \________________________________/
+ *                   a link
+ *
+ *
+ *       e1 ––rat12––> e2 ––rat23––> e3
+ *      \______________________________/
+ *                  an angle
  */
 
 /** ABBREVIATIONS used in variable naming.
  *
- * x2y: map mapping xs to ys
- * e[t]: entity (aka node) [type] id
- * ev[t]: event [type] id
- * infl[t]: influence [type] id
- * l[t]: link [type] id
- * rat: relationship or action type id
+ * e: entity
+ * e1: source entity of a link or event
+ * e2: middle entity of an angle or influence, or "other" entity of a leg
+ * e3: target entity of a link or event
+ *
+ * et: entity type
+ * et1: source entity type of a link or event type
+ * et2: middle entity type of an angle or influence type, or other entity type of a leg type
+ * et3: target entity type of a link or event type
+ *
+ * ev: event
+ * evt: event type
+ *
+ * infl: influence
+ * inflt: influence type
+ *
+ * l: link
+ * lt: link type
+ *
+ * rat: relationship or action type
+ * rat13: type of rel. or action from source to target of a link or event
+ * rat12: type of rel. or action from source to middle/other entity
+ * rat23: type of rel. or action from middle/other entity to target
+ *
  * t: timepoint
+ *
  * trailing _: pointer
  * trailing _it: pointer used as iterator
+ *
+ * x2y: map mapping xs to ys (typically a map, unordered_map, or vector)
  *
  * OTHER NAMING CONVENTIONS:
  *
@@ -127,12 +150,6 @@
  */
 
 // INCLUDES:
-
-// libraries:
-
-//#include <iostream>
-
-// local includes:
 
 #include "global_variables.h"
 #include "io.h"
@@ -147,23 +164,25 @@ string config_yaml_filename; ///< filename of configuration file
 
 /** main function of the tricl executable */
 int main (int argc, char *argv[]) {
-    try {
+    try
+    { // because our code sometimes deliberately throws strings upon errors
+
+        // stuff before simulation:
         read_config(argc, argv);
         init();
         if (debug) verify_data_consistency();
 
-        while (true) {
+        // actual simulation:
+        while (true)
+        {
             if (!step()) break;
         }
 
-        if (verbose) {
-            cout << "\nat t=" << current_t << ", " << t2be.size() << " events on stack: " << endl;
-            for (auto& [t, ev] : t2be) {
-                cout << " " << ev << " at " << t << endl;
-            }
-        }
+        // stuff after simulation:
         finish();
-    } catch (const char* msg) {
+    }
+    catch (const char* msg)
+    {
       cerr << "ERROR: exiting with message: " << msg << endl;
     }
     return 0;

@@ -75,25 +75,28 @@ $(function() {
 <a href="#details">More...</a></p>
 <div class="textblock"><code>#include &lt;assert.h&gt;</code><br />
 <code>#include &lt;iostream&gt;</code><br />
-<code>#include &quot;<a class="el" href="../../d5/d44/data__model_8h_source.html">data_model.h</a>&quot;</code><br />
 <code>#include &quot;global_variables.h&quot;</code><br />
 <code>#include &quot;entity.h&quot;</code><br />
 <code>#include &quot;angle.h&quot;</code><br />
 <code>#include &quot;link.h&quot;</code><br />
 <code>#include &quot;probability.h&quot;</code><br />
 <code>#include &quot;event.h&quot;</code><br />
+<code>#include &quot;io.h&quot;</code><br />
+<code>#include &quot;debugging.h&quot;</code><br />
 </div><div class="textblock"><div class="dynheader">
 Include dependency graph for event.cpp:</div>
 <div class="dyncontent">
 <div class="center"><img src="../../d6/d99/event_8cpp__incl.png" border="0" usemap="#src_2event_8cpp" alt=""/></div>
 <map name="src_2event_8cpp" id="src_2event_8cpp">
-<area shape="rect" id="node4" href="../../d5/d44/data__model_8h.html" title="The main data model. " alt="" coords="346,155,446,181"/>
-<area shape="rect" id="node10" href="../../d5/dfb/global__variables_8h_source.html" title="global_variables.h" alt="" coords="591,80,718,107"/>
-<area shape="rect" id="node12" href="../../d8/d83/entity_8h_source.html" title="entity.h" alt="" coords="502,80,567,107"/>
-<area shape="rect" id="node13" href="../../da/dac/angle_8h_source.html" title="angle.h" alt="" coords="195,80,259,107"/>
-<area shape="rect" id="node14" href="../../d4/d3c/link_8h_source.html" title="link.h" alt="" coords="283,80,336,107"/>
-<area shape="rect" id="node15" href="../../d5/d87/probability_8h_source.html" title="probability.h" alt="" coords="78,80,170,107"/>
-<area shape="rect" id="node17" href="../../dd/d20/event_8h_source.html" title="event.h" alt="" coords="361,80,426,107"/>
+<area shape="rect" id="node4" href="../../d5/dfb/global__variables_8h_source.html" title="global_variables.h" alt="" coords="417,155,543,181"/>
+<area shape="rect" id="node13" href="../../d8/d83/entity_8h_source.html" title="entity.h" alt="" coords="187,155,253,181"/>
+<area shape="rect" id="node14" href="../../da/dac/angle_8h_source.html" title="angle.h" alt="" coords="328,155,392,181"/>
+<area shape="rect" id="node15" href="../../d4/d3c/link_8h_source.html" title="link.h" alt="" coords="139,80,192,107"/>
+<area shape="rect" id="node16" href="../../d5/d87/probability_8h_source.html" title="probability.h" alt="" coords="449,80,541,107"/>
+<area shape="rect" id="node18" href="../../dd/d20/event_8h_source.html" title="event.h" alt="" coords="657,155,722,181"/>
+<area shape="rect" id="node19" href="../../dc/dac/io_8h_source.html" title="io.h" alt="" coords="279,80,321,107"/>
+<area shape="rect" id="node20" href="../../db/dbb/debugging_8h_source.html" title="debugging.h" alt="" coords="798,80,890,107"/>
+<area shape="rect" id="node5" href="../../d5/d44/data__model_8h.html" title="The main data model. " alt="" coords="310,229,410,256"/>
 </map>
 </div>
 </div><table class="memberdecls">
@@ -108,35 +111,35 @@ Macros</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:a834c2fb3ae5f66bbc5e469a529939497"><td class="memItemLeft" align="right" valign="top"><a id="a834c2fb3ae5f66bbc5e469a529939497"></a>
-angles&#160;</td><td class="memItemRight" valign="bottom"><b>leg_intersection</b> (leg_set &amp;out, leg_set &amp;in)</td></tr>
-<tr class="separator:a834c2fb3ae5f66bbc5e469a529939497"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab8644632b851d99741826fb61fb703bd"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../df/d1b/event_8cpp.html#ab8644632b851d99741826fb61fb703bd">event_is_scheduled</a> (<a class="el" href="../../df/d7d/structevent.html">event</a> &amp;ev, <a class="el" href="../../d0/d06/structevent__data.html">event_data</a> *evd_)</td></tr>
+<tr class="memitem:ab8644632b851d99741826fb61fb703bd"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../df/d1b/event_8cpp.html#ab8644632b851d99741826fb61fb703bd">event_is_scheduled</a> (<a class="el" href="../../d4/d7e/structtricl_1_1event.html">event</a> &amp;ev, <a class="el" href="../../d9/d16/structtricl_1_1event__data.html">event_data</a> *evd_)</td></tr>
 <tr class="memdesc:ab8644632b851d99741826fb61fb703bd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return whether a future instance of the event is scheduled.  <a href="#ab8644632b851d99741826fb61fb703bd">More...</a><br /></td></tr>
 <tr class="separator:ab8644632b851d99741826fb61fb703bd"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aec349d70e24c41f10f6995ac3c878c55"><td class="memItemLeft" align="right" valign="top"><a id="aec349d70e24c41f10f6995ac3c878c55"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>_schedule_event</b> (<a class="el" href="../../df/d7d/structevent.html">event</a> &amp;ev, <a class="el" href="../../d0/d06/structevent__data.html">event_data</a> *evd_)</td></tr>
-<tr class="separator:aec349d70e24c41f10f6995ac3c878c55"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a042c9ff332ef8b6a64f41250a4cd6d46"><td class="memItemLeft" align="right" valign="top"><a id="a042c9ff332ef8b6a64f41250a4cd6d46"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>schedule_event</b> (<a class="el" href="../../df/d7d/structevent.html">event</a> &amp;ev, <a class="el" href="../../d0/d06/structevent__data.html">event_data</a> *evd_)</td></tr>
-<tr class="separator:a042c9ff332ef8b6a64f41250a4cd6d46"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9d257f6c8320a4f32fcea04e6b890184"><td class="memItemLeft" align="right" valign="top"><a id="a9d257f6c8320a4f32fcea04e6b890184"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>reschedule_event</b> (<a class="el" href="../../df/d7d/structevent.html">event</a> &amp;ev, <a class="el" href="../../d0/d06/structevent__data.html">event_data</a> *evd_)</td></tr>
-<tr class="separator:a9d257f6c8320a4f32fcea04e6b890184"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4048cb830821ab767f91d751e7bd1f37"><td class="memItemLeft" align="right" valign="top"><a id="a4048cb830821ab767f91d751e7bd1f37"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>_schedule_event</b> (<a class="el" href="../../d4/d7e/structtricl_1_1event.html">event</a> &amp;ev, <a class="el" href="../../d9/d16/structtricl_1_1event__data.html">event_data</a> *evd_, double left_tail, double right_tail)</td></tr>
+<tr class="separator:a4048cb830821ab767f91d751e7bd1f37"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a269d75ea7ef6f98c60705a062e98f4e0"><td class="memItemLeft" align="right" valign="top"><a id="a269d75ea7ef6f98c60705a062e98f4e0"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>schedule_event</b> (<a class="el" href="../../d4/d7e/structtricl_1_1event.html">event</a> &amp;ev, <a class="el" href="../../d9/d16/structtricl_1_1event__data.html">event_data</a> *evd_, double left_tail, double right_tail)</td></tr>
+<tr class="separator:a269d75ea7ef6f98c60705a062e98f4e0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad37a5884bb4d210596ad150d6efafed0"><td class="memItemLeft" align="right" valign="top"><a id="ad37a5884bb4d210596ad150d6efafed0"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>reschedule_event</b> (<a class="el" href="../../d4/d7e/structtricl_1_1event.html">event</a> &amp;ev, <a class="el" href="../../d9/d16/structtricl_1_1event__data.html">event_data</a> *evd_, double left_tail, double right_tail)</td></tr>
+<tr class="separator:ad37a5884bb4d210596ad150d6efafed0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aef94fa11ff43b90a11586d18670f2700"><td class="memItemLeft" align="right" valign="top"><a id="aef94fa11ff43b90a11586d18670f2700"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>add_event</b> (<a class="el" href="../../df/d7d/structevent.html">event</a> &amp;ev)</td></tr>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>add_event</b> (<a class="el" href="../../d4/d7e/structtricl_1_1event.html">event</a> &amp;ev)</td></tr>
 <tr class="separator:aef94fa11ff43b90a11586d18670f2700"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a55e7ed06ea3900949b3bb7a464670054"><td class="memItemLeft" align="right" valign="top"><a id="a55e7ed06ea3900949b3bb7a464670054"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>remove_event</b> (<a class="el" href="../../df/d7d/structevent.html">event</a> &amp;ev, <a class="el" href="../../d0/d06/structevent__data.html">event_data</a> *evd_)</td></tr>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>remove_event</b> (<a class="el" href="../../d4/d7e/structtricl_1_1event.html">event</a> &amp;ev, <a class="el" href="../../d9/d16/structtricl_1_1event__data.html">event_data</a> *evd_)</td></tr>
 <tr class="separator:a55e7ed06ea3900949b3bb7a464670054"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a875f0862466ff1b831fee64602d92d76"><td class="memItemLeft" align="right" valign="top"><a id="a875f0862466ff1b831fee64602d92d76"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>conditionally_remove_event</b> (<a class="el" href="../../d4/d7e/structtricl_1_1event.html">event</a> &amp;ev)</td></tr>
+<tr class="separator:a875f0862466ff1b831fee64602d92d76"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:adc013b33a8b8afbb4f75c8c95dc3b93a"><td class="memItemLeft" align="right" valign="top"><a id="adc013b33a8b8afbb4f75c8c95dc3b93a"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>update_adjacent_events</b> (<a class="el" href="../../df/d7d/structevent.html">event</a> &amp;ev)</td></tr>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>update_adjacent_events</b> (<a class="el" href="../../d4/d7e/structtricl_1_1event.html">event</a> &amp;ev)</td></tr>
 <tr class="separator:adc013b33a8b8afbb4f75c8c95dc3b93a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aec4dd06c452378363b04a58a0cfe8f8b"><td class="memItemLeft" align="right" valign="top"><a id="aec4dd06c452378363b04a58a0cfe8f8b"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>add_reverse_event</b> (<a class="el" href="../../df/d7d/structevent.html">event</a> &amp;old_ev)</td></tr>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>add_reverse_event</b> (<a class="el" href="../../d4/d7e/structtricl_1_1event.html">event</a> &amp;old_ev)</td></tr>
 <tr class="separator:aec4dd06c452378363b04a58a0cfe8f8b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af13ceffde477e67e6d9418750ce45107"><td class="memItemLeft" align="right" valign="top"><a id="af13ceffde477e67e6d9418750ce45107"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>perform_event</b> (<a class="el" href="../../df/d7d/structevent.html">event</a> &amp;ev)</td></tr>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>perform_event</b> (<a class="el" href="../../d4/d7e/structtricl_1_1event.html">event</a> &amp;ev)</td></tr>
 <tr class="separator:af13ceffde477e67e6d9418750ce45107"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad57de4475b376dedfc003a1b09cfece8"><td class="memItemLeft" align="right" valign="top"><a id="ad57de4475b376dedfc003a1b09cfece8"></a>
 bool&#160;</td><td class="memItemRight" valign="bottom"><b>pop_next_event</b> ()</td></tr>
@@ -146,7 +149,7 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><b>pop_next_event</b> ()
 <div class="textblock"><p>Handling of events. </p>
 <p>An event is a tuple {ec, e1, rat13, e3} where ec is the event class (EC_EST or EC_TERM for establishment or termination of a relationship, EC_ACT for the occurrence of an act), e1 and e3 are the affected entities, and rat13 is the relationship or action type.</p>
 <p>An event type is a tuple (ec, et1, rat13, et3} where et1, et3 are two entity types.</p>
-<p>An event's variable data (current attempt rate, success probability units, and next scheduled timepoint) is stored in a separate struct of type <a class="el" href="../../d0/d06/structevent__data.html">event_data</a>.</p>
+<p>An event's variable data (current attempt rate, success probability units, and next scheduled timepoint) is stored in a separate struct of type event_data.</p>
 <dl class="section author"><dt>Author</dt><dd>Jobst Heitzig, Potsdam Institute for Climate Impact Research, <a href="#" onclick="location.href='mai'+'lto:'+'hei'+'tz'+'ig@'+'pi'+'k-p'+'ot'+'sda'+'m.'+'de'; return false;">heitz<span style="display: none;">.nosp@m.</span>ig@p<span style="display: none;">.nosp@m.</span>ik-po<span style="display: none;">.nosp@m.</span>tsda<span style="display: none;">.nosp@m.</span>m.de</a> </dd></dl>
 <dl class="section date"><dt>Date</dt><dd>Mar 30, 2020 </dd></dl>
 </div><h2 class="groupheader">Function Documentation</h2>
@@ -159,13 +162,13 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><b>pop_next_event</b> ()
         <tr>
           <td class="memname">bool event_is_scheduled </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="../../df/d7d/structevent.html">event</a> &amp;&#160;</td>
+          <td class="paramtype"><a class="el" href="../../d4/d7e/structtricl_1_1event.html">event</a> &amp;&#160;</td>
           <td class="paramname"><em>ev</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="../../d0/d06/structevent__data.html">event_data</a> *&#160;</td>
+          <td class="paramtype"><a class="el" href="../../d9/d16/structtricl_1_1event__data.html">event_data</a> *&#160;</td>
           <td class="paramname"><em>evd_</em>&#160;</td>
         </tr>
         <tr>

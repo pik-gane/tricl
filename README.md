@@ -5,7 +5,8 @@ Dependencies
 ------------
 * C++ language standard >=17
 * rapidcsv: <https://github.com/d99kris/rapidcsv>
-* libboost_iostreams: <https://www.boost.org/doc/libs/1_72_0/libs/iostreams/doc/index.html>
+* zlib <https://www.zlib.net/> (instead of using the heavier and harder to install libboost_iostreams shared library)
+* boost::iostreams header files: <https://www.boost.org/doc/libs/1_72_0/libs/iostreams/doc/index.html> 
 
 Building
 --------
@@ -56,7 +57,7 @@ map name:
 ~  # empty value
 inf  # infinity
 ```
-In addition, numerical values can not only be specified as numeric lieterals but also via simple mathematical expressions such as ``3 * sin(pi/5)^2`` (thanks to tinyexpr, <https://github.com/codeplea/tinyexpr>).
+In addition, numerical values can not only be specified as numeric lieterals but also via simple mathematical expressions such as ``3 * sin(pi/5)^2``.
 
 A tricl config file has this overall structure (where stuff in ``<this kind of brackets>`` is a placeholder):
 ```yaml
@@ -219,7 +220,23 @@ visualization:
     <relationship label>: [<thickness>, <shape>, <r>,<g>,<b>,<a>]  # thickness: float. shape: solid (default), dotted, dashed, double
 ```
 
+Third-party code used
+---------------------
+(in folder ``3rdparty``)
+* cxxopts: <https://github.com/jarro2783/cxxopts>
+* tinyexpr: <https://github.com/codeplea/tinyexpr>
+* gzip.cpp and zlib.cpp from boost::iostreams
+
+License
+-------
+?
+
 Change log
 ----------
 
-2020-04-16: added support for gzipped output (.gexz.gz) and separate output of individual relationship types
+2020-04-17
+- metaparameters can now be overwritten on the command line
+
+2020-04-16
+- added utility scripts for making videos with gephi (folder ``gephi``)
+- added support for gzipped output (.gexz.gz, not on the cluster yet) and separate output of individual relationship types

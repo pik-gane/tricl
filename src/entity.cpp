@@ -28,7 +28,6 @@ entity add_entity (
 
     // register type:
     e2et[e] = et;
-    _e2et[E(e)] = et;
     et2es[et].push_back(e);
 
     // register label:
