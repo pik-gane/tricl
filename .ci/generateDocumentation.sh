@@ -48,6 +48,7 @@ DOXYFILE=$TRAVIS_BUILD_DIR/Doxyfile
 # Get the current gh-pages branch
 git clone -b gh-pages git@github.com:$GH_REPO_ORG/$GH_REPO_NAME.git code_docs
 cd code_docs
+ls
 
 # Copy DoxygenLayout.xml here
 #cp $TRAVIS_BUILD_DIR/DoxygenLayout.xml .
@@ -72,7 +73,7 @@ echo "" > .nojekyll
 ##### Generate the Doxygen code documentation and log the output.          #####
 echo 'Generating Doxygen code documentation...'
 # Redirect both stderr and stdout to the log file AND the console.
-doxygen $DOXYFILE 2>&1 | tee doxygen.log
+doxygen ../$DOXYFILE 2>&1 | tee doxygen.log
 
 ################################################################################
 ##### Upload the documentation to the gh-pages branch of the repository.   #####
