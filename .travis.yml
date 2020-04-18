@@ -15,10 +15,12 @@ before_install:
     echo "A"
     if [[ "$TRAVIS_BRANCH" = "master" && -n "$TRAVIS_BUILD_DOCS" && "$TRAVIS_PULL_REQUEST" = "false" ]] ; then
       echo "B"
-      cd $TRAVIS_BUILD_DIR
+      cd $PROJECT_DIR_ABS
+      pwd
       echo "C"
       source .ci/setup-ssh.sh || travis_terminate 1
       echo "D"
       .ci/generateDocumentation.sh || travis_terminate 1
       echo "E"
     fi
+script: cmake . && cmake --build .
