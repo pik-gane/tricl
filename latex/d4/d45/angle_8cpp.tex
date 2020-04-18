@@ -1,0 +1,78 @@
+\hypertarget{angle_8cpp}{}\section{src/angle.cpp File Reference}
+\label{angle_8cpp}\index{src/angle.\+cpp@{src/angle.\+cpp}}
+
+
+Handling of angles.  
+
+
+{\ttfamily \#include $<$assert.\+h$>$}\\*
+{\ttfamily \#include $<$iostream$>$}\\*
+{\ttfamily \#include \char`\"{}global\+\_\+variables.\+h\char`\"{}}\\*
+{\ttfamily \#include \char`\"{}probability.\+h\char`\"{}}\\*
+{\ttfamily \#include \char`\"{}debugging.\+h\char`\"{}}\\*
+{\ttfamily \#include \char`\"{}event.\+h\char`\"{}}\\*
+{\ttfamily \#include \char`\"{}angle.\+h\char`\"{}}\\*
+Include dependency graph for angle.\+cpp\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{db/d2d/angle_8cpp__incl}
+\end{center}
+\end{figure}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \hyperlink{angle_8cpp_a1a5dff9417edeae00cf8bfd75459fc36}{add\+\_\+or\+\_\+delete\+\_\+angle} (event\+\_\+class ec\+\_\+angle, entity e1, entity\+\_\+type et1, relationship\+\_\+or\+\_\+action\+\_\+type rat12, entity e2, entity\+\_\+type et2, relationship\+\_\+or\+\_\+action\+\_\+type rat23, entity e3, entity\+\_\+type et3)
+\item 
+angles \hyperlink{angle_8cpp_a866a945b4a5609c25d73c6488041a658}{leg\+\_\+intersection} (entity e1, outleg\+\_\+set \&out1, inleg\+\_\+set \&in3, entity e3)
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Handling of angles. 
+
+An angle is an indirect connection between two entities e1, e3 via a middle entity e2. It is specified as a triple \{rat12, e2, rat23\} where rat12, rat23 are two relationship or action types.
+
+\begin{DoxyAuthor}{Author}
+Jobst Heitzig, Potsdam Institute for Climate Impact Research, \href{mailto:heitzig@pik-potsdam.de}{\tt heitzig@pik-\/potsdam.\+de} 
+\end{DoxyAuthor}
+\begin{DoxyDate}{Date}
+Mar 30, 2020 
+\end{DoxyDate}
+
+
+\subsection{Function Documentation}
+\index{angle.\+cpp@{angle.\+cpp}!add\+\_\+or\+\_\+delete\+\_\+angle@{add\+\_\+or\+\_\+delete\+\_\+angle}}
+\index{add\+\_\+or\+\_\+delete\+\_\+angle@{add\+\_\+or\+\_\+delete\+\_\+angle}!angle.\+cpp@{angle.\+cpp}}
+\subsubsection[{\texorpdfstring{add\+\_\+or\+\_\+delete\+\_\+angle(event\+\_\+class ec\+\_\+angle, entity e1, entity\+\_\+type et1, relationship\+\_\+or\+\_\+action\+\_\+type rat12, entity e2, entity\+\_\+type et2, relationship\+\_\+or\+\_\+action\+\_\+type rat23, entity e3, entity\+\_\+type et3)}{add_or_delete_angle(event_class ec_angle, entity e1, entity_type et1, relationship_or_action_type rat12, entity e2, entity_type et2, relationship_or_action_type rat23, entity e3, entity_type et3)}}]{\setlength{\rightskip}{0pt plus 5cm}void add\+\_\+or\+\_\+delete\+\_\+angle (
+\begin{DoxyParamCaption}
+\item[{event\+\_\+class}]{ec\+\_\+angle, }
+\item[{entity}]{e1, }
+\item[{entity\+\_\+type}]{et1, }
+\item[{relationship\+\_\+or\+\_\+action\+\_\+type}]{rat12, }
+\item[{entity}]{e2, }
+\item[{entity\+\_\+type}]{et2, }
+\item[{relationship\+\_\+or\+\_\+action\+\_\+type}]{rat23, }
+\item[{entity}]{e3, }
+\item[{entity\+\_\+type}]{et3}
+\end{DoxyParamCaption}
+)}\hypertarget{angle_8cpp_a1a5dff9417edeae00cf8bfd75459fc36}{}\label{angle_8cpp_a1a5dff9417edeae00cf8bfd75459fc36}
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em ec\+\_\+angle} & event class\+: E\+C\+\_\+\+E\+ST adds an angle, E\+C\+\_\+\+T\+E\+RM deletes one \\
+\hline
+\end{DoxyParams}
+\index{angle.\+cpp@{angle.\+cpp}!leg\+\_\+intersection@{leg\+\_\+intersection}}
+\index{leg\+\_\+intersection@{leg\+\_\+intersection}!angle.\+cpp@{angle.\+cpp}}
+\subsubsection[{\texorpdfstring{leg\+\_\+intersection(entity e1, outleg\+\_\+set \&out1, inleg\+\_\+set \&in3, entity e3)}{leg_intersection(entity e1, outleg_set &out1, inleg_set &in3, entity e3)}}]{\setlength{\rightskip}{0pt plus 5cm}angles leg\+\_\+intersection (
+\begin{DoxyParamCaption}
+\item[{entity}]{e1, }
+\item[{outleg\+\_\+set \&}]{out1, }
+\item[{inleg\+\_\+set \&}]{in3, }
+\item[{entity}]{e3}
+\end{DoxyParamCaption}
+)}\hypertarget{angle_8cpp_a866a945b4a5609c25d73c6488041a658}{}\label{angle_8cpp_a866a945b4a5609c25d73c6488041a658}
+algorithm\+:
+
+the two sequences are sorted by e2. put blockstart = out1.\+end(). repeat\+: if out1.\+e2 $<$ in3.\+e2, advance out1. else if out1.\+e2 $>$ in3.\+e2\+: advance in3. if blockstart != out1.\+end()\+: if in3.\+e2 == previous in3.\+e2, rewind out2 to blockstart else put blockstart = out1.\+end(). else out1.\+e2 == in3.\+e2\+: if blockstart == out1.\+end(), remember out1 position as blockstart store found angle advance out1

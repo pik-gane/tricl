@@ -1,0 +1,76 @@
+\hypertarget{entity_8cpp}{}\section{src/entity.cpp File Reference}
+\label{entity_8cpp}\index{src/entity.\+cpp@{src/entity.\+cpp}}
+
+
+Handling of entities.  
+
+
+{\ttfamily \#include $<$iostream$>$}\\*
+{\ttfamily \#include $<$math.\+h$>$}\\*
+{\ttfamily \#include \char`\"{}global\+\_\+variables.\+h\char`\"{}}\\*
+{\ttfamily \#include \char`\"{}entity.\+h\char`\"{}}\\*
+{\ttfamily \#include \char`\"{}probability.\+h\char`\"{}}\\*
+Include dependency graph for entity.\+cpp\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{d8/d92/entity_8cpp__incl}
+\end{center}
+\end{figure}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+entity \hyperlink{entity_8cpp_a0a2d9d57b1737f98889d96db80b44ea4}{add\+\_\+entity} (entity\+\_\+type et, string elabel)
+\begin{DoxyCompactList}\small\item\em Add a new entity of a specific type. \end{DoxyCompactList}\item 
+entity \hyperlink{entity_8cpp_a98c686b5512ec703bd0da855cd296f24}{random\+\_\+entity} (entity\+\_\+type et)
+\begin{DoxyCompactList}\small\item\em Return a random entity of a specific type. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Handling of entities. 
+
+\begin{DoxyAuthor}{Author}
+Jobst Heitzig, Potsdam Institute for Climate Impact Research, \href{mailto:heitzig@pik-potsdam.de}{\tt heitzig@pik-\/potsdam.\+de} 
+\end{DoxyAuthor}
+\begin{DoxyDate}{Date}
+Mar 30, 2020 
+\end{DoxyDate}
+
+
+\subsection{Function Documentation}
+\index{entity.\+cpp@{entity.\+cpp}!add\+\_\+entity@{add\+\_\+entity}}
+\index{add\+\_\+entity@{add\+\_\+entity}!entity.\+cpp@{entity.\+cpp}}
+\subsubsection[{\texorpdfstring{add\+\_\+entity(entity\+\_\+type et, string elabel)}{add_entity(entity_type et, string elabel)}}]{\setlength{\rightskip}{0pt plus 5cm}entity add\+\_\+entity (
+\begin{DoxyParamCaption}
+\item[{entity\+\_\+type}]{et, }
+\item[{string}]{elabel}
+\end{DoxyParamCaption}
+)}\hypertarget{entity_8cpp_a0a2d9d57b1737f98889d96db80b44ea4}{}\label{entity_8cpp_a0a2d9d57b1737f98889d96db80b44ea4}
+
+
+Add a new entity of a specific type. 
+
+(the entity is not returned) 
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em et} & entity type of the entity to be generated anew. \\
+\hline
+\mbox{\tt in}  & {\em elabel} & entity label (if \char`\"{}\char`\"{}, will be generated) \\
+\hline
+\end{DoxyParams}
+\index{entity.\+cpp@{entity.\+cpp}!random\+\_\+entity@{random\+\_\+entity}}
+\index{random\+\_\+entity@{random\+\_\+entity}!entity.\+cpp@{entity.\+cpp}}
+\subsubsection[{\texorpdfstring{random\+\_\+entity(entity\+\_\+type et)}{random_entity(entity_type et)}}]{\setlength{\rightskip}{0pt plus 5cm}entity random\+\_\+entity (
+\begin{DoxyParamCaption}
+\item[{entity\+\_\+type}]{et}
+\end{DoxyParamCaption}
+)}\hypertarget{entity_8cpp_a98c686b5512ec703bd0da855cd296f24}{}\label{entity_8cpp_a98c686b5512ec703bd0da855cd296f24}
+
+
+Return a random entity of a specific type. 
+
+The entity is drawn uniformly at random. 
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em et} & Entity type of which a random entity is needed \\
+\hline
+\end{DoxyParams}

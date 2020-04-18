@@ -1,0 +1,173 @@
+\hypertarget{data__model_8h}{}\section{src/data\+\_\+model.h File Reference}
+\label{data__model_8h}\index{src/data\+\_\+model.\+h@{src/data\+\_\+model.\+h}}
+
+
+The main data model.  
+
+
+{\ttfamily \#include $<$math.\+h$>$}\\*
+{\ttfamily \#include $<$string$>$}\\*
+{\ttfamily \#include $<$vector$>$}\\*
+{\ttfamily \#include $<$unordered\+\_\+map$>$}\\*
+{\ttfamily \#include $<$set$>$}\\*
+Include dependency graph for data\+\_\+model.\+h\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{d0/dc6/data__model_8h__incl}
+\end{center}
+\end{figure}
+This graph shows which files directly or indirectly include this file\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{d8/d95/data__model_8h__dep__incl}
+\end{center}
+\end{figure}
+\subsection*{Data Structures}
+\begin{DoxyCompactItemize}
+\item 
+struct \hyperlink{structentity__type__pair}{entity\+\_\+type\+\_\+pair}
+\item 
+struct \hyperlink{structstd_1_1hash_3_01entity__type__pair_01_4}{std\+::hash$<$ entity\+\_\+type\+\_\+pair $>$}
+\item 
+struct \hyperlink{structlink__type}{link\+\_\+type}
+\item 
+struct \hyperlink{structstd_1_1hash_3_01link__type_01_4}{std\+::hash$<$ link\+\_\+type $>$}
+\item 
+struct \hyperlink{structevent__type}{event\+\_\+type}
+\item 
+struct \hyperlink{structstd_1_1hash_3_01event__type_01_4}{std\+::hash$<$ event\+\_\+type $>$}
+\item 
+struct \hyperlink{structangle__type}{angle\+\_\+type}
+\item 
+struct \hyperlink{structstd_1_1hash_3_01angle__type_01_4}{std\+::hash$<$ angle\+\_\+type $>$}
+\item 
+struct \hyperlink{structinfluence__type}{influence\+\_\+type}
+\item 
+struct \hyperlink{structstd_1_1hash_3_01influence__type_01_4}{std\+::hash$<$ influence\+\_\+type $>$}
+\item 
+struct \hyperlink{structinleg}{inleg}
+\item 
+struct \hyperlink{structstd_1_1hash_3_01inleg_01_4}{std\+::hash$<$ inleg $>$}
+\item 
+struct \hyperlink{structoutleg}{outleg}
+\item 
+struct \hyperlink{structstd_1_1hash_3_01outleg_01_4}{std\+::hash$<$ outleg $>$}
+\item 
+struct \hyperlink{structlink}{link}
+\item 
+struct \hyperlink{structstd_1_1hash_3_01link_01_4}{std\+::hash$<$ link $>$}
+\item 
+struct \hyperlink{structevent}{event}
+\item 
+struct \hyperlink{structstd_1_1hash_3_01event_01_4}{std\+::hash$<$ event $>$}
+\item 
+struct \hyperlink{structevent__data}{event\+\_\+data}
+\item 
+struct \hyperlink{structangle}{angle}
+\item 
+struct \hyperlink{structstd_1_1hash_3_01angle_01_4}{std\+::hash$<$ angle $>$}
+\end{DoxyCompactItemize}
+\subsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\#define {\bfseries E\+\_\+\+B\+I\+TS}~20\hypertarget{data__model_8h_a4ef43416c3082b95dfc7b9b4b37ed4a7}{}\label{data__model_8h_a4ef43416c3082b95dfc7b9b4b37ed4a7}
+
+\item 
+\#define {\bfseries E\+T\+\_\+\+B\+I\+TS}~4\hypertarget{data__model_8h_a27e24a1c84c197041afdad0fc49dcaeb}{}\label{data__model_8h_a27e24a1c84c197041afdad0fc49dcaeb}
+
+\item 
+\#define {\bfseries R\+A\+T\+\_\+\+B\+I\+TS}~4\hypertarget{data__model_8h_a1712faaa1ef9bb3dcbfae56161881708}{}\label{data__model_8h_a1712faaa1ef9bb3dcbfae56161881708}
+
+\item 
+\#define {\bfseries N\+O\+\_\+\+R\+AT}~0\hypertarget{data__model_8h_ae71ff63a5bdb6bfc09a18840c8df4e54}{}\label{data__model_8h_ae71ff63a5bdb6bfc09a18840c8df4e54}
+
+\item 
+\#define {\bfseries R\+T\+\_\+\+ID}~1\hypertarget{data__model_8h_a549fa469b9ccb6e0fe046f797bc181e0}{}\label{data__model_8h_a549fa469b9ccb6e0fe046f797bc181e0}
+
+\item 
+\#define {\bfseries E}(e)~e\hypertarget{data__model_8h_a925666847194fb399477a102d097b306}{}\label{data__model_8h_a925666847194fb399477a102d097b306}
+
+\item 
+\#define {\bfseries M\+A\+X\+\_\+\+N\+\_\+E}~((1$<$$<$E\+\_\+\+B\+I\+TS)-\/1)\hypertarget{data__model_8h_acaa7fd772f80b3066211e5eb6e29ed91}{}\label{data__model_8h_acaa7fd772f80b3066211e5eb6e29ed91}
+
+\item 
+\#define {\bfseries E\+PS}~1e-\/20;\hypertarget{data__model_8h_a6ebf6899d6c1c8b7b9d09be872c05aae}{}\label{data__model_8h_a6ebf6899d6c1c8b7b9d09be872c05aae}
+
+\item 
+\#define {\bfseries I\+N\+F\+LT}(inflt)~((size\+\_\+t)inflt.\+evt.\+ec $^\wedge$ ((size\+\_\+t)inflt.\+evt.\+et1 $<$$<$ 2) $^\wedge$ ((size\+\_\+t)inflt.\+evt.\+rat13 $<$$<$ (2+E\+T\+\_\+\+B\+I\+TS)) $^\wedge$ ((size\+\_\+t)inflt.\+evt.\+et3 $<$$<$ (2+E\+T\+\_\+\+B\+I\+TS+R\+A\+T\+\_\+\+B\+I\+TS)) $^\wedge$ ((size\+\_\+t)inflt.\+at.\+rat12 $<$$<$ (2+2$\ast$E\+T\+\_\+\+B\+I\+TS+R\+A\+T\+\_\+\+B\+I\+TS)) $^\wedge$ ((size\+\_\+t)inflt.\+at.\+et2 $<$$<$ (2+2$\ast$E\+T\+\_\+\+B\+I\+TS+2$\ast$R\+A\+T\+\_\+\+B\+I\+TS)) $^\wedge$ ((size\+\_\+t)inflt.\+at.\+rat23 $<$$<$ (2+3$\ast$E\+T\+\_\+\+B\+I\+TS+2$\ast$R\+A\+T\+\_\+\+B\+I\+TS)))\hypertarget{data__model_8h_a9a89b5cd637aedee7c32dc74252da764}{}\label{data__model_8h_a9a89b5cd637aedee7c32dc74252da764}
+
+\item 
+\#define {\bfseries M\+A\+X\+\_\+\+N\+\_\+\+I\+N\+F\+LT}~(1 $<$$<$ (2+3$\ast$E\+T\+\_\+\+B\+I\+TS+3$\ast$R\+A\+T\+\_\+\+B\+I\+TS))\hypertarget{data__model_8h_a3890372a566c5b111dd6fabda11e73bc}{}\label{data__model_8h_a3890372a566c5b111dd6fabda11e73bc}
+
+\end{DoxyCompactItemize}
+\subsection*{Typedefs}
+\begin{DoxyCompactItemize}
+\item 
+typedef size\+\_\+t {\bfseries relationship\+\_\+or\+\_\+action\+\_\+type}\hypertarget{data__model_8h_a11df54a52750e65829d0054de4b7a861}{}\label{data__model_8h_a11df54a52750e65829d0054de4b7a861}
+
+\item 
+typedef int {\bfseries entity}\hypertarget{data__model_8h_a08316ff3ce5d1e594b5bb434d45633bd}{}\label{data__model_8h_a08316ff3ce5d1e594b5bb434d45633bd}
+
+\item 
+typedef double {\bfseries timepoint}\hypertarget{data__model_8h_ac88fa917135865f26a725d345e83c272}{}\label{data__model_8h_ac88fa917135865f26a725d345e83c272}
+
+\item 
+typedef double {\bfseries rate}\hypertarget{data__model_8h_a2ee4b6db09130f2e0869c1ff9c44bb53}{}\label{data__model_8h_a2ee4b6db09130f2e0869c1ff9c44bb53}
+
+\item 
+typedef double {\bfseries probunit}\hypertarget{data__model_8h_a1517582a41997cc124377682616345f3}{}\label{data__model_8h_a1517582a41997cc124377682616345f3}
+
+\item 
+typedef double {\bfseries probability}\hypertarget{data__model_8h_ad67203c86946d1f00c882a4cbd7cfdf2}{}\label{data__model_8h_ad67203c86946d1f00c882a4cbd7cfdf2}
+
+\item 
+typedef string {\bfseries label}\hypertarget{data__model_8h_a5328f8989e337f661c6dae5b18dbda2a}{}\label{data__model_8h_a5328f8989e337f661c6dae5b18dbda2a}
+
+\item 
+typedef short unsigned int {\bfseries entity\+\_\+type}\hypertarget{data__model_8h_a841c4d1edf6dff66d4de5076bd39b292}{}\label{data__model_8h_a841c4d1edf6dff66d4de5076bd39b292}
+
+\item 
+typedef set$<$ \hyperlink{structinleg}{inleg} $>$ {\bfseries inleg\+\_\+set}\hypertarget{data__model_8h_ad43ae31a8d7ff1c67791edd55bfbb7cf}{}\label{data__model_8h_ad43ae31a8d7ff1c67791edd55bfbb7cf}
+
+\item 
+typedef set$<$ \hyperlink{structoutleg}{outleg} $>$ {\bfseries outleg\+\_\+set}\hypertarget{data__model_8h_a206c04051d5df2bec4397e1c016072ee}{}\label{data__model_8h_a206c04051d5df2bec4397e1c016072ee}
+
+\item 
+typedef vector$<$ \hyperlink{structangle}{angle} $>$ {\bfseries angles}\hypertarget{data__model_8h_aba7697838aa903b2a3de65e7b49c1fcd}{}\label{data__model_8h_aba7697838aa903b2a3de65e7b49c1fcd}
+
+\end{DoxyCompactItemize}
+\subsection*{Enumerations}
+\begin{DoxyCompactItemize}
+\item 
+enum {\bfseries event\+\_\+class} \{ {\bfseries E\+C\+\_\+\+E\+ST}, 
+{\bfseries E\+C\+\_\+\+T\+E\+RM}, 
+{\bfseries E\+C\+\_\+\+A\+CT}
+ \}\hypertarget{data__model_8h_a43c5c21548610e8c60b7830393f0dc46}{}\label{data__model_8h_a43c5c21548610e8c60b7830393f0dc46}
+
+\end{DoxyCompactItemize}
+\subsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+unordered\+\_\+map$<$ event\+\_\+class, string $>$ {\bfseries ec2label}\hypertarget{data__model_8h_a8cfe6d9b04fa1fbdb585deffcf13ae68}{}\label{data__model_8h_a8cfe6d9b04fa1fbdb585deffcf13ae68}
+
+\item 
+const \hyperlink{structangle__type}{angle\+\_\+type} {\bfseries N\+O\+\_\+\+A\+N\+G\+LE} = \{ .rat12 = N\+O\+\_\+\+R\+AT, .et2 = 0, .rat23 = N\+O\+\_\+\+R\+AT \}\hypertarget{data__model_8h_a6cb5d5a29b1038ba20155566ba615e3d}{}\label{data__model_8h_a6cb5d5a29b1038ba20155566ba615e3d}
+
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+The main data model. 
+
+Defines all structs and their operators.
+
+\begin{DoxyAuthor}{Author}
+Jobst Heitzig, Potsdam Institute for Climate Impact Research, \href{mailto:heitzig@pik-potsdam.de}{\tt heitzig@pik-\/potsdam.\+de} 
+\end{DoxyAuthor}
+\begin{DoxyDate}{Date}
+Mar 30, 2020 
+\end{DoxyDate}
