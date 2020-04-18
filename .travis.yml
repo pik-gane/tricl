@@ -11,8 +11,13 @@ before_install:
   - sudo apt-get -y install doxygen doxygen-doc doxygen-gui graphviz
 #after_success:
   - |-
+    echo "A"
     if [[ "$TRAVIS_BRANCH" = "master" && -n "$TRAVIS_BUILD_DOCS" && "$TRAVIS_PULL_REQUEST" = "false" ]] ; then
+      echo "B"
       cd $TRAVIS_BUILD_DIR
+      echo "C"
       source .ci/setup-ssh.sh || travis_terminate 1
+      echo "D"
       .ci/generateDocumentation.sh || travis_terminate 1
+      echo "E"
     fi
