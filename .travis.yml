@@ -15,8 +15,11 @@ before_install:
     echo "A"
     if [[ "$TRAVIS_BRANCH" = "master" && -n "$TRAVIS_BUILD_DOCS" && "$TRAVIS_PULL_REQUEST" = "false" ]] ; then
       echo "B"
+      pwd
+      ls
       cd $PROJECT_DIR_ABS
       pwd
+      ls
       echo "C"
       source .ci/setup-ssh.sh || travis_terminate 1
       echo "D"
