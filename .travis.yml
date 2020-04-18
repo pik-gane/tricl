@@ -1,15 +1,19 @@
 language: cpp
+
+dist: bionic
+
 env:
   global:
   - TRAVIS_BUILD_DOCS=true
   - GH_REPO_NAME=tricl
   - TRAVIS_BUILD_DIR=.
+
 branches:
   only:
   - master
+
 before_install:
   - sudo apt-get -y install doxygen doxygen-doc doxygen-gui graphviz
-#after_success:
   - |-
     if [[ "$TRAVIS_BRANCH" = "master" && -n "$TRAVIS_BUILD_DOCS" && "$TRAVIS_PULL_REQUEST" = "false" ]] ; then
       pwd
@@ -19,4 +23,5 @@ before_install:
       source .ci/generateDocumentation.sh
       echo "generate doc done"
     fi
+
 script: cmake . && cmake --build .
