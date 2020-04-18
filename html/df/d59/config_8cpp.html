@@ -136,6 +136,9 @@ Variables</h2></td></tr>
 <tr class="memitem:a0b60e3ce1fbd529d7fb44c1a3b6f2d5a"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a0b60e3ce1fbd529d7fb44c1a3b6f2d5a"></a>
 string&#160;</td><td class="memItemRight" valign="bottom"><b>gexf_filename</b> = &quot;&quot;</td></tr>
 <tr class="separator:a0b60e3ce1fbd529d7fb44c1a3b6f2d5a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af960657d113135c47b4e0ed4536930c0"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="af960657d113135c47b4e0ed4536930c0"></a>
+string&#160;</td><td class="memItemRight" valign="bottom"><b>diagram_fileprefix</b> = &quot;&quot;</td></tr>
+<tr class="separator:af960657d113135c47b4e0ed4536930c0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab3f078684998b83967d507d0f453f454"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ab3f078684998b83967d507d0f453f454"></a>
 bool&#160;</td><td class="memItemRight" valign="bottom"><b>verbose</b> = false</td></tr>
 <tr class="separator:ab3f078684998b83967d507d0f453f454"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -211,12 +214,48 @@ unordered_map&lt; <a class="el" href="../../d2/dbe/structevent__type.html">event
 <tr class="memitem:a6a65e62a5f8173784beb092165af2528"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a6a65e62a5f8173784beb092165af2528"></a>
 unordered_map&lt; <a class="el" href="../../d2/dbe/structevent__type.html">event_type</a>, double &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>evt2right_tail</b> = {}</td></tr>
 <tr class="separator:a6a65e62a5f8173784beb092165af2528"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a03d560bc5370f3ca1eacb35584ef2315"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a03d560bc5370f3ca1eacb35584ef2315"></a>
-unordered_map&lt; <a class="el" href="../../d2/dbe/structevent__type.html">event_type</a>, probunit &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>evt2base_probunit</b> = {}</td></tr>
-<tr class="separator:a03d560bc5370f3ca1eacb35584ef2315"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7bdcf50228f66221b0b748cdc9593169"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a7bdcf50228f66221b0b748cdc9593169"></a>
-unordered_map&lt; <a class="el" href="../../d6/dec/structinfluence__type.html">influence_type</a>, probunit &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>inflt2delta_probunit</b> = {}</td></tr>
-<tr class="separator:a7bdcf50228f66221b0b748cdc9593169"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5372b5c53ebbceff39a367177d0e4c38"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a5372b5c53ebbceff39a367177d0e4c38"></a>
+unordered_map&lt; <a class="el" href="../../d2/dbe/structevent__type.html">event_type</a>, probunits &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>evt2base_probunits</b> = {}</td></tr>
+<tr class="separator:a5372b5c53ebbceff39a367177d0e4c38"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa4d1d1a030f8a8b177f11e3b4dc93011"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aa4d1d1a030f8a8b177f11e3b4dc93011"></a>
+unordered_map&lt; <a class="el" href="../../d6/dec/structinfluence__type.html">influence_type</a>, probunits &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>inflt2delta_probunits</b> = {}</td></tr>
+<tr class="separator:aa4d1d1a030f8a8b177f11e3b4dc93011"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a922d0c80d1e0778e68aaca86945eb49e"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a922d0c80d1e0778e68aaca86945eb49e"></a>
+unordered_map&lt; entity_type, double &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>et2gexf_size</b> = {}</td></tr>
+<tr class="separator:a922d0c80d1e0778e68aaca86945eb49e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a26668024dfdce9d505c1e0ed03a645a2"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a26668024dfdce9d505c1e0ed03a645a2"></a>
+unordered_map&lt; entity_type, double &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>et2gexf_a</b> = {}</td></tr>
+<tr class="separator:a26668024dfdce9d505c1e0ed03a645a2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a10ef80ac6e92253faba86527383b0b19"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a10ef80ac6e92253faba86527383b0b19"></a>
+unordered_map&lt; entity_type, string &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>et2gexf_shape</b> = {}</td></tr>
+<tr class="separator:a10ef80ac6e92253faba86527383b0b19"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa7267315093f6567077ec5e612b46ed1"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aa7267315093f6567077ec5e612b46ed1"></a>
+unordered_map&lt; entity_type, int &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>et2gexf_r</b> = {}</td></tr>
+<tr class="separator:aa7267315093f6567077ec5e612b46ed1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a86c65c01b4b0c35b56baf6d8d557d977"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a86c65c01b4b0c35b56baf6d8d557d977"></a>
+unordered_map&lt; entity_type, int &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>et2gexf_g</b> = {}</td></tr>
+<tr class="separator:a86c65c01b4b0c35b56baf6d8d557d977"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aded47b9a1ea0cb3ac40ea0ae60d013c3"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aded47b9a1ea0cb3ac40ea0ae60d013c3"></a>
+unordered_map&lt; entity_type, int &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>et2gexf_b</b> = {}</td></tr>
+<tr class="separator:aded47b9a1ea0cb3ac40ea0ae60d013c3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7e4baebe848adb451c45c44624784a8a"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a7e4baebe848adb451c45c44624784a8a"></a>
+unordered_map&lt; relationship_or_action_type, double &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>rat2gexf_thickness</b> = {}</td></tr>
+<tr class="separator:a7e4baebe848adb451c45c44624784a8a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8fc9665235760bdb38eb6a631e654077"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a8fc9665235760bdb38eb6a631e654077"></a>
+unordered_map&lt; relationship_or_action_type, double &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>rat2gexf_a</b> = {}</td></tr>
+<tr class="separator:a8fc9665235760bdb38eb6a631e654077"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9a7b4c97b0337eec7a107d4f48c994f0"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a9a7b4c97b0337eec7a107d4f48c994f0"></a>
+unordered_map&lt; relationship_or_action_type, string &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>rat2gexf_shape</b> = {}</td></tr>
+<tr class="separator:a9a7b4c97b0337eec7a107d4f48c994f0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad77fa8d20dd7cf1471f2219765253a49"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ad77fa8d20dd7cf1471f2219765253a49"></a>
+unordered_map&lt; relationship_or_action_type, int &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>rat2gexf_r</b> = {}</td></tr>
+<tr class="separator:ad77fa8d20dd7cf1471f2219765253a49"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8063993d6d713ccd233e2fcc6e9bc99b"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a8063993d6d713ccd233e2fcc6e9bc99b"></a>
+unordered_map&lt; relationship_or_action_type, int &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>rat2gexf_g</b> = {}</td></tr>
+<tr class="separator:a8063993d6d713ccd233e2fcc6e9bc99b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa91b7e25dfb65b3ea4d7f4c15a7bc25d"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aa91b7e25dfb65b3ea4d7f4c15a7bc25d"></a>
+unordered_map&lt; relationship_or_action_type, int &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>rat2gexf_b</b> = {}</td></tr>
+<tr class="separator:aa91b7e25dfb65b3ea4d7f4c15a7bc25d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aca8167edc3c91cb84c829dd88f75c7b4"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aca8167edc3c91cb84c829dd88f75c7b4"></a>
 entity&#160;</td><td class="memItemRight" valign="bottom"><b>max_e</b> = 0</td></tr>
 <tr class="separator:aca8167edc3c91cb84c829dd88f75c7b4"><td class="memSeparator" colspan="2">&#160;</td></tr>

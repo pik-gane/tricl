@@ -42,6 +42,9 @@ void {\bfseries read\+\_\+config} ()\hypertarget{config_8cpp_ac8471a77a592a1fbe4
 string {\bfseries gexf\+\_\+filename} = \char`\"{}\char`\"{}\hypertarget{config_8cpp_a0b60e3ce1fbd529d7fb44c1a3b6f2d5a}{}\label{config_8cpp_a0b60e3ce1fbd529d7fb44c1a3b6f2d5a}
 
 \item 
+string {\bfseries diagram\+\_\+fileprefix} = \char`\"{}\char`\"{}\hypertarget{config_8cpp_af960657d113135c47b4e0ed4536930c0}{}\label{config_8cpp_af960657d113135c47b4e0ed4536930c0}
+
+\item 
 bool {\bfseries verbose} = false\hypertarget{config_8cpp_ab3f078684998b83967d507d0f453f454}{}\label{config_8cpp_ab3f078684998b83967d507d0f453f454}
 
 \item 
@@ -117,10 +120,46 @@ unordered\+\_\+map$<$ \hyperlink{structevent__type}{event\+\_\+type}, double $>$
 unordered\+\_\+map$<$ \hyperlink{structevent__type}{event\+\_\+type}, double $>$ {\bfseries evt2right\+\_\+tail} = \{\}\hypertarget{config_8cpp_a6a65e62a5f8173784beb092165af2528}{}\label{config_8cpp_a6a65e62a5f8173784beb092165af2528}
 
 \item 
-unordered\+\_\+map$<$ \hyperlink{structevent__type}{event\+\_\+type}, probunit $>$ {\bfseries evt2base\+\_\+probunit} = \{\}\hypertarget{config_8cpp_a03d560bc5370f3ca1eacb35584ef2315}{}\label{config_8cpp_a03d560bc5370f3ca1eacb35584ef2315}
+unordered\+\_\+map$<$ \hyperlink{structevent__type}{event\+\_\+type}, probunits $>$ {\bfseries evt2base\+\_\+probunits} = \{\}\hypertarget{config_8cpp_a5372b5c53ebbceff39a367177d0e4c38}{}\label{config_8cpp_a5372b5c53ebbceff39a367177d0e4c38}
 
 \item 
-unordered\+\_\+map$<$ \hyperlink{structinfluence__type}{influence\+\_\+type}, probunit $>$ {\bfseries inflt2delta\+\_\+probunit} = \{\}\hypertarget{config_8cpp_a7bdcf50228f66221b0b748cdc9593169}{}\label{config_8cpp_a7bdcf50228f66221b0b748cdc9593169}
+unordered\+\_\+map$<$ \hyperlink{structinfluence__type}{influence\+\_\+type}, probunits $>$ {\bfseries inflt2delta\+\_\+probunits} = \{\}\hypertarget{config_8cpp_aa4d1d1a030f8a8b177f11e3b4dc93011}{}\label{config_8cpp_aa4d1d1a030f8a8b177f11e3b4dc93011}
+
+\item 
+unordered\+\_\+map$<$ entity\+\_\+type, double $>$ {\bfseries et2gexf\+\_\+size} = \{\}\hypertarget{config_8cpp_a922d0c80d1e0778e68aaca86945eb49e}{}\label{config_8cpp_a922d0c80d1e0778e68aaca86945eb49e}
+
+\item 
+unordered\+\_\+map$<$ entity\+\_\+type, double $>$ {\bfseries et2gexf\+\_\+a} = \{\}\hypertarget{config_8cpp_a26668024dfdce9d505c1e0ed03a645a2}{}\label{config_8cpp_a26668024dfdce9d505c1e0ed03a645a2}
+
+\item 
+unordered\+\_\+map$<$ entity\+\_\+type, string $>$ {\bfseries et2gexf\+\_\+shape} = \{\}\hypertarget{config_8cpp_a10ef80ac6e92253faba86527383b0b19}{}\label{config_8cpp_a10ef80ac6e92253faba86527383b0b19}
+
+\item 
+unordered\+\_\+map$<$ entity\+\_\+type, int $>$ {\bfseries et2gexf\+\_\+r} = \{\}\hypertarget{config_8cpp_aa7267315093f6567077ec5e612b46ed1}{}\label{config_8cpp_aa7267315093f6567077ec5e612b46ed1}
+
+\item 
+unordered\+\_\+map$<$ entity\+\_\+type, int $>$ {\bfseries et2gexf\+\_\+g} = \{\}\hypertarget{config_8cpp_a86c65c01b4b0c35b56baf6d8d557d977}{}\label{config_8cpp_a86c65c01b4b0c35b56baf6d8d557d977}
+
+\item 
+unordered\+\_\+map$<$ entity\+\_\+type, int $>$ {\bfseries et2gexf\+\_\+b} = \{\}\hypertarget{config_8cpp_aded47b9a1ea0cb3ac40ea0ae60d013c3}{}\label{config_8cpp_aded47b9a1ea0cb3ac40ea0ae60d013c3}
+
+\item 
+unordered\+\_\+map$<$ relationship\+\_\+or\+\_\+action\+\_\+type, double $>$ {\bfseries rat2gexf\+\_\+thickness} = \{\}\hypertarget{config_8cpp_a7e4baebe848adb451c45c44624784a8a}{}\label{config_8cpp_a7e4baebe848adb451c45c44624784a8a}
+
+\item 
+unordered\+\_\+map$<$ relationship\+\_\+or\+\_\+action\+\_\+type, double $>$ {\bfseries rat2gexf\+\_\+a} = \{\}\hypertarget{config_8cpp_a8fc9665235760bdb38eb6a631e654077}{}\label{config_8cpp_a8fc9665235760bdb38eb6a631e654077}
+
+\item 
+unordered\+\_\+map$<$ relationship\+\_\+or\+\_\+action\+\_\+type, string $>$ {\bfseries rat2gexf\+\_\+shape} = \{\}\hypertarget{config_8cpp_a9a7b4c97b0337eec7a107d4f48c994f0}{}\label{config_8cpp_a9a7b4c97b0337eec7a107d4f48c994f0}
+
+\item 
+unordered\+\_\+map$<$ relationship\+\_\+or\+\_\+action\+\_\+type, int $>$ {\bfseries rat2gexf\+\_\+r} = \{\}\hypertarget{config_8cpp_ad77fa8d20dd7cf1471f2219765253a49}{}\label{config_8cpp_ad77fa8d20dd7cf1471f2219765253a49}
+
+\item 
+unordered\+\_\+map$<$ relationship\+\_\+or\+\_\+action\+\_\+type, int $>$ {\bfseries rat2gexf\+\_\+g} = \{\}\hypertarget{config_8cpp_a8063993d6d713ccd233e2fcc6e9bc99b}{}\label{config_8cpp_a8063993d6d713ccd233e2fcc6e9bc99b}
+
+\item 
+unordered\+\_\+map$<$ relationship\+\_\+or\+\_\+action\+\_\+type, int $>$ {\bfseries rat2gexf\+\_\+b} = \{\}\hypertarget{config_8cpp_aa91b7e25dfb65b3ea4d7f4c15a7bc25d}{}\label{config_8cpp_aa91b7e25dfb65b3ea4d7f4c15a7bc25d}
 
 \item 
 entity {\bfseries max\+\_\+e} = 0\hypertarget{config_8cpp_aca8167edc3c91cb84c829dd88f75c7b4}{}\label{config_8cpp_aca8167edc3c91cb84c829dd88f75c7b4}
