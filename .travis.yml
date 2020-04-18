@@ -15,9 +15,9 @@ before_install:
     if [[ "$TRAVIS_BRANCH" = "master" && -n "$TRAVIS_BUILD_DOCS" && "$TRAVIS_PULL_REQUEST" = "false" ]] ; then
       pwd
       ls
-      source .ci/setup-ssh.sh || travis_terminate 1
+      source .ci/setup-ssh.sh
       echo "setup ssh done"
-      .ci/generateDocumentation.sh || travis_terminate 1
+      .ci/generateDocumentation.sh
       echo "generate doc done"
     fi
 script: cmake . && cmake --build .
