@@ -2,7 +2,6 @@ language: cpp
 env:
   global:
   - TRAVIS_BUILD_DOCS=true
-  - DOXYFILE=../Doxyfile
   - GH_REPO_NAME=tricl
   - TRAVIS_BUILD_DIR=.
 branches:
