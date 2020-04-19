@@ -98,92 +98,23 @@ Include dependency graph for tricl.cpp:</div>
 </div><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:ade42974a32e89c168c97127bbc971da4"><td class="memItemLeft" align="right" valign="top"><a id="ade42974a32e89c168c97127bbc971da4"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d2/d27/tricl_8cpp.html#ade42974a32e89c168c97127bbc971da4">parse_args</a> (int argc, const char *argv[])</td></tr>
-<tr class="memdesc:ade42974a32e89c168c97127bbc971da4"><td class="mdescLeft">&#160;</td><td class="mdescRight">parse the command line arguments <br /></td></tr>
-<tr class="separator:ade42974a32e89c168c97127bbc971da4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac0f2228420376f4db7e1274f2b41667c"><td class="memItemLeft" align="right" valign="top"><a id="ac0f2228420376f4db7e1274f2b41667c"></a>
-int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d2/d27/tricl_8cpp.html#ac0f2228420376f4db7e1274f2b41667c">main</a> (int argc, const char *argv[])</td></tr>
-<tr class="memdesc:ac0f2228420376f4db7e1274f2b41667c"><td class="mdescLeft">&#160;</td><td class="mdescRight">main function of the tricl executable <br /></td></tr>
-<tr class="separator:ac0f2228420376f4db7e1274f2b41667c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0ddf1224851353fc92bfbff6f499fa97"><td class="memItemLeft" align="right" valign="top"><a id="a0ddf1224851353fc92bfbff6f499fa97"></a>
+int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d2/d27/tricl_8cpp.html#a0ddf1224851353fc92bfbff6f499fa97">main</a> (int argc, char *argv[])</td></tr>
+<tr class="memdesc:a0ddf1224851353fc92bfbff6f499fa97"><td class="mdescLeft">&#160;</td><td class="mdescRight">main function of the tricl executable <br /></td></tr>
+<tr class="separator:a0ddf1224851353fc92bfbff6f499fa97"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="var-members"></a>
 Variables</h2></td></tr>
-<tr class="memitem:a6ff215d62218bc381c50ab2e7ef4731d"><td class="memItemLeft" align="right" valign="top">string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d2/d27/tricl_8cpp.html#a6ff215d62218bc381c50ab2e7ef4731d">config_yaml_filename</a></td></tr>
-<tr class="memdesc:a6ff215d62218bc381c50ab2e7ef4731d"><td class="mdescLeft">&#160;</td><td class="mdescRight">USAGE.  <a href="#a6ff215d62218bc381c50ab2e7ef4731d">More...</a><br /></td></tr>
+<tr class="memitem:a6ff215d62218bc381c50ab2e7ef4731d"><td class="memItemLeft" align="right" valign="top"><a id="a6ff215d62218bc381c50ab2e7ef4731d"></a>
+string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d2/d27/tricl_8cpp.html#a6ff215d62218bc381c50ab2e7ef4731d">config_yaml_filename</a></td></tr>
+<tr class="memdesc:a6ff215d62218bc381c50ab2e7ef4731d"><td class="mdescLeft">&#160;</td><td class="mdescRight">filename of configuration file <br /></td></tr>
 <tr class="separator:a6ff215d62218bc381c50ab2e7ef4731d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>TriCl, a generic model of social dynamics. </p>
 <dl class="section author"><dt>Author</dt><dd>Jobst Heitzig, Potsdam Institute for Climate Impact Research, <a href="#" onclick="location.href='mai'+'lto:'+'hei'+'tz'+'ig@'+'pi'+'k-p'+'ot'+'sda'+'m.'+'de'; return false;">heitz<span style="display: none;">.nosp@m.</span>ig@p<span style="display: none;">.nosp@m.</span>ik-po<span style="display: none;">.nosp@m.</span>tsda<span style="display: none;">.nosp@m.</span>m.de</a> </dd></dl>
-<dl class="section date"><dt>Date</dt><dd>Oct 18, 2019 </dd></dl>
-</div><h2 class="groupheader">Variable Documentation</h2>
-<a id="a6ff215d62218bc381c50ab2e7ef4731d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a6ff215d62218bc381c50ab2e7ef4731d">&#9670;&nbsp;</a></span>config_yaml_filename</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">string config_yaml_filename</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>USAGE. </p>
-<p>BUILD: cd tricl mkdir -p build/default cd build/default cmake ../../ cmake &ndash;build .</p>
-<p>CONFIGURE: copy parameters_TEMPLATE.yaml to some file my_parameters.yaml and edit it</p>
-<p>RUN: ./tricl my_parameters.yaml</p>
-<p>PROFILE: valgrind &ndash;tool=callgrind &ndash;callgrind-out-file=/tmp/callgrind.out ./tricl my_parameters.yaml; kcachegrind /tmp/callgrind.out TODO:</p>
-<p>model capabilities:</p><ul>
-<li>allow legs to influence success prob. of establishment</li>
-<li>allow legs to attempt establishment</li>
-<li>add acts</li>
-</ul>
-<p>simulation options:</p><ul>
-<li>as an alternative to tmax, add max_n_events and max_wall</li>
-<li>add control over random seed</li>
-<li>allow to read initial state from csv files (one for each link type) or gexf file</li>
-<li>add particle filtering mode</li>
-</ul>
-<p>network theory stuff:</p><ul>
-<li>output triangle counts clustering coefficient(s)</li>
-<li>add more random network models</li>
-</ul>
-<p>convenience:</p><ul>
-<li>add &ndash;help message and potential parameter overrides on the command line</li>
-<li>remove redundant output from init that is already printed in config</li>
-</ul>
-<p>optimization:</p><ul>
-<li>use const args as much as possible in inner loops TERMINOLOGY (see also overleaf document).</li>
-</ul>
-<p>entity type: a type of concrete or abstract entity (see below), e.g. "an individual", "a news channel", "a social group", "an opinion", or "an infection state"</p>
-<p>entity: any concrete or abstract object that can stand in a relationship with other entities, e.g. "John", "the BBC", "catholics", "Elvis lives", or "infected with Dengue"</p>
-<p>relationship type: any concrete or abstract type of directed relationship two entities can stand in, e.g. "is friends with", "is a subscriber of", "belongs to", "holds", or "is". the special relationship type "=" (with id RT_ID) encodes the identity of an entity with itself.</p>
-<p>action type: any type of thing that can happen at a singular time point between two entities, e.g. "kisses" or "utters that"</p>
-<p>act: a pair of entities plus an action type plus a time-point. we say the act "occurs" at that time.</p>
-<p>link type: a pair of entity types plus a relationship or action type, e.g. "an individual - is a subscriber of - a news channel" or "an individual - utters - an opinion"</p>
-<p>link: a pair of entities plus a relationship or action type, e.g. "John - is a subscriber of - the BBC". if it has a relationship type, a link "exists" as long as the entities stand in the respective relationship. if it has an action type, a link "flashes" whenever a corresponding act occurs. the source entity id is called "e1" in code, the destination entity id "e3" (because of angles, see below)</p>
-<p>relationship: a link of relationship type</p>
-<p>action: a link of action type (not to be confused with an act!)</p>
-<p>impact of an action: a nonnegative real number that is increased by one whenever the link flashes and decays exponentially at a certain rate. a link's impact determines the link's influence on adjacent events.</p>
-<p>basic event: an event class plus a link, e.g.</p><ul>
-<li>"establishment of the link 'John - is a subscriber of - the BBC'" (event class EC_EST)</li>
-<li>"termination of the link 'John - is friends with - Alice'" (event class EC_TERM)</li>
-<li>"occurrence of the act 'Alice - utters that - Elvis lives'" (event class EC_ACT)</li>
-</ul>
-<p>leg: a relationship or action type rat plus an entity. a leg can influence an adjacent termination event but no establishment or act occurrence events</p>
-<p>angle: a middle entity plus pair of relationship or action types. an angle can influence any adjacent event. an angle can also encode a leg if either relationship or action type equals the special value NO_RT</p>
-<p>influence: a basic event plus a leg or angle that influences it (or the special value NO_ANGLE if the basic event happens spontaneously)</p>
-<p>attempt rate of an influence: the probability rate with which the influence attempts the corresponding event</p>
-<p>success probability units of a basic event: probability that an attempted event actually happens, transformed via a sigmoidal function. ABBREVIATIONS used in variable naming.</p>
-<p>x2y: map mapping xs to ys e[t]: entity (aka node) [type] id ev[t]: event [type] id infl[t]: influence [type] id l[t]: link [type] id rat: relationship or action type id t: timepoint trailing _: pointer trailing _it: pointer used as iterator</p>
-<p>OTHER NAMING CONVENTIONS:</p>
-<p>void functions are named by imperatives (e.g., "do_this") non-void functions are named by nouns (e.g., "most_important_thing")filename of configuration file </p>
-
-</div>
-</div>
-</div><!-- contents -->
+<dl class="section date"><dt>Date</dt><dd>March 2020 </dd></dl>
+</div></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
 Generated by &#160;<a href="http://www.doxygen.org/index.html">

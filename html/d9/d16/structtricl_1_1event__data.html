@@ -59,7 +59,7 @@ $(function() {
 
 <div id="nav-path" class="navpath">
   <ul>
-<li class="navelem"><b>tricl</b></li><li class="navelem"><a class="el" href="../../d9/d16/structtricl_1_1event__data.html">event_data</a></li>  </ul>
+<li class="navelem"><a class="el" href="../../dc/d70/namespacetricl.html">tricl</a></li><li class="navelem"><a class="el" href="../../d9/d16/structtricl_1_1event__data.html">event_data</a></li>  </ul>
 </div>
 </div><!-- top -->
 <div class="header">
@@ -69,23 +69,35 @@ $(function() {
 <div class="title">tricl::event_data Struct Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
+
+<p>For performance reasons, the mutable data of an <a class="el" href="../../d4/d7e/structtricl_1_1event.html">event</a> is stored in a separate struct.  
+ <a href="../../d9/d16/structtricl_1_1event__data.html#details">More...</a></p>
+
+<p><code>#include &lt;<a class="el" href="../../d5/d44/data__model_8h_source.html">data_model.h</a>&gt;</code></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
 Data Fields</h2></td></tr>
 <tr class="memitem:a6c10029d49048e80c295b346a5b987f9"><td class="memItemLeft" align="right" valign="top"><a id="a6c10029d49048e80c295b346a5b987f9"></a>
-int&#160;</td><td class="memItemRight" valign="bottom"><b>n_angles</b> = 0</td></tr>
+int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d9/d16/structtricl_1_1event__data.html#a6c10029d49048e80c295b346a5b987f9">n_angles</a> = 0</td></tr>
+<tr class="memdesc:a6c10029d49048e80c295b346a5b987f9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Current no. of angles influencing this event. <br /></td></tr>
 <tr class="separator:a6c10029d49048e80c295b346a5b987f9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab1a97598f3ac7947b16c785138d754df"><td class="memItemLeft" align="right" valign="top"><a id="ab1a97598f3ac7947b16c785138d754df"></a>
-rate&#160;</td><td class="memItemRight" valign="bottom"><b>attempt_rate</b></td></tr>
+<a class="el" href="../../dc/d70/namespacetricl.html#ae42d2696f294300a43e0f5edf4875479">rate</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d9/d16/structtricl_1_1event__data.html#ab1a97598f3ac7947b16c785138d754df">attempt_rate</a></td></tr>
+<tr class="memdesc:ab1a97598f3ac7947b16c785138d754df"><td class="mdescLeft">&#160;</td><td class="mdescRight">Current attempt rate of this event. <br /></td></tr>
 <tr class="separator:ab1a97598f3ac7947b16c785138d754df"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af2cce9d4c534778696f87867c156d076"><td class="memItemLeft" align="right" valign="top"><a id="af2cce9d4c534778696f87867c156d076"></a>
-probunits&#160;</td><td class="memItemRight" valign="bottom"><b>success_probunits</b></td></tr>
+<a class="el" href="../../dc/d70/namespacetricl.html#af8f8f9076e92e1c664ffa96f18d038a5">probunits</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d9/d16/structtricl_1_1event__data.html#af2cce9d4c534778696f87867c156d076">success_probunits</a></td></tr>
+<tr class="memdesc:af2cce9d4c534778696f87867c156d076"><td class="mdescLeft">&#160;</td><td class="mdescRight">Current success probunits of this event. <br /></td></tr>
 <tr class="separator:af2cce9d4c534778696f87867c156d076"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:acd1cbe2baf952a87e40d96d5ff60ccb6"><td class="memItemLeft" align="right" valign="top"><a id="acd1cbe2baf952a87e40d96d5ff60ccb6"></a>
-timepoint&#160;</td><td class="memItemRight" valign="bottom"><b>t</b> = -INFINITY</td></tr>
+<a class="el" href="../../dc/d70/namespacetricl.html#a720ff6a29f998e11e1d3622fc8df64b1">timepoint</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d9/d16/structtricl_1_1event__data.html#acd1cbe2baf952a87e40d96d5ff60ccb6">t</a> = -INFINITY</td></tr>
+<tr class="memdesc:acd1cbe2baf952a87e40d96d5ff60ccb6"><td class="mdescLeft">&#160;</td><td class="mdescRight">When this event would next happen if the system state does not chance in between. <br /></td></tr>
 <tr class="separator:acd1cbe2baf952a87e40d96d5ff60ccb6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<hr/>The documentation for this struct was generated from the following file:<ul>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>For performance reasons, the mutable data of an <a class="el" href="../../d4/d7e/structtricl_1_1event.html">event</a> is stored in a separate struct. </p>
+<p>These structs appear as values in a map whose key is the corresponding event. </p>
+</div><hr/>The documentation for this struct was generated from the following file:<ul>
 <li>src/<a class="el" href="../../d5/d44/data__model_8h_source.html">data_model.h</a></li>
 </ul>
 </div><!-- contents -->

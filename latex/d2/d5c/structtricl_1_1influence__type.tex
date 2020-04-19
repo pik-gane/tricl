@@ -2,6 +2,15 @@
 \label{structtricl_1_1influence__type}\index{tricl\+::influence\+\_\+type@{tricl\+::influence\+\_\+type}}
 
 
+Influence types are used to encode the main dynamical rules of a model.  
+
+
+
+
+{\ttfamily \#include $<$data\+\_\+model.\+h$>$}
+
+
+
 Collaboration diagram for tricl\+:\+:influence\+\_\+type\+:
 \nopagebreak
 \begin{figure}[H]
@@ -14,11 +23,11 @@ Collaboration diagram for tricl\+:\+:influence\+\_\+type\+:
 \begin{DoxyCompactItemize}
 \item 
 \mbox{\Hypertarget{structtricl_1_1influence__type_a9e3a80224b266e0ff8041644e372fe19}\label{structtricl_1_1influence__type_a9e3a80224b266e0ff8041644e372fe19}} 
-const \hyperlink{structtricl_1_1event__type}{event\+\_\+type} {\bfseries evt}
-\item 
+const \hyperlink{structtricl_1_1event__type}{event\+\_\+type} \hyperlink{structtricl_1_1influence__type_a9e3a80224b266e0ff8041644e372fe19}{evt}
+\begin{DoxyCompactList}\small\item\em The type of event influenced by this type of influence. \end{DoxyCompactList}\item 
 \mbox{\Hypertarget{structtricl_1_1influence__type_a9d6fecd13fbb3e7b0686556d80b3b537}\label{structtricl_1_1influence__type_a9d6fecd13fbb3e7b0686556d80b3b537}} 
-const \hyperlink{structtricl_1_1angle__type}{angle\+\_\+type} {\bfseries at}
-\end{DoxyCompactItemize}
+const \hyperlink{structtricl_1_1angle__type}{angle\+\_\+type} \hyperlink{structtricl_1_1influence__type_a9d6fecd13fbb3e7b0686556d80b3b537}{at}
+\begin{DoxyCompactList}\small\item\em The type of angle (or leg via N\+O\+\_\+\+R\+AT) influencing that type of event. \end{DoxyCompactList}\end{DoxyCompactItemize}
 \subsection*{Friends}
 \begin{DoxyCompactItemize}
 \item 
@@ -26,6 +35,13 @@ const \hyperlink{structtricl_1_1angle__type}{angle\+\_\+type} {\bfseries at}
 bool {\bfseries operator==} (const \hyperlink{structtricl_1_1influence__type}{influence\+\_\+type} \&left, const \hyperlink{structtricl_1_1influence__type}{influence\+\_\+type} \&right)
 \end{DoxyCompactItemize}
 
+
+\subsection{Detailed Description}
+Influence types are used to encode the main dynamical rules of a model. 
+
+The attempt rates and success probability units of an event can be influenced by adjacent angles and legs (not yet implemented), and the amount of influence is a parameter that depends on the respective entity and relationship or action types.
+
+These parameters are stored in maps that use the \hyperlink{structtricl_1_1influence__type}{influence\+\_\+type} as key. 
 
 The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
 \item 

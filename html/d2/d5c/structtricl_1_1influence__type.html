@@ -59,7 +59,7 @@ $(function() {
 
 <div id="nav-path" class="navpath">
   <ul>
-<li class="navelem"><b>tricl</b></li><li class="navelem"><a class="el" href="../../d2/d5c/structtricl_1_1influence__type.html">influence_type</a></li>  </ul>
+<li class="navelem"><a class="el" href="../../dc/d70/namespacetricl.html">tricl</a></li><li class="navelem"><a class="el" href="../../d2/d5c/structtricl_1_1influence__type.html">influence_type</a></li>  </ul>
 </div>
 </div><!-- top -->
 <div class="header">
@@ -70,23 +70,30 @@ $(function() {
 <div class="title">tricl::influence_type Struct Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
+
+<p>Influence types are used to encode the main dynamical rules of a model.  
+ <a href="../../d2/d5c/structtricl_1_1influence__type.html#details">More...</a></p>
+
+<p><code>#include &lt;<a class="el" href="../../d5/d44/data__model_8h_source.html">data_model.h</a>&gt;</code></p>
 <div class="dynheader">
 Collaboration diagram for tricl::influence_type:</div>
 <div class="dyncontent">
 <div class="center"><img src="../../d0/dba/structtricl_1_1influence__type__coll__graph.png" border="0" usemap="#tricl_1_1influence__type_coll__map" alt="Collaboration graph"/></div>
 <map name="tricl_1_1influence__type_coll__map" id="tricl_1_1influence__type_coll__map">
-<area shape="rect" id="node2" href="../../dc/d1b/structtricl_1_1angle__type.html" title="tricl::angle_type" alt="" coords="5,5,132,32"/>
-<area shape="rect" id="node3" href="../../d3/d70/structtricl_1_1event__type.html" title="tricl::event_type" alt="" coords="157,5,285,32"/>
+<area shape="rect" id="node2" href="../../dc/d1b/structtricl_1_1angle__type.html" title="The type of an angle is given by the involved entity and relationship or action types (or NO_RAT if t..." alt="" coords="5,5,132,32"/>
+<area shape="rect" id="node3" href="../../d3/d70/structtricl_1_1event__type.html" title="The type of an event is given by an event class, two entity types and a relationship or action type..." alt="" coords="157,5,285,32"/>
 </map>
 <center><span class="legend">[<a href="../../graph_legend.html">legend</a>]</span></center></div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
 Data Fields</h2></td></tr>
 <tr class="memitem:a9e3a80224b266e0ff8041644e372fe19"><td class="memItemLeft" align="right" valign="top"><a id="a9e3a80224b266e0ff8041644e372fe19"></a>
-const <a class="el" href="../../d3/d70/structtricl_1_1event__type.html">event_type</a>&#160;</td><td class="memItemRight" valign="bottom"><b>evt</b></td></tr>
+const <a class="el" href="../../d3/d70/structtricl_1_1event__type.html">event_type</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d2/d5c/structtricl_1_1influence__type.html#a9e3a80224b266e0ff8041644e372fe19">evt</a></td></tr>
+<tr class="memdesc:a9e3a80224b266e0ff8041644e372fe19"><td class="mdescLeft">&#160;</td><td class="mdescRight">The type of event influenced by this type of influence. <br /></td></tr>
 <tr class="separator:a9e3a80224b266e0ff8041644e372fe19"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9d6fecd13fbb3e7b0686556d80b3b537"><td class="memItemLeft" align="right" valign="top"><a id="a9d6fecd13fbb3e7b0686556d80b3b537"></a>
-const <a class="el" href="../../dc/d1b/structtricl_1_1angle__type.html">angle_type</a>&#160;</td><td class="memItemRight" valign="bottom"><b>at</b></td></tr>
+const <a class="el" href="../../dc/d1b/structtricl_1_1angle__type.html">angle_type</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d2/d5c/structtricl_1_1influence__type.html#a9d6fecd13fbb3e7b0686556d80b3b537">at</a></td></tr>
+<tr class="memdesc:a9d6fecd13fbb3e7b0686556d80b3b537"><td class="mdescLeft">&#160;</td><td class="mdescRight">The type of angle (or leg via NO_RAT) influencing that type of event. <br /></td></tr>
 <tr class="separator:a9d6fecd13fbb3e7b0686556d80b3b537"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="friends"></a>
@@ -95,7 +102,11 @@ Friends</h2></td></tr>
 bool&#160;</td><td class="memItemRight" valign="bottom"><b>operator==</b> (const <a class="el" href="../../d2/d5c/structtricl_1_1influence__type.html">influence_type</a> &amp;left, const <a class="el" href="../../d2/d5c/structtricl_1_1influence__type.html">influence_type</a> &amp;right)</td></tr>
 <tr class="separator:a4f5b42686b09f580c15f8fa9f3aa296f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<hr/>The documentation for this struct was generated from the following file:<ul>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>Influence types are used to encode the main dynamical rules of a model. </p>
+<p>The attempt rates and success probability units of an event can be influenced by adjacent angles and legs (not yet implemented), and the amount of influence is a parameter that depends on the respective entity and relationship or action types.</p>
+<p>These parameters are stored in maps that use the <a class="el" href="../../d2/d5c/structtricl_1_1influence__type.html" title="Influence types are used to encode the main dynamical rules of a model. ">influence_type</a> as key. </p>
+</div><hr/>The documentation for this struct was generated from the following file:<ul>
 <li>src/<a class="el" href="../../d5/d44/data__model_8h_source.html">data_model.h</a></li>
 </ul>
 </div><!-- contents -->

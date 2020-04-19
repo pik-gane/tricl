@@ -65,10 +65,10 @@ $(function() {
 <div class="header">
   <div class="summary">
 <a href="#nested-classes">Data Structures</a> &#124;
+<a href="#namespaces">Namespaces</a> &#124;
 <a href="#define-members">Macros</a> &#124;
 <a href="#typedef-members">Typedefs</a> &#124;
-<a href="#enum-members">Enumerations</a> &#124;
-<a href="#var-members">Variables</a>  </div>
+<a href="#enum-members">Enumerations</a>  </div>
   <div class="headertitle">
 <div class="title">data_model.h File Reference</div>  </div>
 </div><!--header-->
@@ -89,8 +89,6 @@ $(function() {
 Include dependency graph for data_model.h:</div>
 <div class="dyncontent">
 <div class="center"><img src="../../d0/dc6/data__model_8h__incl.png" border="0" usemap="#src_2data__model_8h" alt=""/></div>
-<map name="src_2data__model_8h" id="src_2data__model_8h">
-</map>
 </div>
 </div><div class="textblock"><div class="dynheader">
 This graph shows which files directly or indirectly include this file:</div>
@@ -119,26 +117,37 @@ This graph shows which files directly or indirectly include this file:</div>
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="nested-classes"></a>
 Data Structures</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../df/dcc/structtricl_1_1entity__type__pair.html">tricl::entity_type_pair</a></td></tr>
-<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d7/d76/structtricl_1_1link__type.html">tricl::link_type</a></td></tr>
-<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d3/d70/structtricl_1_1event__type.html">tricl::event_type</a></td></tr>
-<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d1b/structtricl_1_1angle__type.html">tricl::angle_type</a></td></tr>
-<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d2/d5c/structtricl_1_1influence__type.html">tricl::influence_type</a></td></tr>
-<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d5/dc0/structtricl_1_1inleg.html">tricl::inleg</a></td></tr>
-<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../de/d25/structtricl_1_1outleg.html">tricl::outleg</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pair of entity types (rarely used)  <a href="../../df/dcc/structtricl_1_1entity__type__pair.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d8/d01/structtricl_1_1link.html">tricl::link</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">A link encodes either the existence of a certain relationship between two entities (or the cumulative impact of all past actions of a certain type between two entities &ndash; not yet implemented).  <a href="../../d8/d01/structtricl_1_1link.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d7/d76/structtricl_1_1link__type.html">tricl::link_type</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">The type of a <a class="el" href="../../d8/d01/structtricl_1_1link.html">link</a> is given by two entity types and a relationship or action type.  <a href="../../d7/d76/structtricl_1_1link__type.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d4/d7e/structtricl_1_1event.html">tricl::event</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">An event encodes a possible atomic change in the system state involving exactly one link.  <a href="../../d4/d7e/structtricl_1_1event.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d3/d70/structtricl_1_1event__type.html">tricl::event_type</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">The type of an <a class="el" href="../../d4/d7e/structtricl_1_1event.html">event</a> is given by an event class, two entity types and a relationship or action type.  <a href="../../d3/d70/structtricl_1_1event__type.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d9/d16/structtricl_1_1event__data.html">tricl::event_data</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">For performance reasons, the mutable data of an <a class="el" href="../../d4/d7e/structtricl_1_1event.html">event</a> is stored in a separate struct.  <a href="../../d9/d16/structtricl_1_1event__data.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d5/dc0/structtricl_1_1inleg.html">tricl::inleg</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">An inleg represents a leg "incoming" to a target entity.  <a href="../../d5/dc0/structtricl_1_1inleg.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../de/d25/structtricl_1_1outleg.html">tricl::outleg</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">An outleg represents a leg "outgoing" from a source entity.  <a href="../../de/d25/structtricl_1_1outleg.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d4/d55/structtricl_1_1angle.html">tricl::angle</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">An angle represents an indirect connection between a source entity and a target entity via two links through some "middle" entity.  <a href="../../d4/d55/structtricl_1_1angle.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d1b/structtricl_1_1angle__type.html">tricl::angle_type</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">The type of an angle is given by the involved entity and relationship or action types (or <a class="el" href="../../d5/d44/data__model_8h.html#ae71ff63a5bdb6bfc09a18840c8df4e54">NO_RAT</a> if the angle type is actually a leg type).  <a href="../../dc/d1b/structtricl_1_1angle__type.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d2/d5c/structtricl_1_1influence__type.html">tricl::influence_type</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Influence types are used to encode the main dynamical rules of a model.  <a href="../../d2/d5c/structtricl_1_1influence__type.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d8/d59/structstd_1_1hash_3_01entity__type__pair_01_4.html">std::hash&lt; entity_type_pair &gt;</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -161,70 +170,83 @@ Data Structures</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d9/d9b/structstd_1_1hash_3_01angle_01_4.html">std::hash&lt; angle &gt;</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="namespaces"></a>
+Namespaces</h2></td></tr>
+<tr class="memitem:dc/d70/namespacetricl"><td class="memItemLeft" align="right" valign="top"> &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d70/namespacetricl.html">tricl</a></td></tr>
+<tr class="memdesc:dc/d70/namespacetricl"><td class="mdescLeft">&#160;</td><td class="mdescRight">We use our own namespace to avoid clashes with 3rdparty names, e.g. "link". <br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="define-members"></a>
 Macros</h2></td></tr>
 <tr class="memitem:a4ef43416c3082b95dfc7b9b4b37ed4a7"><td class="memItemLeft" align="right" valign="top"><a id="a4ef43416c3082b95dfc7b9b4b37ed4a7"></a>
-#define&#160;</td><td class="memItemRight" valign="bottom"><b>E_BITS</b>&#160;&#160;&#160;20</td></tr>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d5/d44/data__model_8h.html#a4ef43416c3082b95dfc7b9b4b37ed4a7">E_BITS</a>&#160;&#160;&#160;20</td></tr>
+<tr class="memdesc:a4ef43416c3082b95dfc7b9b4b37ed4a7"><td class="mdescLeft">&#160;</td><td class="mdescRight">No. of bits used for entities &ndash;&gt; max. 1 mio. entities. <br /></td></tr>
 <tr class="separator:a4ef43416c3082b95dfc7b9b4b37ed4a7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a27e24a1c84c197041afdad0fc49dcaeb"><td class="memItemLeft" align="right" valign="top"><a id="a27e24a1c84c197041afdad0fc49dcaeb"></a>
-#define&#160;</td><td class="memItemRight" valign="bottom"><b>ET_BITS</b>&#160;&#160;&#160;4</td></tr>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d5/d44/data__model_8h.html#a27e24a1c84c197041afdad0fc49dcaeb">ET_BITS</a>&#160;&#160;&#160;4</td></tr>
+<tr class="memdesc:a27e24a1c84c197041afdad0fc49dcaeb"><td class="mdescLeft">&#160;</td><td class="mdescRight">No. of bits used for entity types &ndash;&gt; max. 16 entity types. <br /></td></tr>
 <tr class="separator:a27e24a1c84c197041afdad0fc49dcaeb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1712faaa1ef9bb3dcbfae56161881708"><td class="memItemLeft" align="right" valign="top"><a id="a1712faaa1ef9bb3dcbfae56161881708"></a>
-#define&#160;</td><td class="memItemRight" valign="bottom"><b>RAT_BITS</b>&#160;&#160;&#160;4</td></tr>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d5/d44/data__model_8h.html#a1712faaa1ef9bb3dcbfae56161881708">RAT_BITS</a>&#160;&#160;&#160;4</td></tr>
+<tr class="memdesc:a1712faaa1ef9bb3dcbfae56161881708"><td class="mdescLeft">&#160;</td><td class="mdescRight">No. of bits used for relationship or action types &ndash;&gt; max. 16 relationship or action types. <br /></td></tr>
 <tr class="separator:a1712faaa1ef9bb3dcbfae56161881708"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acaa7fd772f80b3066211e5eb6e29ed91"><td class="memItemLeft" align="right" valign="top"><a id="acaa7fd772f80b3066211e5eb6e29ed91"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d5/d44/data__model_8h.html#acaa7fd772f80b3066211e5eb6e29ed91">MAX_N_E</a>&#160;&#160;&#160;((1&lt;&lt;<a class="el" href="../../d5/d44/data__model_8h.html#a4ef43416c3082b95dfc7b9b4b37ed4a7">E_BITS</a>)-1)</td></tr>
+<tr class="memdesc:acaa7fd772f80b3066211e5eb6e29ed91"><td class="mdescLeft">&#160;</td><td class="mdescRight">resulting max. no. of entities <br /></td></tr>
+<tr class="separator:acaa7fd772f80b3066211e5eb6e29ed91"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae71ff63a5bdb6bfc09a18840c8df4e54"><td class="memItemLeft" align="right" valign="top"><a id="ae71ff63a5bdb6bfc09a18840c8df4e54"></a>
-#define&#160;</td><td class="memItemRight" valign="bottom"><b>NO_RAT</b>&#160;&#160;&#160;0</td></tr>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d5/d44/data__model_8h.html#ae71ff63a5bdb6bfc09a18840c8df4e54">NO_RAT</a>&#160;&#160;&#160;0</td></tr>
+<tr class="memdesc:ae71ff63a5bdb6bfc09a18840c8df4e54"><td class="mdescLeft">&#160;</td><td class="mdescRight">Missing value for relationship or action type, used in angles to encode legs. <br /></td></tr>
 <tr class="separator:ae71ff63a5bdb6bfc09a18840c8df4e54"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a549fa469b9ccb6e0fe046f797bc181e0"><td class="memItemLeft" align="right" valign="top"><a id="a549fa469b9ccb6e0fe046f797bc181e0"></a>
-#define&#160;</td><td class="memItemRight" valign="bottom"><b>RT_ID</b>&#160;&#160;&#160;1</td></tr>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d5/d44/data__model_8h.html#a549fa469b9ccb6e0fe046f797bc181e0">RT_ID</a>&#160;&#160;&#160;1</td></tr>
+<tr class="memdesc:a549fa469b9ccb6e0fe046f797bc181e0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Relationship type for identity relationship "=", always present. <br /></td></tr>
 <tr class="separator:a549fa469b9ccb6e0fe046f797bc181e0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a925666847194fb399477a102d097b306"><td class="memItemLeft" align="right" valign="top"><a id="a925666847194fb399477a102d097b306"></a>
-#define&#160;</td><td class="memItemRight" valign="bottom"><b>E</b>(e)&#160;&#160;&#160;e</td></tr>
-<tr class="separator:a925666847194fb399477a102d097b306"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:acaa7fd772f80b3066211e5eb6e29ed91"><td class="memItemLeft" align="right" valign="top"><a id="acaa7fd772f80b3066211e5eb6e29ed91"></a>
-#define&#160;</td><td class="memItemRight" valign="bottom"><b>MAX_N_E</b>&#160;&#160;&#160;((1&lt;&lt;E_BITS)-1)</td></tr>
-<tr class="separator:acaa7fd772f80b3066211e5eb6e29ed91"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6ebf6899d6c1c8b7b9d09be872c05aae"><td class="memItemLeft" align="right" valign="top"><a id="a6ebf6899d6c1c8b7b9d09be872c05aae"></a>
-#define&#160;</td><td class="memItemRight" valign="bottom"><b>EPS</b>&#160;&#160;&#160;1e-20;</td></tr>
-<tr class="separator:a6ebf6899d6c1c8b7b9d09be872c05aae"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9a89b5cd637aedee7c32dc74252da764"><td class="memItemLeft" align="right" valign="top"><a id="a9a89b5cd637aedee7c32dc74252da764"></a>
-#define&#160;</td><td class="memItemRight" valign="bottom"><b>INFLT</b>(inflt)&#160;&#160;&#160;((size_t)inflt.evt.ec ^ ((size_t)inflt.evt.et1 &lt;&lt; 2) ^ ((size_t)inflt.evt.rat13 &lt;&lt; (2+ET_BITS)) ^ ((size_t)inflt.evt.et3 &lt;&lt; (2+ET_BITS+RAT_BITS)) ^ ((size_t)inflt.at.rat12 &lt;&lt; (2+2*ET_BITS+RAT_BITS)) ^ ((size_t)inflt.at.et2 &lt;&lt; (2+2*ET_BITS+2*RAT_BITS)) ^ ((size_t)inflt.at.rat23 &lt;&lt; (2+3*ET_BITS+2*RAT_BITS)))</td></tr>
+#define&#160;</td><td class="memItemRight" valign="bottom"><b>INFLT</b>(inflt)&#160;&#160;&#160;((size_t)inflt.evt.ec ^ ((size_t)inflt.evt.et1 &lt;&lt; 2) ^ ((size_t)inflt.evt.rat13 &lt;&lt; (2+<a class="el" href="../../d5/d44/data__model_8h.html#a27e24a1c84c197041afdad0fc49dcaeb">ET_BITS</a>)) ^ ((size_t)inflt.evt.et3 &lt;&lt; (2+<a class="el" href="../../d5/d44/data__model_8h.html#a27e24a1c84c197041afdad0fc49dcaeb">ET_BITS</a>+<a class="el" href="../../d5/d44/data__model_8h.html#a1712faaa1ef9bb3dcbfae56161881708">RAT_BITS</a>)) ^ ((size_t)inflt.at.rat12 &lt;&lt; (2+2*<a class="el" href="../../d5/d44/data__model_8h.html#a27e24a1c84c197041afdad0fc49dcaeb">ET_BITS</a>+<a class="el" href="../../d5/d44/data__model_8h.html#a1712faaa1ef9bb3dcbfae56161881708">RAT_BITS</a>)) ^ ((size_t)inflt.at.et2 &lt;&lt; (2+2*<a class="el" href="../../d5/d44/data__model_8h.html#a27e24a1c84c197041afdad0fc49dcaeb">ET_BITS</a>+2*<a class="el" href="../../d5/d44/data__model_8h.html#a1712faaa1ef9bb3dcbfae56161881708">RAT_BITS</a>)) ^ ((size_t)inflt.at.rat23 &lt;&lt; (2+3*<a class="el" href="../../d5/d44/data__model_8h.html#a27e24a1c84c197041afdad0fc49dcaeb">ET_BITS</a>+2*<a class="el" href="../../d5/d44/data__model_8h.html#a1712faaa1ef9bb3dcbfae56161881708">RAT_BITS</a>)))</td></tr>
 <tr class="separator:a9a89b5cd637aedee7c32dc74252da764"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3890372a566c5b111dd6fabda11e73bc"><td class="memItemLeft" align="right" valign="top"><a id="a3890372a566c5b111dd6fabda11e73bc"></a>
-#define&#160;</td><td class="memItemRight" valign="bottom"><b>MAX_N_INFLT</b>&#160;&#160;&#160;(1 &lt;&lt; (2+3*ET_BITS+3*RAT_BITS))</td></tr>
+#define&#160;</td><td class="memItemRight" valign="bottom"><b>MAX_N_INFLT</b>&#160;&#160;&#160;(1 &lt;&lt; (2+3*<a class="el" href="../../d5/d44/data__model_8h.html#a27e24a1c84c197041afdad0fc49dcaeb">ET_BITS</a>+3*<a class="el" href="../../d5/d44/data__model_8h.html#a1712faaa1ef9bb3dcbfae56161881708">RAT_BITS</a>))</td></tr>
 <tr class="separator:a3890372a566c5b111dd6fabda11e73bc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="typedef-members"></a>
 Typedefs</h2></td></tr>
-<tr class="memitem:a2d01894944fb58a8fedc0912a48d13f8"><td class="memItemLeft" align="right" valign="top"><a id="a2d01894944fb58a8fedc0912a48d13f8"></a>
-typedef size_t&#160;</td><td class="memItemRight" valign="bottom"><b>tricl::relationship_or_action_type</b></td></tr>
-<tr class="separator:a2d01894944fb58a8fedc0912a48d13f8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a57273122278e8b301844e2a2e1f0742f"><td class="memItemLeft" align="right" valign="top"><a id="a57273122278e8b301844e2a2e1f0742f"></a>
-typedef int&#160;</td><td class="memItemRight" valign="bottom"><b>tricl::entity</b></td></tr>
-<tr class="separator:a57273122278e8b301844e2a2e1f0742f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a720ff6a29f998e11e1d3622fc8df64b1"><td class="memItemLeft" align="right" valign="top"><a id="a720ff6a29f998e11e1d3622fc8df64b1"></a>
-typedef double&#160;</td><td class="memItemRight" valign="bottom"><b>tricl::timepoint</b></td></tr>
+typedef double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d70/namespacetricl.html#a720ff6a29f998e11e1d3622fc8df64b1">tricl::timepoint</a></td></tr>
+<tr class="memdesc:a720ff6a29f998e11e1d3622fc8df64b1"><td class="mdescLeft">&#160;</td><td class="mdescRight">A point in continuous model time, 0...inf. <br /></td></tr>
 <tr class="separator:a720ff6a29f998e11e1d3622fc8df64b1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae42d2696f294300a43e0f5edf4875479"><td class="memItemLeft" align="right" valign="top"><a id="ae42d2696f294300a43e0f5edf4875479"></a>
-typedef double&#160;</td><td class="memItemRight" valign="bottom"><b>tricl::rate</b></td></tr>
-<tr class="separator:ae42d2696f294300a43e0f5edf4875479"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af8f8f9076e92e1c664ffa96f18d038a5"><td class="memItemLeft" align="right" valign="top"><a id="af8f8f9076e92e1c664ffa96f18d038a5"></a>
-typedef double&#160;</td><td class="memItemRight" valign="bottom"><b>tricl::probunits</b></td></tr>
+typedef double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d70/namespacetricl.html#af8f8f9076e92e1c664ffa96f18d038a5">tricl::probunits</a></td></tr>
+<tr class="memdesc:af8f8f9076e92e1c664ffa96f18d038a5"><td class="mdescLeft">&#160;</td><td class="mdescRight">-inf...inf, will be mapped to probabilities by means of the function probunits2probability() <br /></td></tr>
 <tr class="separator:af8f8f9076e92e1c664ffa96f18d038a5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af2e8973ba58a3dad9061296d8bee16a2"><td class="memItemLeft" align="right" valign="top"><a id="af2e8973ba58a3dad9061296d8bee16a2"></a>
-typedef double&#160;</td><td class="memItemRight" valign="bottom"><b>tricl::probability</b></td></tr>
+typedef double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d70/namespacetricl.html#af2e8973ba58a3dad9061296d8bee16a2">tricl::probability</a></td></tr>
+<tr class="memdesc:af2e8973ba58a3dad9061296d8bee16a2"><td class="mdescLeft">&#160;</td><td class="mdescRight">0...1 <br /></td></tr>
 <tr class="separator:af2e8973ba58a3dad9061296d8bee16a2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae42d2696f294300a43e0f5edf4875479"><td class="memItemLeft" align="right" valign="top"><a id="ae42d2696f294300a43e0f5edf4875479"></a>
+typedef double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d70/namespacetricl.html#ae42d2696f294300a43e0f5edf4875479">tricl::rate</a></td></tr>
+<tr class="memdesc:ae42d2696f294300a43e0f5edf4875479"><td class="mdescLeft">&#160;</td><td class="mdescRight">Probability per time, 0...inf. (inf is used for things happening "immediately") <br /></td></tr>
+<tr class="separator:ae42d2696f294300a43e0f5edf4875479"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a77e7daffafa870e5786b344119da9b15"><td class="memItemLeft" align="right" valign="top"><a id="a77e7daffafa870e5786b344119da9b15"></a>
-typedef string&#160;</td><td class="memItemRight" valign="bottom"><b>tricl::label</b></td></tr>
+typedef string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d70/namespacetricl.html#a77e7daffafa870e5786b344119da9b15">tricl::label</a></td></tr>
+<tr class="memdesc:a77e7daffafa870e5786b344119da9b15"><td class="mdescLeft">&#160;</td><td class="mdescRight">A label of something. <br /></td></tr>
 <tr class="separator:a77e7daffafa870e5786b344119da9b15"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afd4de3aedd5e48cf955f03457386e98f"><td class="memItemLeft" align="right" valign="top"><a id="afd4de3aedd5e48cf955f03457386e98f"></a>
-typedef short unsigned int&#160;</td><td class="memItemRight" valign="bottom"><b>tricl::entity_type</b></td></tr>
+<tr class="memitem:a57273122278e8b301844e2a2e1f0742f"><td class="memItemLeft" align="right" valign="top">typedef int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d70/namespacetricl.html#a57273122278e8b301844e2a2e1f0742f">tricl::entity</a></td></tr>
+<tr class="memdesc:a57273122278e8b301844e2a2e1f0742f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Entities are used to encode all physical and abstract objects of the modeled social dynamics that can stand in some form of relation to another or can perform some kinds of actions on or with another.  <a href="../../dc/d70/namespacetricl.html#a57273122278e8b301844e2a2e1f0742f">More...</a><br /></td></tr>
+<tr class="separator:a57273122278e8b301844e2a2e1f0742f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afd4de3aedd5e48cf955f03457386e98f"><td class="memItemLeft" align="right" valign="top">typedef short unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d70/namespacetricl.html#afd4de3aedd5e48cf955f03457386e98f">tricl::entity_type</a></td></tr>
+<tr class="memdesc:afd4de3aedd5e48cf955f03457386e98f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Entity types are used to encode the different kinds of entities in a model.  <a href="../../dc/d70/namespacetricl.html#afd4de3aedd5e48cf955f03457386e98f">More...</a><br /></td></tr>
 <tr class="separator:afd4de3aedd5e48cf955f03457386e98f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2d01894944fb58a8fedc0912a48d13f8"><td class="memItemLeft" align="right" valign="top">typedef size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d70/namespacetricl.html#a2d01894944fb58a8fedc0912a48d13f8">tricl::relationship_or_action_type</a></td></tr>
+<tr class="memdesc:a2d01894944fb58a8fedc0912a48d13f8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Relationship types are used to encode the kinds of relationships entities may stand in; action types are used to encode the kinds of actions entities may perform on or with another (not implemented yet); they are encoded in a common datatype and distinguished by means of the map rat_is_action_type (not implemented yet).  <a href="../../dc/d70/namespacetricl.html#a2d01894944fb58a8fedc0912a48d13f8">More...</a><br /></td></tr>
+<tr class="separator:a2d01894944fb58a8fedc0912a48d13f8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a703ed53fa2dba74d8f51ede5fd46038d"><td class="memItemLeft" align="right" valign="top"><a id="a703ed53fa2dba74d8f51ede5fd46038d"></a>
-typedef set&lt; <a class="el" href="../../d5/dc0/structtricl_1_1inleg.html">inleg</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>tricl::inleg_set</b></td></tr>
+typedef set&lt; <a class="el" href="../../d5/dc0/structtricl_1_1inleg.html">inleg</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d70/namespacetricl.html#a703ed53fa2dba74d8f51ede5fd46038d">tricl::inleg_set</a></td></tr>
+<tr class="memdesc:a703ed53fa2dba74d8f51ede5fd46038d"><td class="mdescLeft">&#160;</td><td class="mdescRight">used to store all incoming legs of an entity <br /></td></tr>
 <tr class="separator:a703ed53fa2dba74d8f51ede5fd46038d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac36fc4606da3d7f9ffd1764942fe5940"><td class="memItemLeft" align="right" valign="top"><a id="ac36fc4606da3d7f9ffd1764942fe5940"></a>
-typedef set&lt; <a class="el" href="../../de/d25/structtricl_1_1outleg.html">outleg</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>tricl::outleg_set</b></td></tr>
+typedef set&lt; <a class="el" href="../../de/d25/structtricl_1_1outleg.html">outleg</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d70/namespacetricl.html#ac36fc4606da3d7f9ffd1764942fe5940">tricl::outleg_set</a></td></tr>
+<tr class="memdesc:ac36fc4606da3d7f9ffd1764942fe5940"><td class="mdescLeft">&#160;</td><td class="mdescRight">used to store all outgoing legs of an entity <br /></td></tr>
 <tr class="separator:ac36fc4606da3d7f9ffd1764942fe5940"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4ec9b46d6dae5a1d114387bca4029ce5"><td class="memItemLeft" align="right" valign="top"><a id="a4ec9b46d6dae5a1d114387bca4029ce5"></a>
 typedef vector&lt; <a class="el" href="../../d4/d55/structtricl_1_1angle.html">angle</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>tricl::angles</b></td></tr>
@@ -232,23 +254,21 @@ typedef vector&lt; <a class="el" href="../../d4/d55/structtricl_1_1angle.html">a
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="enum-members"></a>
 Enumerations</h2></td></tr>
-<tr class="memitem:a6967089e2c0837f273d8cb5fd9f7e46d"><td class="memItemLeft" align="right" valign="top"><a id="a6967089e2c0837f273d8cb5fd9f7e46d"></a>enum &#160;</td><td class="memItemRight" valign="bottom"><b>event_class</b> { <b>EC_EST</b>, 
-<b>EC_TERM</b>, 
-<b>EC_ACT</b>
- }</td></tr>
+<tr class="memitem:a6967089e2c0837f273d8cb5fd9f7e46d"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d70/namespacetricl.html#a6967089e2c0837f273d8cb5fd9f7e46d">tricl::event_class</a> { <a class="el" href="../../dc/d70/namespacetricl.html#a6967089e2c0837f273d8cb5fd9f7e46da928305067790de15396de8fcc92b72b9">tricl::EC_EST</a>, 
+<a class="el" href="../../dc/d70/namespacetricl.html#a6967089e2c0837f273d8cb5fd9f7e46da16f53be37a75a1cdfc726014c7f3810a">tricl::EC_TERM</a>, 
+<a class="el" href="../../dc/d70/namespacetricl.html#a6967089e2c0837f273d8cb5fd9f7e46dac508c68c92ee059322cb644dd330bbcf">tricl::EC_ACT</a>
+ }<tr class="memdesc:a6967089e2c0837f273d8cb5fd9f7e46d"><td class="mdescLeft">&#160;</td><td class="mdescRight">(don't confuse with event_type!) The event class encodes what kind of change to the system state an event represents.  <a href="../../dc/d70/namespacetricl.html#a6967089e2c0837f273d8cb5fd9f7e46d">More...</a><br /></td></tr>
+</td></tr>
 <tr class="separator:a6967089e2c0837f273d8cb5fd9f7e46d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="var-members"></a>
-Variables</h2></td></tr>
-<tr class="memitem:a1d25690adbc3921709bd3b3e16415713"><td class="memItemLeft" align="right" valign="top"><a id="a1d25690adbc3921709bd3b3e16415713"></a>
-const <a class="el" href="../../dc/d1b/structtricl_1_1angle__type.html">angle_type</a>&#160;</td><td class="memItemRight" valign="bottom"><b>tricl::NO_ANGLE</b> = { .rat12 = NO_RAT, .et2 = 0, .rat23 = NO_RAT }</td></tr>
-<tr class="separator:a1d25690adbc3921709bd3b3e16415713"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>The main data model. </p>
-<p>Defines all structs and their operators.</p>
-<dl class="section author"><dt>Author</dt><dd>Jobst Heitzig, Potsdam Institute for Climate Impact Research, <a href="#" onclick="location.href='mai'+'lto:'+'hei'+'tz'+'ig@'+'pi'+'k-p'+'ot'+'sda'+'m.'+'de'; return false;">heitz<span style="display: none;">.nosp@m.</span>ig@p<span style="display: none;">.nosp@m.</span>ik-po<span style="display: none;">.nosp@m.</span>tsda<span style="display: none;">.nosp@m.</span>m.de</a> </dd></dl>
-<dl class="section date"><dt>Date</dt><dd>Mar 30, 2020 </dd></dl>
+<h2>Data architecture </h2>
+<p>Most data is kept in unordered maps (what would be dictionaries in python) whose keys are entity types, entities, link types, links, legs, angles, event types, events, influence types and influences. the latter types of things are encoded as structs, most of which are basically tuples of integer ids.</p>
+<p>For fast access to map entries, these are automatically turned into integer hashs via the hash structs at the end of this file.</p>
+<p>Some data (which is accessed most often) is instead kept in vectors whose indices are either entities (which are ints) or integer hash values of influence types (constructed via the macro INFLT).</p>
+<p>All hashs are constructed as logical ORs of properly shifted ids, hence valid ids are restricted by the respective numbers of bits reserved for this id in the hash.</p>
+<p>This hash construction is governed by the bit size macros <a class="el" href="../../d5/d44/data__model_8h.html#a4ef43416c3082b95dfc7b9b4b37ed4a7" title="No. of bits used for entities –&gt; max. 1 mio. entities. ">E_BITS</a>, <a class="el" href="../../d5/d44/data__model_8h.html#a27e24a1c84c197041afdad0fc49dcaeb" title="No. of bits used for entity types –&gt; max. 16 entity types. ">ET_BITS</a>, and <a class="el" href="../../d5/d44/data__model_8h.html#a1712faaa1ef9bb3dcbfae56161881708" title="No. of bits used for relationship or action types –&gt; max. 16 relationship or action types...">RAT_BITS</a>, which could be adapted in dependence on system architecture, but must fulfil the following constraints: 2 + 2 * <a class="el" href="../../d5/d44/data__model_8h.html#a4ef43416c3082b95dfc7b9b4b37ed4a7" title="No. of bits used for entities –&gt; max. 1 mio. entities. ">E_BITS</a> + <a class="el" href="../../d5/d44/data__model_8h.html#a1712faaa1ef9bb3dcbfae56161881708" title="No. of bits used for relationship or action types –&gt; max. 16 relationship or action types...">RAT_BITS</a> &lt;= no. of bits in size_t (32 or 64) 2^<a class="el" href="../../d5/d44/data__model_8h.html#a4ef43416c3082b95dfc7b9b4b37ed4a7" title="No. of bits used for entities –&gt; max. 1 mio. entities. ">E_BITS</a> + 2^(6 + 3 * <a class="el" href="../../d5/d44/data__model_8h.html#a1712faaa1ef9bb3dcbfae56161881708" title="No. of bits used for relationship or action types –&gt; max. 16 relationship or action types...">RAT_BITS</a> + 3 * <a class="el" href="../../d5/d44/data__model_8h.html#a27e24a1c84c197041afdad0fc49dcaeb" title="No. of bits used for entity types –&gt; max. 16 entity types. ">ET_BITS</a>) &lt;= available memory bytes </p>
 </div></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

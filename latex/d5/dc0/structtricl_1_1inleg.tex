@@ -1,14 +1,23 @@
 \hypertarget{structtricl_1_1inleg}{}\section{tricl\+:\+:inleg Struct Reference}
 \label{structtricl_1_1inleg}\index{tricl\+::inleg@{tricl\+::inleg}}
+
+
+An inleg represents a leg \char`\"{}incoming\char`\"{} to a target entity.  
+
+
+
+
+{\ttfamily \#include $<$data\+\_\+model.\+h$>$}
+
 \subsection*{Data Fields}
 \begin{DoxyCompactItemize}
 \item 
-\mbox{\Hypertarget{structtricl_1_1inleg_aacd096c1b1998b321f19b973db55aec2}\label{structtricl_1_1inleg_aacd096c1b1998b321f19b973db55aec2}} 
-const entity {\bfseries e\+\_\+other}
-\item 
+\mbox{\Hypertarget{structtricl_1_1inleg_a5ab2f2cc36d191a4ce5ff6e0f2537fdb}\label{structtricl_1_1inleg_a5ab2f2cc36d191a4ce5ff6e0f2537fdb}} 
+const \hyperlink{namespacetricl_a57273122278e8b301844e2a2e1f0742f}{entity} \hyperlink{structtricl_1_1inleg_a5ab2f2cc36d191a4ce5ff6e0f2537fdb}{e\+\_\+source}
+\begin{DoxyCompactList}\small\item\em Source entity of the leg. Plays a similar role as {\ttfamily e2} in an angle. \end{DoxyCompactList}\item 
 \mbox{\Hypertarget{structtricl_1_1inleg_aa0bf7ed4910869446d610bf75d05fc34}\label{structtricl_1_1inleg_aa0bf7ed4910869446d610bf75d05fc34}} 
-const relationship\+\_\+or\+\_\+action\+\_\+type {\bfseries rat\+\_\+in}
-\end{DoxyCompactItemize}
+const \hyperlink{namespacetricl_a2d01894944fb58a8fedc0912a48d13f8}{relationship\+\_\+or\+\_\+action\+\_\+type} \hyperlink{structtricl_1_1inleg_aa0bf7ed4910869446d610bf75d05fc34}{rat\+\_\+in}
+\begin{DoxyCompactList}\small\item\em Plays a similar role as {\ttfamily rat23} in an angle. \end{DoxyCompactList}\end{DoxyCompactItemize}
 \subsection*{Friends}
 \begin{DoxyCompactItemize}
 \item 
@@ -19,6 +28,13 @@ bool {\bfseries operator==} (const \hyperlink{structtricl_1_1inleg}{inleg} \&lef
 bool {\bfseries operator$<$} (const \hyperlink{structtricl_1_1inleg}{inleg} \&left, const \hyperlink{structtricl_1_1inleg}{inleg} \&right)
 \end{DoxyCompactItemize}
 
+
+\subsection{Detailed Description}
+An inleg represents a leg \char`\"{}incoming\char`\"{} to a target entity. 
+
+When an inleg is used, the target entity is clear from the context, hence it is not named itself in the inleg but only the source entity and relationship or action type are stored.
+
+Inlegs may influence the attempt rate or success probability of \char`\"{}adjacent\char`\"{} events (events with the same target entity). 
 
 The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
 \item 

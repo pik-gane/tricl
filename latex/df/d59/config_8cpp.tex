@@ -10,6 +10,7 @@ Handling of configuration files.
 {\ttfamily \#include $<$iostream$>$}\newline
 {\ttfamily \#include \char`\"{}yaml-\/cpp/yaml.\+h\char`\"{}}\newline
 {\ttfamily \#include \char`\"{}3rdparty/tinyexpr.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}3rdparty/cxxopts.\+hpp\char`\"{}}\newline
 {\ttfamily \#include \char`\"{}global\+\_\+variables.\+h\char`\"{}}\newline
 {\ttfamily \#include \char`\"{}entity.\+h\char`\"{}}\newline
 {\ttfamily \#include \char`\"{}io.\+h\char`\"{}}\newline
@@ -33,6 +34,9 @@ Include dependency graph for config.\+cpp\+:
 \subsection*{Functions}
 \begin{DoxyCompactItemize}
 \item 
+\mbox{\Hypertarget{config_8cpp_a15dfd425241f1a6bf6aeab6ef70fb896}\label{config_8cpp_a15dfd425241f1a6bf6aeab6ef70fb896}} 
+cxxopts\+::\+Options {\bfseries options} (\char`\"{}tricl\char`\"{}, \char`\"{}a generic network-\/based social simulation model\char`\"{})
+\item 
 \mbox{\Hypertarget{config_8cpp_a8d213a94ae2aae7f1eb19534b3772176}\label{config_8cpp_a8d213a94ae2aae7f1eb19534b3772176}} 
 double {\bfseries parse\+\_\+double} (string expr)
 \item 
@@ -43,16 +47,16 @@ double {\bfseries parse\+\_\+int} (string expr)
 double {\bfseries register\+\_\+te\+\_\+var} (string symbol, string expr)
 \item 
 \mbox{\Hypertarget{config_8cpp_ac5594ed0754d45494f17470961e83309}\label{config_8cpp_ac5594ed0754d45494f17470961e83309}} 
-void {\bfseries read\+\_\+entity\+\_\+labels} (Y\+A\+M\+L\+::\+Node n, entity\+\_\+type et)
+void {\bfseries read\+\_\+entity\+\_\+labels} (Y\+A\+M\+L\+::\+Node n, \hyperlink{namespacetricl_afd4de3aedd5e48cf955f03457386e98f}{entity\+\_\+type} et)
 \item 
-\mbox{\Hypertarget{config_8cpp_ac8471a77a592a1fbe4b3af45fa93098a}\label{config_8cpp_ac8471a77a592a1fbe4b3af45fa93098a}} 
-void {\bfseries read\+\_\+config} ()
+\mbox{\Hypertarget{config_8cpp_a7970057a69282958c52e4a5236a48df8}\label{config_8cpp_a7970057a69282958c52e4a5236a48df8}} 
+void {\bfseries read\+\_\+config} (int argc, char $\ast$argv\mbox{[}$\,$\mbox{]})
 \end{DoxyCompactItemize}
 \subsection*{Variables}
 \begin{DoxyCompactItemize}
 \item 
 \mbox{\Hypertarget{config_8cpp_a113f3c013371a7bc91273d8821d8710d}\label{config_8cpp_a113f3c013371a7bc91273d8821d8710d}} 
-unordered\+\_\+map$<$ relationship\+\_\+or\+\_\+action\+\_\+type, string $>$ {\bfseries gexf\+\_\+filename} = \{\}
+unordered\+\_\+map$<$ \hyperlink{namespacetricl_a2d01894944fb58a8fedc0912a48d13f8}{relationship\+\_\+or\+\_\+action\+\_\+type}, string $>$ {\bfseries gexf\+\_\+filename} = \{\}
 \item 
 \mbox{\Hypertarget{config_8cpp_af960657d113135c47b4e0ed4536930c0}\label{config_8cpp_af960657d113135c47b4e0ed4536930c0}} 
 string {\bfseries diagram\+\_\+fileprefix} = \char`\"{}\char`\"{}
@@ -70,7 +74,7 @@ bool {\bfseries quiet} = false
 bool {\bfseries debug} = false
 \item 
 \mbox{\Hypertarget{config_8cpp_a61e4a08c5309d5cd9538ce9654bdb9e9}\label{config_8cpp_a61e4a08c5309d5cd9538ce9654bdb9e9}} 
-timepoint {\bfseries max\+\_\+t} = 0.\+0
+\hyperlink{namespacetricl_a720ff6a29f998e11e1d3622fc8df64b1}{timepoint} {\bfseries max\+\_\+t} = 0.\+0
 \item 
 \mbox{\Hypertarget{config_8cpp_a921a3c48e5eda75a9944e3d8fdecc826}\label{config_8cpp_a921a3c48e5eda75a9944e3d8fdecc826}} 
 long int {\bfseries max\+\_\+n\+\_\+events} = L\+O\+N\+G\+\_\+\+M\+AX
@@ -79,55 +83,55 @@ long int {\bfseries max\+\_\+n\+\_\+events} = L\+O\+N\+G\+\_\+\+M\+AX
 unsigned {\bfseries seed} = 0
 \item 
 \mbox{\Hypertarget{config_8cpp_a1b14b11720f5396f884aba602cc42602}\label{config_8cpp_a1b14b11720f5396f884aba602cc42602}} 
-unordered\+\_\+map$<$ entity\+\_\+type, label $>$ {\bfseries et2label} = \{\}
+unordered\+\_\+map$<$ \hyperlink{namespacetricl_afd4de3aedd5e48cf955f03457386e98f}{entity\+\_\+type}, \hyperlink{namespacetricl_a77e7daffafa870e5786b344119da9b15}{label} $>$ {\bfseries et2label} = \{\}
 \item 
 \mbox{\Hypertarget{config_8cpp_a4ad1375a3f0b5760ef4861ef35ac7f25}\label{config_8cpp_a4ad1375a3f0b5760ef4861ef35ac7f25}} 
-unordered\+\_\+map$<$ string, entity\+\_\+type $>$ {\bfseries label2et} = \{\}
+unordered\+\_\+map$<$ string, \hyperlink{namespacetricl_afd4de3aedd5e48cf955f03457386e98f}{entity\+\_\+type} $>$ {\bfseries label2et} = \{\}
 \item 
 \mbox{\Hypertarget{config_8cpp_aba5a0104caf66faf04d0e2f4491415fb}\label{config_8cpp_aba5a0104caf66faf04d0e2f4491415fb}} 
-unordered\+\_\+map$<$ entity\+\_\+type, entity $>$ {\bfseries et2n} = \{\}
+unordered\+\_\+map$<$ \hyperlink{namespacetricl_afd4de3aedd5e48cf955f03457386e98f}{entity\+\_\+type}, \hyperlink{namespacetricl_a57273122278e8b301844e2a2e1f0742f}{entity} $>$ {\bfseries et2n} = \{\}
 \item 
 \mbox{\Hypertarget{config_8cpp_a16775be180de048f5d158cf6c18af175}\label{config_8cpp_a16775be180de048f5d158cf6c18af175}} 
-unordered\+\_\+map$<$ relationship\+\_\+or\+\_\+action\+\_\+type, label $>$ {\bfseries rat2label} = \{ \{R\+T\+\_\+\+ID, \char`\"{}=\char`\"{}\} \}
+unordered\+\_\+map$<$ \hyperlink{namespacetricl_a2d01894944fb58a8fedc0912a48d13f8}{relationship\+\_\+or\+\_\+action\+\_\+type}, \hyperlink{namespacetricl_a77e7daffafa870e5786b344119da9b15}{label} $>$ {\bfseries rat2label} = \{ \{\hyperlink{data__model_8h_a549fa469b9ccb6e0fe046f797bc181e0}{R\+T\+\_\+\+ID}, \char`\"{}=\char`\"{}\} \}
 \item 
 \mbox{\Hypertarget{config_8cpp_a1b29491c10222b82a8ac3f8241aa27a8}\label{config_8cpp_a1b29491c10222b82a8ac3f8241aa27a8}} 
-unordered\+\_\+map$<$ string, relationship\+\_\+or\+\_\+action\+\_\+type $>$ {\bfseries label2rat} = \{ \{\char`\"{}=\char`\"{}, R\+T\+\_\+\+ID\} \}
+unordered\+\_\+map$<$ string, \hyperlink{namespacetricl_a2d01894944fb58a8fedc0912a48d13f8}{relationship\+\_\+or\+\_\+action\+\_\+type} $>$ {\bfseries label2rat} = \{ \{\char`\"{}=\char`\"{}, \hyperlink{data__model_8h_a549fa469b9ccb6e0fe046f797bc181e0}{R\+T\+\_\+\+ID}\} \}
 \item 
 \mbox{\Hypertarget{config_8cpp_acb03df27c0aec975d0d0a27e21f9b956}\label{config_8cpp_acb03df27c0aec975d0d0a27e21f9b956}} 
-unordered\+\_\+map$<$ relationship\+\_\+or\+\_\+action\+\_\+type, bool $>$ {\bfseries r\+\_\+is\+\_\+action\+\_\+type} = \{\}
+unordered\+\_\+map$<$ \hyperlink{namespacetricl_a2d01894944fb58a8fedc0912a48d13f8}{relationship\+\_\+or\+\_\+action\+\_\+type}, bool $>$ {\bfseries r\+\_\+is\+\_\+action\+\_\+type} = \{\}
 \item 
 \mbox{\Hypertarget{config_8cpp_a698aaa515390777326d52ab118c9f1fe}\label{config_8cpp_a698aaa515390777326d52ab118c9f1fe}} 
-unordered\+\_\+map$<$ relationship\+\_\+or\+\_\+action\+\_\+type, relationship\+\_\+or\+\_\+action\+\_\+type $>$ {\bfseries rat2inv} = \{\}
-\item 
-\mbox{\Hypertarget{config_8cpp_a12b15805ec2a70ba1781f87af3d8215b}\label{config_8cpp_a12b15805ec2a70ba1781f87af3d8215b}} 
-unordered\+\_\+map$<$ entity, entity\+\_\+type $>$ {\bfseries e2et} = \{\}
+unordered\+\_\+map$<$ \hyperlink{namespacetricl_a2d01894944fb58a8fedc0912a48d13f8}{relationship\+\_\+or\+\_\+action\+\_\+type}, \hyperlink{namespacetricl_a2d01894944fb58a8fedc0912a48d13f8}{relationship\+\_\+or\+\_\+action\+\_\+type} $>$ {\bfseries rat2inv} = \{\}
 \item 
 \mbox{\Hypertarget{config_8cpp_a1d4d2e1edc14bccb896b5dd715cba4a6}\label{config_8cpp_a1d4d2e1edc14bccb896b5dd715cba4a6}} 
-unordered\+\_\+map$<$ entity, label $>$ {\bfseries e2label} = \{\}
+unordered\+\_\+map$<$ \hyperlink{namespacetricl_a57273122278e8b301844e2a2e1f0742f}{entity}, \hyperlink{namespacetricl_a77e7daffafa870e5786b344119da9b15}{label} $>$ {\bfseries e2label} = \{\}
 \item 
 \mbox{\Hypertarget{config_8cpp_a3e3cf64afa14be51e4752ebe0e78d8b4}\label{config_8cpp_a3e3cf64afa14be51e4752ebe0e78d8b4}} 
-unordered\+\_\+map$<$ string, entity $>$ {\bfseries label2e} = \{\}
+unordered\+\_\+map$<$ string, \hyperlink{namespacetricl_a57273122278e8b301844e2a2e1f0742f}{entity} $>$ {\bfseries label2e} = \{\}
 \item 
 \mbox{\Hypertarget{config_8cpp_afe42a9a97fc8e959183c94fc333f2331}\label{config_8cpp_afe42a9a97fc8e959183c94fc333f2331}} 
 set$<$ \hyperlink{structtricl_1_1link}{link} $>$ {\bfseries initial\+\_\+links} = \{\}
 \item 
 \mbox{\Hypertarget{config_8cpp_ac3d91d4eef87cfaf1371a698513533ba}\label{config_8cpp_ac3d91d4eef87cfaf1371a698513533ba}} 
-unordered\+\_\+map$<$ entity\+\_\+type, int $>$ {\bfseries et2n\+\_\+blocks} = \{\}
+unordered\+\_\+map$<$ \hyperlink{namespacetricl_afd4de3aedd5e48cf955f03457386e98f}{entity\+\_\+type}, int $>$ {\bfseries et2n\+\_\+blocks} = \{\}
 \item 
 \mbox{\Hypertarget{config_8cpp_a1cf9b4c5338052d0ac84135ecefc7d39}\label{config_8cpp_a1cf9b4c5338052d0ac84135ecefc7d39}} 
-unordered\+\_\+map$<$ \hyperlink{structtricl_1_1link__type}{link\+\_\+type}, probability $>$ {\bfseries lt2initial\+\_\+prob\+\_\+within} = \{\}
+unordered\+\_\+map$<$ \hyperlink{structtricl_1_1link__type}{link\+\_\+type}, \hyperlink{namespacetricl_af2e8973ba58a3dad9061296d8bee16a2}{probability} $>$ {\bfseries lt2initial\+\_\+prob\+\_\+within} = \{\}
 \item 
 \mbox{\Hypertarget{config_8cpp_aa892b7f705910915c42a59b564850a4a}\label{config_8cpp_aa892b7f705910915c42a59b564850a4a}} 
-unordered\+\_\+map$<$ \hyperlink{structtricl_1_1link__type}{link\+\_\+type}, probability $>$ {\bfseries lt2initial\+\_\+prob\+\_\+between} = \{\}
+unordered\+\_\+map$<$ \hyperlink{structtricl_1_1link__type}{link\+\_\+type}, \hyperlink{namespacetricl_af2e8973ba58a3dad9061296d8bee16a2}{probability} $>$ {\bfseries lt2initial\+\_\+prob\+\_\+between} = \{\}
 \item 
 \mbox{\Hypertarget{config_8cpp_a5022e1a1414fd07a51e1e3e6f08ab064}\label{config_8cpp_a5022e1a1414fd07a51e1e3e6f08ab064}} 
-unordered\+\_\+map$<$ entity\+\_\+type, int $>$ {\bfseries et2dim} = \{\}
+unordered\+\_\+map$<$ \hyperlink{namespacetricl_afd4de3aedd5e48cf955f03457386e98f}{entity\+\_\+type}, int $>$ {\bfseries et2dim} = \{\}
 \item 
 \mbox{\Hypertarget{config_8cpp_ac075689bc4d37b273487fa22e5099b32}\label{config_8cpp_ac075689bc4d37b273487fa22e5099b32}} 
-unordered\+\_\+map$<$ \hyperlink{structtricl_1_1link__type}{link\+\_\+type}, probability $>$ {\bfseries lt2spatial\+\_\+decay} = \{\}
+unordered\+\_\+map$<$ \hyperlink{structtricl_1_1link__type}{link\+\_\+type}, \hyperlink{namespacetricl_af2e8973ba58a3dad9061296d8bee16a2}{probability} $>$ {\bfseries lt2spatial\+\_\+decay} = \{\}
+\item 
+\mbox{\Hypertarget{config_8cpp_a719fa5d246e520102772d00812e33b29}\label{config_8cpp_a719fa5d246e520102772d00812e33b29}} 
+unordered\+\_\+map$<$ \hyperlink{structtricl_1_1event__type}{event\+\_\+type}, \hyperlink{namespacetricl_ae42d2696f294300a43e0f5edf4875479}{rate} $>$ {\bfseries evt2base\+\_\+attempt\+\_\+rate} = \{\}
 \item 
 \mbox{\Hypertarget{config_8cpp_aa37926f8d74a0c74e47def544c4f872e}\label{config_8cpp_aa37926f8d74a0c74e47def544c4f872e}} 
-unordered\+\_\+map$<$ \hyperlink{structtricl_1_1influence__type}{influence\+\_\+type}, rate $>$ {\bfseries inflt2attempt\+\_\+rate} = \{\}
+unordered\+\_\+map$<$ \hyperlink{structtricl_1_1influence__type}{influence\+\_\+type}, \hyperlink{namespacetricl_ae42d2696f294300a43e0f5edf4875479}{rate} $>$ {\bfseries inflt2attempt\+\_\+rate} = \{\}
 \item 
 \mbox{\Hypertarget{config_8cpp_ae7b89a8070b4de9d132b167704229c70}\label{config_8cpp_ae7b89a8070b4de9d132b167704229c70}} 
 unordered\+\_\+map$<$ \hyperlink{structtricl_1_1event__type}{event\+\_\+type}, double $>$ {\bfseries evt2left\+\_\+tail} = \{\}
@@ -136,49 +140,49 @@ unordered\+\_\+map$<$ \hyperlink{structtricl_1_1event__type}{event\+\_\+type}, d
 unordered\+\_\+map$<$ \hyperlink{structtricl_1_1event__type}{event\+\_\+type}, double $>$ {\bfseries evt2right\+\_\+tail} = \{\}
 \item 
 \mbox{\Hypertarget{config_8cpp_a5372b5c53ebbceff39a367177d0e4c38}\label{config_8cpp_a5372b5c53ebbceff39a367177d0e4c38}} 
-unordered\+\_\+map$<$ \hyperlink{structtricl_1_1event__type}{event\+\_\+type}, probunits $>$ {\bfseries evt2base\+\_\+probunits} = \{\}
+unordered\+\_\+map$<$ \hyperlink{structtricl_1_1event__type}{event\+\_\+type}, \hyperlink{namespacetricl_af8f8f9076e92e1c664ffa96f18d038a5}{probunits} $>$ {\bfseries evt2base\+\_\+probunits} = \{\}
 \item 
 \mbox{\Hypertarget{config_8cpp_aa4d1d1a030f8a8b177f11e3b4dc93011}\label{config_8cpp_aa4d1d1a030f8a8b177f11e3b4dc93011}} 
-unordered\+\_\+map$<$ \hyperlink{structtricl_1_1influence__type}{influence\+\_\+type}, probunits $>$ {\bfseries inflt2delta\+\_\+probunits} = \{\}
+unordered\+\_\+map$<$ \hyperlink{structtricl_1_1influence__type}{influence\+\_\+type}, \hyperlink{namespacetricl_af8f8f9076e92e1c664ffa96f18d038a5}{probunits} $>$ {\bfseries inflt2delta\+\_\+probunits} = \{\}
 \item 
 \mbox{\Hypertarget{config_8cpp_a922d0c80d1e0778e68aaca86945eb49e}\label{config_8cpp_a922d0c80d1e0778e68aaca86945eb49e}} 
-unordered\+\_\+map$<$ entity\+\_\+type, double $>$ {\bfseries et2gexf\+\_\+size} = \{\}
+unordered\+\_\+map$<$ \hyperlink{namespacetricl_afd4de3aedd5e48cf955f03457386e98f}{entity\+\_\+type}, double $>$ {\bfseries et2gexf\+\_\+size} = \{\}
 \item 
 \mbox{\Hypertarget{config_8cpp_a26668024dfdce9d505c1e0ed03a645a2}\label{config_8cpp_a26668024dfdce9d505c1e0ed03a645a2}} 
-unordered\+\_\+map$<$ entity\+\_\+type, double $>$ {\bfseries et2gexf\+\_\+a} = \{\}
+unordered\+\_\+map$<$ \hyperlink{namespacetricl_afd4de3aedd5e48cf955f03457386e98f}{entity\+\_\+type}, double $>$ {\bfseries et2gexf\+\_\+a} = \{\}
 \item 
 \mbox{\Hypertarget{config_8cpp_a10ef80ac6e92253faba86527383b0b19}\label{config_8cpp_a10ef80ac6e92253faba86527383b0b19}} 
-unordered\+\_\+map$<$ entity\+\_\+type, string $>$ {\bfseries et2gexf\+\_\+shape} = \{\}
+unordered\+\_\+map$<$ \hyperlink{namespacetricl_afd4de3aedd5e48cf955f03457386e98f}{entity\+\_\+type}, string $>$ {\bfseries et2gexf\+\_\+shape} = \{\}
 \item 
 \mbox{\Hypertarget{config_8cpp_aa7267315093f6567077ec5e612b46ed1}\label{config_8cpp_aa7267315093f6567077ec5e612b46ed1}} 
-unordered\+\_\+map$<$ entity\+\_\+type, int $>$ {\bfseries et2gexf\+\_\+r} = \{\}
+unordered\+\_\+map$<$ \hyperlink{namespacetricl_afd4de3aedd5e48cf955f03457386e98f}{entity\+\_\+type}, int $>$ {\bfseries et2gexf\+\_\+r} = \{\}
 \item 
 \mbox{\Hypertarget{config_8cpp_a86c65c01b4b0c35b56baf6d8d557d977}\label{config_8cpp_a86c65c01b4b0c35b56baf6d8d557d977}} 
-unordered\+\_\+map$<$ entity\+\_\+type, int $>$ {\bfseries et2gexf\+\_\+g} = \{\}
+unordered\+\_\+map$<$ \hyperlink{namespacetricl_afd4de3aedd5e48cf955f03457386e98f}{entity\+\_\+type}, int $>$ {\bfseries et2gexf\+\_\+g} = \{\}
 \item 
 \mbox{\Hypertarget{config_8cpp_aded47b9a1ea0cb3ac40ea0ae60d013c3}\label{config_8cpp_aded47b9a1ea0cb3ac40ea0ae60d013c3}} 
-unordered\+\_\+map$<$ entity\+\_\+type, int $>$ {\bfseries et2gexf\+\_\+b} = \{\}
+unordered\+\_\+map$<$ \hyperlink{namespacetricl_afd4de3aedd5e48cf955f03457386e98f}{entity\+\_\+type}, int $>$ {\bfseries et2gexf\+\_\+b} = \{\}
 \item 
 \mbox{\Hypertarget{config_8cpp_a7e4baebe848adb451c45c44624784a8a}\label{config_8cpp_a7e4baebe848adb451c45c44624784a8a}} 
-unordered\+\_\+map$<$ relationship\+\_\+or\+\_\+action\+\_\+type, double $>$ {\bfseries rat2gexf\+\_\+thickness} = \{\}
+unordered\+\_\+map$<$ \hyperlink{namespacetricl_a2d01894944fb58a8fedc0912a48d13f8}{relationship\+\_\+or\+\_\+action\+\_\+type}, double $>$ {\bfseries rat2gexf\+\_\+thickness} = \{\}
 \item 
 \mbox{\Hypertarget{config_8cpp_a8fc9665235760bdb38eb6a631e654077}\label{config_8cpp_a8fc9665235760bdb38eb6a631e654077}} 
-unordered\+\_\+map$<$ relationship\+\_\+or\+\_\+action\+\_\+type, double $>$ {\bfseries rat2gexf\+\_\+a} = \{\}
+unordered\+\_\+map$<$ \hyperlink{namespacetricl_a2d01894944fb58a8fedc0912a48d13f8}{relationship\+\_\+or\+\_\+action\+\_\+type}, double $>$ {\bfseries rat2gexf\+\_\+a} = \{\}
 \item 
 \mbox{\Hypertarget{config_8cpp_a9a7b4c97b0337eec7a107d4f48c994f0}\label{config_8cpp_a9a7b4c97b0337eec7a107d4f48c994f0}} 
-unordered\+\_\+map$<$ relationship\+\_\+or\+\_\+action\+\_\+type, string $>$ {\bfseries rat2gexf\+\_\+shape} = \{\}
+unordered\+\_\+map$<$ \hyperlink{namespacetricl_a2d01894944fb58a8fedc0912a48d13f8}{relationship\+\_\+or\+\_\+action\+\_\+type}, string $>$ {\bfseries rat2gexf\+\_\+shape} = \{\}
 \item 
 \mbox{\Hypertarget{config_8cpp_ad77fa8d20dd7cf1471f2219765253a49}\label{config_8cpp_ad77fa8d20dd7cf1471f2219765253a49}} 
-unordered\+\_\+map$<$ relationship\+\_\+or\+\_\+action\+\_\+type, int $>$ {\bfseries rat2gexf\+\_\+r} = \{\}
+unordered\+\_\+map$<$ \hyperlink{namespacetricl_a2d01894944fb58a8fedc0912a48d13f8}{relationship\+\_\+or\+\_\+action\+\_\+type}, int $>$ {\bfseries rat2gexf\+\_\+r} = \{\}
 \item 
 \mbox{\Hypertarget{config_8cpp_a8063993d6d713ccd233e2fcc6e9bc99b}\label{config_8cpp_a8063993d6d713ccd233e2fcc6e9bc99b}} 
-unordered\+\_\+map$<$ relationship\+\_\+or\+\_\+action\+\_\+type, int $>$ {\bfseries rat2gexf\+\_\+g} = \{\}
+unordered\+\_\+map$<$ \hyperlink{namespacetricl_a2d01894944fb58a8fedc0912a48d13f8}{relationship\+\_\+or\+\_\+action\+\_\+type}, int $>$ {\bfseries rat2gexf\+\_\+g} = \{\}
 \item 
 \mbox{\Hypertarget{config_8cpp_aa91b7e25dfb65b3ea4d7f4c15a7bc25d}\label{config_8cpp_aa91b7e25dfb65b3ea4d7f4c15a7bc25d}} 
-unordered\+\_\+map$<$ relationship\+\_\+or\+\_\+action\+\_\+type, int $>$ {\bfseries rat2gexf\+\_\+b} = \{\}
+unordered\+\_\+map$<$ \hyperlink{namespacetricl_a2d01894944fb58a8fedc0912a48d13f8}{relationship\+\_\+or\+\_\+action\+\_\+type}, int $>$ {\bfseries rat2gexf\+\_\+b} = \{\}
 \item 
 \mbox{\Hypertarget{config_8cpp_aca8167edc3c91cb84c829dd88f75c7b4}\label{config_8cpp_aca8167edc3c91cb84c829dd88f75c7b4}} 
-entity {\bfseries max\+\_\+e} = 0
+\hyperlink{namespacetricl_a57273122278e8b301844e2a2e1f0742f}{entity} {\bfseries max\+\_\+e} = 0
 \item 
 \mbox{\Hypertarget{config_8cpp_a853f5823f91d99b634d7a3434921c20c}\label{config_8cpp_a853f5823f91d99b634d7a3434921c20c}} 
 string {\bfseries te\+\_\+syms} \mbox{[}M\+A\+X\+\_\+\+N\+\_\+\+T\+E\+\_\+\+V\+A\+RS\mbox{]}

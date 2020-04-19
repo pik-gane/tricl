@@ -1,4 +1,4 @@
 <map id="tricl::influence_type" name="tricl::influence_type">
-<area shape="rect" id="node2" href="$dc/d1b/structtricl_1_1angle__type.html" title="tricl::angle_type" alt="" coords="5,5,132,32"/>
-<area shape="rect" id="node3" href="$d3/d70/structtricl_1_1event__type.html" title="tricl::event_type" alt="" coords="157,5,285,32"/>
+<area shape="rect" id="node2" href="$dc/d1b/structtricl_1_1angle__type.html" title="The type of an angle is given by the involved entity and relationship or action types (or NO_RAT if t..." alt="" coords="5,5,132,32"/>
+<area shape="rect" id="node3" href="$d3/d70/structtricl_1_1event__type.html" title="The type of an event is given by an event class, two entity types and a relationship or action type..." alt="" coords="157,5,285,32"/>
 </map>

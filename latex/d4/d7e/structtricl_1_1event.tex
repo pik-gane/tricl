@@ -1,20 +1,29 @@
 \hypertarget{structtricl_1_1event}{}\section{tricl\+:\+:event Struct Reference}
 \label{structtricl_1_1event}\index{tricl\+::event@{tricl\+::event}}
+
+
+An event encodes a possible atomic change in the system state involving exactly one link.  
+
+
+
+
+{\ttfamily \#include $<$data\+\_\+model.\+h$>$}
+
 \subsection*{Data Fields}
 \begin{DoxyCompactItemize}
 \item 
 \mbox{\Hypertarget{structtricl_1_1event_ab77115c2d4aada8d5c4f51dd6abcaa2a}\label{structtricl_1_1event_ab77115c2d4aada8d5c4f51dd6abcaa2a}} 
-event\+\_\+class {\bfseries ec}
-\item 
+\hyperlink{namespacetricl_a6967089e2c0837f273d8cb5fd9f7e46d}{event\+\_\+class} \hyperlink{structtricl_1_1event_ab77115c2d4aada8d5c4f51dd6abcaa2a}{ec}
+\begin{DoxyCompactList}\small\item\em What kind of change to system state this event represents. \end{DoxyCompactList}\item 
 \mbox{\Hypertarget{structtricl_1_1event_ae3de57643cd0d42762c1fcbd86bd2632}\label{structtricl_1_1event_ae3de57643cd0d42762c1fcbd86bd2632}} 
-entity {\bfseries e1}
-\item 
+\hyperlink{namespacetricl_a57273122278e8b301844e2a2e1f0742f}{entity} \hyperlink{structtricl_1_1event_ae3de57643cd0d42762c1fcbd86bd2632}{e1}
+\begin{DoxyCompactList}\small\item\em Source entity (or, if $<$0, source entity type of a summary event) \end{DoxyCompactList}\item 
 \mbox{\Hypertarget{structtricl_1_1event_a57d8ec5cf582b4cd2de127590d805325}\label{structtricl_1_1event_a57d8ec5cf582b4cd2de127590d805325}} 
-relationship\+\_\+or\+\_\+action\+\_\+type {\bfseries rat13}
-\item 
+\hyperlink{namespacetricl_a2d01894944fb58a8fedc0912a48d13f8}{relationship\+\_\+or\+\_\+action\+\_\+type} \hyperlink{structtricl_1_1event_a57d8ec5cf582b4cd2de127590d805325}{rat13}
+\begin{DoxyCompactList}\small\item\em Type of relationship or action affected by the event. \end{DoxyCompactList}\item 
 \mbox{\Hypertarget{structtricl_1_1event_a49b653bfd4b01a1b561849e8aeadb53d}\label{structtricl_1_1event_a49b653bfd4b01a1b561849e8aeadb53d}} 
-entity {\bfseries e3}
-\end{DoxyCompactItemize}
+\hyperlink{namespacetricl_a57273122278e8b301844e2a2e1f0742f}{entity} \hyperlink{structtricl_1_1event_a49b653bfd4b01a1b561849e8aeadb53d}{e3}
+\begin{DoxyCompactList}\small\item\em Target entity (or, if $<$0, target entity type of a summary event) \end{DoxyCompactList}\end{DoxyCompactItemize}
 \subsection*{Friends}
 \begin{DoxyCompactItemize}
 \item 
@@ -22,6 +31,11 @@ entity {\bfseries e3}
 bool {\bfseries operator==} (const \hyperlink{structtricl_1_1event}{event} \&left, const \hyperlink{structtricl_1_1event}{event} \&right)
 \end{DoxyCompactItemize}
 
+
+\subsection{Detailed Description}
+An event encodes a possible atomic change in the system state involving exactly one link. 
+
+For simplicity, the link is not encoded by an attribute of type \hyperlink{structtricl_1_1link}{link} but rather by a copy of its three attributes e1, rat13, e3. 
 
 The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
 \item 

@@ -6,18 +6,22 @@ Some global constants.
 
 
 {\ttfamily \#include \char`\"{}data\+\_\+model.\+h\char`\"{}}\newline
-Include dependency graph for constants.\+cpp\+:
-\nopagebreak
+Include dependency graph for constants.\+cpp\+:\nopagebreak
 \begin{figure}[H]
 \begin{center}
 \leavevmode
 \includegraphics[width=350pt]{d0/d49/constants_8cpp__incl}
 \end{center}
 \end{figure}
+\subsection*{Namespaces}
+\begin{DoxyCompactItemize}
+\item 
+ \hyperlink{namespacetricl}{tricl}
+\begin{DoxyCompactList}\small\item\em We use our own namespace to avoid clashes with 3rdparty names, e.\+g. \char`\"{}link\char`\"{}. \end{DoxyCompactList}\end{DoxyCompactItemize}
 \subsection*{Variables}
 \begin{DoxyCompactItemize}
 \item 
-unordered\+\_\+map$<$ event\+\_\+class, string $>$ {\bfseries tricl\+::ec2label}
+unordered\+\_\+map$<$ \hyperlink{namespacetricl_a6967089e2c0837f273d8cb5fd9f7e46d}{event\+\_\+class}, string $>$ {\bfseries tricl\+::ec2label}
 \end{DoxyCompactItemize}
 
 
@@ -30,20 +34,3 @@ Jobst Heitzig, Potsdam Institute for Climate Impact Research, \href{mailto:heitz
 \begin{DoxyDate}{Date}
 Mar 30, 2020 
 \end{DoxyDate}
-
-
-\subsection{Variable Documentation}
-\mbox{\Hypertarget{constants_8cpp_file_a9f4cb99ed8a0723da68503403d270bf7}\label{constants_8cpp_file_a9f4cb99ed8a0723da68503403d270bf7}} 
-\index{constants.\+cpp@{constants.\+cpp}!ec2label@{ec2label}}
-\index{ec2label@{ec2label}!constants.\+cpp@{constants.\+cpp}}
-\subsubsection{\texorpdfstring{ec2label}{ec2label}}
-{\footnotesize\ttfamily unordered\+\_\+map$<$ event\+\_\+class, string $>$ tricl\+::ec2label}
-
-{\bfseries Initial value\+:}
-\begin{DoxyCode}
-= \{
-        \{ EC\_EST, \textcolor{stringliteral}{"establish that"} \},
-        \{ EC\_TERM, \textcolor{stringliteral}{"terminate that"} \},
-        \{ EC\_ACT, \textcolor{stringliteral}{"let"} \}
-    \}
-\end{DoxyCode}

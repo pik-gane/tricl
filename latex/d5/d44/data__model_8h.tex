@@ -14,16 +14,14 @@ The main data model.
 {\ttfamily \#include $<$unordered\+\_\+map$>$}\newline
 {\ttfamily \#include $<$map$>$}\newline
 {\ttfamily \#include $<$math.\+h$>$}\newline
-Include dependency graph for data\+\_\+model.\+h\+:
-\nopagebreak
+Include dependency graph for data\+\_\+model.\+h\+:\nopagebreak
 \begin{figure}[H]
 \begin{center}
 \leavevmode
 \includegraphics[width=350pt]{d0/dc6/data__model_8h__incl}
 \end{center}
 \end{figure}
-This graph shows which files directly or indirectly include this file\+:
-\nopagebreak
+This graph shows which files directly or indirectly include this file\+:\nopagebreak
 \begin{figure}[H]
 \begin{center}
 \leavevmode
@@ -34,27 +32,27 @@ This graph shows which files directly or indirectly include this file\+:
 \begin{DoxyCompactItemize}
 \item 
 struct \hyperlink{structtricl_1_1entity__type__pair}{tricl\+::entity\+\_\+type\+\_\+pair}
-\item 
-struct \hyperlink{structtricl_1_1link__type}{tricl\+::link\+\_\+type}
-\item 
-struct \hyperlink{structtricl_1_1event__type}{tricl\+::event\+\_\+type}
-\item 
-struct \hyperlink{structtricl_1_1angle__type}{tricl\+::angle\+\_\+type}
-\item 
-struct \hyperlink{structtricl_1_1influence__type}{tricl\+::influence\+\_\+type}
-\item 
-struct \hyperlink{structtricl_1_1inleg}{tricl\+::inleg}
-\item 
-struct \hyperlink{structtricl_1_1outleg}{tricl\+::outleg}
-\item 
+\begin{DoxyCompactList}\small\item\em Pair of entity types (rarely used) \end{DoxyCompactList}\item 
 struct \hyperlink{structtricl_1_1link}{tricl\+::link}
-\item 
+\begin{DoxyCompactList}\small\item\em A link encodes either the existence of a certain relationship between two entities (or the cumulative impact of all past actions of a certain type between two entities -- not yet implemented). \end{DoxyCompactList}\item 
+struct \hyperlink{structtricl_1_1link__type}{tricl\+::link\+\_\+type}
+\begin{DoxyCompactList}\small\item\em The type of a \hyperlink{structtricl_1_1link}{link} is given by two entity types and a relationship or action type. \end{DoxyCompactList}\item 
 struct \hyperlink{structtricl_1_1event}{tricl\+::event}
-\item 
+\begin{DoxyCompactList}\small\item\em An event encodes a possible atomic change in the system state involving exactly one link. \end{DoxyCompactList}\item 
+struct \hyperlink{structtricl_1_1event__type}{tricl\+::event\+\_\+type}
+\begin{DoxyCompactList}\small\item\em The type of an \hyperlink{structtricl_1_1event}{event} is given by an event class, two entity types and a relationship or action type. \end{DoxyCompactList}\item 
 struct \hyperlink{structtricl_1_1event__data}{tricl\+::event\+\_\+data}
-\item 
+\begin{DoxyCompactList}\small\item\em For performance reasons, the mutable data of an \hyperlink{structtricl_1_1event}{event} is stored in a separate struct. \end{DoxyCompactList}\item 
+struct \hyperlink{structtricl_1_1inleg}{tricl\+::inleg}
+\begin{DoxyCompactList}\small\item\em An inleg represents a leg \char`\"{}incoming\char`\"{} to a target entity. \end{DoxyCompactList}\item 
+struct \hyperlink{structtricl_1_1outleg}{tricl\+::outleg}
+\begin{DoxyCompactList}\small\item\em An outleg represents a leg \char`\"{}outgoing\char`\"{} from a source entity. \end{DoxyCompactList}\item 
 struct \hyperlink{structtricl_1_1angle}{tricl\+::angle}
-\item 
+\begin{DoxyCompactList}\small\item\em An angle represents an indirect connection between a source entity and a target entity via two links through some \char`\"{}middle\char`\"{} entity. \end{DoxyCompactList}\item 
+struct \hyperlink{structtricl_1_1angle__type}{tricl\+::angle\+\_\+type}
+\begin{DoxyCompactList}\small\item\em The type of an angle is given by the involved entity and relationship or action types (or \hyperlink{data__model_8h_ae71ff63a5bdb6bfc09a18840c8df4e54}{N\+O\+\_\+\+R\+AT} if the angle type is actually a leg type). \end{DoxyCompactList}\item 
+struct \hyperlink{structtricl_1_1influence__type}{tricl\+::influence\+\_\+type}
+\begin{DoxyCompactList}\small\item\em Influence types are used to encode the main dynamical rules of a model. \end{DoxyCompactList}\item 
 struct \hyperlink{structstd_1_1hash_3_01entity__type__pair_01_4}{std\+::hash$<$ entity\+\_\+type\+\_\+pair $>$}
 \item 
 struct \hyperlink{structstd_1_1hash_3_01link__type_01_4}{std\+::hash$<$ link\+\_\+type $>$}
@@ -75,100 +73,92 @@ struct \hyperlink{structstd_1_1hash_3_01event_01_4}{std\+::hash$<$ event $>$}
 \item 
 struct \hyperlink{structstd_1_1hash_3_01angle_01_4}{std\+::hash$<$ angle $>$}
 \end{DoxyCompactItemize}
+\subsection*{Namespaces}
+\begin{DoxyCompactItemize}
+\item 
+ \hyperlink{namespacetricl}{tricl}
+\begin{DoxyCompactList}\small\item\em We use our own namespace to avoid clashes with 3rdparty names, e.\+g. \char`\"{}link\char`\"{}. \end{DoxyCompactList}\end{DoxyCompactItemize}
 \subsection*{Macros}
 \begin{DoxyCompactItemize}
 \item 
 \mbox{\Hypertarget{data__model_8h_a4ef43416c3082b95dfc7b9b4b37ed4a7}\label{data__model_8h_a4ef43416c3082b95dfc7b9b4b37ed4a7}} 
-\#define {\bfseries E\+\_\+\+B\+I\+TS}~20
-\item 
+\#define \hyperlink{data__model_8h_a4ef43416c3082b95dfc7b9b4b37ed4a7}{E\+\_\+\+B\+I\+TS}~20
+\begin{DoxyCompactList}\small\item\em No. of bits used for entities --$>$ max. 1 mio. entities. \end{DoxyCompactList}\item 
 \mbox{\Hypertarget{data__model_8h_a27e24a1c84c197041afdad0fc49dcaeb}\label{data__model_8h_a27e24a1c84c197041afdad0fc49dcaeb}} 
-\#define {\bfseries E\+T\+\_\+\+B\+I\+TS}~4
-\item 
+\#define \hyperlink{data__model_8h_a27e24a1c84c197041afdad0fc49dcaeb}{E\+T\+\_\+\+B\+I\+TS}~4
+\begin{DoxyCompactList}\small\item\em No. of bits used for entity types --$>$ max. 16 entity types. \end{DoxyCompactList}\item 
 \mbox{\Hypertarget{data__model_8h_a1712faaa1ef9bb3dcbfae56161881708}\label{data__model_8h_a1712faaa1ef9bb3dcbfae56161881708}} 
-\#define {\bfseries R\+A\+T\+\_\+\+B\+I\+TS}~4
-\item 
-\mbox{\Hypertarget{data__model_8h_ae71ff63a5bdb6bfc09a18840c8df4e54}\label{data__model_8h_ae71ff63a5bdb6bfc09a18840c8df4e54}} 
-\#define {\bfseries N\+O\+\_\+\+R\+AT}~0
-\item 
-\mbox{\Hypertarget{data__model_8h_a549fa469b9ccb6e0fe046f797bc181e0}\label{data__model_8h_a549fa469b9ccb6e0fe046f797bc181e0}} 
-\#define {\bfseries R\+T\+\_\+\+ID}~1
-\item 
-\mbox{\Hypertarget{data__model_8h_a925666847194fb399477a102d097b306}\label{data__model_8h_a925666847194fb399477a102d097b306}} 
-\#define {\bfseries E}(e)~e
-\item 
+\#define \hyperlink{data__model_8h_a1712faaa1ef9bb3dcbfae56161881708}{R\+A\+T\+\_\+\+B\+I\+TS}~4
+\begin{DoxyCompactList}\small\item\em No. of bits used for relationship or action types --$>$ max. 16 relationship or action types. \end{DoxyCompactList}\item 
 \mbox{\Hypertarget{data__model_8h_acaa7fd772f80b3066211e5eb6e29ed91}\label{data__model_8h_acaa7fd772f80b3066211e5eb6e29ed91}} 
-\#define {\bfseries M\+A\+X\+\_\+\+N\+\_\+E}~((1$<$$<$E\+\_\+\+B\+I\+TS)-\/1)
-\item 
-\mbox{\Hypertarget{data__model_8h_a6ebf6899d6c1c8b7b9d09be872c05aae}\label{data__model_8h_a6ebf6899d6c1c8b7b9d09be872c05aae}} 
-\#define {\bfseries E\+PS}~1e-\/20;
-\item 
+\#define \hyperlink{data__model_8h_acaa7fd772f80b3066211e5eb6e29ed91}{M\+A\+X\+\_\+\+N\+\_\+E}~((1$<$$<$\hyperlink{data__model_8h_a4ef43416c3082b95dfc7b9b4b37ed4a7}{E\+\_\+\+B\+I\+TS})-\/1)
+\begin{DoxyCompactList}\small\item\em resulting max. no. of entities \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{data__model_8h_ae71ff63a5bdb6bfc09a18840c8df4e54}\label{data__model_8h_ae71ff63a5bdb6bfc09a18840c8df4e54}} 
+\#define \hyperlink{data__model_8h_ae71ff63a5bdb6bfc09a18840c8df4e54}{N\+O\+\_\+\+R\+AT}~0
+\begin{DoxyCompactList}\small\item\em Missing value for relationship or action type, used in angles to encode legs. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{data__model_8h_a549fa469b9ccb6e0fe046f797bc181e0}\label{data__model_8h_a549fa469b9ccb6e0fe046f797bc181e0}} 
+\#define \hyperlink{data__model_8h_a549fa469b9ccb6e0fe046f797bc181e0}{R\+T\+\_\+\+ID}~1
+\begin{DoxyCompactList}\small\item\em Relationship type for identity relationship \char`\"{}=\char`\"{}, always present. \end{DoxyCompactList}\item 
 \mbox{\Hypertarget{data__model_8h_a9a89b5cd637aedee7c32dc74252da764}\label{data__model_8h_a9a89b5cd637aedee7c32dc74252da764}} 
-\#define {\bfseries I\+N\+F\+LT}(inflt)~((size\+\_\+t)inflt.\+evt.\+ec $^\wedge$ ((size\+\_\+t)inflt.\+evt.\+et1 $<$$<$ 2) $^\wedge$ ((size\+\_\+t)inflt.\+evt.\+rat13 $<$$<$ (2+E\+T\+\_\+\+B\+I\+TS)) $^\wedge$ ((size\+\_\+t)inflt.\+evt.\+et3 $<$$<$ (2+E\+T\+\_\+\+B\+I\+TS+R\+A\+T\+\_\+\+B\+I\+TS)) $^\wedge$ ((size\+\_\+t)inflt.\+at.\+rat12 $<$$<$ (2+2$\ast$E\+T\+\_\+\+B\+I\+TS+R\+A\+T\+\_\+\+B\+I\+TS)) $^\wedge$ ((size\+\_\+t)inflt.\+at.\+et2 $<$$<$ (2+2$\ast$E\+T\+\_\+\+B\+I\+TS+2$\ast$R\+A\+T\+\_\+\+B\+I\+TS)) $^\wedge$ ((size\+\_\+t)inflt.\+at.\+rat23 $<$$<$ (2+3$\ast$E\+T\+\_\+\+B\+I\+TS+2$\ast$R\+A\+T\+\_\+\+B\+I\+TS)))
+\#define {\bfseries I\+N\+F\+LT}(inflt)~((size\+\_\+t)inflt.\+evt.\+ec $^\wedge$ ((size\+\_\+t)inflt.\+evt.\+et1 $<$$<$ 2) $^\wedge$ ((size\+\_\+t)inflt.\+evt.\+rat13 $<$$<$ (2+\hyperlink{data__model_8h_a27e24a1c84c197041afdad0fc49dcaeb}{E\+T\+\_\+\+B\+I\+TS})) $^\wedge$ ((size\+\_\+t)inflt.\+evt.\+et3 $<$$<$ (2+\hyperlink{data__model_8h_a27e24a1c84c197041afdad0fc49dcaeb}{E\+T\+\_\+\+B\+I\+TS}+\hyperlink{data__model_8h_a1712faaa1ef9bb3dcbfae56161881708}{R\+A\+T\+\_\+\+B\+I\+TS})) $^\wedge$ ((size\+\_\+t)inflt.\+at.\+rat12 $<$$<$ (2+2$\ast$\hyperlink{data__model_8h_a27e24a1c84c197041afdad0fc49dcaeb}{E\+T\+\_\+\+B\+I\+TS}+\hyperlink{data__model_8h_a1712faaa1ef9bb3dcbfae56161881708}{R\+A\+T\+\_\+\+B\+I\+TS})) $^\wedge$ ((size\+\_\+t)inflt.\+at.\+et2 $<$$<$ (2+2$\ast$\hyperlink{data__model_8h_a27e24a1c84c197041afdad0fc49dcaeb}{E\+T\+\_\+\+B\+I\+TS}+2$\ast$\hyperlink{data__model_8h_a1712faaa1ef9bb3dcbfae56161881708}{R\+A\+T\+\_\+\+B\+I\+TS})) $^\wedge$ ((size\+\_\+t)inflt.\+at.\+rat23 $<$$<$ (2+3$\ast$\hyperlink{data__model_8h_a27e24a1c84c197041afdad0fc49dcaeb}{E\+T\+\_\+\+B\+I\+TS}+2$\ast$\hyperlink{data__model_8h_a1712faaa1ef9bb3dcbfae56161881708}{R\+A\+T\+\_\+\+B\+I\+TS})))
 \item 
 \mbox{\Hypertarget{data__model_8h_a3890372a566c5b111dd6fabda11e73bc}\label{data__model_8h_a3890372a566c5b111dd6fabda11e73bc}} 
-\#define {\bfseries M\+A\+X\+\_\+\+N\+\_\+\+I\+N\+F\+LT}~(1 $<$$<$ (2+3$\ast$E\+T\+\_\+\+B\+I\+TS+3$\ast$R\+A\+T\+\_\+\+B\+I\+TS))
+\#define {\bfseries M\+A\+X\+\_\+\+N\+\_\+\+I\+N\+F\+LT}~(1 $<$$<$ (2+3$\ast$\hyperlink{data__model_8h_a27e24a1c84c197041afdad0fc49dcaeb}{E\+T\+\_\+\+B\+I\+TS}+3$\ast$\hyperlink{data__model_8h_a1712faaa1ef9bb3dcbfae56161881708}{R\+A\+T\+\_\+\+B\+I\+TS}))
 \end{DoxyCompactItemize}
 \subsection*{Typedefs}
 \begin{DoxyCompactItemize}
 \item 
-\mbox{\Hypertarget{data__model_8h_a2d01894944fb58a8fedc0912a48d13f8}\label{data__model_8h_a2d01894944fb58a8fedc0912a48d13f8}} 
-typedef size\+\_\+t {\bfseries tricl\+::relationship\+\_\+or\+\_\+action\+\_\+type}
-\item 
-\mbox{\Hypertarget{data__model_8h_a57273122278e8b301844e2a2e1f0742f}\label{data__model_8h_a57273122278e8b301844e2a2e1f0742f}} 
-typedef int {\bfseries tricl\+::entity}
-\item 
-\mbox{\Hypertarget{data__model_8h_a720ff6a29f998e11e1d3622fc8df64b1}\label{data__model_8h_a720ff6a29f998e11e1d3622fc8df64b1}} 
-typedef double {\bfseries tricl\+::timepoint}
-\item 
-\mbox{\Hypertarget{data__model_8h_ae42d2696f294300a43e0f5edf4875479}\label{data__model_8h_ae42d2696f294300a43e0f5edf4875479}} 
-typedef double {\bfseries tricl\+::rate}
-\item 
-\mbox{\Hypertarget{data__model_8h_af8f8f9076e92e1c664ffa96f18d038a5}\label{data__model_8h_af8f8f9076e92e1c664ffa96f18d038a5}} 
-typedef double {\bfseries tricl\+::probunits}
-\item 
-\mbox{\Hypertarget{data__model_8h_af2e8973ba58a3dad9061296d8bee16a2}\label{data__model_8h_af2e8973ba58a3dad9061296d8bee16a2}} 
-typedef double {\bfseries tricl\+::probability}
-\item 
-\mbox{\Hypertarget{data__model_8h_a77e7daffafa870e5786b344119da9b15}\label{data__model_8h_a77e7daffafa870e5786b344119da9b15}} 
-typedef string {\bfseries tricl\+::label}
-\item 
-\mbox{\Hypertarget{data__model_8h_afd4de3aedd5e48cf955f03457386e98f}\label{data__model_8h_afd4de3aedd5e48cf955f03457386e98f}} 
-typedef short unsigned int {\bfseries tricl\+::entity\+\_\+type}
-\item 
-\mbox{\Hypertarget{data__model_8h_a703ed53fa2dba74d8f51ede5fd46038d}\label{data__model_8h_a703ed53fa2dba74d8f51ede5fd46038d}} 
-typedef set$<$ \hyperlink{structtricl_1_1inleg}{inleg} $>$ {\bfseries tricl\+::inleg\+\_\+set}
-\item 
-\mbox{\Hypertarget{data__model_8h_ac36fc4606da3d7f9ffd1764942fe5940}\label{data__model_8h_ac36fc4606da3d7f9ffd1764942fe5940}} 
-typedef set$<$ \hyperlink{structtricl_1_1outleg}{outleg} $>$ {\bfseries tricl\+::outleg\+\_\+set}
-\item 
-\mbox{\Hypertarget{data__model_8h_a4ec9b46d6dae5a1d114387bca4029ce5}\label{data__model_8h_a4ec9b46d6dae5a1d114387bca4029ce5}} 
+\mbox{\Hypertarget{namespacetricl_a720ff6a29f998e11e1d3622fc8df64b1}\label{namespacetricl_a720ff6a29f998e11e1d3622fc8df64b1}} 
+typedef double \hyperlink{namespacetricl_a720ff6a29f998e11e1d3622fc8df64b1}{tricl\+::timepoint}
+\begin{DoxyCompactList}\small\item\em A point in continuous model time, 0...inf. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{namespacetricl_af8f8f9076e92e1c664ffa96f18d038a5}\label{namespacetricl_af8f8f9076e92e1c664ffa96f18d038a5}} 
+typedef double \hyperlink{namespacetricl_af8f8f9076e92e1c664ffa96f18d038a5}{tricl\+::probunits}
+\begin{DoxyCompactList}\small\item\em -\/inf...inf, will be mapped to probabilities by means of the function probunits2probability() \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{namespacetricl_af2e8973ba58a3dad9061296d8bee16a2}\label{namespacetricl_af2e8973ba58a3dad9061296d8bee16a2}} 
+typedef double \hyperlink{namespacetricl_af2e8973ba58a3dad9061296d8bee16a2}{tricl\+::probability}
+\begin{DoxyCompactList}\small\item\em 0...1 \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{namespacetricl_ae42d2696f294300a43e0f5edf4875479}\label{namespacetricl_ae42d2696f294300a43e0f5edf4875479}} 
+typedef double \hyperlink{namespacetricl_ae42d2696f294300a43e0f5edf4875479}{tricl\+::rate}
+\begin{DoxyCompactList}\small\item\em Probability per time, 0...inf. (inf is used for things happening \char`\"{}immediately\char`\"{}) \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{namespacetricl_a77e7daffafa870e5786b344119da9b15}\label{namespacetricl_a77e7daffafa870e5786b344119da9b15}} 
+typedef string \hyperlink{namespacetricl_a77e7daffafa870e5786b344119da9b15}{tricl\+::label}
+\begin{DoxyCompactList}\small\item\em A label of something. \end{DoxyCompactList}\item 
+typedef int \hyperlink{namespacetricl_a57273122278e8b301844e2a2e1f0742f}{tricl\+::entity}
+\begin{DoxyCompactList}\small\item\em Entities are used to encode all physical and abstract objects of the modeled social dynamics that can stand in some form of relation to another or can perform some kinds of actions on or with another. \end{DoxyCompactList}\item 
+typedef short unsigned int \hyperlink{namespacetricl_afd4de3aedd5e48cf955f03457386e98f}{tricl\+::entity\+\_\+type}
+\begin{DoxyCompactList}\small\item\em Entity types are used to encode the different kinds of entities in a model. \end{DoxyCompactList}\item 
+typedef size\+\_\+t \hyperlink{namespacetricl_a2d01894944fb58a8fedc0912a48d13f8}{tricl\+::relationship\+\_\+or\+\_\+action\+\_\+type}
+\begin{DoxyCompactList}\small\item\em Relationship types are used to encode the kinds of relationships entities may stand in; action types are used to encode the kinds of actions entities may perform on or with another (not implemented yet); they are encoded in a common datatype and distinguished by means of the map rat\+\_\+is\+\_\+action\+\_\+type (not implemented yet). \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{namespacetricl_a703ed53fa2dba74d8f51ede5fd46038d}\label{namespacetricl_a703ed53fa2dba74d8f51ede5fd46038d}} 
+typedef set$<$ \hyperlink{structtricl_1_1inleg}{inleg} $>$ \hyperlink{namespacetricl_a703ed53fa2dba74d8f51ede5fd46038d}{tricl\+::inleg\+\_\+set}
+\begin{DoxyCompactList}\small\item\em used to store all incoming legs of an entity \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{namespacetricl_ac36fc4606da3d7f9ffd1764942fe5940}\label{namespacetricl_ac36fc4606da3d7f9ffd1764942fe5940}} 
+typedef set$<$ \hyperlink{structtricl_1_1outleg}{outleg} $>$ \hyperlink{namespacetricl_ac36fc4606da3d7f9ffd1764942fe5940}{tricl\+::outleg\+\_\+set}
+\begin{DoxyCompactList}\small\item\em used to store all outgoing legs of an entity \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{namespacetricl_a4ec9b46d6dae5a1d114387bca4029ce5}\label{namespacetricl_a4ec9b46d6dae5a1d114387bca4029ce5}} 
 typedef vector$<$ \hyperlink{structtricl_1_1angle}{angle} $>$ {\bfseries tricl\+::angles}
 \end{DoxyCompactItemize}
 \subsection*{Enumerations}
 \begin{DoxyCompactItemize}
 \item 
-\mbox{\Hypertarget{data__model_8h_a6967089e2c0837f273d8cb5fd9f7e46d}\label{data__model_8h_a6967089e2c0837f273d8cb5fd9f7e46d}} 
-enum {\bfseries event\+\_\+class} \{ {\bfseries E\+C\+\_\+\+E\+ST}, 
-{\bfseries E\+C\+\_\+\+T\+E\+RM}, 
-{\bfseries E\+C\+\_\+\+A\+CT}
- \}
-\end{DoxyCompactItemize}
-\subsection*{Variables}
-\begin{DoxyCompactItemize}
-\item 
-\mbox{\Hypertarget{data__model_8h_a1d25690adbc3921709bd3b3e16415713}\label{data__model_8h_a1d25690adbc3921709bd3b3e16415713}} 
-const \hyperlink{structtricl_1_1angle__type}{angle\+\_\+type} {\bfseries tricl\+::\+N\+O\+\_\+\+A\+N\+G\+LE} = \{ .rat12 = N\+O\+\_\+\+R\+AT, .et2 = 0, .rat23 = N\+O\+\_\+\+R\+AT \}
+enum \hyperlink{namespacetricl_a6967089e2c0837f273d8cb5fd9f7e46d}{tricl\+::event\+\_\+class} \{ \hyperlink{namespacetricl_a6967089e2c0837f273d8cb5fd9f7e46da928305067790de15396de8fcc92b72b9}{tricl\+::\+E\+C\+\_\+\+E\+ST}, 
+\hyperlink{namespacetricl_a6967089e2c0837f273d8cb5fd9f7e46da16f53be37a75a1cdfc726014c7f3810a}{tricl\+::\+E\+C\+\_\+\+T\+E\+RM}, 
+\hyperlink{namespacetricl_a6967089e2c0837f273d8cb5fd9f7e46dac508c68c92ee059322cb644dd330bbcf}{tricl\+::\+E\+C\+\_\+\+A\+CT}
+ \}\begin{DoxyCompactList}\small\item\em (don\textquotesingle{}t confuse with event\+\_\+type!) The event class encodes what kind of change to the system state an event represents. \end{DoxyCompactList}
 \end{DoxyCompactItemize}
 
 
 \subsection{Detailed Description}
 The main data model. 
 
-Defines all structs and their operators.
+\subsubsection*{Data architecture }
 
-\begin{DoxyAuthor}{Author}
-Jobst Heitzig, Potsdam Institute for Climate Impact Research, \href{mailto:heitzig@pik-potsdam.de}{\tt heitzig@pik-\/potsdam.\+de} 
-\end{DoxyAuthor}
-\begin{DoxyDate}{Date}
-Mar 30, 2020 
-\end{DoxyDate}
+Most data is kept in unordered maps (what would be dictionaries in python) whose keys are entity types, entities, link types, links, legs, angles, event types, events, influence types and influences. the latter types of things are encoded as structs, most of which are basically tuples of integer ids.
+
+For fast access to map entries, these are automatically turned into integer hashs via the hash structs at the end of this file.
+
+Some data (which is accessed most often) is instead kept in vectors whose indices are either entities (which are ints) or integer hash values of influence types (constructed via the macro I\+N\+F\+LT).
+
+All hashs are constructed as logical O\+Rs of properly shifted ids, hence valid ids are restricted by the respective numbers of bits reserved for this id in the hash.
+
+This hash construction is governed by the bit size macros \hyperlink{data__model_8h_a4ef43416c3082b95dfc7b9b4b37ed4a7}{E\+\_\+\+B\+I\+TS}, \hyperlink{data__model_8h_a27e24a1c84c197041afdad0fc49dcaeb}{E\+T\+\_\+\+B\+I\+TS}, and \hyperlink{data__model_8h_a1712faaa1ef9bb3dcbfae56161881708}{R\+A\+T\+\_\+\+B\+I\+TS}, which could be adapted in dependence on system architecture, but must fulfil the following constraints\+: 2 + 2 $\ast$ \hyperlink{data__model_8h_a4ef43416c3082b95dfc7b9b4b37ed4a7}{E\+\_\+\+B\+I\+TS} + \hyperlink{data__model_8h_a1712faaa1ef9bb3dcbfae56161881708}{R\+A\+T\+\_\+\+B\+I\+TS} $<$= no. of bits in size\+\_\+t (32 or 64) 2$^\wedge$\hyperlink{data__model_8h_a4ef43416c3082b95dfc7b9b4b37ed4a7}{E\+\_\+\+B\+I\+TS} + 2$^\wedge$(6 + 3 $\ast$ \hyperlink{data__model_8h_a1712faaa1ef9bb3dcbfae56161881708}{R\+A\+T\+\_\+\+B\+I\+TS} + 3 $\ast$ \hyperlink{data__model_8h_a27e24a1c84c197041afdad0fc49dcaeb}{E\+T\+\_\+\+B\+I\+TS}) $<$= available memory bytes 

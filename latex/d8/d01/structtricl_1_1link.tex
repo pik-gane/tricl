@@ -1,17 +1,26 @@
 \hypertarget{structtricl_1_1link}{}\section{tricl\+:\+:link Struct Reference}
 \label{structtricl_1_1link}\index{tricl\+::link@{tricl\+::link}}
+
+
+A link encodes either the existence of a certain relationship between two entities (or the cumulative impact of all past actions of a certain type between two entities -- not yet implemented).  
+
+
+
+
+{\ttfamily \#include $<$data\+\_\+model.\+h$>$}
+
 \subsection*{Data Fields}
 \begin{DoxyCompactItemize}
 \item 
 \mbox{\Hypertarget{structtricl_1_1link_a94b71567d0a342c8d0bf28e4fea1dff4}\label{structtricl_1_1link_a94b71567d0a342c8d0bf28e4fea1dff4}} 
-const entity {\bfseries e1}
-\item 
+const \hyperlink{namespacetricl_a57273122278e8b301844e2a2e1f0742f}{entity} \hyperlink{structtricl_1_1link_a94b71567d0a342c8d0bf28e4fea1dff4}{e1}
+\begin{DoxyCompactList}\small\item\em Source entity (or, if $<$0, source entity type of a summary event) \end{DoxyCompactList}\item 
 \mbox{\Hypertarget{structtricl_1_1link_a9a21745032378ca68f88966d78814be0}\label{structtricl_1_1link_a9a21745032378ca68f88966d78814be0}} 
-const relationship\+\_\+or\+\_\+action\+\_\+type {\bfseries rat13}
-\item 
+const \hyperlink{namespacetricl_a2d01894944fb58a8fedc0912a48d13f8}{relationship\+\_\+or\+\_\+action\+\_\+type} \hyperlink{structtricl_1_1link_a9a21745032378ca68f88966d78814be0}{rat13}
+\begin{DoxyCompactList}\small\item\em Type of relationship or action represented by this link. \end{DoxyCompactList}\item 
 \mbox{\Hypertarget{structtricl_1_1link_ad54f7dbfcda5fd3f98ff5db897893c87}\label{structtricl_1_1link_ad54f7dbfcda5fd3f98ff5db897893c87}} 
-const entity {\bfseries e3}
-\end{DoxyCompactItemize}
+const \hyperlink{namespacetricl_a57273122278e8b301844e2a2e1f0742f}{entity} \hyperlink{structtricl_1_1link_ad54f7dbfcda5fd3f98ff5db897893c87}{e3}
+\begin{DoxyCompactList}\small\item\em Target entity (or, if $<$0, target entity type of a summary event) \end{DoxyCompactList}\end{DoxyCompactItemize}
 \subsection*{Friends}
 \begin{DoxyCompactItemize}
 \item 
@@ -22,6 +31,9 @@ bool {\bfseries operator==} (const \hyperlink{structtricl_1_1link}{link} \&left,
 bool {\bfseries operator$<$} (const \hyperlink{structtricl_1_1link}{link} \&left, const \hyperlink{structtricl_1_1link}{link} \&right)
 \end{DoxyCompactItemize}
 
+
+\subsection{Detailed Description}
+A link encodes either the existence of a certain relationship between two entities (or the cumulative impact of all past actions of a certain type between two entities -- not yet implemented). 
 
 The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
 \item 

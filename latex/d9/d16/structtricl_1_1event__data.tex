@@ -1,21 +1,35 @@
 \hypertarget{structtricl_1_1event__data}{}\section{tricl\+:\+:event\+\_\+data Struct Reference}
 \label{structtricl_1_1event__data}\index{tricl\+::event\+\_\+data@{tricl\+::event\+\_\+data}}
+
+
+For performance reasons, the mutable data of an \hyperlink{structtricl_1_1event}{event} is stored in a separate struct.  
+
+
+
+
+{\ttfamily \#include $<$data\+\_\+model.\+h$>$}
+
 \subsection*{Data Fields}
 \begin{DoxyCompactItemize}
 \item 
 \mbox{\Hypertarget{structtricl_1_1event__data_a6c10029d49048e80c295b346a5b987f9}\label{structtricl_1_1event__data_a6c10029d49048e80c295b346a5b987f9}} 
-int {\bfseries n\+\_\+angles} = 0
-\item 
+int \hyperlink{structtricl_1_1event__data_a6c10029d49048e80c295b346a5b987f9}{n\+\_\+angles} = 0
+\begin{DoxyCompactList}\small\item\em Current no. of angles influencing this event. \end{DoxyCompactList}\item 
 \mbox{\Hypertarget{structtricl_1_1event__data_ab1a97598f3ac7947b16c785138d754df}\label{structtricl_1_1event__data_ab1a97598f3ac7947b16c785138d754df}} 
-rate {\bfseries attempt\+\_\+rate}
-\item 
+\hyperlink{namespacetricl_ae42d2696f294300a43e0f5edf4875479}{rate} \hyperlink{structtricl_1_1event__data_ab1a97598f3ac7947b16c785138d754df}{attempt\+\_\+rate}
+\begin{DoxyCompactList}\small\item\em Current attempt rate of this event. \end{DoxyCompactList}\item 
 \mbox{\Hypertarget{structtricl_1_1event__data_af2cce9d4c534778696f87867c156d076}\label{structtricl_1_1event__data_af2cce9d4c534778696f87867c156d076}} 
-probunits {\bfseries success\+\_\+probunits}
-\item 
+\hyperlink{namespacetricl_af8f8f9076e92e1c664ffa96f18d038a5}{probunits} \hyperlink{structtricl_1_1event__data_af2cce9d4c534778696f87867c156d076}{success\+\_\+probunits}
+\begin{DoxyCompactList}\small\item\em Current success probunits of this event. \end{DoxyCompactList}\item 
 \mbox{\Hypertarget{structtricl_1_1event__data_acd1cbe2baf952a87e40d96d5ff60ccb6}\label{structtricl_1_1event__data_acd1cbe2baf952a87e40d96d5ff60ccb6}} 
-timepoint {\bfseries t} = -\/I\+N\+F\+I\+N\+I\+TY
-\end{DoxyCompactItemize}
+\hyperlink{namespacetricl_a720ff6a29f998e11e1d3622fc8df64b1}{timepoint} \hyperlink{structtricl_1_1event__data_acd1cbe2baf952a87e40d96d5ff60ccb6}{t} = -\/I\+N\+F\+I\+N\+I\+TY
+\begin{DoxyCompactList}\small\item\em When this event would next happen if the system state does not chance in between. \end{DoxyCompactList}\end{DoxyCompactItemize}
 
+
+\subsection{Detailed Description}
+For performance reasons, the mutable data of an \hyperlink{structtricl_1_1event}{event} is stored in a separate struct. 
+
+These structs appear as values in a map whose key is the corresponding event. 
 
 The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
 \item 

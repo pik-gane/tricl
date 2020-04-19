@@ -1,17 +1,26 @@
 \hypertarget{structtricl_1_1angle}{}\section{tricl\+:\+:angle Struct Reference}
 \label{structtricl_1_1angle}\index{tricl\+::angle@{tricl\+::angle}}
+
+
+An angle represents an indirect connection between a source entity and a target entity via two links through some \char`\"{}middle\char`\"{} entity.  
+
+
+
+
+{\ttfamily \#include $<$data\+\_\+model.\+h$>$}
+
 \subsection*{Data Fields}
 \begin{DoxyCompactItemize}
 \item 
 \mbox{\Hypertarget{structtricl_1_1angle_af850c72e4b4b69131e171984213e306d}\label{structtricl_1_1angle_af850c72e4b4b69131e171984213e306d}} 
-relationship\+\_\+or\+\_\+action\+\_\+type {\bfseries rat12}
-\item 
+\hyperlink{namespacetricl_a2d01894944fb58a8fedc0912a48d13f8}{relationship\+\_\+or\+\_\+action\+\_\+type} \hyperlink{structtricl_1_1angle_af850c72e4b4b69131e171984213e306d}{rat12}
+\begin{DoxyCompactList}\small\item\em Relationship or action type of link from source (usually {\ttfamily e1}) to middle entity {\ttfamily e2}, or \hyperlink{data__model_8h_ae71ff63a5bdb6bfc09a18840c8df4e54}{N\+O\+\_\+\+R\+AT} if the angle encodes an \hyperlink{structtricl_1_1inleg}{inleg}. \end{DoxyCompactList}\item 
 \mbox{\Hypertarget{structtricl_1_1angle_ac03e3d590e5228ebf4a5137ec72a7219}\label{structtricl_1_1angle_ac03e3d590e5228ebf4a5137ec72a7219}} 
-entity {\bfseries e2}
-\item 
+\hyperlink{namespacetricl_a57273122278e8b301844e2a2e1f0742f}{entity} \hyperlink{structtricl_1_1angle_ac03e3d590e5228ebf4a5137ec72a7219}{e2}
+\begin{DoxyCompactList}\small\item\em Middle entity. \end{DoxyCompactList}\item 
 \mbox{\Hypertarget{structtricl_1_1angle_af0ec7d54e4d93cbf5df891dcc8397453}\label{structtricl_1_1angle_af0ec7d54e4d93cbf5df891dcc8397453}} 
-relationship\+\_\+or\+\_\+action\+\_\+type {\bfseries rat23}
-\end{DoxyCompactItemize}
+\hyperlink{namespacetricl_a2d01894944fb58a8fedc0912a48d13f8}{relationship\+\_\+or\+\_\+action\+\_\+type} \hyperlink{structtricl_1_1angle_af0ec7d54e4d93cbf5df891dcc8397453}{rat23}
+\begin{DoxyCompactList}\small\item\em Relationship or action type of link from middle entity {\ttfamily e2} to target (usually {\ttfamily e3}), or \hyperlink{data__model_8h_ae71ff63a5bdb6bfc09a18840c8df4e54}{N\+O\+\_\+\+R\+AT} if the angle encodes an \hyperlink{structtricl_1_1outleg}{outleg}. \end{DoxyCompactList}\end{DoxyCompactItemize}
 \subsection*{Friends}
 \begin{DoxyCompactItemize}
 \item 
@@ -19,6 +28,15 @@ relationship\+\_\+or\+\_\+action\+\_\+type {\bfseries rat23}
 bool {\bfseries operator==} (const \hyperlink{structtricl_1_1angle}{angle} \&left, const \hyperlink{structtricl_1_1angle}{angle} \&right)
 \end{DoxyCompactItemize}
 
+
+\subsection{Detailed Description}
+An angle represents an indirect connection between a source entity and a target entity via two links through some \char`\"{}middle\char`\"{} entity. 
+
+When an angle is used, the source and target entities are clear from the context, hence they are not named themselves in the angle but only the middle entity and relationship or action type are stored.
+
+Angles may influence the attempt rate or success probability of \char`\"{}adjacent\char`\"{} events (events with the same source and target entities).
+
+The {\ttfamily angle} datatype may also be used to store an \hyperlink{structtricl_1_1inleg}{inleg} by setting {\ttfamily rat12} to \hyperlink{data__model_8h_ae71ff63a5bdb6bfc09a18840c8df4e54}{N\+O\+\_\+\+R\+AT} or an \hyperlink{structtricl_1_1outleg}{outleg} by setting {\ttfamily rat23} to \hyperlink{data__model_8h_ae71ff63a5bdb6bfc09a18840c8df4e54}{N\+O\+\_\+\+R\+AT}. 
 
 The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
 \item 

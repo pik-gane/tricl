@@ -1,0 +1,166 @@
+\hypertarget{namespacetricl}{}\section{tricl Namespace Reference}
+\label{namespacetricl}\index{tricl@{tricl}}
+
+
+We use our own namespace to avoid clashes with 3rdparty names, e.\+g. \char`\"{}link\char`\"{}.  
+
+
+\subsection*{Data Structures}
+\begin{DoxyCompactItemize}
+\item 
+struct \hyperlink{structtricl_1_1angle}{angle}
+\begin{DoxyCompactList}\small\item\em An angle represents an indirect connection between a source entity and a target entity via two links through some \char`\"{}middle\char`\"{} entity. \end{DoxyCompactList}\item 
+struct \hyperlink{structtricl_1_1angle__type}{angle\+\_\+type}
+\begin{DoxyCompactList}\small\item\em The type of an angle is given by the involved entity and relationship or action types (or \hyperlink{data__model_8h_ae71ff63a5bdb6bfc09a18840c8df4e54}{N\+O\+\_\+\+R\+AT} if the angle type is actually a leg type). \end{DoxyCompactList}\item 
+struct \hyperlink{structtricl_1_1entity__type__pair}{entity\+\_\+type\+\_\+pair}
+\begin{DoxyCompactList}\small\item\em Pair of entity types (rarely used) \end{DoxyCompactList}\item 
+struct \hyperlink{structtricl_1_1event}{event}
+\begin{DoxyCompactList}\small\item\em An event encodes a possible atomic change in the system state involving exactly one link. \end{DoxyCompactList}\item 
+struct \hyperlink{structtricl_1_1event__data}{event\+\_\+data}
+\begin{DoxyCompactList}\small\item\em For performance reasons, the mutable data of an \hyperlink{structtricl_1_1event}{event} is stored in a separate struct. \end{DoxyCompactList}\item 
+struct \hyperlink{structtricl_1_1event__type}{event\+\_\+type}
+\begin{DoxyCompactList}\small\item\em The type of an \hyperlink{structtricl_1_1event}{event} is given by an event class, two entity types and a relationship or action type. \end{DoxyCompactList}\item 
+struct \hyperlink{structtricl_1_1influence__type}{influence\+\_\+type}
+\begin{DoxyCompactList}\small\item\em Influence types are used to encode the main dynamical rules of a model. \end{DoxyCompactList}\item 
+struct \hyperlink{structtricl_1_1inleg}{inleg}
+\begin{DoxyCompactList}\small\item\em An inleg represents a leg \char`\"{}incoming\char`\"{} to a target entity. \end{DoxyCompactList}\item 
+struct \hyperlink{structtricl_1_1link}{link}
+\begin{DoxyCompactList}\small\item\em A link encodes either the existence of a certain relationship between two entities (or the cumulative impact of all past actions of a certain type between two entities -- not yet implemented). \end{DoxyCompactList}\item 
+struct \hyperlink{structtricl_1_1link__type}{link\+\_\+type}
+\begin{DoxyCompactList}\small\item\em The type of a \hyperlink{structtricl_1_1link}{link} is given by two entity types and a relationship or action type. \end{DoxyCompactList}\item 
+struct \hyperlink{structtricl_1_1outleg}{outleg}
+\begin{DoxyCompactList}\small\item\em An outleg represents a leg \char`\"{}outgoing\char`\"{} from a source entity. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Typedefs}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{namespacetricl_a720ff6a29f998e11e1d3622fc8df64b1}\label{namespacetricl_a720ff6a29f998e11e1d3622fc8df64b1}} 
+typedef double \hyperlink{namespacetricl_a720ff6a29f998e11e1d3622fc8df64b1}{timepoint}
+\begin{DoxyCompactList}\small\item\em A point in continuous model time, 0...inf. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{namespacetricl_af8f8f9076e92e1c664ffa96f18d038a5}\label{namespacetricl_af8f8f9076e92e1c664ffa96f18d038a5}} 
+typedef double \hyperlink{namespacetricl_af8f8f9076e92e1c664ffa96f18d038a5}{probunits}
+\begin{DoxyCompactList}\small\item\em -\/inf...inf, will be mapped to probabilities by means of the function probunits2probability() \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{namespacetricl_af2e8973ba58a3dad9061296d8bee16a2}\label{namespacetricl_af2e8973ba58a3dad9061296d8bee16a2}} 
+typedef double \hyperlink{namespacetricl_af2e8973ba58a3dad9061296d8bee16a2}{probability}
+\begin{DoxyCompactList}\small\item\em 0...1 \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{namespacetricl_ae42d2696f294300a43e0f5edf4875479}\label{namespacetricl_ae42d2696f294300a43e0f5edf4875479}} 
+typedef double \hyperlink{namespacetricl_ae42d2696f294300a43e0f5edf4875479}{rate}
+\begin{DoxyCompactList}\small\item\em Probability per time, 0...inf. (inf is used for things happening \char`\"{}immediately\char`\"{}) \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{namespacetricl_a77e7daffafa870e5786b344119da9b15}\label{namespacetricl_a77e7daffafa870e5786b344119da9b15}} 
+typedef string \hyperlink{namespacetricl_a77e7daffafa870e5786b344119da9b15}{label}
+\begin{DoxyCompactList}\small\item\em A label of something. \end{DoxyCompactList}\item 
+typedef int \hyperlink{namespacetricl_a57273122278e8b301844e2a2e1f0742f}{entity}
+\begin{DoxyCompactList}\small\item\em Entities are used to encode all physical and abstract objects of the modeled social dynamics that can stand in some form of relation to another or can perform some kinds of actions on or with another. \end{DoxyCompactList}\item 
+typedef short unsigned int \hyperlink{namespacetricl_afd4de3aedd5e48cf955f03457386e98f}{entity\+\_\+type}
+\begin{DoxyCompactList}\small\item\em Entity types are used to encode the different kinds of entities in a model. \end{DoxyCompactList}\item 
+typedef size\+\_\+t \hyperlink{namespacetricl_a2d01894944fb58a8fedc0912a48d13f8}{relationship\+\_\+or\+\_\+action\+\_\+type}
+\begin{DoxyCompactList}\small\item\em Relationship types are used to encode the kinds of relationships entities may stand in; action types are used to encode the kinds of actions entities may perform on or with another (not implemented yet); they are encoded in a common datatype and distinguished by means of the map rat\+\_\+is\+\_\+action\+\_\+type (not implemented yet). \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{namespacetricl_a703ed53fa2dba74d8f51ede5fd46038d}\label{namespacetricl_a703ed53fa2dba74d8f51ede5fd46038d}} 
+typedef set$<$ \hyperlink{structtricl_1_1inleg}{inleg} $>$ \hyperlink{namespacetricl_a703ed53fa2dba74d8f51ede5fd46038d}{inleg\+\_\+set}
+\begin{DoxyCompactList}\small\item\em used to store all incoming legs of an entity \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{namespacetricl_ac36fc4606da3d7f9ffd1764942fe5940}\label{namespacetricl_ac36fc4606da3d7f9ffd1764942fe5940}} 
+typedef set$<$ \hyperlink{structtricl_1_1outleg}{outleg} $>$ \hyperlink{namespacetricl_ac36fc4606da3d7f9ffd1764942fe5940}{outleg\+\_\+set}
+\begin{DoxyCompactList}\small\item\em used to store all outgoing legs of an entity \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{namespacetricl_a4ec9b46d6dae5a1d114387bca4029ce5}\label{namespacetricl_a4ec9b46d6dae5a1d114387bca4029ce5}} 
+typedef vector$<$ \hyperlink{structtricl_1_1angle}{angle} $>$ {\bfseries angles}
+\end{DoxyCompactItemize}
+\subsection*{Enumerations}
+\begin{DoxyCompactItemize}
+\item 
+enum \hyperlink{namespacetricl_a6967089e2c0837f273d8cb5fd9f7e46d}{event\+\_\+class} \{ \hyperlink{namespacetricl_a6967089e2c0837f273d8cb5fd9f7e46da928305067790de15396de8fcc92b72b9}{E\+C\+\_\+\+E\+ST}, 
+\hyperlink{namespacetricl_a6967089e2c0837f273d8cb5fd9f7e46da16f53be37a75a1cdfc726014c7f3810a}{E\+C\+\_\+\+T\+E\+RM}, 
+\hyperlink{namespacetricl_a6967089e2c0837f273d8cb5fd9f7e46dac508c68c92ee059322cb644dd330bbcf}{E\+C\+\_\+\+A\+CT}
+ \}\begin{DoxyCompactList}\small\item\em (don\textquotesingle{}t confuse with event\+\_\+type!) The event class encodes what kind of change to the system state an event represents. \end{DoxyCompactList}
+\end{DoxyCompactItemize}
+\subsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+unordered\+\_\+map$<$ \hyperlink{namespacetricl_a6967089e2c0837f273d8cb5fd9f7e46d}{event\+\_\+class}, string $>$ {\bfseries ec2label}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+We use our own namespace to avoid clashes with 3rdparty names, e.\+g. \char`\"{}link\char`\"{}. 
+
+\subsection{Typedef Documentation}
+\mbox{\Hypertarget{namespacetricl_a57273122278e8b301844e2a2e1f0742f}\label{namespacetricl_a57273122278e8b301844e2a2e1f0742f}} 
+\index{tricl@{tricl}!entity@{entity}}
+\index{entity@{entity}!tricl@{tricl}}
+\subsubsection{\texorpdfstring{entity}{entity}}
+{\footnotesize\ttfamily typedef int \hyperlink{namespacetricl_a57273122278e8b301844e2a2e1f0742f}{tricl\+::entity}}
+
+
+
+Entities are used to encode all physical and abstract objects of the modeled social dynamics that can stand in some form of relation to another or can perform some kinds of actions on or with another. 
+
+Actual entities have ids $>$= 1. In summary events, the datatype \char`\"{}entity\char`\"{} is also used to store entity types as negative numbers. \mbox{\Hypertarget{namespacetricl_afd4de3aedd5e48cf955f03457386e98f}\label{namespacetricl_afd4de3aedd5e48cf955f03457386e98f}} 
+\index{tricl@{tricl}!entity\+\_\+type@{entity\+\_\+type}}
+\index{entity\+\_\+type@{entity\+\_\+type}!tricl@{tricl}}
+\subsubsection{\texorpdfstring{entity\+\_\+type}{entity\_type}}
+{\footnotesize\ttfamily typedef short unsigned int \hyperlink{namespacetricl_afd4de3aedd5e48cf955f03457386e98f}{tricl\+::entity\+\_\+type}}
+
+
+
+Entity types are used to encode the different kinds of entities in a model. 
+
+Examples of entity type labels\+: \char`\"{}user\char`\"{}, \char`\"{}message\char`\"{}, \char`\"{}opinion\char`\"{}, \char`\"{}epidemic status\char`\"{}, \char`\"{}religious group\char`\"{}, \char`\"{}household\char`\"{}, \char`\"{}news channel\char`\"{}$>$=1 so that -\/entity\+\_\+type can be stored in entity fields \mbox{\Hypertarget{namespacetricl_a2d01894944fb58a8fedc0912a48d13f8}\label{namespacetricl_a2d01894944fb58a8fedc0912a48d13f8}} 
+\index{tricl@{tricl}!relationship\+\_\+or\+\_\+action\+\_\+type@{relationship\+\_\+or\+\_\+action\+\_\+type}}
+\index{relationship\+\_\+or\+\_\+action\+\_\+type@{relationship\+\_\+or\+\_\+action\+\_\+type}!tricl@{tricl}}
+\subsubsection{\texorpdfstring{relationship\+\_\+or\+\_\+action\+\_\+type}{relationship\_or\_action\_type}}
+{\footnotesize\ttfamily typedef size\+\_\+t \hyperlink{namespacetricl_a2d01894944fb58a8fedc0912a48d13f8}{tricl\+::relationship\+\_\+or\+\_\+action\+\_\+type}}
+
+
+
+Relationship types are used to encode the kinds of relationships entities may stand in; action types are used to encode the kinds of actions entities may perform on or with another (not implemented yet); they are encoded in a common datatype and distinguished by means of the map rat\+\_\+is\+\_\+action\+\_\+type (not implemented yet). 
+
+Both can either be symmetric (undirected) or nonsymmetric (directed).
+
+Examples of labels for symmetric relationship types\+: \char`\"{}is friends with\char`\"{}, \char`\"{}is inconsistent with\char`\"{}, \char`\"{}is a neighbour of\char`\"{}.
+
+Examples of labels for nonsymmetric relationship types\+: \char`\"{}follows\char`\"{}, \char`\"{}has read\char`\"{}, \char`\"{}is in status\char`\"{}, \char`\"{}belongs to\char`\"{}.
+
+Examples of labels for symmetric action types\+: \char`\"{}meets\char`\"{}, \char`\"{}talks to\char`\"{}.
+
+Examples of labels for nonsymmetric action types\+: \char`\"{}broadcasts\char`\"{}, \char`\"{}reads\char`\"{}.$>$= 1 
+
+\subsection{Enumeration Type Documentation}
+\mbox{\Hypertarget{namespacetricl_a6967089e2c0837f273d8cb5fd9f7e46d}\label{namespacetricl_a6967089e2c0837f273d8cb5fd9f7e46d}} 
+\index{tricl@{tricl}!event\+\_\+class@{event\+\_\+class}}
+\index{event\+\_\+class@{event\+\_\+class}!tricl@{tricl}}
+\subsubsection{\texorpdfstring{event\+\_\+class}{event\_class}}
+{\footnotesize\ttfamily enum \hyperlink{namespacetricl_a6967089e2c0837f273d8cb5fd9f7e46d}{tricl\+::event\+\_\+class}}
+
+
+
+(don\textquotesingle{}t confuse with event\+\_\+type!) The event class encodes what kind of change to the system state an \hyperlink{structtricl_1_1event}{event} represents. 
+
+\begin{DoxyEnumFields}{Enumerator}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{E\+C\+\_\+\+E\+ST@{E\+C\+\_\+\+E\+ST}!tricl@{tricl}}\index{tricl@{tricl}!E\+C\+\_\+\+E\+ST@{E\+C\+\_\+\+E\+ST}}}\mbox{\Hypertarget{namespacetricl_a6967089e2c0837f273d8cb5fd9f7e46da928305067790de15396de8fcc92b72b9}\label{namespacetricl_a6967089e2c0837f273d8cb5fd9f7e46da928305067790de15396de8fcc92b72b9}} 
+E\+C\+\_\+\+E\+ST&Establishment of a relationship. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{E\+C\+\_\+\+T\+E\+RM@{E\+C\+\_\+\+T\+E\+RM}!tricl@{tricl}}\index{tricl@{tricl}!E\+C\+\_\+\+T\+E\+RM@{E\+C\+\_\+\+T\+E\+RM}}}\mbox{\Hypertarget{namespacetricl_a6967089e2c0837f273d8cb5fd9f7e46da16f53be37a75a1cdfc726014c7f3810a}\label{namespacetricl_a6967089e2c0837f273d8cb5fd9f7e46da16f53be37a75a1cdfc726014c7f3810a}} 
+E\+C\+\_\+\+T\+E\+RM&Termination of a relationship. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{E\+C\+\_\+\+A\+CT@{E\+C\+\_\+\+A\+CT}!tricl@{tricl}}\index{tricl@{tricl}!E\+C\+\_\+\+A\+CT@{E\+C\+\_\+\+A\+CT}}}\mbox{\Hypertarget{namespacetricl_a6967089e2c0837f273d8cb5fd9f7e46dac508c68c92ee059322cb644dd330bbcf}\label{namespacetricl_a6967089e2c0837f273d8cb5fd9f7e46dac508c68c92ee059322cb644dd330bbcf}} 
+E\+C\+\_\+\+A\+CT&Occurrence of an action (not yet implemented) \\
+\hline
+
+\end{DoxyEnumFields}
+
+
+\subsection{Variable Documentation}
+\mbox{\Hypertarget{namespacetricl_a321f250312d2a16a422999a72fc8eb4e}\label{namespacetricl_a321f250312d2a16a422999a72fc8eb4e}} 
+\index{tricl@{tricl}!ec2label@{ec2label}}
+\index{ec2label@{ec2label}!tricl@{tricl}}
+\subsubsection{\texorpdfstring{ec2label}{ec2label}}
+{\footnotesize\ttfamily unordered\+\_\+map$<$ \hyperlink{namespacetricl_a6967089e2c0837f273d8cb5fd9f7e46d}{event\+\_\+class}, \hyperlink{namespacetricl_a77e7daffafa870e5786b344119da9b15}{label} $>$ tricl\+::ec2label}
+
+{\bfseries Initial value\+:}
+\begin{DoxyCode}
+= \{
+        \{ \hyperlink{namespacetricl_a6967089e2c0837f273d8cb5fd9f7e46da928305067790de15396de8fcc92b72b9}{EC\_EST}, \textcolor{stringliteral}{"establish that"} \},
+        \{ \hyperlink{namespacetricl_a6967089e2c0837f273d8cb5fd9f7e46da16f53be37a75a1cdfc726014c7f3810a}{EC\_TERM}, \textcolor{stringliteral}{"terminate that"} \},
+        \{ \hyperlink{namespacetricl_a6967089e2c0837f273d8cb5fd9f7e46dac508c68c92ee059322cb644dd330bbcf}{EC\_ACT}, \textcolor{stringliteral}{"let"} \}
+    \}
+\end{DoxyCode}
