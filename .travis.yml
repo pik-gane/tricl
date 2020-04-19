@@ -13,11 +13,12 @@ branches:
   - master
 
 before_install:
+  - pwd
+  - ls -l src/tricl.cpp
+  - cat src/tricl.cpp
   - sudo apt-get -y install doxygen doxygen-doc doxygen-gui graphviz
   - |-
     if [[ "$TRAVIS_BRANCH" = "master" && -n "$TRAVIS_BUILD_DOCS" && "$TRAVIS_PULL_REQUEST" = "false" ]] ; then
-      pwd
-      ls
       source .ci/setup-ssh.sh
       echo "setup ssh done"
       source .ci/generateDocumentation.sh
