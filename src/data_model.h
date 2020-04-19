@@ -339,10 +339,18 @@ struct angle_type
 
 typedef vector<angle> angles;
 
+/** Influence types are used to encode the main dynamical rules of a model.
+ *
+ *  The attempt rates and success probability units of an event can be influenced by
+ *  adjacent angles and legs (not yet implemented), and the amount of influence
+ *  is a parameter that depends on the respective entity and relationship or action types.
+ *
+ *  These parameters are stored in maps that use the influence_type as key.
+ */
 struct influence_type
 {
-    const event_type evt;
-    const angle_type at;
+    const event_type evt;  ///< The type of event influenced by this type of influence
+    const angle_type at;   ///< The type of angle (or leg via NO_RAT) influencing that type of event
 
     friend bool operator== (const influence_type& left, const influence_type& right) {
         return (left.evt == right.evt
@@ -350,10 +358,8 @@ struct influence_type
     }
 };
 
+} // end of namespace tricl
 
-
-
-} // namespace tricl
 
 using namespace tricl;
 
