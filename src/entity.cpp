@@ -38,8 +38,8 @@ entity add_entity (
     label2e[elabel] = e;
 
     // register identity relation:
-    e2outs[e] = { { .rat_out = RT_ID, .e_other = e } };
-    e2ins[e] = { { .e_other = e, .rat_in = RT_ID } };
+    e2outs[e] = { { .rat_out = RT_ID, .e_target = e } };
+    e2ins[e] = { { .e_source = e, .rat_in = RT_ID } };
 
     return e;
 }

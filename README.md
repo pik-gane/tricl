@@ -227,7 +227,7 @@ Change log
 ----------
 
 2020-04-18
-- automatically generate code documentation and publish it to <https://mensch72.github.io/tricl/html/index.html>
+- automatically generate code documentation and publish it to <https://mensch72.github.io/tricl/html/index.html> following this tutorial: <https://gist.github.com/francesco-romano/351a6ae457860c14ee7e907f2b0fc1a5>
 
 2020-04-17
 - metaparameters can now be overwritten on the command line

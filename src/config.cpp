@@ -50,6 +50,7 @@ unordered_map<link_type, probability> lt2initial_prob_within = {};
 unordered_map<link_type, probability> lt2initial_prob_between = {};
 unordered_map<entity_type, int> et2dim = {};
 unordered_map<link_type, probability> lt2spatial_decay = {};
+unordered_map<event_type, rate> evt2base_attempt_rate = {};
 unordered_map<influence_type, rate> inflt2attempt_rate = {};
 unordered_map<event_type, double> evt2left_tail = {}, evt2right_tail = {};
 unordered_map<event_type, probunits> evt2base_probunits = {};
@@ -496,7 +497,7 @@ void read_config (int argc, char *argv[])
                         evt2base_probunits[evt] = 0.0;
                         if (!n3.IsMap()) {
                             if (!n3.IsScalar()) throw "yaml field 'attempt' within 'dynamics' must be a scalar (base attempt rate) or a map";
-                            inflt2attempt_rate[{ evt, NO_ANGLE }] = parse_double(n3.as<string>());
+                            evt2base_attempt_rate[evt] = parse_double(n3.as<string>());
                         } else {
                             for (YAML::const_iterator it3 = n3.begin(); it3 != n3.end(); ++it3) {
                                 auto cause = it3->first;
@@ -533,7 +534,7 @@ void read_config (int argc, char *argv[])
                                 } else { // basic
                                     if ((cause.as<string>() != "basic") && (cause.as<string>() != "base")) throw
                                             "keys in map 'attempt' can be 'basic', [~, rel./act.type, ent.type, rel./act.type, ~], [~, rel./act.type, ent.type], or [ent.type, rel./act.type, ~]";
-                                    inflt2attempt_rate[{ evt, NO_ANGLE }] = ar;
+                                    evt2base_attempt_rate[evt] = ar;
                                 }
                             }
                         }
@@ -605,7 +606,7 @@ void read_config (int argc, char *argv[])
                         evt2base_probunits[evt] = 0.0;
                         if (!n3.IsMap()) {
                             if (!n3.IsScalar()) throw "yaml field 'attempt' within 'dynamics' must be a scalar (base attempt rate) or a map";
-                            inflt2attempt_rate[{ evt, NO_ANGLE }] = parse_double(n3.as<string>());
+                            evt2base_attempt_rate[evt] = parse_double(n3.as<string>());
                         } else {
                             for (YAML::const_iterator it3 = n3.begin(); it3 != n3.end(); ++it3) {
                                 auto cause = it3->first;
@@ -642,7 +643,7 @@ void read_config (int argc, char *argv[])
                                 } else { // basic
                                     if ((cause.as<string>() != "basic") && (cause.as<string>() != "base")) throw
                                             "keys in map 'attempt' can be 'basic'/'base', [~, rel./act.type, ent.type, rel./act.type, ~], [~, rel./act.type, ent.type], or [ent.type, rel./act.type, ~]";
-                                    inflt2attempt_rate[{ evt, NO_ANGLE }] = ar;
+                                    evt2base_attempt_rate[evt] = ar;
                                 }
                             }
                         }

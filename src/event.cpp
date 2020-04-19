@@ -104,7 +104,7 @@ void add_event (event& ev)
 
         if (debug) cout << "     adding event: " << ev << endl;
         // find and store attempt rate and success probunit by looping through adjacent legs and angles:
-        rate ar = inflt2attempt_rate[{evt, NO_ANGLE}];
+        rate ar = evt2base_attempt_rate[evt];
         auto spu = evt2base_probunits[evt];
         auto outs1 = e2outs[e1];
         auto ins3 = e2ins[e3];
@@ -151,10 +151,6 @@ void add_event (event& ev)
         // only add a non-termination event individually if at least one angle existed
         // (pure spontaneous non-termination events are handled summarily via summary events to keep maps sparse):
         if ((ec == EC_TERM) || (na > 0)) {
-            // add spontaneous event probs.:
-            influence_type inflt = { .evt = evt, .at = NO_ANGLE };
-            ar += _inflt2attempt_rate[INFLT(inflt)];
-            spu += _inflt2delta_probunit[INFLT(inflt)];
             assert (ev2data.count(ev) == 0);
             ev2data[ev] = { .n_angles = na, .attempt_rate = max(0.0, ar), .success_probunits = spu, .t = -INFINITY };
             if (debug) cout << "      attempt rate " << ar << ", success prob. " << probunits2probability(spu, evt2left_tail.at(evt), evt2right_tail.at(evt)) << endl;
@@ -200,7 +196,7 @@ void update_adjacent_events (event& ev)
     et1 = e2et[e1]; et2 = e2et[e2];
     auto outlegs = e2outs[eb]; // rat23, e3
     for (auto& l : outlegs) {
-        rat23 = l.rat_out; e3 = l.e_other; et3 = e2et[e3];
+        rat23 = l.rat_out; e3 = l.e_target; et3 = e2et[e3];
         if (e1 != e3) { // since we allow no self-links except identity
             add_or_delete_angle(ec_ab, e1, et1, rat12, e2, et2, rat23, e3, et3);
         }
@@ -211,7 +207,7 @@ void update_adjacent_events (event& ev)
     e2 = ea; rat23 = rab; e3 = eb;
     et2 = e2et[e2]; et3 = e2et[e3];
     for (auto& l : inlegs) {
-        e1 = l.e_other; rat12 = l.rat_in; et1 = e2et[e1];
+        e1 = l.e_source; rat12 = l.rat_in; et1 = e2et[e1];
         if (e1 != e3) { // since we allow no self-links except identity
             add_or_delete_angle(ec_ab, e1, et1, rat12, e2, et2, rat23, e3, et3);
         }

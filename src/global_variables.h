@@ -50,6 +50,7 @@ extern unordered_map<link_type, probability> lt2spatial_decay;
 
 // dynamic parameters:
 
+extern unordered_map<event_type, rate> evt2base_attempt_rate; // basic attempt rate
 extern unordered_map<influence_type, rate> inflt2attempt_rate; // note that legs may only attempt removals, not additions!
 extern unordered_map<event_type, double> evt2left_tail, evt2right_tail; // tail indices for sigmoid function transforming probunits into probabilities
 extern unordered_map<event_type, probunits> evt2base_probunits; // basic success probability unit

@@ -60,7 +60,7 @@ void init_data ()
     }
     // store actual values:
     for (auto& [inflt, ar] : inflt2attempt_rate) {
-        assert (!( inflt.evt.ec == EC_EST && ( inflt.at.rat12 == NO_RAT || inflt.at.rat23 == NO_RAT ) && !(inflt.at == NO_ANGLE)));
+        assert (!( inflt.evt.ec == EC_EST && ( inflt.at.rat12 == NO_RAT || inflt.at.rat23 == NO_RAT ) ));
         _inflt2attempt_rate[INFLT(inflt)] = ar;
     }
     for (auto& [inflt, spu] : inflt2delta_probunits) {
@@ -170,8 +170,7 @@ void init_summary_events ()
                     .rat13 = rat13,
                     .e3 = (entity)-et3 };
             event_type evt = { .ec = EC_EST, .et1 = et1, .rat13 = rat13, .et3 = et3 };
-            influence_type inflt = { .evt = evt, .at = NO_ANGLE };
-            auto ar = _inflt2attempt_rate[INFLT(inflt)];
+            auto ar = evt2base_attempt_rate[evt];
             if (ar > 0) {
                 // compile maximal success units. if no influences can increase the success units,
                 // this equals the base_probunits, otherwise it is infinite:
@@ -186,7 +185,7 @@ void init_summary_events ()
                 if (verbose) cout << "  " << et2label[et1] << " " << rat2label[rat13] << " " << et2label[et3] << endl;
                 ev2data[summary_ev] = { .n_angles = 0,
                         .attempt_rate = ar * et2n[et1] * et2n[et3],
-                        .success_probunits = evt2base_probunits[evt] + _inflt2delta_probunit[INFLT(inflt)] };
+                        .success_probunits = evt2base_probunits[evt] };
                 schedule_event(summary_ev, &ev2data[summary_ev], evt2left_tail.at(evt), evt2right_tail.at(evt));
             }
         }

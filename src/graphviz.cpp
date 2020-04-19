@@ -72,7 +72,7 @@ void do_graphviz_dynamics_diagram ()
             dot << "   " << v3 << " [label=\"" << et2label.at(et3) << "\"style=filled; color=lightgrey]" << endl;
             // in dynamics diagrams, also symmetric links have an arrow head:
             dot << "   " << v1 << " -> " << v3 << " [label=\"" << rat13l << "\\n";
-            auto ar = (inflt2attempt_rate.count({evt, NO_ANGLE}) > 0) ? inflt2attempt_rate.at({evt, NO_ANGLE}) : 0.0,
+            auto ar = (evt2base_attempt_rate.count(evt) > 0) ? evt2base_attempt_rate.at(evt) : 0.0,
                     spu = evt2base_probunits.at(evt),
                     til = evt2left_tail.at(evt), tir = evt2right_tail.at(evt);
             if (ar > 0.0) dot << "AR +" << ar << ", ";
@@ -81,7 +81,7 @@ void do_graphviz_dynamics_diagram ()
             if (spu != 0.0) dot << ", SPU " << ((spu > 0.0) ? "+" : "") << spu;
             dot << "\"; style=bold]" << endl;
             for (auto& [inflt, ar] : inflt2attempt_rate) {
-                if ((inflt.evt == evt) && (!(inflt.at == NO_ANGLE))) {
+                if (inflt.evt == evt) {
                     auto rat12 = inflt.at.rat12, rat23 = inflt.at.rat23;
                     auto et2 = inflt.at.et2;
                     string v2 = subsub + "_" + to_string(rat12) + "_" + to_string(et2) + "_" + to_string(rat23);

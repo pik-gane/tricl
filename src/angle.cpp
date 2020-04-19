@@ -29,7 +29,7 @@ void add_or_delete_angle (
     // update total n_angles:
     n_angles += ((e1 == e2) || (e2 == e3) || (e3 == e1)) ? 0 : (ec_angle == EC_EST) ? 1 : -1;
     for (auto& rat13 : ets2relations[{ et1, et3 }]) {
-        event_class ec13 = (e2outs[e1].count({ .rat_out = rat13, .e_other = e3 }) == 0) ? EC_EST : EC_TERM;
+        event_class ec13 = (e2outs[e1].count({ .rat_out = rat13, .e_target = e3 }) == 0) ? EC_EST : EC_TERM;
         event_type evt = { .ec = ec13, .et1 = et1, .rat13 = rat13, .et3 = et3 };
         if (debug) cout << "     possibly updating event: " << ec2label[ec13] <<  " \"" << e2label[e1] << " " << rat2label[rat13] << " " << e2label[e3] << "\"" << endl;
         if (evt2base_probunits.count(evt) > 0) {
@@ -50,7 +50,7 @@ void add_or_delete_angle (
                         if (debug) cout << "        event will be scheduled newly" << endl;
                         auto evd_ = &ev2data[ev];  // generates a new event_data object
                         evd_->n_angles = 1;
-                        evd_->attempt_rate = inflt2attempt_rate[{evt, NO_ANGLE}] + dar;
+                        evd_->attempt_rate = evt2base_attempt_rate.at(evt) + dar;
                         evd_->success_probunits = evt2base_probunits.at(evt) + dspu;
                         schedule_event(ev, evd_, evt2left_tail.at(evt), evt2right_tail.at(evt));
                     } else {
@@ -109,7 +109,7 @@ angles leg_intersection (entity e1, outleg_set& out1, inleg_set& in3, entity e3)
    */
   auto out1end = out1.end(), blockstart = out1end;
   auto in3end = in3.end();
-  entity last_e2 = out1_it->e_other;
+  entity last_e2 = out1_it->e_target;
   while (in3_it != in3end)
   {
       if (out1_it == out1end) {
@@ -120,22 +120,22 @@ angles leg_intersection (entity e1, outleg_set& out1, inleg_set& in3, entity e3)
               if (in3_it == in3end) {
                   break;
               }
-              if (in3_it->e_other == last_e2) {
+              if (in3_it->e_source == last_e2) {
                   out1_it = blockstart;
               } else {
                   break;
               }
           }
       }
-      if (debug) cout << "         checking: " << rat2label[out1_it->rat_out] << " " << e2label[out1_it->e_other] << ", "
-              << e2label[in3_it->e_other] << " " << rat2label[in3_it->rat_in] << endl;
-      if (out1_it->e_other < in3_it->e_other) {
+      if (debug) cout << "         checking: " << rat2label[out1_it->rat_out] << " " << e2label[out1_it->e_target] << ", "
+              << e2label[in3_it->e_source] << " " << rat2label[in3_it->rat_in] << endl;
+      if (out1_it->e_target < in3_it->e_source) {
           ++out1_it;
-      } else if (in3_it->e_other < out1_it->e_other) {
+      } else if (in3_it->e_source < out1_it->e_target) {
           ++in3_it;
           if (in3_it == in3end) break;
           if (blockstart != out1end) {
-              if (in3_it->e_other == last_e2) {
+              if (in3_it->e_source == last_e2) {
                   out1_it = blockstart;
               } else {
                   blockstart = out1end;
@@ -145,7 +145,7 @@ angles leg_intersection (entity e1, outleg_set& out1, inleg_set& in3, entity e3)
           if (blockstart == out1end) {
               blockstart = out1_it;
           }
-          last_e2 = out1_it->e_other;
+          last_e2 = out1_it->e_target;
           *result_it = { .rat12 = out1_it->rat_out, .e2 = last_e2, .rat23 = in3_it->rat_in };
           if (debug) cout << "      angle: " << e2label[e1] << " " << rat2label[result_it->rat12] << " "
                   << e2label[last_e2] << " " << rat2label[result_it->rat23] << " " << e2label[e3] << endl;
