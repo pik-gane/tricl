@@ -339,7 +339,6 @@ struct angle_type
 
 typedef vector<angle> angles;
 
-
 struct influence_type
 {
     const event_type evt;
