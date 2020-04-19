@@ -100,12 +100,21 @@ Macros</h2></td></tr>
 <tr class="memitem:a04e254fb2bac4b90010f68d6d716f448"><td class="memItemLeft" align="right" valign="top"><a id="a04e254fb2bac4b90010f68d6d716f448"></a>
 #define&#160;</td><td class="memItemRight" valign="bottom"><b>TAIL_DEFAULT</b>&#160;&#160;&#160;1.0</td></tr>
 <tr class="separator:a04e254fb2bac4b90010f68d6d716f448"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae50193c6f71bb6c5c86c3e6dab750453"><td class="memItemLeft" align="right" valign="top"><a id="ae50193c6f71bb6c5c86c3e6dab750453"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><b>MAX_N_TE_VARS</b>&#160;&#160;&#160;1000</td></tr>
+<tr class="separator:ae50193c6f71bb6c5c86c3e6dab750453"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
 <tr class="memitem:a8d213a94ae2aae7f1eb19534b3772176"><td class="memItemLeft" align="right" valign="top"><a id="a8d213a94ae2aae7f1eb19534b3772176"></a>
 double&#160;</td><td class="memItemRight" valign="bottom"><b>parse_double</b> (string expr)</td></tr>
 <tr class="separator:a8d213a94ae2aae7f1eb19534b3772176"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a09530a0ed754f4b8312bc5a3207f2e92"><td class="memItemLeft" align="right" valign="top"><a id="a09530a0ed754f4b8312bc5a3207f2e92"></a>
+double&#160;</td><td class="memItemRight" valign="bottom"><b>parse_int</b> (string expr)</td></tr>
+<tr class="separator:a09530a0ed754f4b8312bc5a3207f2e92"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afa78811d5ff5957c7f880ffd966d5e55"><td class="memItemLeft" align="right" valign="top"><a id="afa78811d5ff5957c7f880ffd966d5e55"></a>
+double&#160;</td><td class="memItemRight" valign="bottom"><b>register_te_var</b> (string symbol, string expr)</td></tr>
+<tr class="separator:afa78811d5ff5957c7f880ffd966d5e55"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac5594ed0754d45494f17470961e83309"><td class="memItemLeft" align="right" valign="top"><a id="ac5594ed0754d45494f17470961e83309"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>read_entity_labels</b> (YAML::Node n, entity_type et)</td></tr>
 <tr class="separator:ac5594ed0754d45494f17470961e83309"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -241,30 +250,25 @@ unordered_map&lt; relationship_or_action_type, int &gt;&#160;</td><td class="mem
 <tr class="memitem:aca8167edc3c91cb84c829dd88f75c7b4"><td class="memItemLeft" align="right" valign="top"><a id="aca8167edc3c91cb84c829dd88f75c7b4"></a>
 entity&#160;</td><td class="memItemRight" valign="bottom"><b>max_e</b> = 0</td></tr>
 <tr class="separator:aca8167edc3c91cb84c829dd88f75c7b4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af015959ca4303b9da57a07f72c16c9dc"><td class="memItemLeft" align="right" valign="top">te_variable&#160;</td><td class="memItemRight" valign="bottom"><b>te_vars</b> []</td></tr>
-<tr class="separator:af015959ca4303b9da57a07f72c16c9dc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a853f5823f91d99b634d7a3434921c20c"><td class="memItemLeft" align="right" valign="top"><a id="a853f5823f91d99b634d7a3434921c20c"></a>
+string&#160;</td><td class="memItemRight" valign="bottom"><b>te_syms</b> [MAX_N_TE_VARS]</td></tr>
+<tr class="separator:a853f5823f91d99b634d7a3434921c20c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acb4b7705c8e360727dfa01ff42e62452"><td class="memItemLeft" align="right" valign="top"><a id="acb4b7705c8e360727dfa01ff42e62452"></a>
+double&#160;</td><td class="memItemRight" valign="bottom"><b>te_vals</b> [MAX_N_TE_VARS]</td></tr>
+<tr class="separator:acb4b7705c8e360727dfa01ff42e62452"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6026452263ac774db5ae6023ebbaf725"><td class="memItemLeft" align="right" valign="top"><a id="a6026452263ac774db5ae6023ebbaf725"></a>
+te_variable&#160;</td><td class="memItemRight" valign="bottom"><b>te_vars</b> [MAX_N_TE_VARS]</td></tr>
+<tr class="separator:a6026452263ac774db5ae6023ebbaf725"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8150fa321e434d12c9ac3559641ee3b7"><td class="memItemLeft" align="right" valign="top"><a id="a8150fa321e434d12c9ac3559641ee3b7"></a>
+int&#160;</td><td class="memItemRight" valign="bottom"><b>n_te_vars</b> = 0</td></tr>
+<tr class="separator:a8150fa321e434d12c9ac3559641ee3b7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Handling of configuration files. </p>
 <p>Configuration files are in YAML. See config_files/parameters_TEMPLATE.yaml for an example</p>
 <dl class="section author"><dt>Author</dt><dd>Jobst Heitzig, Potsdam Institute for Climate Impact Research, <a href="#" onclick="location.href='mai'+'lto:'+'hei'+'tz'+'ig@'+'pi'+'k-p'+'ot'+'sda'+'m.'+'de'; return false;">heitz<span style="display: none;">.nosp@m.</span>ig@p<span style="display: none;">.nosp@m.</span>ik-po<span style="display: none;">.nosp@m.</span>tsda<span style="display: none;">.nosp@m.</span>m.de</a> </dd></dl>
 <dl class="section date"><dt>Date</dt><dd>Mar 30, 2020 </dd></dl>
-</div><h2 class="groupheader">Variable Documentation</h2>
-<a id="af015959ca4303b9da57a07f72c16c9dc"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af015959ca4303b9da57a07f72c16c9dc">&#9670;&nbsp;</a></span>te_vars</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">te_variable te_vars[]</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<b>Initial value:</b><div class="fragment"><div class="line">= {</div><div class="line">    {<span class="stringliteral">&quot;inf&quot;</span>, (<span class="keyword">const</span> <span class="keywordtype">void</span>*)myinf, TE_FUNCTION0}</div><div class="line">}</div></div><!-- fragment -->
-</div>
-</div>
-</div><!-- contents -->
+</div></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
 Generated by &#160;<a href="http://www.doxygen.org/index.html">

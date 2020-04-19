@@ -27,12 +27,21 @@ Include dependency graph for config.\+cpp\+:
 \item 
 \mbox{\Hypertarget{config_8cpp_a04e254fb2bac4b90010f68d6d716f448}\label{config_8cpp_a04e254fb2bac4b90010f68d6d716f448}} 
 \#define {\bfseries T\+A\+I\+L\+\_\+\+D\+E\+F\+A\+U\+LT}~1.\+0
+\item 
+\mbox{\Hypertarget{config_8cpp_ae50193c6f71bb6c5c86c3e6dab750453}\label{config_8cpp_ae50193c6f71bb6c5c86c3e6dab750453}} 
+\#define {\bfseries M\+A\+X\+\_\+\+N\+\_\+\+T\+E\+\_\+\+V\+A\+RS}~1000
 \end{DoxyCompactItemize}
 \subsection*{Functions}
 \begin{DoxyCompactItemize}
 \item 
 \mbox{\Hypertarget{config_8cpp_a8d213a94ae2aae7f1eb19534b3772176}\label{config_8cpp_a8d213a94ae2aae7f1eb19534b3772176}} 
 double {\bfseries parse\+\_\+double} (string expr)
+\item 
+\mbox{\Hypertarget{config_8cpp_a09530a0ed754f4b8312bc5a3207f2e92}\label{config_8cpp_a09530a0ed754f4b8312bc5a3207f2e92}} 
+double {\bfseries parse\+\_\+int} (string expr)
+\item 
+\mbox{\Hypertarget{config_8cpp_afa78811d5ff5957c7f880ffd966d5e55}\label{config_8cpp_afa78811d5ff5957c7f880ffd966d5e55}} 
+double {\bfseries register\+\_\+te\+\_\+var} (string symbol, string expr)
 \item 
 \mbox{\Hypertarget{config_8cpp_ac5594ed0754d45494f17470961e83309}\label{config_8cpp_ac5594ed0754d45494f17470961e83309}} 
 void {\bfseries read\+\_\+entity\+\_\+labels} (Y\+A\+M\+L\+::\+Node n, entity\+\_\+type et)
@@ -169,7 +178,17 @@ unordered\+\_\+map$<$ relationship\+\_\+or\+\_\+action\+\_\+type, int $>$ {\bfse
 \mbox{\Hypertarget{config_8cpp_aca8167edc3c91cb84c829dd88f75c7b4}\label{config_8cpp_aca8167edc3c91cb84c829dd88f75c7b4}} 
 entity {\bfseries max\+\_\+e} = 0
 \item 
-te\+\_\+variable {\bfseries te\+\_\+vars} \mbox{[}$\,$\mbox{]}
+\mbox{\Hypertarget{config_8cpp_a853f5823f91d99b634d7a3434921c20c}\label{config_8cpp_a853f5823f91d99b634d7a3434921c20c}} 
+string {\bfseries te\+\_\+syms} \mbox{[}M\+A\+X\+\_\+\+N\+\_\+\+T\+E\+\_\+\+V\+A\+RS\mbox{]}
+\item 
+\mbox{\Hypertarget{config_8cpp_acb4b7705c8e360727dfa01ff42e62452}\label{config_8cpp_acb4b7705c8e360727dfa01ff42e62452}} 
+double {\bfseries te\+\_\+vals} \mbox{[}M\+A\+X\+\_\+\+N\+\_\+\+T\+E\+\_\+\+V\+A\+RS\mbox{]}
+\item 
+\mbox{\Hypertarget{config_8cpp_a6026452263ac774db5ae6023ebbaf725}\label{config_8cpp_a6026452263ac774db5ae6023ebbaf725}} 
+te\+\_\+variable {\bfseries te\+\_\+vars} \mbox{[}M\+A\+X\+\_\+\+N\+\_\+\+T\+E\+\_\+\+V\+A\+RS\mbox{]}
+\item 
+\mbox{\Hypertarget{config_8cpp_a8150fa321e434d12c9ac3559641ee3b7}\label{config_8cpp_a8150fa321e434d12c9ac3559641ee3b7}} 
+int {\bfseries n\+\_\+te\+\_\+vars} = 0
 \end{DoxyCompactItemize}
 
 
@@ -184,18 +203,3 @@ Jobst Heitzig, Potsdam Institute for Climate Impact Research, \href{mailto:heitz
 \begin{DoxyDate}{Date}
 Mar 30, 2020 
 \end{DoxyDate}
-
-
-\subsection{Variable Documentation}
-\mbox{\Hypertarget{config_8cpp_af015959ca4303b9da57a07f72c16c9dc}\label{config_8cpp_af015959ca4303b9da57a07f72c16c9dc}} 
-\index{config.\+cpp@{config.\+cpp}!te\+\_\+vars@{te\+\_\+vars}}
-\index{te\+\_\+vars@{te\+\_\+vars}!config.\+cpp@{config.\+cpp}}
-\subsubsection{\texorpdfstring{te\+\_\+vars}{te\_vars}}
-{\footnotesize\ttfamily te\+\_\+variable te\+\_\+vars\mbox{[}$\,$\mbox{]}}
-
-{\bfseries Initial value\+:}
-\begin{DoxyCode}
-= \{
-    \{\textcolor{stringliteral}{"inf"}, (\textcolor{keyword}{const} \textcolor{keywordtype}{void}*)myinf, TE\_FUNCTION0\}
-\}
-\end{DoxyCode}
