@@ -10,7 +10,6 @@ Handling of configuration files.
 {\ttfamily \#include $<$iostream$>$}\newline
 {\ttfamily \#include \char`\"{}yaml-\/cpp/yaml.\+h\char`\"{}}\newline
 {\ttfamily \#include \char`\"{}3rdparty/tinyexpr.\+h\char`\"{}}\newline
-{\ttfamily \#include \char`\"{}data\+\_\+model.\+h\char`\"{}}\newline
 {\ttfamily \#include \char`\"{}global\+\_\+variables.\+h\char`\"{}}\newline
 {\ttfamily \#include \char`\"{}entity.\+h\char`\"{}}\newline
 {\ttfamily \#include \char`\"{}io.\+h\char`\"{}}\newline
@@ -52,11 +51,14 @@ void {\bfseries read\+\_\+config} ()
 \subsection*{Variables}
 \begin{DoxyCompactItemize}
 \item 
-\mbox{\Hypertarget{config_8cpp_a0b60e3ce1fbd529d7fb44c1a3b6f2d5a}\label{config_8cpp_a0b60e3ce1fbd529d7fb44c1a3b6f2d5a}} 
-string {\bfseries gexf\+\_\+filename} = \char`\"{}\char`\"{}
+\mbox{\Hypertarget{config_8cpp_a113f3c013371a7bc91273d8821d8710d}\label{config_8cpp_a113f3c013371a7bc91273d8821d8710d}} 
+unordered\+\_\+map$<$ relationship\+\_\+or\+\_\+action\+\_\+type, string $>$ {\bfseries gexf\+\_\+filename} = \{\}
 \item 
 \mbox{\Hypertarget{config_8cpp_af960657d113135c47b4e0ed4536930c0}\label{config_8cpp_af960657d113135c47b4e0ed4536930c0}} 
 string {\bfseries diagram\+\_\+fileprefix} = \char`\"{}\char`\"{}
+\item 
+\mbox{\Hypertarget{config_8cpp_a8f79554f6ab9b5b2d22ffbc45200a417}\label{config_8cpp_a8f79554f6ab9b5b2d22ffbc45200a417}} 
+string {\bfseries gexf\+\_\+default\+\_\+filename} = \char`\"{}\char`\"{}
 \item 
 \mbox{\Hypertarget{config_8cpp_ab3f078684998b83967d507d0f453f454}\label{config_8cpp_ab3f078684998b83967d507d0f453f454}} 
 bool {\bfseries verbose} = false
@@ -68,7 +70,7 @@ bool {\bfseries quiet} = false
 bool {\bfseries debug} = false
 \item 
 \mbox{\Hypertarget{config_8cpp_a61e4a08c5309d5cd9538ce9654bdb9e9}\label{config_8cpp_a61e4a08c5309d5cd9538ce9654bdb9e9}} 
-timepoint {\bfseries max\+\_\+t} = I\+N\+F\+I\+N\+I\+TY
+timepoint {\bfseries max\+\_\+t} = 0.\+0
 \item 
 \mbox{\Hypertarget{config_8cpp_a921a3c48e5eda75a9944e3d8fdecc826}\label{config_8cpp_a921a3c48e5eda75a9944e3d8fdecc826}} 
 long int {\bfseries max\+\_\+n\+\_\+events} = L\+O\+N\+G\+\_\+\+M\+AX
@@ -107,37 +109,37 @@ unordered\+\_\+map$<$ entity, label $>$ {\bfseries e2label} = \{\}
 unordered\+\_\+map$<$ string, entity $>$ {\bfseries label2e} = \{\}
 \item 
 \mbox{\Hypertarget{config_8cpp_afe42a9a97fc8e959183c94fc333f2331}\label{config_8cpp_afe42a9a97fc8e959183c94fc333f2331}} 
-set$<$ \hyperlink{structlink}{link} $>$ {\bfseries initial\+\_\+links} = \{\}
+set$<$ \hyperlink{structtricl_1_1link}{link} $>$ {\bfseries initial\+\_\+links} = \{\}
 \item 
 \mbox{\Hypertarget{config_8cpp_ac3d91d4eef87cfaf1371a698513533ba}\label{config_8cpp_ac3d91d4eef87cfaf1371a698513533ba}} 
 unordered\+\_\+map$<$ entity\+\_\+type, int $>$ {\bfseries et2n\+\_\+blocks} = \{\}
 \item 
 \mbox{\Hypertarget{config_8cpp_a1cf9b4c5338052d0ac84135ecefc7d39}\label{config_8cpp_a1cf9b4c5338052d0ac84135ecefc7d39}} 
-unordered\+\_\+map$<$ \hyperlink{structlink__type}{link\+\_\+type}, probability $>$ {\bfseries lt2initial\+\_\+prob\+\_\+within} = \{\}
+unordered\+\_\+map$<$ \hyperlink{structtricl_1_1link__type}{link\+\_\+type}, probability $>$ {\bfseries lt2initial\+\_\+prob\+\_\+within} = \{\}
 \item 
 \mbox{\Hypertarget{config_8cpp_aa892b7f705910915c42a59b564850a4a}\label{config_8cpp_aa892b7f705910915c42a59b564850a4a}} 
-unordered\+\_\+map$<$ \hyperlink{structlink__type}{link\+\_\+type}, probability $>$ {\bfseries lt2initial\+\_\+prob\+\_\+between} = \{\}
+unordered\+\_\+map$<$ \hyperlink{structtricl_1_1link__type}{link\+\_\+type}, probability $>$ {\bfseries lt2initial\+\_\+prob\+\_\+between} = \{\}
 \item 
 \mbox{\Hypertarget{config_8cpp_a5022e1a1414fd07a51e1e3e6f08ab064}\label{config_8cpp_a5022e1a1414fd07a51e1e3e6f08ab064}} 
 unordered\+\_\+map$<$ entity\+\_\+type, int $>$ {\bfseries et2dim} = \{\}
 \item 
 \mbox{\Hypertarget{config_8cpp_ac075689bc4d37b273487fa22e5099b32}\label{config_8cpp_ac075689bc4d37b273487fa22e5099b32}} 
-unordered\+\_\+map$<$ \hyperlink{structlink__type}{link\+\_\+type}, probability $>$ {\bfseries lt2spatial\+\_\+decay} = \{\}
+unordered\+\_\+map$<$ \hyperlink{structtricl_1_1link__type}{link\+\_\+type}, probability $>$ {\bfseries lt2spatial\+\_\+decay} = \{\}
 \item 
 \mbox{\Hypertarget{config_8cpp_aa37926f8d74a0c74e47def544c4f872e}\label{config_8cpp_aa37926f8d74a0c74e47def544c4f872e}} 
-unordered\+\_\+map$<$ \hyperlink{structinfluence__type}{influence\+\_\+type}, rate $>$ {\bfseries inflt2attempt\+\_\+rate} = \{\}
+unordered\+\_\+map$<$ \hyperlink{structtricl_1_1influence__type}{influence\+\_\+type}, rate $>$ {\bfseries inflt2attempt\+\_\+rate} = \{\}
 \item 
 \mbox{\Hypertarget{config_8cpp_ae7b89a8070b4de9d132b167704229c70}\label{config_8cpp_ae7b89a8070b4de9d132b167704229c70}} 
-unordered\+\_\+map$<$ \hyperlink{structevent__type}{event\+\_\+type}, double $>$ {\bfseries evt2left\+\_\+tail} = \{\}
+unordered\+\_\+map$<$ \hyperlink{structtricl_1_1event__type}{event\+\_\+type}, double $>$ {\bfseries evt2left\+\_\+tail} = \{\}
 \item 
 \mbox{\Hypertarget{config_8cpp_a6a65e62a5f8173784beb092165af2528}\label{config_8cpp_a6a65e62a5f8173784beb092165af2528}} 
-unordered\+\_\+map$<$ \hyperlink{structevent__type}{event\+\_\+type}, double $>$ {\bfseries evt2right\+\_\+tail} = \{\}
+unordered\+\_\+map$<$ \hyperlink{structtricl_1_1event__type}{event\+\_\+type}, double $>$ {\bfseries evt2right\+\_\+tail} = \{\}
 \item 
 \mbox{\Hypertarget{config_8cpp_a5372b5c53ebbceff39a367177d0e4c38}\label{config_8cpp_a5372b5c53ebbceff39a367177d0e4c38}} 
-unordered\+\_\+map$<$ \hyperlink{structevent__type}{event\+\_\+type}, probunits $>$ {\bfseries evt2base\+\_\+probunits} = \{\}
+unordered\+\_\+map$<$ \hyperlink{structtricl_1_1event__type}{event\+\_\+type}, probunits $>$ {\bfseries evt2base\+\_\+probunits} = \{\}
 \item 
 \mbox{\Hypertarget{config_8cpp_aa4d1d1a030f8a8b177f11e3b4dc93011}\label{config_8cpp_aa4d1d1a030f8a8b177f11e3b4dc93011}} 
-unordered\+\_\+map$<$ \hyperlink{structinfluence__type}{influence\+\_\+type}, probunits $>$ {\bfseries inflt2delta\+\_\+probunits} = \{\}
+unordered\+\_\+map$<$ \hyperlink{structtricl_1_1influence__type}{influence\+\_\+type}, probunits $>$ {\bfseries inflt2delta\+\_\+probunits} = \{\}
 \item 
 \mbox{\Hypertarget{config_8cpp_a922d0c80d1e0778e68aaca86945eb49e}\label{config_8cpp_a922d0c80d1e0778e68aaca86945eb49e}} 
 unordered\+\_\+map$<$ entity\+\_\+type, double $>$ {\bfseries et2gexf\+\_\+size} = \{\}

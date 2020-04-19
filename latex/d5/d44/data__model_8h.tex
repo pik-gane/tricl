@@ -5,12 +5,17 @@
 The main data model.  
 
 
-{\ttfamily \#include $<$math.\+h$>$}\newline
+{\ttfamily \#include $<$assert.\+h$>$}\newline
+{\ttfamily \#include $<$fstream$>$}\newline
+{\ttfamily \#include $<$iostream$>$}\newline
 {\ttfamily \#include $<$string$>$}\newline
 {\ttfamily \#include $<$vector$>$}\newline
-{\ttfamily \#include $<$unordered\+\_\+map$>$}\newline
 {\ttfamily \#include $<$set$>$}\newline
-Include dependency graph for data\+\_\+model.\+h\+:\nopagebreak
+{\ttfamily \#include $<$unordered\+\_\+map$>$}\newline
+{\ttfamily \#include $<$map$>$}\newline
+{\ttfamily \#include $<$math.\+h$>$}\newline
+Include dependency graph for data\+\_\+model.\+h\+:
+\nopagebreak
 \begin{figure}[H]
 \begin{center}
 \leavevmode
@@ -28,45 +33,45 @@ This graph shows which files directly or indirectly include this file\+:
 \subsection*{Data Structures}
 \begin{DoxyCompactItemize}
 \item 
-struct \hyperlink{structentity__type__pair}{entity\+\_\+type\+\_\+pair}
+struct \hyperlink{structtricl_1_1entity__type__pair}{tricl\+::entity\+\_\+type\+\_\+pair}
+\item 
+struct \hyperlink{structtricl_1_1link__type}{tricl\+::link\+\_\+type}
+\item 
+struct \hyperlink{structtricl_1_1event__type}{tricl\+::event\+\_\+type}
+\item 
+struct \hyperlink{structtricl_1_1angle__type}{tricl\+::angle\+\_\+type}
+\item 
+struct \hyperlink{structtricl_1_1influence__type}{tricl\+::influence\+\_\+type}
+\item 
+struct \hyperlink{structtricl_1_1inleg}{tricl\+::inleg}
+\item 
+struct \hyperlink{structtricl_1_1outleg}{tricl\+::outleg}
+\item 
+struct \hyperlink{structtricl_1_1link}{tricl\+::link}
+\item 
+struct \hyperlink{structtricl_1_1event}{tricl\+::event}
+\item 
+struct \hyperlink{structtricl_1_1event__data}{tricl\+::event\+\_\+data}
+\item 
+struct \hyperlink{structtricl_1_1angle}{tricl\+::angle}
 \item 
 struct \hyperlink{structstd_1_1hash_3_01entity__type__pair_01_4}{std\+::hash$<$ entity\+\_\+type\+\_\+pair $>$}
 \item 
-struct \hyperlink{structlink__type}{link\+\_\+type}
-\item 
 struct \hyperlink{structstd_1_1hash_3_01link__type_01_4}{std\+::hash$<$ link\+\_\+type $>$}
-\item 
-struct \hyperlink{structevent__type}{event\+\_\+type}
 \item 
 struct \hyperlink{structstd_1_1hash_3_01event__type_01_4}{std\+::hash$<$ event\+\_\+type $>$}
 \item 
-struct \hyperlink{structangle__type}{angle\+\_\+type}
-\item 
 struct \hyperlink{structstd_1_1hash_3_01angle__type_01_4}{std\+::hash$<$ angle\+\_\+type $>$}
-\item 
-struct \hyperlink{structinfluence__type}{influence\+\_\+type}
 \item 
 struct \hyperlink{structstd_1_1hash_3_01influence__type_01_4}{std\+::hash$<$ influence\+\_\+type $>$}
 \item 
-struct \hyperlink{structinleg}{inleg}
-\item 
 struct \hyperlink{structstd_1_1hash_3_01inleg_01_4}{std\+::hash$<$ inleg $>$}
-\item 
-struct \hyperlink{structoutleg}{outleg}
 \item 
 struct \hyperlink{structstd_1_1hash_3_01outleg_01_4}{std\+::hash$<$ outleg $>$}
 \item 
-struct \hyperlink{structlink}{link}
-\item 
 struct \hyperlink{structstd_1_1hash_3_01link_01_4}{std\+::hash$<$ link $>$}
 \item 
-struct \hyperlink{structevent}{event}
-\item 
 struct \hyperlink{structstd_1_1hash_3_01event_01_4}{std\+::hash$<$ event $>$}
-\item 
-struct \hyperlink{structevent__data}{event\+\_\+data}
-\item 
-struct \hyperlink{structangle}{angle}
 \item 
 struct \hyperlink{structstd_1_1hash_3_01angle_01_4}{std\+::hash$<$ angle $>$}
 \end{DoxyCompactItemize}
@@ -106,43 +111,43 @@ struct \hyperlink{structstd_1_1hash_3_01angle_01_4}{std\+::hash$<$ angle $>$}
 \subsection*{Typedefs}
 \begin{DoxyCompactItemize}
 \item 
-\mbox{\Hypertarget{data__model_8h_a11df54a52750e65829d0054de4b7a861}\label{data__model_8h_a11df54a52750e65829d0054de4b7a861}} 
-typedef size\+\_\+t {\bfseries relationship\+\_\+or\+\_\+action\+\_\+type}
+\mbox{\Hypertarget{data__model_8h_a2d01894944fb58a8fedc0912a48d13f8}\label{data__model_8h_a2d01894944fb58a8fedc0912a48d13f8}} 
+typedef size\+\_\+t {\bfseries tricl\+::relationship\+\_\+or\+\_\+action\+\_\+type}
 \item 
-\mbox{\Hypertarget{data__model_8h_a08316ff3ce5d1e594b5bb434d45633bd}\label{data__model_8h_a08316ff3ce5d1e594b5bb434d45633bd}} 
-typedef int {\bfseries entity}
+\mbox{\Hypertarget{data__model_8h_a57273122278e8b301844e2a2e1f0742f}\label{data__model_8h_a57273122278e8b301844e2a2e1f0742f}} 
+typedef int {\bfseries tricl\+::entity}
 \item 
-\mbox{\Hypertarget{data__model_8h_ac88fa917135865f26a725d345e83c272}\label{data__model_8h_ac88fa917135865f26a725d345e83c272}} 
-typedef double {\bfseries timepoint}
+\mbox{\Hypertarget{data__model_8h_a720ff6a29f998e11e1d3622fc8df64b1}\label{data__model_8h_a720ff6a29f998e11e1d3622fc8df64b1}} 
+typedef double {\bfseries tricl\+::timepoint}
 \item 
-\mbox{\Hypertarget{data__model_8h_a2ee4b6db09130f2e0869c1ff9c44bb53}\label{data__model_8h_a2ee4b6db09130f2e0869c1ff9c44bb53}} 
-typedef double {\bfseries rate}
+\mbox{\Hypertarget{data__model_8h_ae42d2696f294300a43e0f5edf4875479}\label{data__model_8h_ae42d2696f294300a43e0f5edf4875479}} 
+typedef double {\bfseries tricl\+::rate}
 \item 
-\mbox{\Hypertarget{data__model_8h_a430f430ae388402edd27cd3870d25fed}\label{data__model_8h_a430f430ae388402edd27cd3870d25fed}} 
-typedef double {\bfseries probunits}
+\mbox{\Hypertarget{data__model_8h_af8f8f9076e92e1c664ffa96f18d038a5}\label{data__model_8h_af8f8f9076e92e1c664ffa96f18d038a5}} 
+typedef double {\bfseries tricl\+::probunits}
 \item 
-\mbox{\Hypertarget{data__model_8h_ad67203c86946d1f00c882a4cbd7cfdf2}\label{data__model_8h_ad67203c86946d1f00c882a4cbd7cfdf2}} 
-typedef double {\bfseries probability}
+\mbox{\Hypertarget{data__model_8h_af2e8973ba58a3dad9061296d8bee16a2}\label{data__model_8h_af2e8973ba58a3dad9061296d8bee16a2}} 
+typedef double {\bfseries tricl\+::probability}
 \item 
-\mbox{\Hypertarget{data__model_8h_a5328f8989e337f661c6dae5b18dbda2a}\label{data__model_8h_a5328f8989e337f661c6dae5b18dbda2a}} 
-typedef string {\bfseries label}
+\mbox{\Hypertarget{data__model_8h_a77e7daffafa870e5786b344119da9b15}\label{data__model_8h_a77e7daffafa870e5786b344119da9b15}} 
+typedef string {\bfseries tricl\+::label}
 \item 
-\mbox{\Hypertarget{data__model_8h_a841c4d1edf6dff66d4de5076bd39b292}\label{data__model_8h_a841c4d1edf6dff66d4de5076bd39b292}} 
-typedef short unsigned int {\bfseries entity\+\_\+type}
+\mbox{\Hypertarget{data__model_8h_afd4de3aedd5e48cf955f03457386e98f}\label{data__model_8h_afd4de3aedd5e48cf955f03457386e98f}} 
+typedef short unsigned int {\bfseries tricl\+::entity\+\_\+type}
 \item 
-\mbox{\Hypertarget{data__model_8h_ad43ae31a8d7ff1c67791edd55bfbb7cf}\label{data__model_8h_ad43ae31a8d7ff1c67791edd55bfbb7cf}} 
-typedef set$<$ \hyperlink{structinleg}{inleg} $>$ {\bfseries inleg\+\_\+set}
+\mbox{\Hypertarget{data__model_8h_a703ed53fa2dba74d8f51ede5fd46038d}\label{data__model_8h_a703ed53fa2dba74d8f51ede5fd46038d}} 
+typedef set$<$ \hyperlink{structtricl_1_1inleg}{inleg} $>$ {\bfseries tricl\+::inleg\+\_\+set}
 \item 
-\mbox{\Hypertarget{data__model_8h_a206c04051d5df2bec4397e1c016072ee}\label{data__model_8h_a206c04051d5df2bec4397e1c016072ee}} 
-typedef set$<$ \hyperlink{structoutleg}{outleg} $>$ {\bfseries outleg\+\_\+set}
+\mbox{\Hypertarget{data__model_8h_ac36fc4606da3d7f9ffd1764942fe5940}\label{data__model_8h_ac36fc4606da3d7f9ffd1764942fe5940}} 
+typedef set$<$ \hyperlink{structtricl_1_1outleg}{outleg} $>$ {\bfseries tricl\+::outleg\+\_\+set}
 \item 
-\mbox{\Hypertarget{data__model_8h_aba7697838aa903b2a3de65e7b49c1fcd}\label{data__model_8h_aba7697838aa903b2a3de65e7b49c1fcd}} 
-typedef vector$<$ \hyperlink{structangle}{angle} $>$ {\bfseries angles}
+\mbox{\Hypertarget{data__model_8h_a4ec9b46d6dae5a1d114387bca4029ce5}\label{data__model_8h_a4ec9b46d6dae5a1d114387bca4029ce5}} 
+typedef vector$<$ \hyperlink{structtricl_1_1angle}{angle} $>$ {\bfseries tricl\+::angles}
 \end{DoxyCompactItemize}
 \subsection*{Enumerations}
 \begin{DoxyCompactItemize}
 \item 
-\mbox{\Hypertarget{data__model_8h_a43c5c21548610e8c60b7830393f0dc46}\label{data__model_8h_a43c5c21548610e8c60b7830393f0dc46}} 
+\mbox{\Hypertarget{data__model_8h_a6967089e2c0837f273d8cb5fd9f7e46d}\label{data__model_8h_a6967089e2c0837f273d8cb5fd9f7e46d}} 
 enum {\bfseries event\+\_\+class} \{ {\bfseries E\+C\+\_\+\+E\+ST}, 
 {\bfseries E\+C\+\_\+\+T\+E\+RM}, 
 {\bfseries E\+C\+\_\+\+A\+CT}
@@ -151,11 +156,8 @@ enum {\bfseries event\+\_\+class} \{ {\bfseries E\+C\+\_\+\+E\+ST},
 \subsection*{Variables}
 \begin{DoxyCompactItemize}
 \item 
-\mbox{\Hypertarget{data__model_8h_a8cfe6d9b04fa1fbdb585deffcf13ae68}\label{data__model_8h_a8cfe6d9b04fa1fbdb585deffcf13ae68}} 
-unordered\+\_\+map$<$ event\+\_\+class, string $>$ {\bfseries ec2label}
-\item 
-\mbox{\Hypertarget{data__model_8h_a6cb5d5a29b1038ba20155566ba615e3d}\label{data__model_8h_a6cb5d5a29b1038ba20155566ba615e3d}} 
-const \hyperlink{structangle__type}{angle\+\_\+type} {\bfseries N\+O\+\_\+\+A\+N\+G\+LE} = \{ .rat12 = N\+O\+\_\+\+R\+AT, .et2 = 0, .rat23 = N\+O\+\_\+\+R\+AT \}
+\mbox{\Hypertarget{data__model_8h_a1d25690adbc3921709bd3b3e16415713}\label{data__model_8h_a1d25690adbc3921709bd3b3e16415713}} 
+const \hyperlink{structtricl_1_1angle__type}{angle\+\_\+type} {\bfseries tricl\+::\+N\+O\+\_\+\+A\+N\+G\+LE} = \{ .rat12 = N\+O\+\_\+\+R\+AT, .et2 = 0, .rat23 = N\+O\+\_\+\+R\+AT \}
 \end{DoxyCompactItemize}
 
 

@@ -79,7 +79,6 @@ $(function() {
 <code>#include &lt;iostream&gt;</code><br />
 <code>#include &quot;yaml-cpp/yaml.h&quot;</code><br />
 <code>#include &quot;3rdparty/tinyexpr.h&quot;</code><br />
-<code>#include &quot;<a class="el" href="../../d5/d44/data__model_8h_source.html">data_model.h</a>&quot;</code><br />
 <code>#include &quot;global_variables.h&quot;</code><br />
 <code>#include &quot;entity.h&quot;</code><br />
 <code>#include &quot;io.h&quot;</code><br />
@@ -88,10 +87,10 @@ Include dependency graph for config.cpp:</div>
 <div class="dyncontent">
 <div class="center"><img src="../../db/d4c/config_8cpp__incl.png" border="0" usemap="#src_2config_8cpp" alt=""/></div>
 <map name="src_2config_8cpp" id="src_2config_8cpp">
-<area shape="rect" id="node7" href="../../d5/d44/data__model_8h.html" title="The main data model. " alt="" coords="205,155,316,181"/>
-<area shape="rect" id="node12" href="../../d5/dfb/global__variables_8h_source.html" title="global_variables.h" alt="" coords="298,80,439,107"/>
-<area shape="rect" id="node14" href="../../d8/d83/entity_8h_source.html" title="entity.h" alt="" coords="152,80,223,107"/>
-<area shape="rect" id="node15" href="../../dc/dac/io_8h_source.html" title="io.h" alt="" coords="464,80,511,107"/>
+<area shape="rect" id="node7" href="../../d5/dfb/global__variables_8h_source.html" title="global_variables.h" alt="" coords="202,80,343,107"/>
+<area shape="rect" id="node16" href="../../d8/d83/entity_8h_source.html" title="entity.h" alt="" coords="368,80,439,107"/>
+<area shape="rect" id="node17" href="../../dc/dac/io_8h_source.html" title="io.h" alt="" coords="463,80,509,107"/>
+<area shape="rect" id="node8" href="../../d5/d44/data__model_8h.html" title="The main data model. " alt="" coords="365,155,476,181"/>
 </map>
 </div>
 </div><table class="memberdecls">
@@ -124,12 +123,15 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>read_config</b> ()</t
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="var-members"></a>
 Variables</h2></td></tr>
-<tr class="memitem:a0b60e3ce1fbd529d7fb44c1a3b6f2d5a"><td class="memItemLeft" align="right" valign="top"><a id="a0b60e3ce1fbd529d7fb44c1a3b6f2d5a"></a>
-string&#160;</td><td class="memItemRight" valign="bottom"><b>gexf_filename</b> = &quot;&quot;</td></tr>
-<tr class="separator:a0b60e3ce1fbd529d7fb44c1a3b6f2d5a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a113f3c013371a7bc91273d8821d8710d"><td class="memItemLeft" align="right" valign="top"><a id="a113f3c013371a7bc91273d8821d8710d"></a>
+unordered_map&lt; relationship_or_action_type, string &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>gexf_filename</b> = {}</td></tr>
+<tr class="separator:a113f3c013371a7bc91273d8821d8710d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af960657d113135c47b4e0ed4536930c0"><td class="memItemLeft" align="right" valign="top"><a id="af960657d113135c47b4e0ed4536930c0"></a>
 string&#160;</td><td class="memItemRight" valign="bottom"><b>diagram_fileprefix</b> = &quot;&quot;</td></tr>
 <tr class="separator:af960657d113135c47b4e0ed4536930c0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8f79554f6ab9b5b2d22ffbc45200a417"><td class="memItemLeft" align="right" valign="top"><a id="a8f79554f6ab9b5b2d22ffbc45200a417"></a>
+string&#160;</td><td class="memItemRight" valign="bottom"><b>gexf_default_filename</b> = &quot;&quot;</td></tr>
+<tr class="separator:a8f79554f6ab9b5b2d22ffbc45200a417"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab3f078684998b83967d507d0f453f454"><td class="memItemLeft" align="right" valign="top"><a id="ab3f078684998b83967d507d0f453f454"></a>
 bool&#160;</td><td class="memItemRight" valign="bottom"><b>verbose</b> = false</td></tr>
 <tr class="separator:ab3f078684998b83967d507d0f453f454"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -140,7 +142,7 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><b>quiet</b> = false</td
 bool&#160;</td><td class="memItemRight" valign="bottom"><b>debug</b> = false</td></tr>
 <tr class="separator:a398527b3e9e358c345c5047b16871957"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a61e4a08c5309d5cd9538ce9654bdb9e9"><td class="memItemLeft" align="right" valign="top"><a id="a61e4a08c5309d5cd9538ce9654bdb9e9"></a>
-timepoint&#160;</td><td class="memItemRight" valign="bottom"><b>max_t</b> = INFINITY</td></tr>
+timepoint&#160;</td><td class="memItemRight" valign="bottom"><b>max_t</b> = 0.0</td></tr>
 <tr class="separator:a61e4a08c5309d5cd9538ce9654bdb9e9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a921a3c48e5eda75a9944e3d8fdecc826"><td class="memItemLeft" align="right" valign="top"><a id="a921a3c48e5eda75a9944e3d8fdecc826"></a>
 long int&#160;</td><td class="memItemRight" valign="bottom"><b>max_n_events</b> = LONG_MAX</td></tr>
@@ -179,37 +181,37 @@ unordered_map&lt; entity, label &gt;&#160;</td><td class="memItemRight" valign="
 unordered_map&lt; string, entity &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>label2e</b> = {}</td></tr>
 <tr class="separator:a3e3cf64afa14be51e4752ebe0e78d8b4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:afe42a9a97fc8e959183c94fc333f2331"><td class="memItemLeft" align="right" valign="top"><a id="afe42a9a97fc8e959183c94fc333f2331"></a>
-set&lt; <a class="el" href="../../dd/d95/structlink.html">link</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>initial_links</b> = {}</td></tr>
+set&lt; <a class="el" href="../../d8/d01/structtricl_1_1link.html">link</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>initial_links</b> = {}</td></tr>
 <tr class="separator:afe42a9a97fc8e959183c94fc333f2331"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac3d91d4eef87cfaf1371a698513533ba"><td class="memItemLeft" align="right" valign="top"><a id="ac3d91d4eef87cfaf1371a698513533ba"></a>
 unordered_map&lt; entity_type, int &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>et2n_blocks</b> = {}</td></tr>
 <tr class="separator:ac3d91d4eef87cfaf1371a698513533ba"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1cf9b4c5338052d0ac84135ecefc7d39"><td class="memItemLeft" align="right" valign="top"><a id="a1cf9b4c5338052d0ac84135ecefc7d39"></a>
-unordered_map&lt; <a class="el" href="../../d2/dec/structlink__type.html">link_type</a>, probability &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>lt2initial_prob_within</b> = {}</td></tr>
+unordered_map&lt; <a class="el" href="../../d7/d76/structtricl_1_1link__type.html">link_type</a>, probability &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>lt2initial_prob_within</b> = {}</td></tr>
 <tr class="separator:a1cf9b4c5338052d0ac84135ecefc7d39"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa892b7f705910915c42a59b564850a4a"><td class="memItemLeft" align="right" valign="top"><a id="aa892b7f705910915c42a59b564850a4a"></a>
-unordered_map&lt; <a class="el" href="../../d2/dec/structlink__type.html">link_type</a>, probability &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>lt2initial_prob_between</b> = {}</td></tr>
+unordered_map&lt; <a class="el" href="../../d7/d76/structtricl_1_1link__type.html">link_type</a>, probability &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>lt2initial_prob_between</b> = {}</td></tr>
 <tr class="separator:aa892b7f705910915c42a59b564850a4a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5022e1a1414fd07a51e1e3e6f08ab064"><td class="memItemLeft" align="right" valign="top"><a id="a5022e1a1414fd07a51e1e3e6f08ab064"></a>
 unordered_map&lt; entity_type, int &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>et2dim</b> = {}</td></tr>
 <tr class="separator:a5022e1a1414fd07a51e1e3e6f08ab064"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac075689bc4d37b273487fa22e5099b32"><td class="memItemLeft" align="right" valign="top"><a id="ac075689bc4d37b273487fa22e5099b32"></a>
-unordered_map&lt; <a class="el" href="../../d2/dec/structlink__type.html">link_type</a>, probability &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>lt2spatial_decay</b> = {}</td></tr>
+unordered_map&lt; <a class="el" href="../../d7/d76/structtricl_1_1link__type.html">link_type</a>, probability &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>lt2spatial_decay</b> = {}</td></tr>
 <tr class="separator:ac075689bc4d37b273487fa22e5099b32"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa37926f8d74a0c74e47def544c4f872e"><td class="memItemLeft" align="right" valign="top"><a id="aa37926f8d74a0c74e47def544c4f872e"></a>
-unordered_map&lt; <a class="el" href="../../d6/dec/structinfluence__type.html">influence_type</a>, rate &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>inflt2attempt_rate</b> = {}</td></tr>
+unordered_map&lt; <a class="el" href="../../d2/d5c/structtricl_1_1influence__type.html">influence_type</a>, rate &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>inflt2attempt_rate</b> = {}</td></tr>
 <tr class="separator:aa37926f8d74a0c74e47def544c4f872e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae7b89a8070b4de9d132b167704229c70"><td class="memItemLeft" align="right" valign="top"><a id="ae7b89a8070b4de9d132b167704229c70"></a>
-unordered_map&lt; <a class="el" href="../../d2/dbe/structevent__type.html">event_type</a>, double &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>evt2left_tail</b> = {}</td></tr>
+unordered_map&lt; <a class="el" href="../../d3/d70/structtricl_1_1event__type.html">event_type</a>, double &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>evt2left_tail</b> = {}</td></tr>
 <tr class="separator:ae7b89a8070b4de9d132b167704229c70"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6a65e62a5f8173784beb092165af2528"><td class="memItemLeft" align="right" valign="top"><a id="a6a65e62a5f8173784beb092165af2528"></a>
-unordered_map&lt; <a class="el" href="../../d2/dbe/structevent__type.html">event_type</a>, double &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>evt2right_tail</b> = {}</td></tr>
+unordered_map&lt; <a class="el" href="../../d3/d70/structtricl_1_1event__type.html">event_type</a>, double &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>evt2right_tail</b> = {}</td></tr>
 <tr class="separator:a6a65e62a5f8173784beb092165af2528"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5372b5c53ebbceff39a367177d0e4c38"><td class="memItemLeft" align="right" valign="top"><a id="a5372b5c53ebbceff39a367177d0e4c38"></a>
-unordered_map&lt; <a class="el" href="../../d2/dbe/structevent__type.html">event_type</a>, probunits &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>evt2base_probunits</b> = {}</td></tr>
+unordered_map&lt; <a class="el" href="../../d3/d70/structtricl_1_1event__type.html">event_type</a>, probunits &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>evt2base_probunits</b> = {}</td></tr>
 <tr class="separator:a5372b5c53ebbceff39a367177d0e4c38"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa4d1d1a030f8a8b177f11e3b4dc93011"><td class="memItemLeft" align="right" valign="top"><a id="aa4d1d1a030f8a8b177f11e3b4dc93011"></a>
-unordered_map&lt; <a class="el" href="../../d6/dec/structinfluence__type.html">influence_type</a>, probunits &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>inflt2delta_probunits</b> = {}</td></tr>
+unordered_map&lt; <a class="el" href="../../d2/d5c/structtricl_1_1influence__type.html">influence_type</a>, probunits &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>inflt2delta_probunits</b> = {}</td></tr>
 <tr class="separator:aa4d1d1a030f8a8b177f11e3b4dc93011"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a922d0c80d1e0778e68aaca86945eb49e"><td class="memItemLeft" align="right" valign="top"><a id="a922d0c80d1e0778e68aaca86945eb49e"></a>
 unordered_map&lt; entity_type, double &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>et2gexf_size</b> = {}</td></tr>

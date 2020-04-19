@@ -76,35 +76,41 @@ $(function() {
 
 <p>The main data model.  
 <a href="#details">More...</a></p>
-<div class="textblock"><code>#include &lt;math.h&gt;</code><br />
+<div class="textblock"><code>#include &lt;assert.h&gt;</code><br />
+<code>#include &lt;fstream&gt;</code><br />
+<code>#include &lt;iostream&gt;</code><br />
 <code>#include &lt;string&gt;</code><br />
 <code>#include &lt;vector&gt;</code><br />
-<code>#include &lt;unordered_map&gt;</code><br />
 <code>#include &lt;set&gt;</code><br />
+<code>#include &lt;unordered_map&gt;</code><br />
+<code>#include &lt;map&gt;</code><br />
+<code>#include &lt;math.h&gt;</code><br />
 </div><div class="textblock"><div class="dynheader">
 Include dependency graph for data_model.h:</div>
 <div class="dyncontent">
 <div class="center"><img src="../../d0/dc6/data__model_8h__incl.png" border="0" usemap="#src_2data__model_8h" alt=""/></div>
+<map name="src_2data__model_8h" id="src_2data__model_8h">
+</map>
 </div>
 </div><div class="textblock"><div class="dynheader">
 This graph shows which files directly or indirectly include this file:</div>
 <div class="dyncontent">
 <div class="center"><img src="../../d8/d95/data__model_8h__dep__incl.png" border="0" usemap="#src_2data__model_8hdep" alt=""/></div>
 <map name="src_2data__model_8hdep" id="src_2data__model_8hdep">
-<area shape="rect" id="node2" href="../../d5/dfb/global__variables_8h_source.html" title="src/global_variables.h" alt="" coords="551,80,715,107"/>
-<area shape="rect" id="node4" href="../../d5/d87/probability_8h_source.html" title="src/probability.h" alt="" coords="450,155,575,181"/>
-<area shape="rect" id="node6" href="../../df/d1b/event_8cpp.html" title="Handling of events. " alt="" coords="369,229,478,256"/>
-<area shape="rect" id="node7" href="../../df/d59/config_8cpp.html" title="Handling of configuration files. " alt="" coords="875,155,985,181"/>
+<area shape="rect" id="node2" href="../../d5/dfb/global__variables_8h_source.html" title="src/global_variables.h" alt="" coords="499,80,663,107"/>
 <area shape="rect" id="node9" href="../../dd/d20/event_8h_source.html" title="src/event.h" alt="" coords="5,155,100,181"/>
 <area shape="rect" id="node10" href="../../da/dac/angle_8h_source.html" title="src/angle.h" alt="" coords="125,155,218,181"/>
-<area shape="rect" id="node11" href="../../d8/d83/entity_8h_source.html" title="src/entity.h" alt="" coords="883,80,977,107"/>
-<area shape="rect" id="node12" href="../../dc/dac/io_8h_source.html" title="src/io.h" alt="" coords="739,80,809,107"/>
-<area shape="rect" id="node13" href="../../d6/d80/constants_8cpp.html" title="Some global constants. " alt="" coords="1001,80,1136,107"/>
-<area shape="rect" id="node14" href="../../d4/d3c/link_8h_source.html" title="src/link.h" alt="" coords="293,155,375,181"/>
-<area shape="rect" id="node15" href="../../d6/ddc/gexf_8h_source.html" title="src/gexf.h" alt="" coords="1161,80,1246,107"/>
-<area shape="rect" id="node3" href="../../d4/d45/angle_8cpp.html" title="Handling of angles. " alt="" coords="221,229,329,256"/>
-<area shape="rect" id="node5" href="../../d9/ddd/entity_8cpp.html" title="Handling of entities. " alt="" coords="609,229,717,256"/>
-<area shape="rect" id="node8" href="../../d2/d27/tricl_8cpp.html" title="TriCl, a generic model of social dynamics. " alt="" coords="701,155,799,181"/>
+<area shape="rect" id="node11" href="../../d8/d83/entity_8h_source.html" title="src/entity.h" alt="" coords="781,80,874,107"/>
+<area shape="rect" id="node12" href="../../dc/dac/io_8h_source.html" title="src/io.h" alt="" coords="687,80,757,107"/>
+<area shape="rect" id="node13" href="../../d6/d80/constants_8cpp.html" title="Some global constants. " alt="" coords="899,80,1033,107"/>
+<area shape="rect" id="node14" href="../../d4/d3c/link_8h_source.html" title="src/link.h" alt="" coords="243,155,324,181"/>
+<area shape="rect" id="node15" href="../../d6/ddc/gexf_8h_source.html" title="src/gexf.h" alt="" coords="1058,80,1143,107"/>
+<area shape="rect" id="node3" href="../../d4/d45/angle_8cpp.html" title="Handling of angles. " alt="" coords="196,229,304,256"/>
+<area shape="rect" id="node4" href="../../d5/d87/probability_8h_source.html" title="src/probability.h" alt="" coords="399,155,525,181"/>
+<area shape="rect" id="node5" href="../../d9/ddd/entity_8cpp.html" title="Handling of entities. " alt="" coords="559,229,667,256"/>
+<area shape="rect" id="node6" href="../../df/d1b/event_8cpp.html" title="Handling of events. " alt="" coords="407,229,517,256"/>
+<area shape="rect" id="node7" href="../../df/d59/config_8cpp.html" title="Handling of configuration files. " alt="" coords="772,155,883,181"/>
+<area shape="rect" id="node8" href="../../d2/d27/tricl_8cpp.html" title="TriCl, a generic model of social dynamics. " alt="" coords="651,155,748,181"/>
 </map>
 </div>
 </div>
@@ -112,45 +118,45 @@ This graph shows which files directly or indirectly include this file:</div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="nested-classes"></a>
 Data Structures</h2></td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../db/d5d/structentity__type__pair.html">entity_type_pair</a></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../df/dcc/structtricl_1_1entity__type__pair.html">tricl::entity_type_pair</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d7/d76/structtricl_1_1link__type.html">tricl::link_type</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d3/d70/structtricl_1_1event__type.html">tricl::event_type</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d1b/structtricl_1_1angle__type.html">tricl::angle_type</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d2/d5c/structtricl_1_1influence__type.html">tricl::influence_type</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d5/dc0/structtricl_1_1inleg.html">tricl::inleg</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../de/d25/structtricl_1_1outleg.html">tricl::outleg</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d8/d01/structtricl_1_1link.html">tricl::link</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d4/d7e/structtricl_1_1event.html">tricl::event</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d9/d16/structtricl_1_1event__data.html">tricl::event_data</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d4/d55/structtricl_1_1angle.html">tricl::angle</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d8/d59/structstd_1_1hash_3_01entity__type__pair_01_4.html">std::hash&lt; entity_type_pair &gt;</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d2/dec/structlink__type.html">link_type</a></td></tr>
-<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d8/d0c/structstd_1_1hash_3_01link__type_01_4.html">std::hash&lt; link_type &gt;</a></td></tr>
-<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d2/dbe/structevent__type.html">event_type</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d8/df6/structstd_1_1hash_3_01event__type_01_4.html">std::hash&lt; event_type &gt;</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/ddd/structangle__type.html">angle_type</a></td></tr>
-<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d0/d23/structstd_1_1hash_3_01angle__type_01_4.html">std::hash&lt; angle_type &gt;</a></td></tr>
-<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d6/dec/structinfluence__type.html">influence_type</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d5/d14/structstd_1_1hash_3_01influence__type_01_4.html">std::hash&lt; influence_type &gt;</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d4/ddd/structinleg.html">inleg</a></td></tr>
-<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dd/d8d/structstd_1_1hash_3_01inleg_01_4.html">std::hash&lt; inleg &gt;</a></td></tr>
-<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d6/d8e/structoutleg.html">outleg</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d2/dd1/structstd_1_1hash_3_01outleg_01_4.html">std::hash&lt; outleg &gt;</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dd/d95/structlink.html">link</a></td></tr>
-<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../da/dfc/structstd_1_1hash_3_01link_01_4.html">std::hash&lt; link &gt;</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../df/d7d/structevent.html">event</a></td></tr>
-<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d6/d87/structstd_1_1hash_3_01event_01_4.html">std::hash&lt; event &gt;</a></td></tr>
-<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d0/d06/structevent__data.html">event_data</a></td></tr>
-<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d4/d23/structangle.html">angle</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d9/d9b/structstd_1_1hash_3_01angle_01_4.html">std::hash&lt; angle &gt;</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -190,56 +196,53 @@ Macros</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="typedef-members"></a>
 Typedefs</h2></td></tr>
-<tr class="memitem:a11df54a52750e65829d0054de4b7a861"><td class="memItemLeft" align="right" valign="top"><a id="a11df54a52750e65829d0054de4b7a861"></a>
-typedef size_t&#160;</td><td class="memItemRight" valign="bottom"><b>relationship_or_action_type</b></td></tr>
-<tr class="separator:a11df54a52750e65829d0054de4b7a861"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a08316ff3ce5d1e594b5bb434d45633bd"><td class="memItemLeft" align="right" valign="top"><a id="a08316ff3ce5d1e594b5bb434d45633bd"></a>
-typedef int&#160;</td><td class="memItemRight" valign="bottom"><b>entity</b></td></tr>
-<tr class="separator:a08316ff3ce5d1e594b5bb434d45633bd"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac88fa917135865f26a725d345e83c272"><td class="memItemLeft" align="right" valign="top"><a id="ac88fa917135865f26a725d345e83c272"></a>
-typedef double&#160;</td><td class="memItemRight" valign="bottom"><b>timepoint</b></td></tr>
-<tr class="separator:ac88fa917135865f26a725d345e83c272"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2ee4b6db09130f2e0869c1ff9c44bb53"><td class="memItemLeft" align="right" valign="top"><a id="a2ee4b6db09130f2e0869c1ff9c44bb53"></a>
-typedef double&#160;</td><td class="memItemRight" valign="bottom"><b>rate</b></td></tr>
-<tr class="separator:a2ee4b6db09130f2e0869c1ff9c44bb53"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a430f430ae388402edd27cd3870d25fed"><td class="memItemLeft" align="right" valign="top"><a id="a430f430ae388402edd27cd3870d25fed"></a>
-typedef double&#160;</td><td class="memItemRight" valign="bottom"><b>probunits</b></td></tr>
-<tr class="separator:a430f430ae388402edd27cd3870d25fed"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad67203c86946d1f00c882a4cbd7cfdf2"><td class="memItemLeft" align="right" valign="top"><a id="ad67203c86946d1f00c882a4cbd7cfdf2"></a>
-typedef double&#160;</td><td class="memItemRight" valign="bottom"><b>probability</b></td></tr>
-<tr class="separator:ad67203c86946d1f00c882a4cbd7cfdf2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5328f8989e337f661c6dae5b18dbda2a"><td class="memItemLeft" align="right" valign="top"><a id="a5328f8989e337f661c6dae5b18dbda2a"></a>
-typedef string&#160;</td><td class="memItemRight" valign="bottom"><b>label</b></td></tr>
-<tr class="separator:a5328f8989e337f661c6dae5b18dbda2a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a841c4d1edf6dff66d4de5076bd39b292"><td class="memItemLeft" align="right" valign="top"><a id="a841c4d1edf6dff66d4de5076bd39b292"></a>
-typedef short unsigned int&#160;</td><td class="memItemRight" valign="bottom"><b>entity_type</b></td></tr>
-<tr class="separator:a841c4d1edf6dff66d4de5076bd39b292"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad43ae31a8d7ff1c67791edd55bfbb7cf"><td class="memItemLeft" align="right" valign="top"><a id="ad43ae31a8d7ff1c67791edd55bfbb7cf"></a>
-typedef set&lt; <a class="el" href="../../d4/ddd/structinleg.html">inleg</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>inleg_set</b></td></tr>
-<tr class="separator:ad43ae31a8d7ff1c67791edd55bfbb7cf"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a206c04051d5df2bec4397e1c016072ee"><td class="memItemLeft" align="right" valign="top"><a id="a206c04051d5df2bec4397e1c016072ee"></a>
-typedef set&lt; <a class="el" href="../../d6/d8e/structoutleg.html">outleg</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>outleg_set</b></td></tr>
-<tr class="separator:a206c04051d5df2bec4397e1c016072ee"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aba7697838aa903b2a3de65e7b49c1fcd"><td class="memItemLeft" align="right" valign="top"><a id="aba7697838aa903b2a3de65e7b49c1fcd"></a>
-typedef vector&lt; <a class="el" href="../../d4/d23/structangle.html">angle</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>angles</b></td></tr>
-<tr class="separator:aba7697838aa903b2a3de65e7b49c1fcd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2d01894944fb58a8fedc0912a48d13f8"><td class="memItemLeft" align="right" valign="top"><a id="a2d01894944fb58a8fedc0912a48d13f8"></a>
+typedef size_t&#160;</td><td class="memItemRight" valign="bottom"><b>tricl::relationship_or_action_type</b></td></tr>
+<tr class="separator:a2d01894944fb58a8fedc0912a48d13f8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a57273122278e8b301844e2a2e1f0742f"><td class="memItemLeft" align="right" valign="top"><a id="a57273122278e8b301844e2a2e1f0742f"></a>
+typedef int&#160;</td><td class="memItemRight" valign="bottom"><b>tricl::entity</b></td></tr>
+<tr class="separator:a57273122278e8b301844e2a2e1f0742f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a720ff6a29f998e11e1d3622fc8df64b1"><td class="memItemLeft" align="right" valign="top"><a id="a720ff6a29f998e11e1d3622fc8df64b1"></a>
+typedef double&#160;</td><td class="memItemRight" valign="bottom"><b>tricl::timepoint</b></td></tr>
+<tr class="separator:a720ff6a29f998e11e1d3622fc8df64b1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae42d2696f294300a43e0f5edf4875479"><td class="memItemLeft" align="right" valign="top"><a id="ae42d2696f294300a43e0f5edf4875479"></a>
+typedef double&#160;</td><td class="memItemRight" valign="bottom"><b>tricl::rate</b></td></tr>
+<tr class="separator:ae42d2696f294300a43e0f5edf4875479"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af8f8f9076e92e1c664ffa96f18d038a5"><td class="memItemLeft" align="right" valign="top"><a id="af8f8f9076e92e1c664ffa96f18d038a5"></a>
+typedef double&#160;</td><td class="memItemRight" valign="bottom"><b>tricl::probunits</b></td></tr>
+<tr class="separator:af8f8f9076e92e1c664ffa96f18d038a5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af2e8973ba58a3dad9061296d8bee16a2"><td class="memItemLeft" align="right" valign="top"><a id="af2e8973ba58a3dad9061296d8bee16a2"></a>
+typedef double&#160;</td><td class="memItemRight" valign="bottom"><b>tricl::probability</b></td></tr>
+<tr class="separator:af2e8973ba58a3dad9061296d8bee16a2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a77e7daffafa870e5786b344119da9b15"><td class="memItemLeft" align="right" valign="top"><a id="a77e7daffafa870e5786b344119da9b15"></a>
+typedef string&#160;</td><td class="memItemRight" valign="bottom"><b>tricl::label</b></td></tr>
+<tr class="separator:a77e7daffafa870e5786b344119da9b15"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afd4de3aedd5e48cf955f03457386e98f"><td class="memItemLeft" align="right" valign="top"><a id="afd4de3aedd5e48cf955f03457386e98f"></a>
+typedef short unsigned int&#160;</td><td class="memItemRight" valign="bottom"><b>tricl::entity_type</b></td></tr>
+<tr class="separator:afd4de3aedd5e48cf955f03457386e98f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a703ed53fa2dba74d8f51ede5fd46038d"><td class="memItemLeft" align="right" valign="top"><a id="a703ed53fa2dba74d8f51ede5fd46038d"></a>
+typedef set&lt; <a class="el" href="../../d5/dc0/structtricl_1_1inleg.html">inleg</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>tricl::inleg_set</b></td></tr>
+<tr class="separator:a703ed53fa2dba74d8f51ede5fd46038d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac36fc4606da3d7f9ffd1764942fe5940"><td class="memItemLeft" align="right" valign="top"><a id="ac36fc4606da3d7f9ffd1764942fe5940"></a>
+typedef set&lt; <a class="el" href="../../de/d25/structtricl_1_1outleg.html">outleg</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>tricl::outleg_set</b></td></tr>
+<tr class="separator:ac36fc4606da3d7f9ffd1764942fe5940"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4ec9b46d6dae5a1d114387bca4029ce5"><td class="memItemLeft" align="right" valign="top"><a id="a4ec9b46d6dae5a1d114387bca4029ce5"></a>
+typedef vector&lt; <a class="el" href="../../d4/d55/structtricl_1_1angle.html">angle</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>tricl::angles</b></td></tr>
+<tr class="separator:a4ec9b46d6dae5a1d114387bca4029ce5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="enum-members"></a>
 Enumerations</h2></td></tr>
-<tr class="memitem:a43c5c21548610e8c60b7830393f0dc46"><td class="memItemLeft" align="right" valign="top"><a id="a43c5c21548610e8c60b7830393f0dc46"></a>enum &#160;</td><td class="memItemRight" valign="bottom"><b>event_class</b> { <b>EC_EST</b>, 
+<tr class="memitem:a6967089e2c0837f273d8cb5fd9f7e46d"><td class="memItemLeft" align="right" valign="top"><a id="a6967089e2c0837f273d8cb5fd9f7e46d"></a>enum &#160;</td><td class="memItemRight" valign="bottom"><b>event_class</b> { <b>EC_EST</b>, 
 <b>EC_TERM</b>, 
 <b>EC_ACT</b>
  }</td></tr>
-<tr class="separator:a43c5c21548610e8c60b7830393f0dc46"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="separator:a6967089e2c0837f273d8cb5fd9f7e46d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="var-members"></a>
 Variables</h2></td></tr>
-<tr class="memitem:a8cfe6d9b04fa1fbdb585deffcf13ae68"><td class="memItemLeft" align="right" valign="top"><a id="a8cfe6d9b04fa1fbdb585deffcf13ae68"></a>
-unordered_map&lt; event_class, string &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>ec2label</b></td></tr>
-<tr class="separator:a8cfe6d9b04fa1fbdb585deffcf13ae68"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6cb5d5a29b1038ba20155566ba615e3d"><td class="memItemLeft" align="right" valign="top"><a id="a6cb5d5a29b1038ba20155566ba615e3d"></a>
-const <a class="el" href="../../dc/ddd/structangle__type.html">angle_type</a>&#160;</td><td class="memItemRight" valign="bottom"><b>NO_ANGLE</b> = { .rat12 = NO_RAT, .et2 = 0, .rat23 = NO_RAT }</td></tr>
-<tr class="separator:a6cb5d5a29b1038ba20155566ba615e3d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1d25690adbc3921709bd3b3e16415713"><td class="memItemLeft" align="right" valign="top"><a id="a1d25690adbc3921709bd3b3e16415713"></a>
+const <a class="el" href="../../dc/d1b/structtricl_1_1angle__type.html">angle_type</a>&#160;</td><td class="memItemRight" valign="bottom"><b>tricl::NO_ANGLE</b> = { .rat12 = NO_RAT, .et2 = 0, .rat23 = NO_RAT }</td></tr>
+<tr class="separator:a1d25690adbc3921709bd3b3e16415713"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>The main data model. </p>
