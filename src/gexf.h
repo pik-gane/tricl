@@ -1,10 +1,4 @@
-/*
- * gexf.h
- *
- *  Created on: Mar 27, 2020
- *      Author: heitzig
- */
-
+// make sure this file is only included once:
 #ifndef INC_GEXF_H
 #define INC_GEXF_H
 

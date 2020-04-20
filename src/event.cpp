@@ -48,7 +48,7 @@ void _schedule_event (event& ev, event_data* evd_, double left_tail, double righ
     assert (ar >= 0.0);
     if (verbose) cout << "         (re)scheduling " << ev << ": ";
     if (event_is_summary(ev)) { // summary event: use only attempt rate (success will be tested in pop_next_event):
-        t = current_t + exponential(random_variable) / (ar * ev2max_sp[ev]);
+        t = current_t + exponential(random_variable) / (ar * ev2max_success_probability[ev]);
         if (verbose) cout << "summary event, attempt rate " << ar << " → attempt at t=" << t << ", test success then" << endl;
     } else { // particular event: use effective rate:
         auto spu = evd_->success_probunits;
@@ -71,7 +71,7 @@ void _schedule_event (event& ev, event_data* evd_, double left_tail, double righ
         // replace INFINITY by some unique finite but non-reached time point:
         t = max_t * (1 + uniform(random_variable));
     }
-    t2be[t] = ev;
+    t2ev[t] = ev;
     evd_->t = t;
 }
 
@@ -88,7 +88,7 @@ void reschedule_event (event& ev, event_data* evd_, double left_tail, double rig
 {
     assert(evd_ == &ev2data.at(ev));
     assert(event_is_scheduled(ev, evd_));
-    t2be.erase(evd_->t);
+    t2ev.erase(evd_->t);
     _schedule_event(ev, evd_, left_tail, right_tail);
     if (debug) verify_data_consistency();
 }
@@ -168,7 +168,7 @@ void add_event (event& ev)
 void remove_event (event& ev, event_data* evd_)
 {
     assert (event_is_scheduled(ev, evd_));
-    t2be.erase(evd_->t);
+    t2ev.erase(evd_->t);
     ev2data.erase(ev);
     if (debug) cout << "        removed event: " << ev << " scheduled at " << evd_->t << endl;
 }
@@ -279,8 +279,8 @@ bool pop_next_event ()
     while ((!found) && (current_t < max_t)) {
 
         // get handle of earliest next scheduled event:
-        auto tev = t2be.begin();
-        if (tev == t2be.end()) { // no events are scheduled --> model has converged
+        auto tev = t2ev.begin();
+        if (tev == t2ev.end()) { // no events are scheduled --> model has converged
             log_status();
             // jump to end
             current_t = max_t;
@@ -341,7 +341,7 @@ bool pop_next_event ()
                     // since the scheduling rate already contained the factor ev2max_sp[ev],
                     // we need to divide the success probability by it here:
                     probability conditional_success_probability =
-                            probunits2probability(spu, evt2left_tail.at(evt), evt2right_tail.at(evt)) / ev2max_sp[ev];
+                            probunits2probability(spu, evt2left_tail.at(evt), evt2right_tail.at(evt)) / ev2max_success_probability[ev];
                     // check if success:
                     if (uniform(random_variable) < conditional_success_probability) { // success
                         // "return" event:

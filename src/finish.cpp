@@ -15,8 +15,8 @@ void finish ()
 {
     current_t = max_t;
     if (verbose) {
-        cout << "\nat t=" << current_t << ", " << t2be.size() << " events on stack: " << endl;
-        for (auto& [t, ev] : t2be) {
+        cout << "\nat t=" << current_t << ", " << t2ev.size() << " events on stack: " << endl;
+        for (auto& [t, ev] : t2ev) {
             cout << " " << ev << " at " << t << endl;
         }
     }

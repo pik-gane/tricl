@@ -1,10 +1,4 @@
-/*
- * io.h
- *
- *  Created on: Mar 27, 2020
- *      Author: heitzig
- */
-
+// make sure this file is only included once:
 #ifndef INC_IO_H
 #define INC_IO_H
 

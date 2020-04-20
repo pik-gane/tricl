@@ -63,14 +63,14 @@ void verify_data_consistency() {
         assert (evd.success_probunits > -INFINITY);
         if (!(evd.t > -INFINITY)) dump_data();
         assert (evd.t > -INFINITY);
-        if (!(((evd.t < INFINITY) && (t2be.count(evd.t) == 1))
-                || ((evd.t == INFINITY) && (t2be.count(evd.t) > 0))))
-            cout << ev << evd << " " << (evd.t == INFINITY) << " " << t2be.count(evd.t) << endl;
-        assert (((evd.t < INFINITY) && (t2be.count(evd.t) == 1))
-                || ((evd.t == INFINITY) && (t2be.count(evd.t) > 0)));
+        if (!(((evd.t < INFINITY) && (t2ev.count(evd.t) == 1))
+                || ((evd.t == INFINITY) && (t2ev.count(evd.t) > 0))))
+            cout << ev << evd << " " << (evd.t == INFINITY) << " " << t2ev.count(evd.t) << endl;
+        assert (((evd.t < INFINITY) && (t2ev.count(evd.t) == 1))
+                || ((evd.t == INFINITY) && (t2ev.count(evd.t) > 0)));
     }
     // t2be:
-    for (auto& [t, ev] : t2be) {
+    for (auto& [t, ev] : t2ev) {
         assert (t > -INFINITY);
         assert (ev2data.count(ev) == 1);
     }

@@ -1,10 +1,4 @@
-/*
- * link.h
- *
- *  Created on: Mar 27, 2020
- *      Author: heitzig
- */
-
+// make sure this file is only included once:
 #ifndef INC_LINK_H
 #define INC_LINK_H
 

@@ -47,6 +47,7 @@
  *
  * optimization:
  * - use const args as much as possible in inner loops (?)
+ * - speed up probability2probunits by precomputing probability for events with constant success probability
  *
  *
  * Terminology
@@ -130,6 +131,9 @@
  *
  * Abbreviations used in variable naming
  * -------------------------------------
+ *
+ * - \b ar: attempt rate
+ * - \b spu: success probability units
  *
  * - \b e: entity
  * - \b e1: source entity of a link or event

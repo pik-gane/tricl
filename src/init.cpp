@@ -25,7 +25,7 @@ entity_type e2et[MAX_N_E];
 // derived constants:
 set<entity> es;
 unordered_map<entity_type_pair, set<relationship_or_action_type>> ets2relations;  // possible relations
-unordered_map<event, rate> ev2max_sp; // max possible effective rate of summary events
+unordered_map<event, rate> ev2max_success_probability; // max possible effective rate of summary events
 
 // variable data:
 
@@ -43,7 +43,7 @@ long int n_links = 0, n_angles = 0;
 
 // event data:
 unordered_map<event, event_data> ev2data = {};
-map<timepoint, event> t2be = {};  // kept to equal inverse of ev2data.t
+map<timepoint, event> t2ev = {};  // kept to equal inverse of ev2data.t
 
 
 void init_data ()
@@ -181,7 +181,7 @@ void init_summary_events ()
                         break;
                     }
                 }
-                ev2max_sp[summary_ev] = probunits2probability(max_spu, evt2left_tail.at(evt), evt2right_tail.at(evt));
+                ev2max_success_probability[summary_ev] = probunits2probability(max_spu, evt2left_tail.at(evt), evt2right_tail.at(evt));
                 if (verbose) cout << "  " << et2label[et1] << " " << rat2label[rat13] << " " << et2label[et3] << endl;
                 ev2data[summary_ev] = { .n_angles = 0,
                         .attempt_rate = ar * et2n[et1] * et2n[et3],

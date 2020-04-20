@@ -17,7 +17,7 @@ bool step ()
         if (quiet) {
             cout << round(current_t) << ": " << ((double)n_links)/((double)max_e*(double)max_e) << "                            \r";
         }
-        if (debug) cout << " " << t2be.size() << " events on stack" << endl << endl;
+        if (debug) cout << " " << t2ev.size() << " events on stack" << endl << endl;
         return true;
     } else {
         return false;

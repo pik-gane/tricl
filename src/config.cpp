@@ -1,30 +1,24 @@
 /** Handling of configuration files.
  *
- * Configuration files are in YAML.
- * See config_files/parameters_TEMPLATE.yaml for an example
+ *  \file
  *
- * @author Jobst Heitzig, Potsdam Institute for Climate Impact Research, heitzig@pik-potsdam.de
- * @date Mar 30, 2020
+ *  Configuration files are in YAML.
+ *  See the repository's \ref README.md for a documentation of all options.
  *
- * @file
  */
 
-/*
- * TODO:
- * - allow expressions as numerical values, e.g. 2*3.0
- */
 #include <limits.h>
 #include <math.h>
 #include <iostream>
 #include "yaml-cpp/yaml.h"
-#include "3rdparty/tinyexpr.h"
-#include "3rdparty/cxxopts.hpp"
+#include "3rdparty/tinyexpr.h"   // for handling of expressions
+#include "3rdparty/cxxopts.hpp"  // for handling of command line options
 
 #include "global_variables.h"
 #include "entity.h"
 #include "io.h"
 
-cxxopts::Options options("tricl", "a generic network-based social simulation model");
+cxxopts::Options options("tricl", "a generic network-based social simulation model");  ///< Holds all command line options
 
 // scalar parameters and their default values:
 unordered_map<relationship_or_action_type, string> gexf_filename = {};
@@ -63,26 +57,32 @@ unordered_map<relationship_or_action_type, string> rat2gexf_shape = {};
 unordered_map<relationship_or_action_type, int> rat2gexf_r = {}, rat2gexf_g = {}, rat2gexf_b = {};
 
 // further default values:
-#define TAIL_DEFAULT 1.0
+#define TAIL_DEFAULT 1.0  ///< Default value for tail indices. TODO: change to 0.0 to increase default performance?
 
 // internal data:
 entity max_e = 0;
 
 // stuff for parsing expressions:
-#define MAX_N_TE_VARS 1000
-string te_syms[MAX_N_TE_VARS];
-double te_vals[MAX_N_TE_VARS];
-te_variable te_vars[MAX_N_TE_VARS];
-int n_te_vars = 0;
+#define MAX_N_TE_VARS 1000           // maximum number of metaparameters
+string te_syms[MAX_N_TE_VARS];       // symbols representing metaparameters in expressions
+double te_vals[MAX_N_TE_VARS];       // corresponding substitution values
+te_variable te_vars[MAX_N_TE_VARS];  // corresponding variable objects
+int n_te_vars = 0;                   // total no. of these
+
+// convert a string expression into a double value:
 double parse_double (string expr)
 {
     return te_eval(te_compile(expr.c_str(), te_vars, n_te_vars, 0));
 }
+
+// convert a string expression into an integer value:
 double parse_int (string expr)
 {
     double dblv = parse_double(expr);
     return (dblv == INFINITY) ? INT_MAX : (dblv == -INFINITY) ? INT_MIN : round(dblv);
 }
+
+// register a metaparameter and its value for use in expressions:
 double register_te_var (string symbol, string expr)
 {
     if (n_te_vars >= MAX_N_TE_VARS) throw "too many metaparameters";
@@ -93,23 +93,25 @@ double register_te_var (string symbol, string expr)
     // register symbol and value as new subexpression to be substituted:
     te_vars[n_te_vars] = {te_syms[n_te_vars].c_str(), (const void*)(&te_vals[n_te_vars]), TE_VARIABLE};
     n_te_vars++;
-//    for (int i=0; i<n_te_vars; i++) {
-//        te_variable v = te_vars[i];
-//        cout << v.name << " @ " << v.address << "(" << *((double*)v.address) << ") " << v.type << endl;
-//    }
     return value;
 }
 
+// read entity labels from a YAML list
 void read_entity_labels (YAML::Node n, entity_type et)
 {
     for (YAML::const_iterator it3 = n.begin(); it3 != n.end(); ++it3) {
-        auto elabel = it3->as<string>();
+        auto elabel = it3->as<string>();  // YAML values must always be converted to some type by means of as<type>()
         entity e = add_entity(et, elabel);
         cout << "  entity " << e << ": " << elabel << endl;
     }
 }
 
-void read_config (int argc, char *argv[])
+/** Parse the command line options and YAML config file.
+ */
+void read_config (
+        int argc,     ///< [in] forwarded from \ref main()
+        char *argv[]  ///< [in] forwarded from \ref main()
+        )
 {
     // parse command line:
 
@@ -128,31 +130,49 @@ void read_config (int argc, char *argv[])
             cout << options.help() << endl;
             throw "field 'metaparameters' in config file must be a map";
         }
-        for (YAML::const_iterator it = n.begin(); it != n.end(); ++it) {
-            string symbol = it->first.as<string>(), deflt = it->second.as<string>();
+        for (YAML::const_iterator it = n.begin(); it != n.end(); ++it) {  // iterate through the map
+            string symbol = it->first.as<string>();  // the "first" member of a YAML map entry is the item's key
+            string deflt = it->second.as<string>();  // the "second" member of a YAML map entry is the item's value
             // TODO: validate symbol is both a valid command line option name and a valid tinyexpr variable name!
+            // the expression specified in the config file acts as default
+            // and can be overridden by the same named command-line option:
             options.add_options()(symbol, "value or expression for metaparameter " + symbol,
                     cxxopts::value<std::string>()->default_value(deflt));
         }
     }
-    // parse command line:
+    // read command line:
     auto cmdlineopts = options.parse(argc, argv);
     if ((cmdlineopts.count("help") >= 1)) {
         cout << options.help() << endl;
         exit(0);
     }
 
-    cout << "READING CONFIG file " << config_yaml_filename << " ..." << endl;
+    // read config file:
 
-    // metaparameters:
+    if (!quiet) cout << "READING CONFIG file " << config_yaml_filename << " ..." << endl;
+
+    // initial symbols allowed in expressions:
     te_vals[0] = { INFINITY };
     te_vars[0] = {"inf", (const void*)(&te_vals[0]), TE_VARIABLE};
-    n_te_vars = 1;
+    te_vals[1] = { INFINITY };
+    te_vars[1] = {"infty", (const void*)(&te_vals[0]), TE_VARIABLE};
+    te_vals[2] = { INFINITY };
+    te_vars[2] = {"infinity", (const void*)(&te_vals[0]), TE_VARIABLE};
+    te_vals[3] = { std::numeric_limits<double>::epsilon() };
+    te_vars[3] = {"eps", (const void*)(&te_vals[0]), TE_VARIABLE};
+    te_vals[4] = { std::numeric_limits<double>::epsilon() };
+    te_vars[4] = {"epsilon", (const void*)(&te_vals[0]), TE_VARIABLE};
+    n_te_vars = 5;
+
+    // NOTE: for some reason, "metaparameters" must be parsed before "options" to avoid a strange error.
+
+    // metaparameters:
     n = c["metaparameters"];
     if (n) {
         if (!quiet) cout << " metaparameters:" << endl;
         for (YAML::const_iterator it = n.begin(); it != n.end(); ++it) {
-            auto symbol = it->first.as<string>(), expression = cmdlineopts[symbol].as<string>();
+            auto symbol = it->first.as<string>();
+            auto expression = cmdlineopts[symbol].as<string>();  // this is either the expression from the command line, or if missing then the one from the config file
             double value = register_te_var(symbol, expression);
             if (!quiet) cout << "  " << symbol << " = " << expression << " = " << value << endl;
         }
@@ -168,6 +188,7 @@ void read_config (int argc, char *argv[])
         if (n["seed"]) seed = n["seed"].as<unsigned>();
     }
 
+    // TODO: make use of the metadata, e.g. in output
     // metadata (mandatory):
     n = c["metadata"];
     // meta_name = n["name"].as<string>();
@@ -191,7 +212,7 @@ void read_config (int argc, char *argv[])
         if (max_t == INFINITY) throw "limit: t must be finite";
     }
     if (n["events"]) max_n_events = floor(parse_double(n["events"].as<string>()));
-    // max_wall_time = n["wall"] ? n["wall"].as<double>() : INFINITY;
+    // max_wall_time = n["wall"] ? n["wall"].as<double>() : INFINITY;  // TODO: support this option
     if ((max_t==INFINITY) && (max_n_events==LONG_MAX)) throw
             "must specify at least one of limits:t, limits:events";
 
@@ -739,6 +760,6 @@ void read_config (int argc, char *argv[])
         }
     }
 
-    cout << "...READING CONFIG FINISHED." << endl << endl;
+    if (!quiet) cout << "...READING CONFIG FINISHED." << endl << endl;
 }
 

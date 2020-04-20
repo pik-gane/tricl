@@ -1,8 +1,6 @@
-/*
- * probability.cpp
+/** Additional functions dealing with probabilities.
  *
- *  Created on: Mar 27, 2020
- *      Author: heitzig
+ *  \file
  */
 
 #include "global_variables.h"
@@ -14,6 +12,10 @@ mt19937 random_variable;
 uniform_real_distribution<> uniform(0, 1);
 exponential_distribution<> exponential(1);
 
+/** Initialize the pseudo-random number generator using specified seed.
+ *
+ *  Uses a pseudo-random seed if seed == 0.
+ */
 void init_randomness ()
 {
     auto theseed = (seed == 0) ? ran_dev() : seed;

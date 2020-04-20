@@ -34,6 +34,7 @@ entity add_entity (
     if (elabel == "") {
         elabel = et2label.at(et) + " " + to_string(e);
     }
+    if (label2e.count(elabel) > 0) throw "entity label \"" + elabel + "\" is already in use";
     e2label[e] = elabel;
     label2e[elabel] = e;
 

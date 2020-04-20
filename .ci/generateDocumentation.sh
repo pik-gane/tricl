@@ -68,8 +68,8 @@ echo "" > .nojekyll
 ##### Generate the Doxygen code documentation and log the output.          #####
 echo 'Generating Doxygen code documentation...'
 # Redirect both stderr and stdout to the log file AND the console.
-ls -l src/tricl.cpp
-cat src/tricl.cpp
+#ls -l src/tricl.cpp
+#cat src/tricl.cpp
 doxygen Doxyfile 2>&1 | tee doxygen.log
 
 ################################################################################
@@ -78,7 +78,7 @@ doxygen Doxyfile 2>&1 | tee doxygen.log
 # Check this by verifying that the html directory and the file html/index.html
 # both exist. This is a good indication that Doxygen did it's work.
 cd doc
-ls -l
+#ls -l
 if [ -d "html" ] && [ -f "html/index.html" ]; then
     echo 'Uploading documentation to the gh-pages branch...'
     # Add everything in this directory (the Doxygen code documentation) to the

@@ -1,10 +1,4 @@
-/*
- * event.h
- *
- *  Created on: Mar 27, 2020
- *      Author: heitzig
- */
-
+// make sure this file is only included once:
 #ifndef INC_EVENT_H
 #define INC_EVENT_H
 
