@@ -88,6 +88,7 @@ $(function() {
 </ul>
 <p>optimization:</p><ul>
 <li>use const args as much as possible in inner loops (?)</li>
+<li>speed up probability2probunits by precomputing probability for events with constant success probability</li>
 </ul>
 <h1>Terminology </h1>
 <ul>
@@ -133,6 +134,8 @@ entity     relationship     entity
 </pre><h1>Naming conventions </h1>
 <h2>Abbreviations used in variable naming </h2>
 <ul>
+<li><b>ar:</b> attempt rate</li>
+<li><b>spu:</b> success probability units</li>
 <li><b>e:</b> entity</li>
 <li><b>e1:</b> source entity of a link or event</li>
 <li><b>e2:</b> middle entity of an angle or influence, or "other" entity of a leg</li>

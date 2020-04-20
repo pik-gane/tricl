@@ -1,0 +1,56 @@
+\hypertarget{probability_8cpp}{}\section{src/probability.cpp File Reference}
+\label{probability_8cpp}\index{src/probability.\+cpp@{src/probability.\+cpp}}
+
+
+Additional functions dealing with probabilities.  
+
+
+{\ttfamily \#include \char`\"{}global\+\_\+variables.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}probability.\+h\char`\"{}}\newline
+Include dependency graph for probability.\+cpp\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{d1/d32/probability_8cpp__incl}
+\end{center}
+\end{figure}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{probability_8cpp_a7e1fccef67213ff95a65f2a927e7c1c6}\label{probability_8cpp_a7e1fccef67213ff95a65f2a927e7c1c6}} 
+uniform\+\_\+real\+\_\+distribution {\bfseries uniform} (0, 1)
+\item 
+\mbox{\Hypertarget{probability_8cpp_a6a1b9029d84d91d784ad861f0330fada}\label{probability_8cpp_a6a1b9029d84d91d784ad861f0330fada}} 
+exponential\+\_\+distribution {\bfseries exponential} (1)
+\item 
+void \hyperlink{probability_8cpp_a59876affedc061069286bfd09a1c1d49}{init\+\_\+randomness} ()
+\begin{DoxyCompactList}\small\item\em Initialize the pseudo-\/random number generator using specified seed. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{probability_8cpp_a740e3e4f1bd0949f379c6ca7792d2fec}\label{probability_8cpp_a740e3e4f1bd0949f379c6ca7792d2fec}} 
+random\+\_\+device {\bfseries ran\+\_\+dev}
+\item 
+\mbox{\Hypertarget{probability_8cpp_a29e835ad2ed1bccd97f457d7c0cb746e}\label{probability_8cpp_a29e835ad2ed1bccd97f457d7c0cb746e}} 
+mt19937 \hyperlink{probability_8cpp_a29e835ad2ed1bccd97f457d7c0cb746e}{random\+\_\+variable}
+\begin{DoxyCompactList}\small\item\em Our pseudo-\/random number generator. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Additional functions dealing with probabilities. 
+
+
+
+\subsection{Function Documentation}
+\mbox{\Hypertarget{probability_8cpp_a59876affedc061069286bfd09a1c1d49}\label{probability_8cpp_a59876affedc061069286bfd09a1c1d49}} 
+\index{probability.\+cpp@{probability.\+cpp}!init\+\_\+randomness@{init\+\_\+randomness}}
+\index{init\+\_\+randomness@{init\+\_\+randomness}!probability.\+cpp@{probability.\+cpp}}
+\subsubsection{\texorpdfstring{init\+\_\+randomness()}{init\_randomness()}}
+{\footnotesize\ttfamily void init\+\_\+randomness (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Initialize the pseudo-\/random number generator using specified seed. 
+
+Uses a pseudo-\/random seed if seed == 0. 

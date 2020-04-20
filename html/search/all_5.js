@@ -1,6 +1,5 @@
 var searchData=
 [
-  ['influence_5ftype',['influence_type',['../d2/d5c/structtricl_1_1influence__type.html',1,'tricl']]],
-  ['inleg',['inleg',['../d5/dc0/structtricl_1_1inleg.html',1,'tricl']]],
-  ['inleg_5fset',['inleg_set',['../dc/d70/namespacetricl.html#a703ed53fa2dba74d8f51ede5fd46038d',1,'tricl']]]
+  ['gexf_5ffilename',['gexf_filename',['../df/d59/config_8cpp.html#a113f3c013371a7bc91273d8821d8710d',1,'gexf_filename():&#160;config.cpp'],['../d5/dfb/global__variables_8h.html#a113f3c013371a7bc91273d8821d8710d',1,'gexf_filename():&#160;config.cpp']]],
+  ['global_5fvariables_2eh',['global_variables.h',['../d5/dfb/global__variables_8h.html',1,'']]]
 ];

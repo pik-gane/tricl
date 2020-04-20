@@ -1,0 +1,237 @@
+\hypertarget{global__variables_8h}{}\section{src/global\+\_\+variables.h File Reference}
+\label{global__variables_8h}\index{src/global\+\_\+variables.\+h@{src/global\+\_\+variables.\+h}}
+
+
+Definition of global data storage.  
+
+
+{\ttfamily \#include \char`\"{}data\+\_\+model.\+h\char`\"{}}\newline
+Include dependency graph for global\+\_\+variables.\+h\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{d1/d21/global__variables_8h__incl}
+\end{center}
+\end{figure}
+This graph shows which files directly or indirectly include this file\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{de/dbc/global__variables_8h__dep__incl}
+\end{center}
+\end{figure}
+\subsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{global__variables_8h_a20bd8e3d0c96b4a292dc541550fb0d09}\label{global__variables_8h_a20bd8e3d0c96b4a292dc541550fb0d09}} 
+\#define {\bfseries C\+O\+U\+N\+T\+\_\+\+A\+L\+L\+\_\+\+A\+N\+G\+L\+ES}~false
+\end{DoxyCompactItemize}
+\subsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{global__variables_8h_a947946369717100780d790811d81bbb2}\label{global__variables_8h_a947946369717100780d790811d81bbb2}} 
+set$<$ \hyperlink{namespacetricl_a57273122278e8b301844e2a2e1f0742f}{entity} $>$ \hyperlink{global__variables_8h_a947946369717100780d790811d81bbb2}{es}
+\begin{DoxyCompactList}\small\item\em Set of all entities. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{global__variables_8h_aca8167edc3c91cb84c829dd88f75c7b4}\label{global__variables_8h_aca8167edc3c91cb84c829dd88f75c7b4}} 
+\hyperlink{namespacetricl_a57273122278e8b301844e2a2e1f0742f}{entity} \hyperlink{global__variables_8h_aca8167edc3c91cb84c829dd88f75c7b4}{max\+\_\+e}
+\begin{DoxyCompactList}\small\item\em Largest entity id in use. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{global__variables_8h_a5575d3ad7f54cb040bf940234988f10c}\label{global__variables_8h_a5575d3ad7f54cb040bf940234988f10c}} 
+\hyperlink{namespacetricl_afd4de3aedd5e48cf955f03457386e98f}{entity\+\_\+type} \hyperlink{global__variables_8h_a5575d3ad7f54cb040bf940234988f10c}{e2et} \mbox{[}\hyperlink{data__model_8h_acaa7fd772f80b3066211e5eb6e29ed91}{M\+A\+X\+\_\+\+N\+\_\+E}\mbox{]}
+\begin{DoxyCompactList}\small\item\em Entity type by entity (stored in an array for performance) \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{global__variables_8h_afde1d602246c7190d16eb890ee87f35b}\label{global__variables_8h_afde1d602246c7190d16eb890ee87f35b}} 
+unordered\+\_\+map$<$ \hyperlink{namespacetricl_afd4de3aedd5e48cf955f03457386e98f}{entity\+\_\+type}, vector$<$ \hyperlink{namespacetricl_a57273122278e8b301844e2a2e1f0742f}{entity} $>$ $>$ \hyperlink{global__variables_8h_afde1d602246c7190d16eb890ee87f35b}{et2es}
+\begin{DoxyCompactList}\small\item\em Inverse of e2et. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{global__variables_8h_a1d4d2e1edc14bccb896b5dd715cba4a6}\label{global__variables_8h_a1d4d2e1edc14bccb896b5dd715cba4a6}} 
+unordered\+\_\+map$<$ \hyperlink{namespacetricl_a57273122278e8b301844e2a2e1f0742f}{entity}, \hyperlink{namespacetricl_a77e7daffafa870e5786b344119da9b15}{label} $>$ \hyperlink{global__variables_8h_a1d4d2e1edc14bccb896b5dd715cba4a6}{e2label}
+\begin{DoxyCompactList}\small\item\em Labels of entities. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{global__variables_8h_a3e3cf64afa14be51e4752ebe0e78d8b4}\label{global__variables_8h_a3e3cf64afa14be51e4752ebe0e78d8b4}} 
+unordered\+\_\+map$<$ string, \hyperlink{namespacetricl_a57273122278e8b301844e2a2e1f0742f}{entity} $>$ \hyperlink{global__variables_8h_a3e3cf64afa14be51e4752ebe0e78d8b4}{label2e}
+\begin{DoxyCompactList}\small\item\em Inverse map of \hyperlink{global__variables_8h_a1d4d2e1edc14bccb896b5dd715cba4a6}{e2label}. \end{DoxyCompactList}\item 
+string \hyperlink{global__variables_8h_a6ff215d62218bc381c50ab2e7ef4731d}{config\+\_\+yaml\+\_\+filename}
+\begin{DoxyCompactList}\small\item\em Name of (or path to) main config file. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{global__variables_8h_ab3f078684998b83967d507d0f453f454}\label{global__variables_8h_ab3f078684998b83967d507d0f453f454}} 
+bool \hyperlink{global__variables_8h_ab3f078684998b83967d507d0f453f454}{verbose}
+\begin{DoxyCompactList}\small\item\em Whether to output more detailed information. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{global__variables_8h_ae4426f467d61ae456b95844d4d9c2dcd}\label{global__variables_8h_ae4426f467d61ae456b95844d4d9c2dcd}} 
+bool \hyperlink{global__variables_8h_ae4426f467d61ae456b95844d4d9c2dcd}{quiet}
+\begin{DoxyCompactList}\small\item\em Whether to suppress most output. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{global__variables_8h_a398527b3e9e358c345c5047b16871957}\label{global__variables_8h_a398527b3e9e358c345c5047b16871957}} 
+bool \hyperlink{global__variables_8h_a398527b3e9e358c345c5047b16871957}{debug}
+\begin{DoxyCompactList}\small\item\em Whether to output debug messages. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{global__variables_8h_af960657d113135c47b4e0ed4536930c0}\label{global__variables_8h_af960657d113135c47b4e0ed4536930c0}} 
+string \hyperlink{global__variables_8h_af960657d113135c47b4e0ed4536930c0}{diagram\+\_\+fileprefix}
+\begin{DoxyCompactList}\small\item\em Prefix of name of (or path to) generated diagram files. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{global__variables_8h_a61e4a08c5309d5cd9538ce9654bdb9e9}\label{global__variables_8h_a61e4a08c5309d5cd9538ce9654bdb9e9}} 
+\hyperlink{namespacetricl_a720ff6a29f998e11e1d3622fc8df64b1}{timepoint} \hyperlink{global__variables_8h_a61e4a08c5309d5cd9538ce9654bdb9e9}{max\+\_\+t}
+\begin{DoxyCompactList}\small\item\em Maximal model time to simulate until. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{global__variables_8h_a921a3c48e5eda75a9944e3d8fdecc826}\label{global__variables_8h_a921a3c48e5eda75a9944e3d8fdecc826}} 
+long int \hyperlink{global__variables_8h_a921a3c48e5eda75a9944e3d8fdecc826}{max\+\_\+n\+\_\+events}
+\begin{DoxyCompactList}\small\item\em Max. no. events to simulate before stopping. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{global__variables_8h_abb3c5a016eb55b340002c5da33a16714}\label{global__variables_8h_abb3c5a016eb55b340002c5da33a16714}} 
+unsigned \hyperlink{global__variables_8h_abb3c5a016eb55b340002c5da33a16714}{seed}
+\begin{DoxyCompactList}\small\item\em Random seed (if 0, generate a random seed) \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{global__variables_8h_a113f3c013371a7bc91273d8821d8710d}\label{global__variables_8h_a113f3c013371a7bc91273d8821d8710d}} 
+unordered\+\_\+map$<$ \hyperlink{namespacetricl_a2d01894944fb58a8fedc0912a48d13f8}{relationship\+\_\+or\+\_\+action\+\_\+type}, string $>$ \hyperlink{global__variables_8h_a113f3c013371a7bc91273d8821d8710d}{gexf\+\_\+filename}
+\begin{DoxyCompactList}\small\item\em Names of (or paths to) generated gexf (or gexf.\+gz) files by relationship or action type. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{global__variables_8h_a1b14b11720f5396f884aba602cc42602}\label{global__variables_8h_a1b14b11720f5396f884aba602cc42602}} 
+unordered\+\_\+map$<$ \hyperlink{namespacetricl_afd4de3aedd5e48cf955f03457386e98f}{entity\+\_\+type}, \hyperlink{namespacetricl_a77e7daffafa870e5786b344119da9b15}{label} $>$ \hyperlink{global__variables_8h_a1b14b11720f5396f884aba602cc42602}{et2label}
+\begin{DoxyCompactList}\small\item\em Entity type labels (typically nouns) \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{global__variables_8h_a4ad1375a3f0b5760ef4861ef35ac7f25}\label{global__variables_8h_a4ad1375a3f0b5760ef4861ef35ac7f25}} 
+unordered\+\_\+map$<$ string, \hyperlink{namespacetricl_afd4de3aedd5e48cf955f03457386e98f}{entity\+\_\+type} $>$ \hyperlink{global__variables_8h_a4ad1375a3f0b5760ef4861ef35ac7f25}{label2et}
+\begin{DoxyCompactList}\small\item\em Inverse map of \hyperlink{global__variables_8h_a1b14b11720f5396f884aba602cc42602}{et2label}. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{global__variables_8h_aba5a0104caf66faf04d0e2f4491415fb}\label{global__variables_8h_aba5a0104caf66faf04d0e2f4491415fb}} 
+unordered\+\_\+map$<$ \hyperlink{namespacetricl_afd4de3aedd5e48cf955f03457386e98f}{entity\+\_\+type}, \hyperlink{namespacetricl_a57273122278e8b301844e2a2e1f0742f}{entity} $>$ \hyperlink{global__variables_8h_aba5a0104caf66faf04d0e2f4491415fb}{et2n}
+\begin{DoxyCompactList}\small\item\em No. of entities by type. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{global__variables_8h_a41e5e4e1e8384638199deff086cbe4ad}\label{global__variables_8h_a41e5e4e1e8384638199deff086cbe4ad}} 
+int \hyperlink{global__variables_8h_a41e5e4e1e8384638199deff086cbe4ad}{n\+\_\+rats}
+\begin{DoxyCompactList}\small\item\em No. of distinct relationship or action types. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{global__variables_8h_a16775be180de048f5d158cf6c18af175}\label{global__variables_8h_a16775be180de048f5d158cf6c18af175}} 
+unordered\+\_\+map$<$ \hyperlink{namespacetricl_a2d01894944fb58a8fedc0912a48d13f8}{relationship\+\_\+or\+\_\+action\+\_\+type}, \hyperlink{namespacetricl_a77e7daffafa870e5786b344119da9b15}{label} $>$ \hyperlink{global__variables_8h_a16775be180de048f5d158cf6c18af175}{rat2label}
+\begin{DoxyCompactList}\small\item\em Relationship or action type labels (typically verbs in the 3rd person singular, or math symbols) \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{global__variables_8h_a1b29491c10222b82a8ac3f8241aa27a8}\label{global__variables_8h_a1b29491c10222b82a8ac3f8241aa27a8}} 
+unordered\+\_\+map$<$ string, \hyperlink{namespacetricl_a2d01894944fb58a8fedc0912a48d13f8}{relationship\+\_\+or\+\_\+action\+\_\+type} $>$ \hyperlink{global__variables_8h_a1b29491c10222b82a8ac3f8241aa27a8}{label2rat}
+\begin{DoxyCompactList}\small\item\em Inverse map of \hyperlink{global__variables_8h_a1b29491c10222b82a8ac3f8241aa27a8}{label2rat}. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{global__variables_8h_acb03df27c0aec975d0d0a27e21f9b956}\label{global__variables_8h_acb03df27c0aec975d0d0a27e21f9b956}} 
+unordered\+\_\+map$<$ \hyperlink{namespacetricl_a2d01894944fb58a8fedc0912a48d13f8}{relationship\+\_\+or\+\_\+action\+\_\+type}, bool $>$ \hyperlink{global__variables_8h_acb03df27c0aec975d0d0a27e21f9b956}{r\+\_\+is\+\_\+action\+\_\+type}
+\begin{DoxyCompactList}\small\item\em Whether relationship or action type is an action type (not implemented yet) \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{global__variables_8h_a698aaa515390777326d52ab118c9f1fe}\label{global__variables_8h_a698aaa515390777326d52ab118c9f1fe}} 
+unordered\+\_\+map$<$ \hyperlink{namespacetricl_a2d01894944fb58a8fedc0912a48d13f8}{relationship\+\_\+or\+\_\+action\+\_\+type}, \hyperlink{namespacetricl_a2d01894944fb58a8fedc0912a48d13f8}{relationship\+\_\+or\+\_\+action\+\_\+type} $>$ \hyperlink{global__variables_8h_a698aaa515390777326d52ab118c9f1fe}{rat2inv}
+\begin{DoxyCompactList}\small\item\em Inverse type of a relationship or action type (e.\+g. the inverse of \char`\"{}follows\char`\"{} would be \char`\"{}is followed by\char`\"{}, the inverse of \char`\"{}meets\char`\"{} would be \char`\"{}meets\char`\"{}). If N\+O\+\_\+\+R\+AT, inverse has no individual label. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{global__variables_8h_afe42a9a97fc8e959183c94fc333f2331}\label{global__variables_8h_afe42a9a97fc8e959183c94fc333f2331}} 
+set$<$ \hyperlink{structtricl_1_1link}{link} $>$ \hyperlink{global__variables_8h_afe42a9a97fc8e959183c94fc333f2331}{initial\+\_\+links}
+\begin{DoxyCompactList}\small\item\em Set of named initial links. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{global__variables_8h_ac3d91d4eef87cfaf1371a698513533ba}\label{global__variables_8h_ac3d91d4eef87cfaf1371a698513533ba}} 
+unordered\+\_\+map$<$ \hyperlink{namespacetricl_afd4de3aedd5e48cf955f03457386e98f}{entity\+\_\+type}, int $>$ \hyperlink{global__variables_8h_ac3d91d4eef87cfaf1371a698513533ba}{et2n\+\_\+blocks}
+\begin{DoxyCompactList}\small\item\em No. of blocks for random block model by entity type. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{global__variables_8h_a1cf9b4c5338052d0ac84135ecefc7d39}\label{global__variables_8h_a1cf9b4c5338052d0ac84135ecefc7d39}} 
+unordered\+\_\+map$<$ \hyperlink{structtricl_1_1link__type}{link\+\_\+type}, \hyperlink{namespacetricl_af2e8973ba58a3dad9061296d8bee16a2}{probability} $>$ \hyperlink{global__variables_8h_a1cf9b4c5338052d0ac84135ecefc7d39}{lt2initial\+\_\+prob\+\_\+within}
+\begin{DoxyCompactList}\small\item\em Within-\/block link probability for random block model by link type. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{global__variables_8h_aa892b7f705910915c42a59b564850a4a}\label{global__variables_8h_aa892b7f705910915c42a59b564850a4a}} 
+unordered\+\_\+map$<$ \hyperlink{structtricl_1_1link__type}{link\+\_\+type}, \hyperlink{namespacetricl_af2e8973ba58a3dad9061296d8bee16a2}{probability} $>$ \hyperlink{global__variables_8h_aa892b7f705910915c42a59b564850a4a}{lt2initial\+\_\+prob\+\_\+between}
+\begin{DoxyCompactList}\small\item\em Between-\/block link probability for random block model by link type. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{global__variables_8h_a5022e1a1414fd07a51e1e3e6f08ab064}\label{global__variables_8h_a5022e1a1414fd07a51e1e3e6f08ab064}} 
+unordered\+\_\+map$<$ \hyperlink{namespacetricl_afd4de3aedd5e48cf955f03457386e98f}{entity\+\_\+type}, int $>$ \hyperlink{global__variables_8h_a5022e1a1414fd07a51e1e3e6f08ab064}{et2dim}
+\begin{DoxyCompactList}\small\item\em No. of spatial dimensions for random geometric model by entity type. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{global__variables_8h_ac075689bc4d37b273487fa22e5099b32}\label{global__variables_8h_ac075689bc4d37b273487fa22e5099b32}} 
+unordered\+\_\+map$<$ \hyperlink{structtricl_1_1link__type}{link\+\_\+type}, \hyperlink{namespacetricl_af2e8973ba58a3dad9061296d8bee16a2}{probability} $>$ \hyperlink{global__variables_8h_ac075689bc4d37b273487fa22e5099b32}{lt2spatial\+\_\+decay}
+\begin{DoxyCompactList}\small\item\em Rate of exponential decay of link probability for random geometric model by link type. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{global__variables_8h_a719fa5d246e520102772d00812e33b29}\label{global__variables_8h_a719fa5d246e520102772d00812e33b29}} 
+unordered\+\_\+map$<$ \hyperlink{structtricl_1_1event__type}{event\+\_\+type}, \hyperlink{namespacetricl_ae42d2696f294300a43e0f5edf4875479}{rate} $>$ \hyperlink{global__variables_8h_a719fa5d246e520102772d00812e33b29}{evt2base\+\_\+attempt\+\_\+rate}
+\begin{DoxyCompactList}\small\item\em Basic attempt rate by event type. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{global__variables_8h_aa37926f8d74a0c74e47def544c4f872e}\label{global__variables_8h_aa37926f8d74a0c74e47def544c4f872e}} 
+unordered\+\_\+map$<$ \hyperlink{structtricl_1_1influence__type}{influence\+\_\+type}, \hyperlink{namespacetricl_ae42d2696f294300a43e0f5edf4875479}{rate} $>$ \hyperlink{global__variables_8h_aa37926f8d74a0c74e47def544c4f872e}{inflt2attempt\+\_\+rate}
+\begin{DoxyCompactList}\small\item\em Additional attempt rate by influence type. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{global__variables_8h_a69b9cd60e82b0548a3b19a476f8b6f80}\label{global__variables_8h_a69b9cd60e82b0548a3b19a476f8b6f80}} 
+\hyperlink{namespacetricl_ae42d2696f294300a43e0f5edf4875479}{rate} \hyperlink{global__variables_8h_a69b9cd60e82b0548a3b19a476f8b6f80}{\+\_\+inflt2attempt\+\_\+rate} \mbox{[}M\+A\+X\+\_\+\+N\+\_\+\+I\+N\+F\+LT\mbox{]}
+\begin{DoxyCompactList}\small\item\em Redundant copy of \hyperlink{global__variables_8h_aa37926f8d74a0c74e47def544c4f872e}{inflt2attempt\+\_\+rate} as array. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{global__variables_8h_ae7b89a8070b4de9d132b167704229c70}\label{global__variables_8h_ae7b89a8070b4de9d132b167704229c70}} 
+unordered\+\_\+map$<$ \hyperlink{structtricl_1_1event__type}{event\+\_\+type}, double $>$ \hyperlink{global__variables_8h_ae7b89a8070b4de9d132b167704229c70}{evt2left\+\_\+tail}
+\begin{DoxyCompactList}\small\item\em Left tail index for sigmoid function \hyperlink{probability_8h_a278b4df0353e94d6cf8cfb59a0d8058a}{probunits2probability()}, $>$=0. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{global__variables_8h_a6a65e62a5f8173784beb092165af2528}\label{global__variables_8h_a6a65e62a5f8173784beb092165af2528}} 
+unordered\+\_\+map$<$ \hyperlink{structtricl_1_1event__type}{event\+\_\+type}, double $>$ \hyperlink{global__variables_8h_a6a65e62a5f8173784beb092165af2528}{evt2right\+\_\+tail}
+\begin{DoxyCompactList}\small\item\em Right tail index for sigmoid function \hyperlink{probability_8h_a278b4df0353e94d6cf8cfb59a0d8058a}{probunits2probability()}, $>$= 0. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{global__variables_8h_a5372b5c53ebbceff39a367177d0e4c38}\label{global__variables_8h_a5372b5c53ebbceff39a367177d0e4c38}} 
+unordered\+\_\+map$<$ \hyperlink{structtricl_1_1event__type}{event\+\_\+type}, \hyperlink{namespacetricl_af8f8f9076e92e1c664ffa96f18d038a5}{probunits} $>$ \hyperlink{global__variables_8h_a5372b5c53ebbceff39a367177d0e4c38}{evt2base\+\_\+probunits}
+\begin{DoxyCompactList}\small\item\em Basic success probability units by event type. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{global__variables_8h_aa4d1d1a030f8a8b177f11e3b4dc93011}\label{global__variables_8h_aa4d1d1a030f8a8b177f11e3b4dc93011}} 
+unordered\+\_\+map$<$ \hyperlink{structtricl_1_1influence__type}{influence\+\_\+type}, \hyperlink{namespacetricl_af8f8f9076e92e1c664ffa96f18d038a5}{probunits} $>$ \hyperlink{global__variables_8h_aa4d1d1a030f8a8b177f11e3b4dc93011}{inflt2delta\+\_\+probunits}
+\begin{DoxyCompactList}\small\item\em Change in success probunits by influence type. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{global__variables_8h_a2904c61a9f1383a59a4fa585f316dddc}\label{global__variables_8h_a2904c61a9f1383a59a4fa585f316dddc}} 
+\hyperlink{namespacetricl_af8f8f9076e92e1c664ffa96f18d038a5}{probunits} \hyperlink{global__variables_8h_a2904c61a9f1383a59a4fa585f316dddc}{\+\_\+inflt2delta\+\_\+probunit} \mbox{[}M\+A\+X\+\_\+\+N\+\_\+\+I\+N\+F\+LT\mbox{]}
+\begin{DoxyCompactList}\small\item\em Redundant copy of \hyperlink{global__variables_8h_aa4d1d1a030f8a8b177f11e3b4dc93011}{inflt2delta\+\_\+probunits} as array. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{global__variables_8h_aa14307fdbe429593717c02e66b2bc468}\label{global__variables_8h_aa14307fdbe429593717c02e66b2bc468}} 
+unordered\+\_\+map$<$ \hyperlink{structtricl_1_1entity__type__pair}{entity\+\_\+type\+\_\+pair}, set$<$ \hyperlink{namespacetricl_a2d01894944fb58a8fedc0912a48d13f8}{relationship\+\_\+or\+\_\+action\+\_\+type} $>$ $>$ \hyperlink{global__variables_8h_aa14307fdbe429593717c02e66b2bc468}{ets2relations}
+\begin{DoxyCompactList}\small\item\em Possible relationship or action types by entity type pair. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{global__variables_8h_a29508c6fbe67c716bed74a427640c7aa}\label{global__variables_8h_a29508c6fbe67c716bed74a427640c7aa}} 
+unordered\+\_\+map$<$ \hyperlink{structtricl_1_1event}{event}, \hyperlink{namespacetricl_ae42d2696f294300a43e0f5edf4875479}{rate} $>$ \hyperlink{global__variables_8h_a29508c6fbe67c716bed74a427640c7aa}{ev2max\+\_\+success\+\_\+probability}
+\begin{DoxyCompactList}\small\item\em Maximal possible success probability of summary events. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{global__variables_8h_a922d0c80d1e0778e68aaca86945eb49e}\label{global__variables_8h_a922d0c80d1e0778e68aaca86945eb49e}} 
+unordered\+\_\+map$<$ \hyperlink{namespacetricl_afd4de3aedd5e48cf955f03457386e98f}{entity\+\_\+type}, double $>$ \hyperlink{global__variables_8h_a922d0c80d1e0778e68aaca86945eb49e}{et2gexf\+\_\+size}
+\begin{DoxyCompactList}\small\item\em Node size for gexf file by entity type. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{global__variables_8h_a26668024dfdce9d505c1e0ed03a645a2}\label{global__variables_8h_a26668024dfdce9d505c1e0ed03a645a2}} 
+unordered\+\_\+map$<$ \hyperlink{namespacetricl_afd4de3aedd5e48cf955f03457386e98f}{entity\+\_\+type}, double $>$ \hyperlink{global__variables_8h_a26668024dfdce9d505c1e0ed03a645a2}{et2gexf\+\_\+a}
+\begin{DoxyCompactList}\small\item\em Node color alpha value for gexf file by entity type, 0...1. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{global__variables_8h_a10ef80ac6e92253faba86527383b0b19}\label{global__variables_8h_a10ef80ac6e92253faba86527383b0b19}} 
+unordered\+\_\+map$<$ \hyperlink{namespacetricl_afd4de3aedd5e48cf955f03457386e98f}{entity\+\_\+type}, string $>$ \hyperlink{global__variables_8h_a10ef80ac6e92253faba86527383b0b19}{et2gexf\+\_\+shape}
+\begin{DoxyCompactList}\small\item\em Node shape for gexf file by entity type. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{global__variables_8h_aa7267315093f6567077ec5e612b46ed1}\label{global__variables_8h_aa7267315093f6567077ec5e612b46ed1}} 
+unordered\+\_\+map$<$ \hyperlink{namespacetricl_afd4de3aedd5e48cf955f03457386e98f}{entity\+\_\+type}, int $>$ \hyperlink{global__variables_8h_aa7267315093f6567077ec5e612b46ed1}{et2gexf\+\_\+r}
+\begin{DoxyCompactList}\small\item\em Node color red value for gexf file by entity type, 0...255. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{global__variables_8h_a86c65c01b4b0c35b56baf6d8d557d977}\label{global__variables_8h_a86c65c01b4b0c35b56baf6d8d557d977}} 
+unordered\+\_\+map$<$ \hyperlink{namespacetricl_afd4de3aedd5e48cf955f03457386e98f}{entity\+\_\+type}, int $>$ \hyperlink{global__variables_8h_a86c65c01b4b0c35b56baf6d8d557d977}{et2gexf\+\_\+g}
+\begin{DoxyCompactList}\small\item\em Node color green value for gexf file by entity type, 0...255. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{global__variables_8h_aded47b9a1ea0cb3ac40ea0ae60d013c3}\label{global__variables_8h_aded47b9a1ea0cb3ac40ea0ae60d013c3}} 
+unordered\+\_\+map$<$ \hyperlink{namespacetricl_afd4de3aedd5e48cf955f03457386e98f}{entity\+\_\+type}, int $>$ \hyperlink{global__variables_8h_aded47b9a1ea0cb3ac40ea0ae60d013c3}{et2gexf\+\_\+b}
+\begin{DoxyCompactList}\small\item\em Node color blue value for gexf file by entity type, 0...255. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{global__variables_8h_a7e4baebe848adb451c45c44624784a8a}\label{global__variables_8h_a7e4baebe848adb451c45c44624784a8a}} 
+unordered\+\_\+map$<$ \hyperlink{namespacetricl_a2d01894944fb58a8fedc0912a48d13f8}{relationship\+\_\+or\+\_\+action\+\_\+type}, double $>$ \hyperlink{global__variables_8h_a7e4baebe848adb451c45c44624784a8a}{rat2gexf\+\_\+thickness}
+\begin{DoxyCompactList}\small\item\em Edge line thickness for gexf file by relationship or action type. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{global__variables_8h_a8fc9665235760bdb38eb6a631e654077}\label{global__variables_8h_a8fc9665235760bdb38eb6a631e654077}} 
+unordered\+\_\+map$<$ \hyperlink{namespacetricl_a2d01894944fb58a8fedc0912a48d13f8}{relationship\+\_\+or\+\_\+action\+\_\+type}, double $>$ \hyperlink{global__variables_8h_a8fc9665235760bdb38eb6a631e654077}{rat2gexf\+\_\+a}
+\begin{DoxyCompactList}\small\item\em Edge color alpha value for gexf file by relationship or action type, 0...1. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{global__variables_8h_a9a7b4c97b0337eec7a107d4f48c994f0}\label{global__variables_8h_a9a7b4c97b0337eec7a107d4f48c994f0}} 
+unordered\+\_\+map$<$ \hyperlink{namespacetricl_a2d01894944fb58a8fedc0912a48d13f8}{relationship\+\_\+or\+\_\+action\+\_\+type}, string $>$ \hyperlink{global__variables_8h_a9a7b4c97b0337eec7a107d4f48c994f0}{rat2gexf\+\_\+shape}
+\begin{DoxyCompactList}\small\item\em Edge shape for gexf file by relationship or action type. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{global__variables_8h_ad77fa8d20dd7cf1471f2219765253a49}\label{global__variables_8h_ad77fa8d20dd7cf1471f2219765253a49}} 
+unordered\+\_\+map$<$ \hyperlink{namespacetricl_a2d01894944fb58a8fedc0912a48d13f8}{relationship\+\_\+or\+\_\+action\+\_\+type}, int $>$ \hyperlink{global__variables_8h_ad77fa8d20dd7cf1471f2219765253a49}{rat2gexf\+\_\+r}
+\begin{DoxyCompactList}\small\item\em Edge color red value for gexf file by relationship or action type, 0...255. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{global__variables_8h_a8063993d6d713ccd233e2fcc6e9bc99b}\label{global__variables_8h_a8063993d6d713ccd233e2fcc6e9bc99b}} 
+unordered\+\_\+map$<$ \hyperlink{namespacetricl_a2d01894944fb58a8fedc0912a48d13f8}{relationship\+\_\+or\+\_\+action\+\_\+type}, int $>$ \hyperlink{global__variables_8h_a8063993d6d713ccd233e2fcc6e9bc99b}{rat2gexf\+\_\+g}
+\begin{DoxyCompactList}\small\item\em Edge color green value for gexf file by relationship or action type, 0...255. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{global__variables_8h_aa91b7e25dfb65b3ea4d7f4c15a7bc25d}\label{global__variables_8h_aa91b7e25dfb65b3ea4d7f4c15a7bc25d}} 
+unordered\+\_\+map$<$ \hyperlink{namespacetricl_a2d01894944fb58a8fedc0912a48d13f8}{relationship\+\_\+or\+\_\+action\+\_\+type}, int $>$ \hyperlink{global__variables_8h_aa91b7e25dfb65b3ea4d7f4c15a7bc25d}{rat2gexf\+\_\+b}
+\begin{DoxyCompactList}\small\item\em Edge color blue value for gexf file by relationship or action type, 0...255. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{global__variables_8h_a7995d0e6f6203414b6d3a587cd914ccd}\label{global__variables_8h_a7995d0e6f6203414b6d3a587cd914ccd}} 
+\hyperlink{namespacetricl_a720ff6a29f998e11e1d3622fc8df64b1}{timepoint} \hyperlink{global__variables_8h_a7995d0e6f6203414b6d3a587cd914ccd}{current\+\_\+t}
+\begin{DoxyCompactList}\small\item\em Current model time point. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{global__variables_8h_af6fef9c00468567be81aa35cbd9954f8}\label{global__variables_8h_af6fef9c00468567be81aa35cbd9954f8}} 
+long int \hyperlink{global__variables_8h_af6fef9c00468567be81aa35cbd9954f8}{n\+\_\+events}
+\begin{DoxyCompactList}\small\item\em No. of events that occurred so far. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{global__variables_8h_a469af6042c7f42fa196518b3891eaf99}\label{global__variables_8h_a469af6042c7f42fa196518b3891eaf99}} 
+\hyperlink{structtricl_1_1event}{event} \hyperlink{global__variables_8h_a469af6042c7f42fa196518b3891eaf99}{current\+\_\+ev}
+\begin{DoxyCompactList}\small\item\em Current event. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{global__variables_8h_adf40548238257ccb72ce250dc8d24ecb}\label{global__variables_8h_adf40548238257ccb72ce250dc8d24ecb}} 
+\hyperlink{structtricl_1_1event__data}{event\+\_\+data} $\ast$ \hyperlink{global__variables_8h_adf40548238257ccb72ce250dc8d24ecb}{current\+\_\+evd\+\_\+}
+\begin{DoxyCompactList}\small\item\em Pointer to event data of current event. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{global__variables_8h_ad341486e8758a34dc041b76c3da467b8}\label{global__variables_8h_ad341486e8758a34dc041b76c3da467b8}} 
+map$<$ \hyperlink{namespacetricl_a720ff6a29f998e11e1d3622fc8df64b1}{timepoint}, \hyperlink{structtricl_1_1event}{event} $>$ \hyperlink{global__variables_8h_ad341486e8758a34dc041b76c3da467b8}{t2ev}
+\begin{DoxyCompactList}\small\item\em Current schedule of events, inverse of ev2data\mbox{[}ev\mbox{]}.t. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{global__variables_8h_abd93dcd3ef051b923d28ab67c676e0bb}\label{global__variables_8h_abd93dcd3ef051b923d28ab67c676e0bb}} 
+unordered\+\_\+map$<$ \hyperlink{structtricl_1_1event}{event}, \hyperlink{structtricl_1_1event__data}{event\+\_\+data} $>$ \hyperlink{global__variables_8h_abd93dcd3ef051b923d28ab67c676e0bb}{ev2data}
+\begin{DoxyCompactList}\small\item\em Data of all currently scheduled events. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{global__variables_8h_a75a5d043ba4e509c67453695e7e5529c}\label{global__variables_8h_a75a5d043ba4e509c67453695e7e5529c}} 
+unordered\+\_\+map$<$ \hyperlink{namespacetricl_a57273122278e8b301844e2a2e1f0742f}{entity}, \hyperlink{namespacetricl_ac36fc4606da3d7f9ffd1764942fe5940}{outleg\+\_\+set} $>$ \hyperlink{global__variables_8h_a75a5d043ba4e509c67453695e7e5529c}{e2outs}
+\begin{DoxyCompactList}\small\item\em Set of current outlegs by source entity. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{global__variables_8h_a8b3b3d5adbc11b8004154a178ff6b72b}\label{global__variables_8h_a8b3b3d5adbc11b8004154a178ff6b72b}} 
+unordered\+\_\+map$<$ \hyperlink{namespacetricl_a57273122278e8b301844e2a2e1f0742f}{entity}, \hyperlink{namespacetricl_a703ed53fa2dba74d8f51ede5fd46038d}{inleg\+\_\+set} $>$ \hyperlink{global__variables_8h_a8b3b3d5adbc11b8004154a178ff6b72b}{e2ins}
+\begin{DoxyCompactList}\small\item\em Set of current inlegs by source entity (redundant, but essential for performance) \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{global__variables_8h_a350c4ac6a5a928c3d633cb168a210370}\label{global__variables_8h_a350c4ac6a5a928c3d633cb168a210370}} 
+unordered\+\_\+map$<$ \hyperlink{structtricl_1_1link__type}{link\+\_\+type}, long int $>$ \hyperlink{global__variables_8h_a350c4ac6a5a928c3d633cb168a210370}{lt2n}
+\begin{DoxyCompactList}\small\item\em No. of current (non-\/id.) links by type incl. inverse relationships. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{global__variables_8h_a2a10752aad7e37dad675c09c1d82d2bd}\label{global__variables_8h_a2a10752aad7e37dad675c09c1d82d2bd}} 
+long int \hyperlink{global__variables_8h_a2a10752aad7e37dad675c09c1d82d2bd}{n\+\_\+links}
+\begin{DoxyCompactList}\small\item\em Total no. of current (non-\/id.) links incl. inverse relationships. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{global__variables_8h_aa5d2c58e453251cc00477f3c945d7597}\label{global__variables_8h_aa5d2c58e453251cc00477f3c945d7597}} 
+long int \hyperlink{global__variables_8h_aa5d2c58e453251cc00477f3c945d7597}{n\+\_\+angles}
+\begin{DoxyCompactList}\small\item\em Total no. of current (non-\/id.) angles that may influence at least one event. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Definition of global data storage. 
+
+See \hyperlink{data__model_8h}{data\+\_\+model.\+h} for an explanation of the overall data architecture. 
+
+\subsection{Variable Documentation}
+\mbox{\Hypertarget{global__variables_8h_a6ff215d62218bc381c50ab2e7ef4731d}\label{global__variables_8h_a6ff215d62218bc381c50ab2e7ef4731d}} 
+\index{global\+\_\+variables.\+h@{global\+\_\+variables.\+h}!config\+\_\+yaml\+\_\+filename@{config\+\_\+yaml\+\_\+filename}}
+\index{config\+\_\+yaml\+\_\+filename@{config\+\_\+yaml\+\_\+filename}!global\+\_\+variables.\+h@{global\+\_\+variables.\+h}}
+\subsubsection{\texorpdfstring{config\+\_\+yaml\+\_\+filename}{config\_yaml\_filename}}
+{\footnotesize\ttfamily string config\+\_\+yaml\+\_\+filename}
+
+
+
+Name of (or path to) main config file. 
+
+Name of (or path to) main config file. 

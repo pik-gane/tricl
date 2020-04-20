@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['at',['at',['../d2/d5c/structtricl_1_1influence__type.html#a9d6fecd13fbb3e7b0686556d80b3b537',1,'tricl::influence_type']]],
-  ['attempt_5frate',['attempt_rate',['../d9/d16/structtricl_1_1event__data.html#ab1a97598f3ac7947b16c785138d754df',1,'tricl::event_data']]]
+  ['_5finflt2attempt_5frate',['_inflt2attempt_rate',['../d5/dfb/global__variables_8h.html#a69b9cd60e82b0548a3b19a476f8b6f80',1,'init.cpp']]],
+  ['_5finflt2delta_5fprobunit',['_inflt2delta_probunit',['../d5/dfb/global__variables_8h.html#a2904c61a9f1383a59a4fa585f316dddc',1,'init.cpp']]]
 ];

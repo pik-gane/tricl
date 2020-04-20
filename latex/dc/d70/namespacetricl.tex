@@ -38,7 +38,7 @@ typedef double \hyperlink{namespacetricl_a720ff6a29f998e11e1d3622fc8df64b1}{time
 \begin{DoxyCompactList}\small\item\em A point in continuous model time, 0...inf. \end{DoxyCompactList}\item 
 \mbox{\Hypertarget{namespacetricl_af8f8f9076e92e1c664ffa96f18d038a5}\label{namespacetricl_af8f8f9076e92e1c664ffa96f18d038a5}} 
 typedef double \hyperlink{namespacetricl_af8f8f9076e92e1c664ffa96f18d038a5}{probunits}
-\begin{DoxyCompactList}\small\item\em -\/inf...inf, will be mapped to probabilities by means of the function probunits2probability() \end{DoxyCompactList}\item 
+\begin{DoxyCompactList}\small\item\em -\/inf...inf, will be mapped to probabilities by means of the function \hyperlink{probability_8h_a278b4df0353e94d6cf8cfb59a0d8058a}{probunits2probability()} \end{DoxyCompactList}\item 
 \mbox{\Hypertarget{namespacetricl_af2e8973ba58a3dad9061296d8bee16a2}\label{namespacetricl_af2e8973ba58a3dad9061296d8bee16a2}} 
 typedef double \hyperlink{namespacetricl_af2e8973ba58a3dad9061296d8bee16a2}{probability}
 \begin{DoxyCompactList}\small\item\em 0...1 \end{DoxyCompactList}\item 
@@ -74,8 +74,8 @@ enum \hyperlink{namespacetricl_a6967089e2c0837f273d8cb5fd9f7e46d}{event\+\_\+cla
 \subsection*{Variables}
 \begin{DoxyCompactItemize}
 \item 
-unordered\+\_\+map$<$ \hyperlink{namespacetricl_a6967089e2c0837f273d8cb5fd9f7e46d}{event\+\_\+class}, string $>$ {\bfseries ec2label}
-\end{DoxyCompactItemize}
+unordered\+\_\+map$<$ \hyperlink{namespacetricl_a6967089e2c0837f273d8cb5fd9f7e46d}{event\+\_\+class}, string $>$ \hyperlink{namespacetricl_a321f250312d2a16a422999a72fc8eb4e}{ec2label}
+\begin{DoxyCompactList}\small\item\em Labels for event classes. \end{DoxyCompactList}\end{DoxyCompactItemize}
 
 
 \subsection{Detailed Description}
@@ -159,8 +159,13 @@ E\+C\+\_\+\+A\+CT&Occurrence of an action (not yet implemented) \\
 {\bfseries Initial value\+:}
 \begin{DoxyCode}
 = \{
-        \{ \hyperlink{namespacetricl_a6967089e2c0837f273d8cb5fd9f7e46da928305067790de15396de8fcc92b72b9}{EC\_EST}, \textcolor{stringliteral}{"establish that"} \},
-        \{ \hyperlink{namespacetricl_a6967089e2c0837f273d8cb5fd9f7e46da16f53be37a75a1cdfc726014c7f3810a}{EC\_TERM}, \textcolor{stringliteral}{"terminate that"} \},
-        \{ \hyperlink{namespacetricl_a6967089e2c0837f273d8cb5fd9f7e46dac508c68c92ee059322cb644dd330bbcf}{EC\_ACT}, \textcolor{stringliteral}{"let"} \}
+        \{ \hyperlink{namespacetricl_a6967089e2c0837f273d8cb5fd9f7e46da928305067790de15396de8fcc92b72b9}{EC\_EST}, \textcolor{stringliteral}{"establish that"} \},    
+        \{ \hyperlink{namespacetricl_a6967089e2c0837f273d8cb5fd9f7e46da16f53be37a75a1cdfc726014c7f3810a}{EC\_TERM}, \textcolor{stringliteral}{"terminate that"} \},   
+        \{ \hyperlink{namespacetricl_a6967089e2c0837f273d8cb5fd9f7e46dac508c68c92ee059322cb644dd330bbcf}{EC\_ACT}, \textcolor{stringliteral}{"let it occur that"} \}  
     \}
 \end{DoxyCode}
+
+
+Labels for event classes. 
+
+These labels are prepended to the event label (which is a simple sentence like \char`\"{}\+A loves B\char`\"{}). 

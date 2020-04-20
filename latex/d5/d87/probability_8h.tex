@@ -1,0 +1,139 @@
+\hypertarget{probability_8h}{}\section{src/probability.h File Reference}
+\label{probability_8h}\index{src/probability.\+h@{src/probability.\+h}}
+
+
+Inline functions dealing with probabilities.  
+
+
+{\ttfamily \#include $<$random$>$}\newline
+{\ttfamily \#include \char`\"{}global\+\_\+variables.\+h\char`\"{}}\newline
+Include dependency graph for probability.\+h\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{d6/dd3/probability_8h__incl}
+\end{center}
+\end{figure}
+This graph shows which files directly or indirectly include this file\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{d4/de2/probability_8h__dep__incl}
+\end{center}
+\end{figure}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \hyperlink{probability_8h_a59876affedc061069286bfd09a1c1d49}{init\+\_\+randomness} ()
+\begin{DoxyCompactList}\small\item\em Initialize the pseudo-\/random number generator using specified seed. \end{DoxyCompactList}\item 
+double \hyperlink{probability_8h_a96d584ab7ce9c4874bd2a0305679755a}{tail2scale} (double tail)
+\begin{DoxyCompactList}\small\item\em Compute the scale parameter for a tail index. \end{DoxyCompactList}\item 
+\hyperlink{namespacetricl_af2e8973ba58a3dad9061296d8bee16a2}{probability} \hyperlink{probability_8h_a278b4df0353e94d6cf8cfb59a0d8058a}{probunits2probability} (\hyperlink{namespacetricl_af8f8f9076e92e1c664ffa96f18d038a5}{probunits} pu, double left\+\_\+tail, double right\+\_\+tail)
+\begin{DoxyCompactList}\small\item\em Convert probability units to probability. \end{DoxyCompactList}\item 
+\hyperlink{namespacetricl_ae42d2696f294300a43e0f5edf4875479}{rate} \hyperlink{probability_8h_abfaa763b93af36afec58f5d42fdf69a1}{effective\+\_\+rate} (\hyperlink{namespacetricl_ae42d2696f294300a43e0f5edf4875479}{rate} attempt\+\_\+rate, \hyperlink{namespacetricl_af8f8f9076e92e1c664ffa96f18d038a5}{probunits} success\+\_\+pus, double left\+\_\+tail, double right\+\_\+tail)
+\begin{DoxyCompactList}\small\item\em Compute the current effective rate at which an event occurs from its current attempt rate and success probability units. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{probability_8h_a29e835ad2ed1bccd97f457d7c0cb746e}\label{probability_8h_a29e835ad2ed1bccd97f457d7c0cb746e}} 
+mt19937 \hyperlink{probability_8h_a29e835ad2ed1bccd97f457d7c0cb746e}{random\+\_\+variable}
+\begin{DoxyCompactList}\small\item\em Our pseudo-\/random number generator. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{probability_8h_a4719dce3f1f52de89aedc43c5149c801}\label{probability_8h_a4719dce3f1f52de89aedc43c5149c801}} 
+uniform\+\_\+real\+\_\+distribution \hyperlink{probability_8h_a4719dce3f1f52de89aedc43c5149c801}{uniform}
+\begin{DoxyCompactList}\small\item\em uniform(random\+\_\+variable) produces uniformly distributed numbers 0...1 \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{probability_8h_a00a3a3e47a0462049e9bc954f420b5e1}\label{probability_8h_a00a3a3e47a0462049e9bc954f420b5e1}} 
+exponential\+\_\+distribution \hyperlink{probability_8h_a00a3a3e47a0462049e9bc954f420b5e1}{exponential}
+\begin{DoxyCompactList}\small\item\em exponential(random\+\_\+variable) produces exponentially distributed numbers with mean 1 \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{probability_8h_a951c0f6989d7b3b3fd4361a7a1197149}\label{probability_8h_a951c0f6989d7b3b3fd4361a7a1197149}} 
+const double \hyperlink{probability_8h_a951c0f6989d7b3b3fd4361a7a1197149}{scale0} = 1 / 2 / exp(1)
+\begin{DoxyCompactList}\small\item\em Precomputed scale parameter for tail index 0. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Inline functions dealing with probabilities. 
+
+
+
+\subsection{Function Documentation}
+\mbox{\Hypertarget{probability_8h_abfaa763b93af36afec58f5d42fdf69a1}\label{probability_8h_abfaa763b93af36afec58f5d42fdf69a1}} 
+\index{probability.\+h@{probability.\+h}!effective\+\_\+rate@{effective\+\_\+rate}}
+\index{effective\+\_\+rate@{effective\+\_\+rate}!probability.\+h@{probability.\+h}}
+\subsubsection{\texorpdfstring{effective\+\_\+rate()}{effective\_rate()}}
+{\footnotesize\ttfamily \hyperlink{namespacetricl_ae42d2696f294300a43e0f5edf4875479}{rate} effective\+\_\+rate (\begin{DoxyParamCaption}\item[{\hyperlink{namespacetricl_ae42d2696f294300a43e0f5edf4875479}{rate}}]{attempt\+\_\+rate,  }\item[{\hyperlink{namespacetricl_af8f8f9076e92e1c664ffa96f18d038a5}{probunits}}]{success\+\_\+pus,  }\item[{double}]{left\+\_\+tail,  }\item[{double}]{right\+\_\+tail }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Compute the current effective rate at which an event occurs from its current attempt rate and success probability units. 
+
+An effective rate of inf implies that the event occurs immediately.
+
+\begin{DoxyReturn}{Returns}
+the effective rate, 0...inf 
+\end{DoxyReturn}
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em attempt\+\_\+rate} & the event\textquotesingle{}s current total attempt rate, 0...inf \\
+\hline
+\mbox{\tt in}  & {\em success\+\_\+pus} & the event\textquotesingle{}s current total success probability units, -\/inf...inf \\
+\hline
+\mbox{\tt in}  & {\em left\+\_\+tail} & the left tail index of the sigmoid function to be used, $>$= 0 \\
+\hline
+\mbox{\tt in}  & {\em right\+\_\+tail} & the right tail index of the sigmoid function to be used, $>$= 0 \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{probability_8h_a59876affedc061069286bfd09a1c1d49}\label{probability_8h_a59876affedc061069286bfd09a1c1d49}} 
+\index{probability.\+h@{probability.\+h}!init\+\_\+randomness@{init\+\_\+randomness}}
+\index{init\+\_\+randomness@{init\+\_\+randomness}!probability.\+h@{probability.\+h}}
+\subsubsection{\texorpdfstring{init\+\_\+randomness()}{init\_randomness()}}
+{\footnotesize\ttfamily void init\+\_\+randomness (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Initialize the pseudo-\/random number generator using specified seed. 
+
+Uses a pseudo-\/random seed if seed == 0. \mbox{\Hypertarget{probability_8h_a278b4df0353e94d6cf8cfb59a0d8058a}\label{probability_8h_a278b4df0353e94d6cf8cfb59a0d8058a}} 
+\index{probability.\+h@{probability.\+h}!probunits2probability@{probunits2probability}}
+\index{probunits2probability@{probunits2probability}!probability.\+h@{probability.\+h}}
+\subsubsection{\texorpdfstring{probunits2probability()}{probunits2probability()}}
+{\footnotesize\ttfamily \hyperlink{namespacetricl_af2e8973ba58a3dad9061296d8bee16a2}{probability} probunits2probability (\begin{DoxyParamCaption}\item[{\hyperlink{namespacetricl_af8f8f9076e92e1c664ffa96f18d038a5}{probunits}}]{pu,  }\item[{double}]{left\+\_\+tail,  }\item[{double}]{right\+\_\+tail }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Convert probability units to probability. 
+
+This is a smooth sigmoidal function that also depends smoothly on two tail indices as parameters. If both tail indices are zero, this is simply the expit (= inverse logit) function. If a tail index is positive, the corresponding tail converges with a power-\/law decay to its limit 0 (left tail) or 1 (right tail), where the power-\/law exponent is 1 / tail index.
+
+\begin{DoxyReturn}{Returns}
+the probability, 0...1 
+\end{DoxyReturn}
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em pu} & the probability units, -\/inf...inf \\
+\hline
+\mbox{\tt in}  & {\em left\+\_\+tail} & the tail index of the left (lower) tail, $>$= 0 \\
+\hline
+\mbox{\tt in}  & {\em right\+\_\+tail} & the tail index of the right (upper) tail, $>$= 0 \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{probability_8h_a96d584ab7ce9c4874bd2a0305679755a}\label{probability_8h_a96d584ab7ce9c4874bd2a0305679755a}} 
+\index{probability.\+h@{probability.\+h}!tail2scale@{tail2scale}}
+\index{tail2scale@{tail2scale}!probability.\+h@{probability.\+h}}
+\subsubsection{\texorpdfstring{tail2scale()}{tail2scale()}}
+{\footnotesize\ttfamily double tail2scale (\begin{DoxyParamCaption}\item[{double}]{tail }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Compute the scale parameter for a tail index. 
+
+Auxiliary function for \hyperlink{probability_8h_a278b4df0353e94d6cf8cfb59a0d8058a}{probunits2probability()}.
+
+\begin{DoxyReturn}{Returns}
+the scale parameter, $>$ 0 
+\end{DoxyReturn}
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em tail} & tail index to compute the scale parameter for, $>$= 0 \\
+\hline
+\end{DoxyParams}

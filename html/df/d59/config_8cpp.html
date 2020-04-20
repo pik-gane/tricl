@@ -80,7 +80,7 @@ $(function() {
 <code>#include &quot;yaml-cpp/yaml.h&quot;</code><br />
 <code>#include &quot;3rdparty/tinyexpr.h&quot;</code><br />
 <code>#include &quot;3rdparty/cxxopts.hpp&quot;</code><br />
-<code>#include &quot;global_variables.h&quot;</code><br />
+<code>#include &quot;<a class="el" href="../../d5/dfb/global__variables_8h_source.html">global_variables.h</a>&quot;</code><br />
 <code>#include &quot;entity.h&quot;</code><br />
 <code>#include &quot;io.h&quot;</code><br />
 </div><div class="textblock"><div class="dynheader">
@@ -88,7 +88,7 @@ Include dependency graph for config.cpp:</div>
 <div class="dyncontent">
 <div class="center"><img src="../../db/d4c/config_8cpp__incl.png" border="0" usemap="#src_2config_8cpp" alt=""/></div>
 <map name="src_2config_8cpp" id="src_2config_8cpp">
-<area shape="rect" id="node19" href="../../d5/dfb/global__variables_8h_source.html" title="global_variables.h" alt="" coords="253,80,394,107"/>
+<area shape="rect" id="node19" href="../../d5/dfb/global__variables_8h.html" title="Definition of global data storage. " alt="" coords="253,80,394,107"/>
 <area shape="rect" id="node24" href="../../d8/d83/entity_8h_source.html" title="entity.h" alt="" coords="419,80,489,107"/>
 <area shape="rect" id="node25" href="../../dc/dac/io_8h_source.html" title="io.h" alt="" coords="513,80,560,107"/>
 <area shape="rect" id="node20" href="../../d5/d44/data__model_8h.html" title="The main data model. " alt="" coords="391,155,501,181"/>
@@ -98,7 +98,8 @@ Include dependency graph for config.cpp:</div>
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="define-members"></a>
 Macros</h2></td></tr>
 <tr class="memitem:a04e254fb2bac4b90010f68d6d716f448"><td class="memItemLeft" align="right" valign="top"><a id="a04e254fb2bac4b90010f68d6d716f448"></a>
-#define&#160;</td><td class="memItemRight" valign="bottom"><b>TAIL_DEFAULT</b>&#160;&#160;&#160;1.0</td></tr>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../df/d59/config_8cpp.html#a04e254fb2bac4b90010f68d6d716f448">TAIL_DEFAULT</a>&#160;&#160;&#160;1.0</td></tr>
+<tr class="memdesc:a04e254fb2bac4b90010f68d6d716f448"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default value for tail indices. TODO: change to 0.0 to increase default performance? <br /></td></tr>
 <tr class="separator:a04e254fb2bac4b90010f68d6d716f448"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae50193c6f71bb6c5c86c3e6dab750453"><td class="memItemLeft" align="right" valign="top"><a id="ae50193c6f71bb6c5c86c3e6dab750453"></a>
 #define&#160;</td><td class="memItemRight" valign="bottom"><b>MAX_N_TE_VARS</b>&#160;&#160;&#160;1000</td></tr>
@@ -107,7 +108,8 @@ Macros</h2></td></tr>
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
 <tr class="memitem:a15dfd425241f1a6bf6aeab6ef70fb896"><td class="memItemLeft" align="right" valign="top"><a id="a15dfd425241f1a6bf6aeab6ef70fb896"></a>
-cxxopts::Options&#160;</td><td class="memItemRight" valign="bottom"><b>options</b> (&quot;tricl&quot;, &quot;a generic network-based social simulation model&quot;)</td></tr>
+cxxopts::Options&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../df/d59/config_8cpp.html#a15dfd425241f1a6bf6aeab6ef70fb896">options</a> (&quot;tricl&quot;, &quot;a generic network-based social simulation model&quot;)</td></tr>
+<tr class="memdesc:a15dfd425241f1a6bf6aeab6ef70fb896"><td class="mdescLeft">&#160;</td><td class="mdescRight">Holds all command line options. <br /></td></tr>
 <tr class="separator:a15dfd425241f1a6bf6aeab6ef70fb896"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8d213a94ae2aae7f1eb19534b3772176"><td class="memItemLeft" align="right" valign="top"><a id="a8d213a94ae2aae7f1eb19534b3772176"></a>
 double&#160;</td><td class="memItemRight" valign="bottom"><b>parse_double</b> (string expr)</td></tr>
@@ -121,140 +123,182 @@ double&#160;</td><td class="memItemRight" valign="bottom"><b>register_te_var</b>
 <tr class="memitem:ac5594ed0754d45494f17470961e83309"><td class="memItemLeft" align="right" valign="top"><a id="ac5594ed0754d45494f17470961e83309"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>read_entity_labels</b> (YAML::Node n, <a class="el" href="../../dc/d70/namespacetricl.html#afd4de3aedd5e48cf955f03457386e98f">entity_type</a> et)</td></tr>
 <tr class="separator:ac5594ed0754d45494f17470961e83309"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7970057a69282958c52e4a5236a48df8"><td class="memItemLeft" align="right" valign="top"><a id="a7970057a69282958c52e4a5236a48df8"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>read_config</b> (int argc, char *argv[])</td></tr>
+<tr class="memitem:a7970057a69282958c52e4a5236a48df8"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../df/d59/config_8cpp.html#a7970057a69282958c52e4a5236a48df8">read_config</a> (int argc, char *argv[])</td></tr>
+<tr class="memdesc:a7970057a69282958c52e4a5236a48df8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Parse the command line options and YAML config file.  <a href="#a7970057a69282958c52e4a5236a48df8">More...</a><br /></td></tr>
 <tr class="separator:a7970057a69282958c52e4a5236a48df8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="var-members"></a>
 Variables</h2></td></tr>
 <tr class="memitem:a113f3c013371a7bc91273d8821d8710d"><td class="memItemLeft" align="right" valign="top"><a id="a113f3c013371a7bc91273d8821d8710d"></a>
-unordered_map&lt; <a class="el" href="../../dc/d70/namespacetricl.html#a2d01894944fb58a8fedc0912a48d13f8">relationship_or_action_type</a>, string &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>gexf_filename</b> = {}</td></tr>
+unordered_map&lt; <a class="el" href="../../dc/d70/namespacetricl.html#a2d01894944fb58a8fedc0912a48d13f8">relationship_or_action_type</a>, string &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../df/d59/config_8cpp.html#a113f3c013371a7bc91273d8821d8710d">gexf_filename</a> = {}</td></tr>
+<tr class="memdesc:a113f3c013371a7bc91273d8821d8710d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Names of (or paths to) generated gexf (or gexf.gz) files by relationship or action type. <br /></td></tr>
 <tr class="separator:a113f3c013371a7bc91273d8821d8710d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af960657d113135c47b4e0ed4536930c0"><td class="memItemLeft" align="right" valign="top"><a id="af960657d113135c47b4e0ed4536930c0"></a>
-string&#160;</td><td class="memItemRight" valign="bottom"><b>diagram_fileprefix</b> = &quot;&quot;</td></tr>
+string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../df/d59/config_8cpp.html#af960657d113135c47b4e0ed4536930c0">diagram_fileprefix</a> = &quot;&quot;</td></tr>
+<tr class="memdesc:af960657d113135c47b4e0ed4536930c0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Prefix of name of (or path to) generated diagram files. <br /></td></tr>
 <tr class="separator:af960657d113135c47b4e0ed4536930c0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8f79554f6ab9b5b2d22ffbc45200a417"><td class="memItemLeft" align="right" valign="top"><a id="a8f79554f6ab9b5b2d22ffbc45200a417"></a>
 string&#160;</td><td class="memItemRight" valign="bottom"><b>gexf_default_filename</b> = &quot;&quot;</td></tr>
 <tr class="separator:a8f79554f6ab9b5b2d22ffbc45200a417"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab3f078684998b83967d507d0f453f454"><td class="memItemLeft" align="right" valign="top"><a id="ab3f078684998b83967d507d0f453f454"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><b>verbose</b> = false</td></tr>
+bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../df/d59/config_8cpp.html#ab3f078684998b83967d507d0f453f454">verbose</a> = false</td></tr>
+<tr class="memdesc:ab3f078684998b83967d507d0f453f454"><td class="mdescLeft">&#160;</td><td class="mdescRight">Whether to output more detailed information. <br /></td></tr>
 <tr class="separator:ab3f078684998b83967d507d0f453f454"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae4426f467d61ae456b95844d4d9c2dcd"><td class="memItemLeft" align="right" valign="top"><a id="ae4426f467d61ae456b95844d4d9c2dcd"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><b>quiet</b> = false</td></tr>
+bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../df/d59/config_8cpp.html#ae4426f467d61ae456b95844d4d9c2dcd">quiet</a> = false</td></tr>
+<tr class="memdesc:ae4426f467d61ae456b95844d4d9c2dcd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Whether to suppress most output. <br /></td></tr>
 <tr class="separator:ae4426f467d61ae456b95844d4d9c2dcd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a398527b3e9e358c345c5047b16871957"><td class="memItemLeft" align="right" valign="top"><a id="a398527b3e9e358c345c5047b16871957"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><b>debug</b> = false</td></tr>
+bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../df/d59/config_8cpp.html#a398527b3e9e358c345c5047b16871957">debug</a> = false</td></tr>
+<tr class="memdesc:a398527b3e9e358c345c5047b16871957"><td class="mdescLeft">&#160;</td><td class="mdescRight">Whether to output debug messages. <br /></td></tr>
 <tr class="separator:a398527b3e9e358c345c5047b16871957"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a61e4a08c5309d5cd9538ce9654bdb9e9"><td class="memItemLeft" align="right" valign="top"><a id="a61e4a08c5309d5cd9538ce9654bdb9e9"></a>
-<a class="el" href="../../dc/d70/namespacetricl.html#a720ff6a29f998e11e1d3622fc8df64b1">timepoint</a>&#160;</td><td class="memItemRight" valign="bottom"><b>max_t</b> = 0.0</td></tr>
+<a class="el" href="../../dc/d70/namespacetricl.html#a720ff6a29f998e11e1d3622fc8df64b1">timepoint</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../df/d59/config_8cpp.html#a61e4a08c5309d5cd9538ce9654bdb9e9">max_t</a> = 0.0</td></tr>
+<tr class="memdesc:a61e4a08c5309d5cd9538ce9654bdb9e9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Maximal model time to simulate until. <br /></td></tr>
 <tr class="separator:a61e4a08c5309d5cd9538ce9654bdb9e9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a921a3c48e5eda75a9944e3d8fdecc826"><td class="memItemLeft" align="right" valign="top"><a id="a921a3c48e5eda75a9944e3d8fdecc826"></a>
-long int&#160;</td><td class="memItemRight" valign="bottom"><b>max_n_events</b> = LONG_MAX</td></tr>
+long int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../df/d59/config_8cpp.html#a921a3c48e5eda75a9944e3d8fdecc826">max_n_events</a> = LONG_MAX</td></tr>
+<tr class="memdesc:a921a3c48e5eda75a9944e3d8fdecc826"><td class="mdescLeft">&#160;</td><td class="mdescRight">Max. no. events to simulate before stopping. <br /></td></tr>
 <tr class="separator:a921a3c48e5eda75a9944e3d8fdecc826"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abb3c5a016eb55b340002c5da33a16714"><td class="memItemLeft" align="right" valign="top"><a id="abb3c5a016eb55b340002c5da33a16714"></a>
-unsigned&#160;</td><td class="memItemRight" valign="bottom"><b>seed</b> = 0</td></tr>
+unsigned&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../df/d59/config_8cpp.html#abb3c5a016eb55b340002c5da33a16714">seed</a> = 0</td></tr>
+<tr class="memdesc:abb3c5a016eb55b340002c5da33a16714"><td class="mdescLeft">&#160;</td><td class="mdescRight">Random seed (if 0, generate a random seed) <br /></td></tr>
 <tr class="separator:abb3c5a016eb55b340002c5da33a16714"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1b14b11720f5396f884aba602cc42602"><td class="memItemLeft" align="right" valign="top"><a id="a1b14b11720f5396f884aba602cc42602"></a>
-unordered_map&lt; <a class="el" href="../../dc/d70/namespacetricl.html#afd4de3aedd5e48cf955f03457386e98f">entity_type</a>, <a class="el" href="../../dc/d70/namespacetricl.html#a77e7daffafa870e5786b344119da9b15">label</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>et2label</b> = {}</td></tr>
+unordered_map&lt; <a class="el" href="../../dc/d70/namespacetricl.html#afd4de3aedd5e48cf955f03457386e98f">entity_type</a>, <a class="el" href="../../dc/d70/namespacetricl.html#a77e7daffafa870e5786b344119da9b15">label</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../df/d59/config_8cpp.html#a1b14b11720f5396f884aba602cc42602">et2label</a> = {}</td></tr>
+<tr class="memdesc:a1b14b11720f5396f884aba602cc42602"><td class="mdescLeft">&#160;</td><td class="mdescRight">Entity type labels (typically nouns) <br /></td></tr>
 <tr class="separator:a1b14b11720f5396f884aba602cc42602"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4ad1375a3f0b5760ef4861ef35ac7f25"><td class="memItemLeft" align="right" valign="top"><a id="a4ad1375a3f0b5760ef4861ef35ac7f25"></a>
-unordered_map&lt; string, <a class="el" href="../../dc/d70/namespacetricl.html#afd4de3aedd5e48cf955f03457386e98f">entity_type</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>label2et</b> = {}</td></tr>
+unordered_map&lt; string, <a class="el" href="../../dc/d70/namespacetricl.html#afd4de3aedd5e48cf955f03457386e98f">entity_type</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../df/d59/config_8cpp.html#a4ad1375a3f0b5760ef4861ef35ac7f25">label2et</a> = {}</td></tr>
+<tr class="memdesc:a4ad1375a3f0b5760ef4861ef35ac7f25"><td class="mdescLeft">&#160;</td><td class="mdescRight">Inverse map of <a class="el" href="../../d5/dfb/global__variables_8h.html#a1b14b11720f5396f884aba602cc42602">et2label</a>. <br /></td></tr>
 <tr class="separator:a4ad1375a3f0b5760ef4861ef35ac7f25"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aba5a0104caf66faf04d0e2f4491415fb"><td class="memItemLeft" align="right" valign="top"><a id="aba5a0104caf66faf04d0e2f4491415fb"></a>
-unordered_map&lt; <a class="el" href="../../dc/d70/namespacetricl.html#afd4de3aedd5e48cf955f03457386e98f">entity_type</a>, <a class="el" href="../../dc/d70/namespacetricl.html#a57273122278e8b301844e2a2e1f0742f">entity</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>et2n</b> = {}</td></tr>
+unordered_map&lt; <a class="el" href="../../dc/d70/namespacetricl.html#afd4de3aedd5e48cf955f03457386e98f">entity_type</a>, <a class="el" href="../../dc/d70/namespacetricl.html#a57273122278e8b301844e2a2e1f0742f">entity</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../df/d59/config_8cpp.html#aba5a0104caf66faf04d0e2f4491415fb">et2n</a> = {}</td></tr>
+<tr class="memdesc:aba5a0104caf66faf04d0e2f4491415fb"><td class="mdescLeft">&#160;</td><td class="mdescRight">No. of entities by type. <br /></td></tr>
 <tr class="separator:aba5a0104caf66faf04d0e2f4491415fb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a16775be180de048f5d158cf6c18af175"><td class="memItemLeft" align="right" valign="top"><a id="a16775be180de048f5d158cf6c18af175"></a>
-unordered_map&lt; <a class="el" href="../../dc/d70/namespacetricl.html#a2d01894944fb58a8fedc0912a48d13f8">relationship_or_action_type</a>, <a class="el" href="../../dc/d70/namespacetricl.html#a77e7daffafa870e5786b344119da9b15">label</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>rat2label</b> = { {<a class="el" href="../../d5/d44/data__model_8h.html#a549fa469b9ccb6e0fe046f797bc181e0">RT_ID</a>, &quot;=&quot;} }</td></tr>
+unordered_map&lt; <a class="el" href="../../dc/d70/namespacetricl.html#a2d01894944fb58a8fedc0912a48d13f8">relationship_or_action_type</a>, <a class="el" href="../../dc/d70/namespacetricl.html#a77e7daffafa870e5786b344119da9b15">label</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../df/d59/config_8cpp.html#a16775be180de048f5d158cf6c18af175">rat2label</a> = { {<a class="el" href="../../d5/d44/data__model_8h.html#a549fa469b9ccb6e0fe046f797bc181e0">RT_ID</a>, &quot;=&quot;} }</td></tr>
+<tr class="memdesc:a16775be180de048f5d158cf6c18af175"><td class="mdescLeft">&#160;</td><td class="mdescRight">Relationship or action type labels (typically verbs in the 3rd person singular, or math symbols) <br /></td></tr>
 <tr class="separator:a16775be180de048f5d158cf6c18af175"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1b29491c10222b82a8ac3f8241aa27a8"><td class="memItemLeft" align="right" valign="top"><a id="a1b29491c10222b82a8ac3f8241aa27a8"></a>
-unordered_map&lt; string, <a class="el" href="../../dc/d70/namespacetricl.html#a2d01894944fb58a8fedc0912a48d13f8">relationship_or_action_type</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>label2rat</b> = { {&quot;=&quot;, <a class="el" href="../../d5/d44/data__model_8h.html#a549fa469b9ccb6e0fe046f797bc181e0">RT_ID</a>} }</td></tr>
+unordered_map&lt; string, <a class="el" href="../../dc/d70/namespacetricl.html#a2d01894944fb58a8fedc0912a48d13f8">relationship_or_action_type</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../df/d59/config_8cpp.html#a1b29491c10222b82a8ac3f8241aa27a8">label2rat</a> = { {&quot;=&quot;, <a class="el" href="../../d5/d44/data__model_8h.html#a549fa469b9ccb6e0fe046f797bc181e0">RT_ID</a>} }</td></tr>
+<tr class="memdesc:a1b29491c10222b82a8ac3f8241aa27a8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Inverse map of <a class="el" href="../../d5/dfb/global__variables_8h.html#a1b29491c10222b82a8ac3f8241aa27a8">label2rat</a>. <br /></td></tr>
 <tr class="separator:a1b29491c10222b82a8ac3f8241aa27a8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:acb03df27c0aec975d0d0a27e21f9b956"><td class="memItemLeft" align="right" valign="top"><a id="acb03df27c0aec975d0d0a27e21f9b956"></a>
-unordered_map&lt; <a class="el" href="../../dc/d70/namespacetricl.html#a2d01894944fb58a8fedc0912a48d13f8">relationship_or_action_type</a>, bool &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>r_is_action_type</b> = {}</td></tr>
+unordered_map&lt; <a class="el" href="../../dc/d70/namespacetricl.html#a2d01894944fb58a8fedc0912a48d13f8">relationship_or_action_type</a>, bool &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../df/d59/config_8cpp.html#acb03df27c0aec975d0d0a27e21f9b956">r_is_action_type</a> = {}</td></tr>
+<tr class="memdesc:acb03df27c0aec975d0d0a27e21f9b956"><td class="mdescLeft">&#160;</td><td class="mdescRight">Whether relationship or action type is an action type (not implemented yet) <br /></td></tr>
 <tr class="separator:acb03df27c0aec975d0d0a27e21f9b956"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a698aaa515390777326d52ab118c9f1fe"><td class="memItemLeft" align="right" valign="top"><a id="a698aaa515390777326d52ab118c9f1fe"></a>
-unordered_map&lt; <a class="el" href="../../dc/d70/namespacetricl.html#a2d01894944fb58a8fedc0912a48d13f8">relationship_or_action_type</a>, <a class="el" href="../../dc/d70/namespacetricl.html#a2d01894944fb58a8fedc0912a48d13f8">relationship_or_action_type</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>rat2inv</b> = {}</td></tr>
+unordered_map&lt; <a class="el" href="../../dc/d70/namespacetricl.html#a2d01894944fb58a8fedc0912a48d13f8">relationship_or_action_type</a>, <a class="el" href="../../dc/d70/namespacetricl.html#a2d01894944fb58a8fedc0912a48d13f8">relationship_or_action_type</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../df/d59/config_8cpp.html#a698aaa515390777326d52ab118c9f1fe">rat2inv</a> = {}</td></tr>
+<tr class="memdesc:a698aaa515390777326d52ab118c9f1fe"><td class="mdescLeft">&#160;</td><td class="mdescRight">Inverse type of a relationship or action type (e.g. the inverse of "follows" would be "is followed by", the inverse of "meets" would be "meets"). If NO_RAT, inverse has no individual label. <br /></td></tr>
 <tr class="separator:a698aaa515390777326d52ab118c9f1fe"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1d4d2e1edc14bccb896b5dd715cba4a6"><td class="memItemLeft" align="right" valign="top"><a id="a1d4d2e1edc14bccb896b5dd715cba4a6"></a>
-unordered_map&lt; <a class="el" href="../../dc/d70/namespacetricl.html#a57273122278e8b301844e2a2e1f0742f">entity</a>, <a class="el" href="../../dc/d70/namespacetricl.html#a77e7daffafa870e5786b344119da9b15">label</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>e2label</b> = {}</td></tr>
+unordered_map&lt; <a class="el" href="../../dc/d70/namespacetricl.html#a57273122278e8b301844e2a2e1f0742f">entity</a>, <a class="el" href="../../dc/d70/namespacetricl.html#a77e7daffafa870e5786b344119da9b15">label</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../df/d59/config_8cpp.html#a1d4d2e1edc14bccb896b5dd715cba4a6">e2label</a> = {}</td></tr>
+<tr class="memdesc:a1d4d2e1edc14bccb896b5dd715cba4a6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Labels of entities. <br /></td></tr>
 <tr class="separator:a1d4d2e1edc14bccb896b5dd715cba4a6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3e3cf64afa14be51e4752ebe0e78d8b4"><td class="memItemLeft" align="right" valign="top"><a id="a3e3cf64afa14be51e4752ebe0e78d8b4"></a>
-unordered_map&lt; string, <a class="el" href="../../dc/d70/namespacetricl.html#a57273122278e8b301844e2a2e1f0742f">entity</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>label2e</b> = {}</td></tr>
+unordered_map&lt; string, <a class="el" href="../../dc/d70/namespacetricl.html#a57273122278e8b301844e2a2e1f0742f">entity</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../df/d59/config_8cpp.html#a3e3cf64afa14be51e4752ebe0e78d8b4">label2e</a> = {}</td></tr>
+<tr class="memdesc:a3e3cf64afa14be51e4752ebe0e78d8b4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Inverse map of <a class="el" href="../../d5/dfb/global__variables_8h.html#a1d4d2e1edc14bccb896b5dd715cba4a6">e2label</a>. <br /></td></tr>
 <tr class="separator:a3e3cf64afa14be51e4752ebe0e78d8b4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:afe42a9a97fc8e959183c94fc333f2331"><td class="memItemLeft" align="right" valign="top"><a id="afe42a9a97fc8e959183c94fc333f2331"></a>
-set&lt; <a class="el" href="../../d8/d01/structtricl_1_1link.html">link</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>initial_links</b> = {}</td></tr>
+set&lt; <a class="el" href="../../d8/d01/structtricl_1_1link.html">link</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../df/d59/config_8cpp.html#afe42a9a97fc8e959183c94fc333f2331">initial_links</a> = {}</td></tr>
+<tr class="memdesc:afe42a9a97fc8e959183c94fc333f2331"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set of named initial links. <br /></td></tr>
 <tr class="separator:afe42a9a97fc8e959183c94fc333f2331"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac3d91d4eef87cfaf1371a698513533ba"><td class="memItemLeft" align="right" valign="top"><a id="ac3d91d4eef87cfaf1371a698513533ba"></a>
-unordered_map&lt; <a class="el" href="../../dc/d70/namespacetricl.html#afd4de3aedd5e48cf955f03457386e98f">entity_type</a>, int &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>et2n_blocks</b> = {}</td></tr>
+unordered_map&lt; <a class="el" href="../../dc/d70/namespacetricl.html#afd4de3aedd5e48cf955f03457386e98f">entity_type</a>, int &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../df/d59/config_8cpp.html#ac3d91d4eef87cfaf1371a698513533ba">et2n_blocks</a> = {}</td></tr>
+<tr class="memdesc:ac3d91d4eef87cfaf1371a698513533ba"><td class="mdescLeft">&#160;</td><td class="mdescRight">No. of blocks for random block model by entity type. <br /></td></tr>
 <tr class="separator:ac3d91d4eef87cfaf1371a698513533ba"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1cf9b4c5338052d0ac84135ecefc7d39"><td class="memItemLeft" align="right" valign="top"><a id="a1cf9b4c5338052d0ac84135ecefc7d39"></a>
-unordered_map&lt; <a class="el" href="../../d7/d76/structtricl_1_1link__type.html">link_type</a>, <a class="el" href="../../dc/d70/namespacetricl.html#af2e8973ba58a3dad9061296d8bee16a2">probability</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>lt2initial_prob_within</b> = {}</td></tr>
+unordered_map&lt; <a class="el" href="../../d7/d76/structtricl_1_1link__type.html">link_type</a>, <a class="el" href="../../dc/d70/namespacetricl.html#af2e8973ba58a3dad9061296d8bee16a2">probability</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../df/d59/config_8cpp.html#a1cf9b4c5338052d0ac84135ecefc7d39">lt2initial_prob_within</a> = {}</td></tr>
+<tr class="memdesc:a1cf9b4c5338052d0ac84135ecefc7d39"><td class="mdescLeft">&#160;</td><td class="mdescRight">Within-block link probability for random block model by link type. <br /></td></tr>
 <tr class="separator:a1cf9b4c5338052d0ac84135ecefc7d39"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa892b7f705910915c42a59b564850a4a"><td class="memItemLeft" align="right" valign="top"><a id="aa892b7f705910915c42a59b564850a4a"></a>
-unordered_map&lt; <a class="el" href="../../d7/d76/structtricl_1_1link__type.html">link_type</a>, <a class="el" href="../../dc/d70/namespacetricl.html#af2e8973ba58a3dad9061296d8bee16a2">probability</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>lt2initial_prob_between</b> = {}</td></tr>
+unordered_map&lt; <a class="el" href="../../d7/d76/structtricl_1_1link__type.html">link_type</a>, <a class="el" href="../../dc/d70/namespacetricl.html#af2e8973ba58a3dad9061296d8bee16a2">probability</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../df/d59/config_8cpp.html#aa892b7f705910915c42a59b564850a4a">lt2initial_prob_between</a> = {}</td></tr>
+<tr class="memdesc:aa892b7f705910915c42a59b564850a4a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Between-block link probability for random block model by link type. <br /></td></tr>
 <tr class="separator:aa892b7f705910915c42a59b564850a4a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5022e1a1414fd07a51e1e3e6f08ab064"><td class="memItemLeft" align="right" valign="top"><a id="a5022e1a1414fd07a51e1e3e6f08ab064"></a>
-unordered_map&lt; <a class="el" href="../../dc/d70/namespacetricl.html#afd4de3aedd5e48cf955f03457386e98f">entity_type</a>, int &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>et2dim</b> = {}</td></tr>
+unordered_map&lt; <a class="el" href="../../dc/d70/namespacetricl.html#afd4de3aedd5e48cf955f03457386e98f">entity_type</a>, int &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../df/d59/config_8cpp.html#a5022e1a1414fd07a51e1e3e6f08ab064">et2dim</a> = {}</td></tr>
+<tr class="memdesc:a5022e1a1414fd07a51e1e3e6f08ab064"><td class="mdescLeft">&#160;</td><td class="mdescRight">No. of spatial dimensions for random geometric model by entity type. <br /></td></tr>
 <tr class="separator:a5022e1a1414fd07a51e1e3e6f08ab064"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac075689bc4d37b273487fa22e5099b32"><td class="memItemLeft" align="right" valign="top"><a id="ac075689bc4d37b273487fa22e5099b32"></a>
-unordered_map&lt; <a class="el" href="../../d7/d76/structtricl_1_1link__type.html">link_type</a>, <a class="el" href="../../dc/d70/namespacetricl.html#af2e8973ba58a3dad9061296d8bee16a2">probability</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>lt2spatial_decay</b> = {}</td></tr>
+unordered_map&lt; <a class="el" href="../../d7/d76/structtricl_1_1link__type.html">link_type</a>, <a class="el" href="../../dc/d70/namespacetricl.html#af2e8973ba58a3dad9061296d8bee16a2">probability</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../df/d59/config_8cpp.html#ac075689bc4d37b273487fa22e5099b32">lt2spatial_decay</a> = {}</td></tr>
+<tr class="memdesc:ac075689bc4d37b273487fa22e5099b32"><td class="mdescLeft">&#160;</td><td class="mdescRight">Rate of exponential decay of link probability for random geometric model by link type. <br /></td></tr>
 <tr class="separator:ac075689bc4d37b273487fa22e5099b32"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a719fa5d246e520102772d00812e33b29"><td class="memItemLeft" align="right" valign="top"><a id="a719fa5d246e520102772d00812e33b29"></a>
-unordered_map&lt; <a class="el" href="../../d3/d70/structtricl_1_1event__type.html">event_type</a>, <a class="el" href="../../dc/d70/namespacetricl.html#ae42d2696f294300a43e0f5edf4875479">rate</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>evt2base_attempt_rate</b> = {}</td></tr>
+unordered_map&lt; <a class="el" href="../../d3/d70/structtricl_1_1event__type.html">event_type</a>, <a class="el" href="../../dc/d70/namespacetricl.html#ae42d2696f294300a43e0f5edf4875479">rate</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../df/d59/config_8cpp.html#a719fa5d246e520102772d00812e33b29">evt2base_attempt_rate</a> = {}</td></tr>
+<tr class="memdesc:a719fa5d246e520102772d00812e33b29"><td class="mdescLeft">&#160;</td><td class="mdescRight">Basic attempt rate by event type. <br /></td></tr>
 <tr class="separator:a719fa5d246e520102772d00812e33b29"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa37926f8d74a0c74e47def544c4f872e"><td class="memItemLeft" align="right" valign="top"><a id="aa37926f8d74a0c74e47def544c4f872e"></a>
-unordered_map&lt; <a class="el" href="../../d2/d5c/structtricl_1_1influence__type.html">influence_type</a>, <a class="el" href="../../dc/d70/namespacetricl.html#ae42d2696f294300a43e0f5edf4875479">rate</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>inflt2attempt_rate</b> = {}</td></tr>
+unordered_map&lt; <a class="el" href="../../d2/d5c/structtricl_1_1influence__type.html">influence_type</a>, <a class="el" href="../../dc/d70/namespacetricl.html#ae42d2696f294300a43e0f5edf4875479">rate</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../df/d59/config_8cpp.html#aa37926f8d74a0c74e47def544c4f872e">inflt2attempt_rate</a> = {}</td></tr>
+<tr class="memdesc:aa37926f8d74a0c74e47def544c4f872e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Additional attempt rate by influence type. <br /></td></tr>
 <tr class="separator:aa37926f8d74a0c74e47def544c4f872e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae7b89a8070b4de9d132b167704229c70"><td class="memItemLeft" align="right" valign="top"><a id="ae7b89a8070b4de9d132b167704229c70"></a>
-unordered_map&lt; <a class="el" href="../../d3/d70/structtricl_1_1event__type.html">event_type</a>, double &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>evt2left_tail</b> = {}</td></tr>
+unordered_map&lt; <a class="el" href="../../d3/d70/structtricl_1_1event__type.html">event_type</a>, double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../df/d59/config_8cpp.html#ae7b89a8070b4de9d132b167704229c70">evt2left_tail</a> = {}</td></tr>
+<tr class="memdesc:ae7b89a8070b4de9d132b167704229c70"><td class="mdescLeft">&#160;</td><td class="mdescRight">Left tail index for sigmoid function <a class="el" href="../../d5/d87/probability_8h.html#a278b4df0353e94d6cf8cfb59a0d8058a" title="Convert probability units to probability. ">probunits2probability()</a>, &gt;=0. <br /></td></tr>
 <tr class="separator:ae7b89a8070b4de9d132b167704229c70"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6a65e62a5f8173784beb092165af2528"><td class="memItemLeft" align="right" valign="top"><a id="a6a65e62a5f8173784beb092165af2528"></a>
-unordered_map&lt; <a class="el" href="../../d3/d70/structtricl_1_1event__type.html">event_type</a>, double &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>evt2right_tail</b> = {}</td></tr>
+unordered_map&lt; <a class="el" href="../../d3/d70/structtricl_1_1event__type.html">event_type</a>, double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../df/d59/config_8cpp.html#a6a65e62a5f8173784beb092165af2528">evt2right_tail</a> = {}</td></tr>
+<tr class="memdesc:a6a65e62a5f8173784beb092165af2528"><td class="mdescLeft">&#160;</td><td class="mdescRight">Right tail index for sigmoid function <a class="el" href="../../d5/d87/probability_8h.html#a278b4df0353e94d6cf8cfb59a0d8058a" title="Convert probability units to probability. ">probunits2probability()</a>, &gt;= 0. <br /></td></tr>
 <tr class="separator:a6a65e62a5f8173784beb092165af2528"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5372b5c53ebbceff39a367177d0e4c38"><td class="memItemLeft" align="right" valign="top"><a id="a5372b5c53ebbceff39a367177d0e4c38"></a>
-unordered_map&lt; <a class="el" href="../../d3/d70/structtricl_1_1event__type.html">event_type</a>, <a class="el" href="../../dc/d70/namespacetricl.html#af8f8f9076e92e1c664ffa96f18d038a5">probunits</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>evt2base_probunits</b> = {}</td></tr>
+unordered_map&lt; <a class="el" href="../../d3/d70/structtricl_1_1event__type.html">event_type</a>, <a class="el" href="../../dc/d70/namespacetricl.html#af8f8f9076e92e1c664ffa96f18d038a5">probunits</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../df/d59/config_8cpp.html#a5372b5c53ebbceff39a367177d0e4c38">evt2base_probunits</a> = {}</td></tr>
+<tr class="memdesc:a5372b5c53ebbceff39a367177d0e4c38"><td class="mdescLeft">&#160;</td><td class="mdescRight">Basic success probability units by event type. <br /></td></tr>
 <tr class="separator:a5372b5c53ebbceff39a367177d0e4c38"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa4d1d1a030f8a8b177f11e3b4dc93011"><td class="memItemLeft" align="right" valign="top"><a id="aa4d1d1a030f8a8b177f11e3b4dc93011"></a>
-unordered_map&lt; <a class="el" href="../../d2/d5c/structtricl_1_1influence__type.html">influence_type</a>, <a class="el" href="../../dc/d70/namespacetricl.html#af8f8f9076e92e1c664ffa96f18d038a5">probunits</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>inflt2delta_probunits</b> = {}</td></tr>
+unordered_map&lt; <a class="el" href="../../d2/d5c/structtricl_1_1influence__type.html">influence_type</a>, <a class="el" href="../../dc/d70/namespacetricl.html#af8f8f9076e92e1c664ffa96f18d038a5">probunits</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../df/d59/config_8cpp.html#aa4d1d1a030f8a8b177f11e3b4dc93011">inflt2delta_probunits</a> = {}</td></tr>
+<tr class="memdesc:aa4d1d1a030f8a8b177f11e3b4dc93011"><td class="mdescLeft">&#160;</td><td class="mdescRight">Change in success probunits by influence type. <br /></td></tr>
 <tr class="separator:aa4d1d1a030f8a8b177f11e3b4dc93011"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a922d0c80d1e0778e68aaca86945eb49e"><td class="memItemLeft" align="right" valign="top"><a id="a922d0c80d1e0778e68aaca86945eb49e"></a>
-unordered_map&lt; <a class="el" href="../../dc/d70/namespacetricl.html#afd4de3aedd5e48cf955f03457386e98f">entity_type</a>, double &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>et2gexf_size</b> = {}</td></tr>
+unordered_map&lt; <a class="el" href="../../dc/d70/namespacetricl.html#afd4de3aedd5e48cf955f03457386e98f">entity_type</a>, double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../df/d59/config_8cpp.html#a922d0c80d1e0778e68aaca86945eb49e">et2gexf_size</a> = {}</td></tr>
+<tr class="memdesc:a922d0c80d1e0778e68aaca86945eb49e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Node size for gexf file by entity type. <br /></td></tr>
 <tr class="separator:a922d0c80d1e0778e68aaca86945eb49e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a26668024dfdce9d505c1e0ed03a645a2"><td class="memItemLeft" align="right" valign="top"><a id="a26668024dfdce9d505c1e0ed03a645a2"></a>
-unordered_map&lt; <a class="el" href="../../dc/d70/namespacetricl.html#afd4de3aedd5e48cf955f03457386e98f">entity_type</a>, double &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>et2gexf_a</b> = {}</td></tr>
+unordered_map&lt; <a class="el" href="../../dc/d70/namespacetricl.html#afd4de3aedd5e48cf955f03457386e98f">entity_type</a>, double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../df/d59/config_8cpp.html#a26668024dfdce9d505c1e0ed03a645a2">et2gexf_a</a> = {}</td></tr>
+<tr class="memdesc:a26668024dfdce9d505c1e0ed03a645a2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Node color alpha value for gexf file by entity type, 0...1. <br /></td></tr>
 <tr class="separator:a26668024dfdce9d505c1e0ed03a645a2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a10ef80ac6e92253faba86527383b0b19"><td class="memItemLeft" align="right" valign="top"><a id="a10ef80ac6e92253faba86527383b0b19"></a>
-unordered_map&lt; <a class="el" href="../../dc/d70/namespacetricl.html#afd4de3aedd5e48cf955f03457386e98f">entity_type</a>, string &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>et2gexf_shape</b> = {}</td></tr>
+unordered_map&lt; <a class="el" href="../../dc/d70/namespacetricl.html#afd4de3aedd5e48cf955f03457386e98f">entity_type</a>, string &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../df/d59/config_8cpp.html#a10ef80ac6e92253faba86527383b0b19">et2gexf_shape</a> = {}</td></tr>
+<tr class="memdesc:a10ef80ac6e92253faba86527383b0b19"><td class="mdescLeft">&#160;</td><td class="mdescRight">Node shape for gexf file by entity type. <br /></td></tr>
 <tr class="separator:a10ef80ac6e92253faba86527383b0b19"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa7267315093f6567077ec5e612b46ed1"><td class="memItemLeft" align="right" valign="top"><a id="aa7267315093f6567077ec5e612b46ed1"></a>
-unordered_map&lt; <a class="el" href="../../dc/d70/namespacetricl.html#afd4de3aedd5e48cf955f03457386e98f">entity_type</a>, int &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>et2gexf_r</b> = {}</td></tr>
+unordered_map&lt; <a class="el" href="../../dc/d70/namespacetricl.html#afd4de3aedd5e48cf955f03457386e98f">entity_type</a>, int &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../df/d59/config_8cpp.html#aa7267315093f6567077ec5e612b46ed1">et2gexf_r</a> = {}</td></tr>
+<tr class="memdesc:aa7267315093f6567077ec5e612b46ed1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Node color red value for gexf file by entity type, 0...255. <br /></td></tr>
 <tr class="separator:aa7267315093f6567077ec5e612b46ed1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a86c65c01b4b0c35b56baf6d8d557d977"><td class="memItemLeft" align="right" valign="top"><a id="a86c65c01b4b0c35b56baf6d8d557d977"></a>
-unordered_map&lt; <a class="el" href="../../dc/d70/namespacetricl.html#afd4de3aedd5e48cf955f03457386e98f">entity_type</a>, int &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>et2gexf_g</b> = {}</td></tr>
+unordered_map&lt; <a class="el" href="../../dc/d70/namespacetricl.html#afd4de3aedd5e48cf955f03457386e98f">entity_type</a>, int &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../df/d59/config_8cpp.html#a86c65c01b4b0c35b56baf6d8d557d977">et2gexf_g</a> = {}</td></tr>
+<tr class="memdesc:a86c65c01b4b0c35b56baf6d8d557d977"><td class="mdescLeft">&#160;</td><td class="mdescRight">Node color green value for gexf file by entity type, 0...255. <br /></td></tr>
 <tr class="separator:a86c65c01b4b0c35b56baf6d8d557d977"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aded47b9a1ea0cb3ac40ea0ae60d013c3"><td class="memItemLeft" align="right" valign="top"><a id="aded47b9a1ea0cb3ac40ea0ae60d013c3"></a>
-unordered_map&lt; <a class="el" href="../../dc/d70/namespacetricl.html#afd4de3aedd5e48cf955f03457386e98f">entity_type</a>, int &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>et2gexf_b</b> = {}</td></tr>
+unordered_map&lt; <a class="el" href="../../dc/d70/namespacetricl.html#afd4de3aedd5e48cf955f03457386e98f">entity_type</a>, int &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../df/d59/config_8cpp.html#aded47b9a1ea0cb3ac40ea0ae60d013c3">et2gexf_b</a> = {}</td></tr>
+<tr class="memdesc:aded47b9a1ea0cb3ac40ea0ae60d013c3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Node color blue value for gexf file by entity type, 0...255. <br /></td></tr>
 <tr class="separator:aded47b9a1ea0cb3ac40ea0ae60d013c3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7e4baebe848adb451c45c44624784a8a"><td class="memItemLeft" align="right" valign="top"><a id="a7e4baebe848adb451c45c44624784a8a"></a>
-unordered_map&lt; <a class="el" href="../../dc/d70/namespacetricl.html#a2d01894944fb58a8fedc0912a48d13f8">relationship_or_action_type</a>, double &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>rat2gexf_thickness</b> = {}</td></tr>
+unordered_map&lt; <a class="el" href="../../dc/d70/namespacetricl.html#a2d01894944fb58a8fedc0912a48d13f8">relationship_or_action_type</a>, double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../df/d59/config_8cpp.html#a7e4baebe848adb451c45c44624784a8a">rat2gexf_thickness</a> = {}</td></tr>
+<tr class="memdesc:a7e4baebe848adb451c45c44624784a8a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Edge line thickness for gexf file by relationship or action type. <br /></td></tr>
 <tr class="separator:a7e4baebe848adb451c45c44624784a8a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8fc9665235760bdb38eb6a631e654077"><td class="memItemLeft" align="right" valign="top"><a id="a8fc9665235760bdb38eb6a631e654077"></a>
-unordered_map&lt; <a class="el" href="../../dc/d70/namespacetricl.html#a2d01894944fb58a8fedc0912a48d13f8">relationship_or_action_type</a>, double &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>rat2gexf_a</b> = {}</td></tr>
+unordered_map&lt; <a class="el" href="../../dc/d70/namespacetricl.html#a2d01894944fb58a8fedc0912a48d13f8">relationship_or_action_type</a>, double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../df/d59/config_8cpp.html#a8fc9665235760bdb38eb6a631e654077">rat2gexf_a</a> = {}</td></tr>
+<tr class="memdesc:a8fc9665235760bdb38eb6a631e654077"><td class="mdescLeft">&#160;</td><td class="mdescRight">Edge color alpha value for gexf file by relationship or action type, 0...1. <br /></td></tr>
 <tr class="separator:a8fc9665235760bdb38eb6a631e654077"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9a7b4c97b0337eec7a107d4f48c994f0"><td class="memItemLeft" align="right" valign="top"><a id="a9a7b4c97b0337eec7a107d4f48c994f0"></a>
-unordered_map&lt; <a class="el" href="../../dc/d70/namespacetricl.html#a2d01894944fb58a8fedc0912a48d13f8">relationship_or_action_type</a>, string &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>rat2gexf_shape</b> = {}</td></tr>
+unordered_map&lt; <a class="el" href="../../dc/d70/namespacetricl.html#a2d01894944fb58a8fedc0912a48d13f8">relationship_or_action_type</a>, string &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../df/d59/config_8cpp.html#a9a7b4c97b0337eec7a107d4f48c994f0">rat2gexf_shape</a> = {}</td></tr>
+<tr class="memdesc:a9a7b4c97b0337eec7a107d4f48c994f0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Edge shape for gexf file by relationship or action type. <br /></td></tr>
 <tr class="separator:a9a7b4c97b0337eec7a107d4f48c994f0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad77fa8d20dd7cf1471f2219765253a49"><td class="memItemLeft" align="right" valign="top"><a id="ad77fa8d20dd7cf1471f2219765253a49"></a>
-unordered_map&lt; <a class="el" href="../../dc/d70/namespacetricl.html#a2d01894944fb58a8fedc0912a48d13f8">relationship_or_action_type</a>, int &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>rat2gexf_r</b> = {}</td></tr>
+unordered_map&lt; <a class="el" href="../../dc/d70/namespacetricl.html#a2d01894944fb58a8fedc0912a48d13f8">relationship_or_action_type</a>, int &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../df/d59/config_8cpp.html#ad77fa8d20dd7cf1471f2219765253a49">rat2gexf_r</a> = {}</td></tr>
+<tr class="memdesc:ad77fa8d20dd7cf1471f2219765253a49"><td class="mdescLeft">&#160;</td><td class="mdescRight">Edge color red value for gexf file by relationship or action type, 0...255. <br /></td></tr>
 <tr class="separator:ad77fa8d20dd7cf1471f2219765253a49"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8063993d6d713ccd233e2fcc6e9bc99b"><td class="memItemLeft" align="right" valign="top"><a id="a8063993d6d713ccd233e2fcc6e9bc99b"></a>
-unordered_map&lt; <a class="el" href="../../dc/d70/namespacetricl.html#a2d01894944fb58a8fedc0912a48d13f8">relationship_or_action_type</a>, int &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>rat2gexf_g</b> = {}</td></tr>
+unordered_map&lt; <a class="el" href="../../dc/d70/namespacetricl.html#a2d01894944fb58a8fedc0912a48d13f8">relationship_or_action_type</a>, int &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../df/d59/config_8cpp.html#a8063993d6d713ccd233e2fcc6e9bc99b">rat2gexf_g</a> = {}</td></tr>
+<tr class="memdesc:a8063993d6d713ccd233e2fcc6e9bc99b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Edge color green value for gexf file by relationship or action type, 0...255. <br /></td></tr>
 <tr class="separator:a8063993d6d713ccd233e2fcc6e9bc99b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa91b7e25dfb65b3ea4d7f4c15a7bc25d"><td class="memItemLeft" align="right" valign="top"><a id="aa91b7e25dfb65b3ea4d7f4c15a7bc25d"></a>
-unordered_map&lt; <a class="el" href="../../dc/d70/namespacetricl.html#a2d01894944fb58a8fedc0912a48d13f8">relationship_or_action_type</a>, int &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>rat2gexf_b</b> = {}</td></tr>
+unordered_map&lt; <a class="el" href="../../dc/d70/namespacetricl.html#a2d01894944fb58a8fedc0912a48d13f8">relationship_or_action_type</a>, int &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../df/d59/config_8cpp.html#aa91b7e25dfb65b3ea4d7f4c15a7bc25d">rat2gexf_b</a> = {}</td></tr>
+<tr class="memdesc:aa91b7e25dfb65b3ea4d7f4c15a7bc25d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Edge color blue value for gexf file by relationship or action type, 0...255. <br /></td></tr>
 <tr class="separator:aa91b7e25dfb65b3ea4d7f4c15a7bc25d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aca8167edc3c91cb84c829dd88f75c7b4"><td class="memItemLeft" align="right" valign="top"><a id="aca8167edc3c91cb84c829dd88f75c7b4"></a>
-<a class="el" href="../../dc/d70/namespacetricl.html#a57273122278e8b301844e2a2e1f0742f">entity</a>&#160;</td><td class="memItemRight" valign="bottom"><b>max_e</b> = 0</td></tr>
+<a class="el" href="../../dc/d70/namespacetricl.html#a57273122278e8b301844e2a2e1f0742f">entity</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../df/d59/config_8cpp.html#aca8167edc3c91cb84c829dd88f75c7b4">max_e</a> = 0</td></tr>
+<tr class="memdesc:aca8167edc3c91cb84c829dd88f75c7b4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Largest entity id in use. <br /></td></tr>
 <tr class="separator:aca8167edc3c91cb84c829dd88f75c7b4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a853f5823f91d99b634d7a3434921c20c"><td class="memItemLeft" align="right" valign="top"><a id="a853f5823f91d99b634d7a3434921c20c"></a>
 string&#160;</td><td class="memItemRight" valign="bottom"><b>te_syms</b> [MAX_N_TE_VARS]</td></tr>
@@ -271,10 +315,46 @@ int&#160;</td><td class="memItemRight" valign="bottom"><b>n_te_vars</b> = 0</td>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Handling of configuration files. </p>
-<p>Configuration files are in YAML. See config_files/parameters_TEMPLATE.yaml for an example</p>
-<dl class="section author"><dt>Author</dt><dd>Jobst Heitzig, Potsdam Institute for Climate Impact Research, <a href="#" onclick="location.href='mai'+'lto:'+'hei'+'tz'+'ig@'+'pi'+'k-p'+'ot'+'sda'+'m.'+'de'; return false;">heitz<span style="display: none;">.nosp@m.</span>ig@p<span style="display: none;">.nosp@m.</span>ik-po<span style="display: none;">.nosp@m.</span>tsda<span style="display: none;">.nosp@m.</span>m.de</a> </dd></dl>
-<dl class="section date"><dt>Date</dt><dd>Mar 30, 2020 </dd></dl>
-</div></div><!-- contents -->
+<p>Configuration files are in YAML. See the repository's README.md for a documentation of all options. </p>
+</div><h2 class="groupheader">Function Documentation</h2>
+<a id="a7970057a69282958c52e4a5236a48df8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7970057a69282958c52e4a5236a48df8">&#9670;&nbsp;</a></span>read_config()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void read_config </td>
+          <td>(</td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>argc</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">char *&#160;</td>
+          <td class="paramname"><em>argv</em>[]&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Parse the command line options and YAML config file. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">argc</td><td>forwarded from <a class="el" href="../../d2/d27/tricl_8cpp.html#a0ddf1224851353fc92bfbff6f499fa97">main()</a> </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">argv</td><td>forwarded from <a class="el" href="../../d2/d27/tricl_8cpp.html#a0ddf1224851353fc92bfbff6f499fa97">main()</a> </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+</div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
 Generated by &#160;<a href="http://www.doxygen.org/index.html">

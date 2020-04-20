@@ -37,6 +37,7 @@ convenience\+:
 optimization\+:
 \begin{DoxyItemize}
 \item use const args as much as possible in inner loops (?)
+\item speed up probability2probunits by precomputing probability for events with constant success probability
 \end{DoxyItemize}
 
 \section*{Terminology }
@@ -92,6 +93,8 @@ entity     relationship     entity
 
 
 \begin{DoxyItemize}
+\item {\bfseries ar\+:} attempt rate
+\item {\bfseries spu\+:} success probability units
 \item {\bfseries e\+:} entity
 \item {\bfseries e1\+:} source entity of a link or event
 \item {\bfseries e2\+:} middle entity of an angle or influence, or \char`\"{}other\char`\"{} entity of a leg
