@@ -21,7 +21,7 @@ unordered_map<string, bool> gexf_is_gz;
 unordered_map<string, ofstream> gexf_direct, gexf_indirect;
 unordered_map<string, boost::iostreams::filtering_streambuf<boost::iostreams::output>> gexf_buf;
 ostream* gexf(NULL);
-unordered_map<tricl::link, timepoint> gexf_edge2start = {};
+unordered_map<tricl::tricllink, timepoint> gexf_edge2start = {};
 
 void init_gexf () {
     // open files:
@@ -88,7 +88,7 @@ void init_gexf () {
     }
 }
 
-void gexf_output_edge (tricl::link& l) {
+void gexf_output_edge (tricl::tricllink& l) {
     auto e1 = l.e1, e3 = l.e3;
     auto rat13 = l.rat13;
     if (rat13 != RT_ID) {
@@ -127,7 +127,7 @@ void finish_gexf () {
     current_t = max_t;
     for (auto& [e1, outs] : e2outs) {
         for (auto& [rat13, e3] : outs) {
-            tricl::link l = { .e1 = e1, .rat13 = rat13, .e3 = e3 };
+            tricl::tricllink l = { .e1 = e1, .rat13 = rat13, .e3 = e3 };
             if (rat13 != RT_ID) gexf_output_edge(l);
         }
     }

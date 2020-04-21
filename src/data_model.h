@@ -57,6 +57,7 @@
 #include <set>
 #include <unordered_map>
 #include <map>
+#include <boost/container/flat_set.hpp>
 
 // other:
 #include <math.h>
@@ -148,19 +149,19 @@ struct entity_type_pair
 /** A link encodes either the existence of a certain relationship between two entities
  *  (or the cumulative impact of all past actions of a certain type between two entities -- not yet implemented).
  */
-struct link
+struct tricllink
 {
     const entity e1;                          ///< Source entity (or, if <0, source entity type of a summary event)
     const relationship_or_action_type rat13;  ///< Type of relationship or action represented by this link
     const entity e3;                          ///< Target entity (or, if <0, target entity type of a summary event)
 
-    friend bool operator== (const link& left, const link& right) {
+    friend bool operator== (const tricllink& left, const tricllink& right) {
         return ((left.e1 == right.e1)
                 && (left.rat13 == right.rat13)
                 && (left.e3 == right.e3));
     }
     // since links are used in sets, they must provide a comparison operator:
-    friend bool operator< (const link& left, const link& right) {
+    friend bool operator< (const tricllink& left, const tricllink& right) {
         return ((left.e1 < right.e1)
                 || ((left.e1 == right.e1) && (left.rat13 < right.rat13))
                 || ((left.e1 == right.e1) && (left.rat13 == right.rat13) && (left.e3 < right.e3)));
@@ -253,14 +254,15 @@ struct event_data
  */
 struct inleg
 {
-    const entity e_source;                     ///< Source entity of the leg. Plays a similar role as \c e2 in an angle.
-    const relationship_or_action_type rat_in;  ///< Plays a similar role as \c rat23 in an angle.
+    // in contrast to the other structs, here the members cannot be const since inlegs are used as values of flat_sets:
+    entity e_source;                     ///< Source entity of the leg. Plays a similar role as \c e2 in an angle.
+    relationship_or_action_type rat_in;  ///< Plays a similar role as \c rat23 in an angle.
 
     friend bool operator== (const inleg& left, const inleg& right) {
         return (left.e_source == right.e_source
                 && left.rat_in == right.rat_in);
     }
-    // since inlegs are used in sets, they must provide a comparison operator:
+    // since inlegs are used in flat_sets, they must provide a comparison operator:
     friend bool operator< (const inleg& left, const inleg& right) {
         // CAUTION: order must be lexicographic with e_other leading (otherwise function leg_intersection() won't work!):
         return ((left.e_source < right.e_source)
@@ -279,23 +281,24 @@ struct inleg
  */
 struct outleg
 {
-    const relationship_or_action_type rat_out;  ///< Plays a similar role as \c rat12 in an angle.
-    const entity e_target;                      ///< Target entity of the leg. Plays a similar role as \c e2 in an angle.
+    // in contrast to the other structs, here the members cannot be const since outlegs are used as values of flat_sets:
+    relationship_or_action_type rat_out;  ///< Plays a similar role as \c rat12 in an angle.
+    entity e_target;                      ///< Target entity of the leg. Plays a similar role as \c e2 in an angle.
 
     friend bool operator== (const outleg& left, const outleg& right) {
         return (left.e_target == right.e_target
                 && left.rat_out == right.rat_out);
     }
-    // since outlegs are used in sets, they must provide a comparison operator:
+    // since outlegs are used in flat_sets, they must provide a comparison operator:
     friend bool operator< (const outleg& left, const outleg& right) {
         // order must be lexicographic with e_other leading (otherwise leg_intersection won't work!):
         return ((left.e_target < right.e_target) || ((left.e_target == right.e_target) && (left.rat_out < right.rat_out)));
     }
 };
 
-// CAUTION: the following must be (ordered) set (NOT unordered_set) for leg_intersection to work!!
-typedef set<inleg> inleg_set;    ///< used to store all incoming legs of an entity
-typedef set<outleg> outleg_set;  ///< used to store all outgoing legs of an entity
+// CAUTION: the following must be ordered containers (NOT unordered_set) for leg_intersection to work!!
+typedef boost::container::flat_set<inleg> inleg_set;    ///< used to store all incoming legs of an entity
+typedef boost::container::flat_set<outleg> outleg_set;  ///< used to store all outgoing legs of an entity
 
 /** An angle represents an indirect connection between a source entity
  *  and a target entity via two links through some "middle" entity.
@@ -429,8 +432,8 @@ template <> struct std::hash<influence_type> {
 };
 /** Construct an integer hash for use in maps and sets by adding bit-shifted atteributes:
  */
-template <> struct std::hash<link> {
-    inline size_t operator()(const link& l) const {
+template <> struct std::hash<tricllink> {
+    inline size_t operator()(const tricllink& l) const {
         return (l.e1 ^ (l.rat13 << E_BITS) ^ (l.e3 << (E_BITS+RAT_BITS)));
     }
 };

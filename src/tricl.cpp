@@ -48,7 +48,9 @@
  *
  * optimization:
  * - use const args as much as possible in inner loops (?)
+ * - inline most called functions
  * - speed up probability2probunits by precomputing probability for events with constant success probability
+ * - think of partial parallelization
  *
  *
  * Terminology

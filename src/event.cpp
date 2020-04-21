@@ -211,7 +211,7 @@ void perform_event (
 
     auto ec = ev.ec; auto e1 = ev.e1, e3 = ev.e3; auto rat13 = ev.rat13, rat31 = rat2inv.at(rat13);
     assert (rat13 != RT_ID);
-    link l = { .e1 = e1, .rat13 = rat13, .e3 = e3 };
+    tricllink l = { .e1 = e1, .rat13 = rat13, .e3 = e3 };
 
     // FIRST add the reverse event, so that its n_angles will reflect the situation before the change:
     add_reverse_event(ev);
@@ -227,7 +227,7 @@ void perform_event (
     // also perform companion event that deals with the inverse link:
     if (rat31 != NO_RAT) {
         event companion_ev = { .ec = ec, .e1 = e3, .rat13 = rat31, .e3 = e1 };
-        link inv_l = { .e1 = e3, .rat13 = rat31, .e3 = e1 }; // inverse link
+        tricllink inv_l = { .e1 = e3, .rat13 = rat31, .e3 = e1 }; // inverse link
         if (ev2data.count(companion_ev) == 1) {
             if (debug) cout << " unscheduling companion event: " << companion_ev << endl;
             auto companion_evd_ = &ev2data.at(companion_ev);
@@ -310,7 +310,7 @@ bool pop_next_event ()
             auto e1 = random_entity(et1), e3 = random_entity(et3);
 
             auto rat13 = summary_ev.rat13;
-            link l = { e1, rat13, e3 };
+            tricllink l = { e1, rat13, e3 };
             event_type evt = { .ec = EC_EST, et1, rat13, et3 };
 
             if (link_exists(l))

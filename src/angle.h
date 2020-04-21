@@ -114,10 +114,10 @@ inline void add_or_delete_angle (
  *  \returns a vector of found angles
  */
 inline angle_vec leg_intersection (
-        entity e1,         ///< [in] source entity
-        outleg_set& out1,  ///< [in] set of outlegs of source entity
-        inleg_set& in3,    ///< [in] set of inlegs of target entity
-        entity e3          ///< [in] target entity
+        const entity e1,         ///< [in] source entity
+        const outleg_set& out1,  ///< [in] set of outlegs of source entity
+        const inleg_set& in3,    ///< [in] set of inlegs of target entity
+        const entity e3          ///< [in] target entity
         )
 {
   // allocate mem for result:

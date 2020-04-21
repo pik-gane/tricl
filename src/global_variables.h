@@ -46,7 +46,7 @@ extern unordered_map<string, relationship_or_action_type> label2rat;  ///< Inver
 extern unordered_map<relationship_or_action_type, bool> r_is_action_type; ///< Whether relationship or action type is an action type (not implemented yet)
 extern unordered_map<relationship_or_action_type, relationship_or_action_type> rat2inv; ///< Inverse type of a relationship or action type (e.g. the inverse of "follows" would be "is followed by", the inverse of "meets" would be "meets"). If NO_RAT, inverse has no individual label
 // any preregistered initial links:
-extern set<link> initial_links;                                       ///< Set of named initial links
+extern set<tricllink> initial_links;                                       ///< Set of named initial links
 // random initial links:
 // block model:
 extern unordered_map<entity_type, int> et2n_blocks;                   ///< No. of blocks for random block model by entity type

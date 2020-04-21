@@ -11,13 +11,13 @@
 #include "gexf.h"
 #include "link.h"
 
-bool link_exists (link& l)
+bool link_exists (tricllink& l)
 {
     auto e1 = l.e1, e3 = l.e3; auto rat13 = l.rat13;
     return (e2outs[e1].count({ .rat_out = rat13, .e_target = e3 }) > 0);
 }
 
-void add_link (link& l)
+void add_link (tricllink& l)
 {
     assert ((!link_exists(l)) && (l.e1 != l.e3));
     auto e1 = l.e1, e3 = l.e3; auto rat13 = l.rat13;
@@ -28,7 +28,7 @@ void add_link (link& l)
     n_links++;
 }
 
-void del_link (link& l)
+void del_link (tricllink& l)
 {
     assert (link_exists(l));
     auto e1 = l.e1, e3 = l.e3; auto rat13 = l.rat13;
@@ -41,7 +41,7 @@ void del_link (link& l)
 
 void do_random_link (probability p, entity e1, relationship_or_action_type rat13, entity e3) {
     if (uniform(random_variable) < p) {
-        link l = { .e1 = e1, .rat13 = rat13, .e3 = e3 };
+        tricllink l = { .e1 = e1, .rat13 = rat13, .e3 = e3 };
         if (!link_exists(l)) {
             event ev = { .ec = EC_EST, .e1 = e1, .rat13 = rat13, .e3 = e3 };
             conditionally_remove_event(ev);

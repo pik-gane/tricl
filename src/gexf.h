@@ -4,11 +4,11 @@
 
 #include "data_model.h"
 
-extern unordered_map<link, timepoint> gexf_edge2start;
+extern unordered_map<tricllink, timepoint> gexf_edge2start;
 
 void init_gexf ();
 
-void gexf_output_edge (link& l);
+void gexf_output_edge (tricllink& l);
 
 void finish_gexf ();
 
