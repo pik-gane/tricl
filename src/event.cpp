@@ -100,7 +100,7 @@ void add_event (event& ev)
     auto et1 = e2et[e1], et3 = e2et[e3];
     event_type evt = { .ec = ec, .et1 = et1, .rat13 = rat13, .et3 = et3 };
 
-    if (evt2base_probunits.count(evt) > 0) { // event can happen at all:
+    if (possible_evts.count(evt) > 0) { // event can happen at all:
 
         if (debug) cout << "     adding event: " << ev << endl;
         // find and store attempt rate and success probunit by looping through adjacent legs and angles:
@@ -113,12 +113,12 @@ void add_event (event& ev)
             for (auto& [rat12, e2] : outs1) {
                 influence_type inflt = { .evt = evt, .at = { .rat12 = rat12, .et2 = e2et[e2], .rat23 = NO_RAT } };
                 ar += _inflt2attempt_rate[INFLT(inflt)];
-                spu += _inflt2delta_probunit[INFLT(inflt)];
+                spu += _inflt2delta_probunits[INFLT(inflt)];
             }
             for (auto& [e2, rat23] : ins3) {
                 influence_type inflt = { .evt = evt, .at = { .rat12 = NO_RAT, .et2 = e2et[e2], .rat23 = rat23 } };
                 ar += _inflt2attempt_rate[INFLT(inflt)];
-                spu += _inflt2delta_probunit[INFLT(inflt)];
+                spu += _inflt2delta_probunits[INFLT(inflt)];
             }
         }
 
@@ -133,18 +133,21 @@ void add_event (event& ev)
         int na = 0; // number of influencing angles
         angles as = leg_intersection(e1, outs1, ins3, e3);
         for (auto a_it = as.begin(); a_it != as.end(); a_it++) {
-            influence_type inflt = { .evt = evt, .at = { .rat12 = a_it->rat12, .et2 = e2et[a_it->e2], .rat23 = a_it->rat23 } };
+            influence_type inflt = {
+                    .evt = evt,
+                    .at = { .rat12 = a_it->rat12, .et2 = e2et[a_it->e2], .rat23 = a_it->rat23 }
+            };
             if (debug) cout << "      influences of angle \"" << e2label[e1] << " " << rat2label[a_it->rat12] << " " << e2label[a_it->e2] << " " << rat2label[a_it->rat23] << " " << e2label[e3] << "\":" << endl;
             auto dar = _inflt2attempt_rate[INFLT(inflt)];
-            auto dsl = _inflt2delta_probunit[INFLT(inflt)];
-            if (COUNT_ALL_ANGLES || (dar != 0.0) || (dsl != 0.0)) { // angle can influence event
+            auto dspu = _inflt2delta_probunits[INFLT(inflt)];
+            if (COUNT_ALL_ANGLES || (dar != 0.0) || (dspu != 0.0)) { // angle can influence event
                 na++;
                 if (debug) {
                     if (dar != 0.0) cout << "       on attempt rate:" << dar << endl;
-                    if (dsl != 0.0) cout << "       on success probunit:" << dsl << endl;
+                    if (dspu != 0.0) cout << "       on success probunit:" << dspu << endl;
                 }
                 ar += dar;
-                spu += dsl;
+                spu += dspu;
             } else if (debug) cout << "       none" << endl;
         }
 
@@ -155,7 +158,7 @@ void add_event (event& ev)
             ev2data[ev] = { .n_angles = na, .attempt_rate = max(0.0, ar), .success_probunits = spu, .t = -INFINITY };
             if (debug) cout << "      attempt rate " << ar << ", success prob. " << probunits2probability(spu, evt2left_tail.at(evt), evt2right_tail.at(evt)) << endl;
             schedule_event(ev, &ev2data[ev], evt2left_tail.at(evt), evt2right_tail.at(evt));
-            if (debug) verify_angle_consistency();
+            if (debug) { verify_data_consistency(); verify_angle_consistency(); }
         } else {
             if (debug) cout << "      covered by summary event, not scheduled separately" << endl;
         }

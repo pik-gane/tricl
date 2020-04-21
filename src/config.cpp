@@ -44,6 +44,7 @@ unordered_map<link_type, probability> lt2initial_prob_within = {};
 unordered_map<link_type, probability> lt2initial_prob_between = {};
 unordered_map<entity_type, int> et2dim = {};
 unordered_map<link_type, probability> lt2spatial_decay = {};
+
 unordered_map<event_type, rate> evt2base_attempt_rate = {};
 unordered_map<influence_type, rate> inflt2attempt_rate = {};
 unordered_map<event_type, double> evt2left_tail = {}, evt2right_tail = {};
@@ -102,7 +103,7 @@ void read_entity_labels (YAML::Node n, entity_type et)
     for (YAML::const_iterator it3 = n.begin(); it3 != n.end(); ++it3) {
         auto elabel = it3->as<string>();  // YAML values must always be converted to some type by means of as<type>()
         entity e = add_entity(et, elabel);
-        cout << "  entity " << e << ": " << elabel << endl;
+        if (verbose) cout << "  entity " << e << ": " << elabel << endl;
     }
 }
 
@@ -121,7 +122,21 @@ void read_config (
     }
     config_yaml_filename = argv[1];
     YAML::Node c = YAML::LoadFile(config_yaml_filename), n, n1, n2, n3;
-    options.add_options()("help", "Print help for " + config_yaml_filename);
+
+    // register command line options for config file options:
+    n = c["options"];
+    if (n && !n.IsMap()) throw "yaml field 'options' must be a map";
+    options.add_options()
+            ("help", "Print help for " + config_yaml_filename)
+            ("quiet", "quiet mode", cxxopts::value<bool>()->default_value(
+                    (n && n["quiet"]) ? n["quiet"].as<string>() : "false"))
+            ("verbose", "verbose mode", cxxopts::value<bool>()->default_value(
+                    (n && n["verbose"]) ? n["verbose"].as<string>() : "false"))
+            ("debug", "debug mode", cxxopts::value<bool>()->default_value(
+                    (n && n["debug"]) ? n["debug"].as<string>() : "false"))
+            ("seed", "random seed", cxxopts::value<unsigned>()->default_value(
+                    (n && n["seed"]) ? n["seed"].as<string>() : "0"))
+            ;
 
     // register command line options for all metaparameters in config file:
     n = c["metaparameters"];
@@ -140,12 +155,17 @@ void read_config (
                     cxxopts::value<std::string>()->default_value(deflt));
         }
     }
+
     // read command line:
     auto cmdlineopts = options.parse(argc, argv);
     if ((cmdlineopts.count("help") >= 1)) {
         cout << options.help() << endl;
         exit(0);
     }
+    debug = cmdlineopts["debug"].as<bool>();
+    verbose = cmdlineopts["verbose"].as<bool>() || debug;
+    quiet = cmdlineopts["quiet"].as<bool>() && (!verbose);
+    seed = cmdlineopts["seed"].as<unsigned>();
 
     // read config file:
 
@@ -164,8 +184,6 @@ void read_config (
     te_vars[4] = {"epsilon", (const void*)(&te_vals[0]), TE_VARIABLE};
     n_te_vars = 5;
 
-    // NOTE: for some reason, "metaparameters" must be parsed before "options" to avoid a strange error.
-
     // metaparameters:
     n = c["metaparameters"];
     if (n) {
@@ -176,16 +194,6 @@ void read_config (
             double value = register_te_var(symbol, expression);
             if (!quiet) cout << "  " << symbol << " = " << expression << " = " << value << endl;
         }
-    }
-
-    // options:
-    n = c["options"];
-    if (n) {
-        if (!n.IsMap()) throw "yaml field 'options' must be a map";
-        if (n["quiet"]) quiet = n["quiet"].as<bool>();
-        if (n["verbose"]) verbose = n["verbose"].as<bool>();
-        if (n["debug"]) debug = n["debug"].as<bool>();
-        if (n["seed"]) seed = n["seed"].as<unsigned>();
     }
 
     // TODO: make use of the metadata, e.g. in output
@@ -222,7 +230,7 @@ void read_config (
     if (!n1.IsMap()) throw "yaml field 'entities' must be a map";
     for (YAML::const_iterator it1 = n1.begin(); it1 != n1.end(); ++it1) {
         auto etlabel = (it1->first).as<string>();
-        cout << " entity type " << et << ": " << etlabel << endl;
+        if (verbose) cout << " entity type " << et << ": " << etlabel << endl;
         label2et[etlabel] = et;
         et2label[et] = etlabel;
         n2 = it1->second;
@@ -276,13 +284,13 @@ void read_config (
                 gexf_filename[rat1] = (!n2["gexf"]) ? gexf_default_filename : n2["gexf"].IsNull() ? "" : n2["gexf"].as<string>();
             } else throw "field values under 'relationship types' must be strings or maps";
             if (ratlabel2 == "") {
-                cout << " relationship type " << rat1 << ": " << ratlabel << endl;
+                if (verbose) cout << " relationship type " << rat1 << ": " << ratlabel << endl;
             } else {
                 relationship_or_action_type rat2;
                 if (ratlabel2 == "symmetric") ratlabel2 = ratlabel;
                 if (label2rat.count(ratlabel2)) {
                     rat2 = label2rat[ratlabel2];
-                    cout << " relationship type " << rat1 << ": " << ratlabel << " (inverse: " << ratlabel2 << ")" << endl;
+                    if (verbose) cout << " relationship type " << rat1 << ": " << ratlabel << " (inverse: " << ratlabel2 << ")" << endl;
                 } else {
                     rat2 = nextrat;
                     label2rat[ratlabel2] = rat2;
@@ -290,16 +298,16 @@ void read_config (
                     gexf_filename[rat2] = ""; // don't output rats that are only inverses
                     r_is_action_type[nextrat] = false;
                     nextrat++;
-                    cout << " relationship type " << rat2 << ": " << ratlabel2 << " (inverse: " << ratlabel << ")" << endl;
-                    cout << " relationship type " << rat1 << ": " << ratlabel << " (inverse: " << ratlabel2 << ")" << endl;
+                    if (verbose) cout << " relationship type " << rat2 << ": " << ratlabel2 << " (inverse: " << ratlabel << ")" << endl;
+                    if (verbose) cout << " relationship type " << rat1 << ": " << ratlabel << " (inverse: " << ratlabel2 << ")" << endl;
                 }
                 rat2inv[rat1] = rat2;
                 rat2inv[rat2] = rat1;
             }
             if (gexf_filename[rat1] == "") {
-                cout << "  (omitted in gexf output)" << endl;
+                if (verbose) cout << "  (omitted in gexf output)" << endl;
             } else if (gexf_filename[rat1] != gexf_default_filename) {
-                cout << "  written to separate file " << gexf_filename[rat1] << endl;
+                if (verbose) cout << "  written to separate file " << gexf_filename[rat1] << endl;
             }
         }
     }
@@ -322,13 +330,13 @@ void read_config (
             rat1 = label2rat[ratlabel];
             n2 = it1->second;
             if (n2.IsNull()) {
-                cout << " action type " << rat1 << ": " << ratlabel << endl;
+                if (verbose) cout << " action type " << rat1 << ": " << ratlabel << endl;
             } else {
                 auto ratlabel2 = n2.as<string>();
                 if (ratlabel2 == "symmetric") ratlabel2 = ratlabel;
                 if (label2rat.count(ratlabel2) > 0) {
                     rat2 = label2rat[ratlabel2];
-                    cout << " action type " << rat1 << ": " << ratlabel << " (inverse: " << ratlabel2 << ")" << endl;
+                    if (verbose) cout << " action type " << rat1 << ": " << ratlabel << " (inverse: " << ratlabel2 << ")" << endl;
                     if ((rat2inv.count(rat1) > 0) && (rat2inv.at(rat1) != rat2)) throw "conflicting specification of inverses";
                 } else {
                     rat2 = nextrat;
@@ -336,8 +344,8 @@ void read_config (
                     rat2label[rat2] = ratlabel2;
                     r_is_action_type[nextrat] = true;
                     nextrat++;
-                    cout << " action type " << rat1 << ": " << ratlabel << " (inverse: " << ratlabel2 << ")" << endl;
-                    cout << " action type " << rat2 << ": " << ratlabel2 << " (inverse: " << ratlabel << ")" << endl;
+                    if (verbose) cout << " action type " << rat1 << ": " << ratlabel << " (inverse: " << ratlabel2 << ")" << endl;
+                    if (verbose) cout << " action type " << rat2 << ": " << ratlabel2 << " (inverse: " << ratlabel << ")" << endl;
                 }
                 rat2inv[rat1] = rat2;
                 rat2inv[rat2] = rat1;
@@ -356,13 +364,13 @@ void read_config (
     // named initial links:
     n = c["initial links"]["named"];
     if (n) {
-        cout << "named initial links:" << endl;
+        if (verbose) cout << "named initial links:" << endl;
         for (YAML::const_iterator it = n.begin(); it != n.end(); ++it) {
             if (!it->IsSequence()) throw "yaml subfield 'named' of 'initial links' must be a sequence";
             string e1label = (*it)[0].as<string>(),
                     rat13label = (*it)[1].as<string>(),
                     e3label = (*it)[2].as<string>();
-            cout << " " << e1label << " " << rat13label << " " << e3label << endl;
+            if (verbose) cout << " " << e1label << " " << rat13label << " " << e3label << endl;
             try {
                 auto e1 = label2e.at(e1label), e3 = label2e.at(e3label);
                 auto rat13 = label2rat.at(rat13label);
@@ -379,12 +387,12 @@ void read_config (
     // random initial links:
     n1 = c["initial links"]["random"];
     if (n1) {
-        cout << "random initial links:" << endl;
+        if (verbose) cout << "random initial links:" << endl;
         if (!n1.IsMap()) throw "yaml subfield 'random' of 'initial links' must be a map";
         for (YAML::const_iterator it1 = n1.begin(); it1 != n1.end(); ++it1) {
             auto lt = it1->first;
             if (!lt.IsSequence()) throw "keys in yaml map 'named' of 'initial links' must be of the form [entity type, relationship or action type, entity type]";
-            cout << " " << lt[0].as<string>() << " " << lt[1].as<string>() << " " << lt[2].as<string>() << endl;
+            if (verbose) cout << " " << lt[0].as<string>() << " " << lt[1].as<string>() << " " << lt[2].as<string>() << endl;
             try {
                 auto et1 = label2et.at(lt[0].as<string>()),
                         et3 = label2et.at(lt[2].as<string>());
@@ -439,7 +447,7 @@ void read_config (
             auto n2 = it1->second;
             if ((key != "named") && (key != "random")) {
                 auto filename = key;
-                if (!quiet) cout << "reading initial links from file " << filename << " ..." << endl;
+                if (verbose) cout << "reading initial links from file " << filename << " ..." << endl;
                 auto ext = filename.substr(filename.find_last_of(".") + 1);
                 if (ext == "csv") {
                     string et1label, rat13label, et3label;
@@ -485,19 +493,19 @@ void read_config (
                 } else {
                     throw "unsupported file extension";
                 }
-                if (!quiet) cout << " ...done." << endl;
+                if (verbose) cout << " ...done." << endl;
             }
         }
     }
 
     // dynamics:
-    cout << "dynamics:" << endl;
+    if (verbose) cout << "dynamics:" << endl;
     n1 = c["dynamics"];
     if (!n1.IsMap()) throw "yaml field 'dynamics' must be a map";
     for (YAML::const_iterator it1 = n1.begin(); it1 != n1.end(); ++it1) {
         auto lt = it1->first;
         if (!lt.IsSequence()) throw "keys in yaml map 'dynamics' must be of the form [entity type, relationship or action type, entity type]";
-        cout << " " << lt[0].as<string>() << " " << lt[1].as<string>() << " " << lt[2].as<string>() << endl;
+        if (verbose) cout << " " << lt[0].as<string>() << " " << lt[1].as<string>() << " " << lt[2].as<string>() << endl;
         try {
             auto et1l = lt[0].as<string>(), et3l = lt[2].as<string>();
             auto et1 = label2et.at(et1l), et3 = label2et.at(et3l);

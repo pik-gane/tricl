@@ -16,7 +16,7 @@
 
 // CONSTANT DATA:
 
-extern set<entity> es;                         ///< Set of all entities
+extern unordered_set<entity> es;               ///< Set of all entities
 extern entity max_e;                           ///< Largest entity id in use
 extern entity_type e2et[MAX_N_E];              ///< Entity type by entity (stored in an array for performance)
 extern unordered_map<entity_type, vector<entity>> et2es;  ///< Inverse of e2et
@@ -58,6 +58,7 @@ extern unordered_map<link_type, probability> lt2spatial_decay;        ///< Rate 
 
 // dynamic parameters:
 
+extern unordered_set<event_type> possible_evts;                                    ///< Types of events that may occur at all
 extern unordered_map<event_type, rate> evt2base_attempt_rate;            ///< Basic attempt rate by event type
 extern unordered_map<influence_type, rate> inflt2attempt_rate;           ///< Additional attempt rate by influence type
 extern rate _inflt2attempt_rate[MAX_N_INFLT];                            ///< Redundant copy of \ref inflt2attempt_rate as array
@@ -65,8 +66,8 @@ extern unordered_map<event_type, double> evt2left_tail,                  ///< Le
                                          evt2right_tail;                 ///< Right tail index for sigmoid function probunits2probability(), >= 0
 extern unordered_map<event_type, probunits> evt2base_probunits;          ///< Basic success probability units by event type
 extern unordered_map<influence_type, probunits> inflt2delta_probunits;   ///< Change in success probunits by influence type
-extern probunits _inflt2delta_probunit[MAX_N_INFLT];                     ///< Redundant copy of \ref inflt2delta_probunits as array
-extern unordered_map<entity_type_pair, set<relationship_or_action_type>> ets2relations;  ///< Possible relationship or action types by entity type pair
+extern probunits _inflt2delta_probunits[MAX_N_INFLT];                     ///< Redundant copy of \ref inflt2delta_probunits as array
+extern unordered_map<entity_type_pair, unordered_set<relationship_or_action_type>> ets2relations;  ///< Possible relationship or action types by entity type pair
 extern unordered_map<event, rate> ev2max_success_probability;            ///< Maximal possible success probability of summary events
 
 // gexf parameters:

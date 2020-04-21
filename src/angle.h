@@ -1,3 +1,4 @@
+// make sure this file is only included once:
 #ifndef INC_ANGLE_H
 #define INC_ANGLE_H
 

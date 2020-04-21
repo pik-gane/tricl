@@ -22,8 +22,8 @@ int compute_n_angles(event_type evt, entity e1, entity e3, bool print) {
     for (auto a_it = as.begin(); a_it < as.end(); a_it++) {
         influence_type inflt = { .evt = evt, .at = { .rat12 = a_it->rat12, .et2 = e2et[a_it->e2], .rat23 = a_it->rat23 } };
         auto dar = _inflt2attempt_rate[INFLT(inflt)];
-        auto dsl = _inflt2delta_probunit[INFLT(inflt)];
-        if (print) cout << " " << rat2label[a_it->rat12] << " " << e2label[a_it->e2] << " " << rat2label[a_it->rat23] << " " << dar << " " << dsl << endl;
+        auto dsl = _inflt2delta_probunits[INFLT(inflt)];
+        if (print) cout << " " << rat2label[a_it->rat12] << " " << e2label[a_it->e2] << " " << rat2label[a_it->rat23] << ", " << INFLT(inflt) << " " << dar << " " << dsl << endl;
         if (COUNT_ALL_ANGLES || (dar != 0.0) || (dsl != 0.0)) { // angle can influence event
             na++;
         }
@@ -38,7 +38,7 @@ void verify_angle_consistency() {
         auto et1 = e2et[e1], et3 = e2et[e3];
         auto n = compute_n_angles({ ev.ec, et1, ev.rat13, et3 }, e1, e3, false);
         if (n != evd.n_angles) {
-           cout << ev << " " << evd << " " << n << endl;
+           cout << "failed at " << ev << " " << evd << " " << n << endl;
            compute_n_angles({ ev.ec, et1, ev.rat13, et3 }, e1, e3, true);
 //           dump_data();
         }

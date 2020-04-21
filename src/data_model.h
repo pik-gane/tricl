@@ -53,6 +53,7 @@
 // datatypes:
 #include <string>
 #include <vector>
+#include <unordered_set>
 #include <set>
 #include <unordered_map>
 #include <map>
@@ -67,12 +68,13 @@ namespace tricl {
 // make common members of std available without needing to specify "std::" each time:
 using std::ofstream;
 using std::ostream;
-using std::endl;
 using std::cout;
 using std::cerr;
+using std::endl;
 using std::string;
 using std::to_string;
 using std::vector;
+using std::unordered_set;
 using std::set;
 using std::unordered_map;
 using std::map;
@@ -291,6 +293,7 @@ struct outleg
     }
 };
 
+// CAUTION: the following must be (ordered) set (NOT unordered_set) for leg_intersection to work!!
 typedef set<inleg> inleg_set;    ///< used to store all incoming legs of an entity
 typedef set<outleg> outleg_set;  ///< used to store all outgoing legs of an entity
 

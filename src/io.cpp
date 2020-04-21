@@ -12,6 +12,8 @@
 #include "event.h"
 #include "io.h"
 
+namespace tricl {
+
 ostream& operator<< (ostream& os, const link_type& lt) {
     os << et2label[lt.et1]
         << " " << rat2label[lt.rat13] << " "
@@ -19,7 +21,8 @@ ostream& operator<< (ostream& os, const link_type& lt) {
     return os;
 }
 
-ostream& operator<< (ostream& os, const event_type& evt) {
+ostream& operator<< (ostream& os, const event_type& evt)
+{
     os << ec2label[evt.ec]
             << " " << et2label[evt.et1]
             << " " << rat2label[evt.rat13] << " "
@@ -50,6 +53,8 @@ ostream& operator<< (ostream& os, const event& ev) {
 ostream& operator<< (ostream& os, const event_data& evd) {
     os << "na=" << evd.n_angles << " ar=" << evd.attempt_rate << " pu=" << evd.success_probunits << " t=" << evd.t;
     return os;
+}
+
 }
 
 void log_status ()

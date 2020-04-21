@@ -4,6 +4,8 @@
 
 #include "data_model.h"
 
+namespace tricl {
+
 ostream& operator<< (ostream& os, const link_type& lt);
 
 ostream& operator<< (ostream& os, const event_type& evt);
@@ -13,6 +15,10 @@ ostream& operator<< (ostream& os, const angle_type& at);
 ostream& operator<< (ostream& os, const event& ev);
 
 ostream& operator<< (ostream& os, const event_data& evd);
+
+}
+
+using tricl::operator<<;
 
 void log_status ();
 

@@ -18,13 +18,14 @@
 
 // parameters:
 int n_rats = 0; // total no. of rats
+unordered_set<event_type> possible_evts = {};
 rate _inflt2attempt_rate[MAX_N_INFLT];
-probunits _inflt2delta_probunit[MAX_N_INFLT];
+probunits _inflt2delta_probunits[MAX_N_INFLT];
 entity_type e2et[MAX_N_E];
 
 // derived constants:
-set<entity> es;
-unordered_map<entity_type_pair, set<relationship_or_action_type>> ets2relations;  // possible relations
+unordered_set<entity> es;
+unordered_map<entity_type_pair, unordered_set<relationship_or_action_type>> ets2relations;  // possible relations
 unordered_map<event, rate> ev2max_success_probability; // max possible effective rate of summary events
 
 // variable data:
@@ -56,7 +57,7 @@ void init_data ()
     }
     // init with zeroes:
     for (int i=0; i<MAX_N_INFLT; i++) {
-        _inflt2delta_probunit[i] = _inflt2attempt_rate[i] = 0;
+        _inflt2delta_probunits[i] = _inflt2attempt_rate[i] = 0;
     }
     // store actual values:
     for (auto& [inflt, ar] : inflt2attempt_rate) {
@@ -65,7 +66,7 @@ void init_data ()
     }
     for (auto& [inflt, spu] : inflt2delta_probunits) {
         assert (!( inflt.evt.ec == EC_EST && ( inflt.at.rat12 == NO_RAT || inflt.at.rat23 == NO_RAT ) ));
-        _inflt2delta_probunit[INFLT(inflt)] = spu;
+        _inflt2delta_probunits[INFLT(inflt)] = spu;
     }
 }
 
@@ -77,14 +78,6 @@ void init_entities ()
         auto et = e2et[e];
         if (et >= 1<<ET_BITS) throw "too many entity types (recompile with larger ET_BITS?)";
         assert(e >= 0);
-//        es.insert(e);
-//        if (e > max_e) max_e = e;
-//        if (e2label.count(e) == 0) e2label[e] = to_string(e);
-//        if (e2outs.count(e) == 0) e2outs[e] = {};
-//        if (e2ins.count(e) == 0) e2ins[e] = {};
-//        if (et2es.count(et) == 0) et2es[et] = {};
-//        _e2et[e] = et;
-//        et2es[et].push_back(e);
         if (et2remaining_n[et] > 0) {
             et2remaining_n[et]--;
         } else {
@@ -95,10 +88,6 @@ void init_entities ()
     // generate remaining entities:
     for (auto& [et, n] : et2remaining_n) {
         cout << " entity type \"" << et2label[et] << "\" has " << et2n[et] << " entities" << endl;
-//        if (n < et2n[et]) {
-//            cout << "  of which were preregistered:" << endl;
-//            for (auto& e : et2es[et]) cout << "   " << e2label[e] << endl;
-//        }
         assert (n >= 0);
         while (n > 0) {
             add_entity(et, "");
@@ -112,39 +101,18 @@ void init_entities ()
 void init_relationship_or_action_types ()
 {
     // verify symmetry of relationship inversion map:
-    cout << " relationship types (with inverses) and action types:" << endl;
     assert (rat2inv.at(RT_ID) == RT_ID);
     for (auto& [r, la] : rat2label) {
         if (r >= 1<<RAT_BITS) throw "too many relationship or action types (recompile with larger RAT_BITS?)";
         if (rat2inv.count(r) == 0) rat2inv[r] = NO_RAT;
         auto inv = rat2inv[r];
-        if (inv == NO_RAT) {
-//            if (r_is_action_type[r]) {
-//                cout << "  non-symmetric action type \"" << la << "\" (no inverse)" << endl;
-//            } else {
-//                cout << "  non-symmetric relationship type \"" << la << "\" (no inverse)" << endl;
-//            }
-        } else {
-            if (inv == r) {
-//                if (r_is_action_type[r]) {
-//                    cout << "  symmetric action type \"" << la << "\"" << endl;
-//                } else {
-//                    cout << "  symmetric relationship type \"" << la << "\"" << endl;
-//                }
-            } else {
-                assert (rat2inv.at(inv) == r);
-                assert (r_is_action_type.at(r) == r_is_action_type.at(inv));
-//                if (r_is_action_type[r]) {
-//                    cout << "  non-symmetric action type \"" << la << "\" (inverse: \"" << rat2label[inv] << "\")" << endl;
-//                } else {
-//                    cout << "  non-symmetric relationship type \"" << la << "\" (inverse: \"" << rat2label[inv] << "\")" << endl;
-//                }
-            }
+        if ((inv != NO_RAT) && (inv != r)) {
+            assert (rat2inv.at(inv) == r);
+            assert (r_is_action_type.at(r) == r_is_action_type.at(inv));
         }
     }
 
     // register possible relationship types by entity type pair, and compute probunits:
-    cout << " base success probabilities:" << endl;
     for (auto& [evt, pu] : evt2base_probunits) {
         auto rat13 = evt.rat13;
         assert (rat13 != RT_ID);
@@ -152,15 +120,27 @@ void init_relationship_or_action_types ()
         if (ets2relations.count(ets) == 0) ets2relations[ets] = {};
         ets2relations[ets].insert(rat13);
         lt2n[{evt.et1, rat13, evt.et3}] = 0;
-        cout << "  " << evt << ": " << probunits2probability(pu, evt2left_tail.at(evt), evt2right_tail.at(evt)) << endl;
     }
 
     n_rats = rat2label.size();
 }
 
-void init_summary_events ()
+void init_events ()
 {
-    if (!quiet) cout << " perform initial scheduling of summary events..." << endl;
+
+    for (auto& [evt, ar] : evt2base_attempt_rate) {
+        if (ar > 0.0) possible_evts.insert(evt);
+    }
+    for (auto& [inflt, ar] : inflt2attempt_rate) {
+        if (ar > 0.0) possible_evts.insert(inflt.evt);
+    }
+    if (verbose) {
+        cout << " possible event types with base attempt rates and base success probabilities:" << endl;
+        for (auto& evt : possible_evts) cout << "  " << evt << ": " << evt2base_attempt_rate[evt] <<
+                ", " << probunits2probability(evt2base_probunits[evt], evt2left_tail[evt], evt2right_tail[evt]) << endl;
+    }
+
+    if (!quiet) cout << " initial scheduling of summary events..." << endl;
     // summary events for purely spontaneous establishment without angles:
     for (auto& [ets, relations] : ets2relations) {
         auto et1 = ets.et1, et3 = ets.et3;
@@ -221,7 +201,7 @@ void init_links ()
     }
     for (auto& [lt, pw] : lt2initial_prob_within) { // TODO: add lt2initial_prob_between
         if (pw > 0) {
-            if (!quiet) cout << "  using a block model for \"" << lt << "\"" << endl;
+            if (verbose) cout << "  using a block model for \"" << lt << "\"" << endl;
             assert (lt.rat13 != RT_ID);
             auto et1 = lt.et1, et3 = lt.et3; auto rat13 = lt.rat13;
             for (auto& e1 : et2es[et1]) {
@@ -247,7 +227,7 @@ void init_links ()
         }
     }
     for (auto& [lt, ex] : lt2spatial_decay) {
-        if (!quiet) cout << "  using a random geometric model for \"" << lt << "\"" << endl;
+        if (verbose) cout << "  using a random geometric model for \"" << lt << "\"" << endl;
         assert (lt.rat13 != RT_ID);
         auto et1 = lt.et1, et3 = lt.et3; auto rat13 = lt.rat13; auto dim = et2dim.at(et1);
         assert (et2dim.at(et3) == dim);
@@ -277,7 +257,7 @@ void init ()
     init_data();
     init_entities();
     init_relationship_or_action_types();
-    init_summary_events();
+    init_events();
     init_links();
     init_gexf();
     do_graphviz_diagrams();
