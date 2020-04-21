@@ -85,11 +85,14 @@ $(function() {
 <code>#include &lt;set&gt;</code><br />
 <code>#include &lt;unordered_map&gt;</code><br />
 <code>#include &lt;map&gt;</code><br />
+<code>#include &lt;boost/container/flat_set.hpp&gt;</code><br />
 <code>#include &lt;math.h&gt;</code><br />
 </div><div class="textblock"><div class="dynheader">
 Include dependency graph for data_model.h:</div>
 <div class="dyncontent">
 <div class="center"><img src="../../d0/dc6/data__model_8h__incl.png" border="0" usemap="#src_2data__model_8h" alt=""/></div>
+<map name="src_2data__model_8h" id="src_2data__model_8h">
+</map>
 </div>
 </div><div class="textblock"><div class="dynheader">
 This graph shows which files directly or indirectly include this file:</div>
@@ -121,11 +124,11 @@ Data Structures</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../df/dcc/structtricl_1_1entity__type__pair.html">tricl::entity_type_pair</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pair of entity types (rarely used)  <a href="../../df/dcc/structtricl_1_1entity__type__pair.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d8/d01/structtricl_1_1link.html">tricl::link</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">A link encodes either the existence of a certain relationship between two entities (or the cumulative impact of all past actions of a certain type between two entities &ndash; not yet implemented).  <a href="../../d8/d01/structtricl_1_1link.html#details">More...</a><br /></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../da/de2/structtricl_1_1tricllink.html">tricl::tricllink</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">A link encodes either the existence of a certain relationship between two entities (or the cumulative impact of all past actions of a certain type between two entities &ndash; not yet implemented).  <a href="../../da/de2/structtricl_1_1tricllink.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d7/d76/structtricl_1_1link__type.html">tricl::link_type</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">The type of a <a class="el" href="../../d8/d01/structtricl_1_1link.html">link</a> is given by two entity types and a relationship or action type.  <a href="../../d7/d76/structtricl_1_1link__type.html#details">More...</a><br /></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">The type of a link is given by two entity types and a relationship or action type.  <a href="../../d7/d76/structtricl_1_1link__type.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d4/d7e/structtricl_1_1event.html">tricl::event</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">An event encodes a possible atomic change in the system state involving exactly one link.  <a href="../../d4/d7e/structtricl_1_1event.html#details">More...</a><br /></td></tr>
@@ -175,8 +178,8 @@ Data Structures</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d5/d14/structstd_1_1hash_3_01influence__type_01_4.html">std::hash&lt; influence_type &gt;</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Construct an integer hash for use in maps and sets by adding bit-shifted atteributes:  <a href="../../d5/d14/structstd_1_1hash_3_01influence__type_01_4.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../da/dfc/structstd_1_1hash_3_01link_01_4.html">std::hash&lt; link &gt;</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Construct an integer hash for use in maps and sets by adding bit-shifted atteributes:  <a href="../../da/dfc/structstd_1_1hash_3_01link_01_4.html#details">More...</a><br /></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d3/d00/structstd_1_1hash_3_01tricllink_01_4.html">std::hash&lt; tricllink &gt;</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Construct an integer hash for use in maps and sets by adding bit-shifted atteributes:  <a href="../../d3/d00/structstd_1_1hash_3_01tricllink_01_4.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d6/d87/structstd_1_1hash_3_01event_01_4.html">std::hash&lt; event &gt;</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Construct an integer hash for use in maps and sets by adding bit-shifted atteributes:  <a href="../../d6/d87/structstd_1_1hash_3_01event_01_4.html#details">More...</a><br /></td></tr>
@@ -252,14 +255,14 @@ typedef string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" 
 <tr class="memitem:a2d01894944fb58a8fedc0912a48d13f8"><td class="memItemLeft" align="right" valign="top">typedef size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d70/namespacetricl.html#a2d01894944fb58a8fedc0912a48d13f8">tricl::relationship_or_action_type</a></td></tr>
 <tr class="memdesc:a2d01894944fb58a8fedc0912a48d13f8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Relationship types are used to encode the kinds of relationships entities may stand in; action types are used to encode the kinds of actions entities may perform on or with another (not implemented yet); they are encoded in a common datatype and distinguished by means of the map rat_is_action_type (not implemented yet).  <a href="../../dc/d70/namespacetricl.html#a2d01894944fb58a8fedc0912a48d13f8">More...</a><br /></td></tr>
 <tr class="separator:a2d01894944fb58a8fedc0912a48d13f8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a703ed53fa2dba74d8f51ede5fd46038d"><td class="memItemLeft" align="right" valign="top"><a id="a703ed53fa2dba74d8f51ede5fd46038d"></a>
-typedef set&lt; <a class="el" href="../../d5/dc0/structtricl_1_1inleg.html">inleg</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d70/namespacetricl.html#a703ed53fa2dba74d8f51ede5fd46038d">tricl::inleg_set</a></td></tr>
-<tr class="memdesc:a703ed53fa2dba74d8f51ede5fd46038d"><td class="mdescLeft">&#160;</td><td class="mdescRight">used to store all incoming legs of an entity <br /></td></tr>
-<tr class="separator:a703ed53fa2dba74d8f51ede5fd46038d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac36fc4606da3d7f9ffd1764942fe5940"><td class="memItemLeft" align="right" valign="top"><a id="ac36fc4606da3d7f9ffd1764942fe5940"></a>
-typedef set&lt; <a class="el" href="../../de/d25/structtricl_1_1outleg.html">outleg</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d70/namespacetricl.html#ac36fc4606da3d7f9ffd1764942fe5940">tricl::outleg_set</a></td></tr>
-<tr class="memdesc:ac36fc4606da3d7f9ffd1764942fe5940"><td class="mdescLeft">&#160;</td><td class="mdescRight">used to store all outgoing legs of an entity <br /></td></tr>
-<tr class="separator:ac36fc4606da3d7f9ffd1764942fe5940"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a024e365a54b0a7ed2094f9d452d52a84"><td class="memItemLeft" align="right" valign="top"><a id="a024e365a54b0a7ed2094f9d452d52a84"></a>
+typedef boost::container::flat_set&lt; <a class="el" href="../../d5/dc0/structtricl_1_1inleg.html">inleg</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d70/namespacetricl.html#a024e365a54b0a7ed2094f9d452d52a84">tricl::inleg_set</a></td></tr>
+<tr class="memdesc:a024e365a54b0a7ed2094f9d452d52a84"><td class="mdescLeft">&#160;</td><td class="mdescRight">used to store all incoming legs of an entity <br /></td></tr>
+<tr class="separator:a024e365a54b0a7ed2094f9d452d52a84"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab38d0de463e15641fa11e175c60a265e"><td class="memItemLeft" align="right" valign="top"><a id="ab38d0de463e15641fa11e175c60a265e"></a>
+typedef boost::container::flat_set&lt; <a class="el" href="../../de/d25/structtricl_1_1outleg.html">outleg</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d70/namespacetricl.html#ab38d0de463e15641fa11e175c60a265e">tricl::outleg_set</a></td></tr>
+<tr class="memdesc:ab38d0de463e15641fa11e175c60a265e"><td class="mdescLeft">&#160;</td><td class="mdescRight">used to store all outgoing legs of an entity <br /></td></tr>
+<tr class="separator:ab38d0de463e15641fa11e175c60a265e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3de3d7b28165426ea812bd7d6096540a"><td class="memItemLeft" align="right" valign="top"><a id="a3de3d7b28165426ea812bd7d6096540a"></a>
 typedef vector&lt; <a class="el" href="../../d4/d55/structtricl_1_1angle.html">angle</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>tricl::angle_vec</b></td></tr>
 <tr class="separator:a3de3d7b28165426ea812bd7d6096540a"><td class="memSeparator" colspan="2">&#160;</td></tr>

@@ -24,12 +24,12 @@ struct \hyperlink{structtricl_1_1influence__type}{influence\+\_\+type}
 \begin{DoxyCompactList}\small\item\em Influence types are used to encode the main dynamical rules of a model. \end{DoxyCompactList}\item 
 struct \hyperlink{structtricl_1_1inleg}{inleg}
 \begin{DoxyCompactList}\small\item\em An inleg represents a leg \char`\"{}incoming\char`\"{} to a target entity. \end{DoxyCompactList}\item 
-struct \hyperlink{structtricl_1_1link}{link}
-\begin{DoxyCompactList}\small\item\em A link encodes either the existence of a certain relationship between two entities (or the cumulative impact of all past actions of a certain type between two entities -- not yet implemented). \end{DoxyCompactList}\item 
 struct \hyperlink{structtricl_1_1link__type}{link\+\_\+type}
-\begin{DoxyCompactList}\small\item\em The type of a \hyperlink{structtricl_1_1link}{link} is given by two entity types and a relationship or action type. \end{DoxyCompactList}\item 
+\begin{DoxyCompactList}\small\item\em The type of a link is given by two entity types and a relationship or action type. \end{DoxyCompactList}\item 
 struct \hyperlink{structtricl_1_1outleg}{outleg}
-\begin{DoxyCompactList}\small\item\em An outleg represents a leg \char`\"{}outgoing\char`\"{} from a source entity. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\begin{DoxyCompactList}\small\item\em An outleg represents a leg \char`\"{}outgoing\char`\"{} from a source entity. \end{DoxyCompactList}\item 
+struct \hyperlink{structtricl_1_1tricllink}{tricllink}
+\begin{DoxyCompactList}\small\item\em A link encodes either the existence of a certain relationship between two entities (or the cumulative impact of all past actions of a certain type between two entities -- not yet implemented). \end{DoxyCompactList}\end{DoxyCompactItemize}
 \subsection*{Typedefs}
 \begin{DoxyCompactItemize}
 \item 
@@ -54,11 +54,11 @@ typedef short unsigned int \hyperlink{namespacetricl_afd4de3aedd5e48cf955f034573
 \begin{DoxyCompactList}\small\item\em Entity types are used to encode the different kinds of entities in a model. \end{DoxyCompactList}\item 
 typedef size\+\_\+t \hyperlink{namespacetricl_a2d01894944fb58a8fedc0912a48d13f8}{relationship\+\_\+or\+\_\+action\+\_\+type}
 \begin{DoxyCompactList}\small\item\em Relationship types are used to encode the kinds of relationships entities may stand in; action types are used to encode the kinds of actions entities may perform on or with another (not implemented yet); they are encoded in a common datatype and distinguished by means of the map rat\+\_\+is\+\_\+action\+\_\+type (not implemented yet). \end{DoxyCompactList}\item 
-\mbox{\Hypertarget{namespacetricl_a703ed53fa2dba74d8f51ede5fd46038d}\label{namespacetricl_a703ed53fa2dba74d8f51ede5fd46038d}} 
-typedef set$<$ \hyperlink{structtricl_1_1inleg}{inleg} $>$ \hyperlink{namespacetricl_a703ed53fa2dba74d8f51ede5fd46038d}{inleg\+\_\+set}
+\mbox{\Hypertarget{namespacetricl_a024e365a54b0a7ed2094f9d452d52a84}\label{namespacetricl_a024e365a54b0a7ed2094f9d452d52a84}} 
+typedef boost\+::container\+::flat\+\_\+set$<$ \hyperlink{structtricl_1_1inleg}{inleg} $>$ \hyperlink{namespacetricl_a024e365a54b0a7ed2094f9d452d52a84}{inleg\+\_\+set}
 \begin{DoxyCompactList}\small\item\em used to store all incoming legs of an entity \end{DoxyCompactList}\item 
-\mbox{\Hypertarget{namespacetricl_ac36fc4606da3d7f9ffd1764942fe5940}\label{namespacetricl_ac36fc4606da3d7f9ffd1764942fe5940}} 
-typedef set$<$ \hyperlink{structtricl_1_1outleg}{outleg} $>$ \hyperlink{namespacetricl_ac36fc4606da3d7f9ffd1764942fe5940}{outleg\+\_\+set}
+\mbox{\Hypertarget{namespacetricl_ab38d0de463e15641fa11e175c60a265e}\label{namespacetricl_ab38d0de463e15641fa11e175c60a265e}} 
+typedef boost\+::container\+::flat\+\_\+set$<$ \hyperlink{structtricl_1_1outleg}{outleg} $>$ \hyperlink{namespacetricl_ab38d0de463e15641fa11e175c60a265e}{outleg\+\_\+set}
 \begin{DoxyCompactList}\small\item\em used to store all outgoing legs of an entity \end{DoxyCompactList}\item 
 \mbox{\Hypertarget{namespacetricl_a3de3d7b28165426ea812bd7d6096540a}\label{namespacetricl_a3de3d7b28165426ea812bd7d6096540a}} 
 typedef vector$<$ \hyperlink{structtricl_1_1angle}{angle} $>$ {\bfseries angle\+\_\+vec}
