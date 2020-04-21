@@ -1,24 +1,24 @@
-/*
- * debugging.cpp
+/** Some stuff only needed for debugging
  *
- *  Created on: Apr 5, 2020
- *      Author: heitzig
+ *  \file
  */
 
 #include "assert.h"
 #include <iostream>
-#include <string>
 
 #include "global_variables.h"
 #include "angle.h"
 #include "io.h"
 
-int compute_n_angles(event_type evt, entity e1, entity e3, bool print) {
+/** Find the no. of angles influencing an event from scratch
+ *  in order to compare it with the stored no.
+ */
+int compute_n_angles (event_type evt, entity e1, entity e3, bool print) {
     if (print) cout << evt << endl;
     auto outs1 = e2outs[e1];
     auto ins3 = e2ins[e3];
     int na = 0;
-    angles as = leg_intersection(e1, outs1, ins3, e3);
+    angle_vec as = leg_intersection(e1, outs1, ins3, e3);
     for (auto a_it = as.begin(); a_it < as.end(); a_it++) {
         influence_type inflt = { .evt = evt, .at = { .rat12 = a_it->rat12, .et2 = e2et[a_it->e2], .rat23 = a_it->rat23 } };
         auto dar = _inflt2attempt_rate[INFLT(inflt)];
@@ -31,7 +31,9 @@ int compute_n_angles(event_type evt, entity e1, entity e3, bool print) {
     return na;
 }
 
-void verify_angle_consistency() {
+/** Verify that data about angles is consistent.
+ */
+void verify_angle_consistency () {
     // ev2data -> n_angles:
     for (auto& [ev, evd] : ev2data) {
         auto e1 = ev.e1, e3=ev.e3;
@@ -44,10 +46,12 @@ void verify_angle_consistency() {
         }
         assert(n == evd.n_angles);
     }
-    // angles -> ec2data:
+    // angles -> ec2data: TODO
 }
 
-void verify_data_consistency() {
+/** Verify that other data is consistent.
+ */
+void verify_data_consistency () {
     // e2outs:
     for (auto& [e1, outs1] : e2outs) {
         for (auto& [rat13, e3] : outs1) assert (e2ins.at(e3).count({e1, rat13}) == 1);

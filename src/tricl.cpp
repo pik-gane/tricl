@@ -44,6 +44,7 @@
  * convenience:
  * - improve quiet status output
  * - remove redundant output from init that is already printed in config
+ * - support custom prefixes for entity label generation
  *
  * optimization:
  * - use const args as much as possible in inner loops (?)

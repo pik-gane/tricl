@@ -340,7 +340,7 @@ struct angle_type
     }
 };
 
-typedef vector<angle> angles;
+typedef vector<angle> angle_vec;
 
 /** Influence types are used to encode the main dynamical rules of a model.
  *

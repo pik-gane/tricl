@@ -8,7 +8,7 @@ add_executable(tricl
     probability.cpp 
     entity.cpp 
     link.cpp
-    angle.cpp
+#    angle.cpp  # currently empty
     event.cpp
     config.cpp 
     io.cpp 
