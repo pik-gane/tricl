@@ -63,6 +63,7 @@ $(function() {
 <a href="#nested-classes">Data Structures</a> &#124;
 <a href="#typedef-members">Typedefs</a> &#124;
 <a href="#enum-members">Enumerations</a> &#124;
+<a href="#func-members">Functions</a> &#124;
 <a href="#var-members">Variables</a>  </div>
   <div class="headertitle">
 <div class="title">tricl Namespace Reference</div>  </div>
@@ -159,6 +160,24 @@ Enumerations</h2></td></tr>
  }<tr class="memdesc:a6967089e2c0837f273d8cb5fd9f7e46d"><td class="mdescLeft">&#160;</td><td class="mdescRight">(don't confuse with event_type!) The event class encodes what kind of change to the system state an event represents.  <a href="../../dc/d70/namespacetricl.html#a6967089e2c0837f273d8cb5fd9f7e46d">More...</a><br /></td></tr>
 </td></tr>
 <tr class="separator:a6967089e2c0837f273d8cb5fd9f7e46d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
+Functions</h2></td></tr>
+<tr class="memitem:a0c8560d9e6008454c78d640b04cfec39"><td class="memItemLeft" align="right" valign="top"><a id="a0c8560d9e6008454c78d640b04cfec39"></a>
+ostream &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>operator&lt;&lt;</b> (ostream &amp;os, const <a class="el" href="../../d7/d76/structtricl_1_1link__type.html">link_type</a> &amp;lt)</td></tr>
+<tr class="separator:a0c8560d9e6008454c78d640b04cfec39"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5d13ae5cc1aee2bdd17da12ffc29738b"><td class="memItemLeft" align="right" valign="top"><a id="a5d13ae5cc1aee2bdd17da12ffc29738b"></a>
+ostream &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>operator&lt;&lt;</b> (ostream &amp;os, const <a class="el" href="../../d3/d70/structtricl_1_1event__type.html">event_type</a> &amp;evt)</td></tr>
+<tr class="separator:a5d13ae5cc1aee2bdd17da12ffc29738b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9412301333adf45d8ce1059cfaf1adb0"><td class="memItemLeft" align="right" valign="top"><a id="a9412301333adf45d8ce1059cfaf1adb0"></a>
+ostream &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>operator&lt;&lt;</b> (ostream &amp;os, const <a class="el" href="../../dc/d1b/structtricl_1_1angle__type.html">angle_type</a> &amp;at)</td></tr>
+<tr class="separator:a9412301333adf45d8ce1059cfaf1adb0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a91e2fc74b8ef15e4fb23e5cab1f67da4"><td class="memItemLeft" align="right" valign="top"><a id="a91e2fc74b8ef15e4fb23e5cab1f67da4"></a>
+ostream &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>operator&lt;&lt;</b> (ostream &amp;os, const <a class="el" href="../../d4/d7e/structtricl_1_1event.html">event</a> &amp;ev)</td></tr>
+<tr class="separator:a91e2fc74b8ef15e4fb23e5cab1f67da4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a65ebcedfa43301fd5be2b2cf34a4b660"><td class="memItemLeft" align="right" valign="top"><a id="a65ebcedfa43301fd5be2b2cf34a4b660"></a>
+ostream &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>operator&lt;&lt;</b> (ostream &amp;os, const <a class="el" href="../../d9/d16/structtricl_1_1event__data.html">event_data</a> &amp;evd)</td></tr>
+<tr class="separator:a65ebcedfa43301fd5be2b2cf34a4b660"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="var-members"></a>
 Variables</h2></td></tr>
@@ -261,9 +280,9 @@ Variables</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<b>Initial value:</b><div class="fragment"><div class="line">= {</div><div class="line">        { <a class="code" href="../../dc/d70/namespacetricl.html#a6967089e2c0837f273d8cb5fd9f7e46da928305067790de15396de8fcc92b72b9">EC_EST</a>, <span class="stringliteral">&quot;establish that&quot;</span> },    </div><div class="line">        { <a class="code" href="../../dc/d70/namespacetricl.html#a6967089e2c0837f273d8cb5fd9f7e46da16f53be37a75a1cdfc726014c7f3810a">EC_TERM</a>, <span class="stringliteral">&quot;terminate that&quot;</span> },   </div><div class="line">        { <a class="code" href="../../dc/d70/namespacetricl.html#a6967089e2c0837f273d8cb5fd9f7e46dac508c68c92ee059322cb644dd330bbcf">EC_ACT</a>, <span class="stringliteral">&quot;let it occur that&quot;</span> }  </div><div class="line">    }</div><div class="ttc" id="namespacetricl_html_a6967089e2c0837f273d8cb5fd9f7e46da16f53be37a75a1cdfc726014c7f3810a"><div class="ttname"><a href="../../dc/d70/namespacetricl.html#a6967089e2c0837f273d8cb5fd9f7e46da16f53be37a75a1cdfc726014c7f3810a">tricl::EC_TERM</a></div><div class="ttdoc">Termination of a relationship. </div><div class="ttdef"><b>Definition:</b> data_model.h:187</div></div>
-<div class="ttc" id="namespacetricl_html_a6967089e2c0837f273d8cb5fd9f7e46dac508c68c92ee059322cb644dd330bbcf"><div class="ttname"><a href="../../dc/d70/namespacetricl.html#a6967089e2c0837f273d8cb5fd9f7e46dac508c68c92ee059322cb644dd330bbcf">tricl::EC_ACT</a></div><div class="ttdoc">Occurrence of an action (not yet implemented) </div><div class="ttdef"><b>Definition:</b> data_model.h:188</div></div>
-<div class="ttc" id="namespacetricl_html_a6967089e2c0837f273d8cb5fd9f7e46da928305067790de15396de8fcc92b72b9"><div class="ttname"><a href="../../dc/d70/namespacetricl.html#a6967089e2c0837f273d8cb5fd9f7e46da928305067790de15396de8fcc92b72b9">tricl::EC_EST</a></div><div class="ttdoc">Establishment of a relationship. </div><div class="ttdef"><b>Definition:</b> data_model.h:186</div></div>
+<b>Initial value:</b><div class="fragment"><div class="line">= {</div><div class="line">        { <a class="code" href="../../dc/d70/namespacetricl.html#a6967089e2c0837f273d8cb5fd9f7e46da928305067790de15396de8fcc92b72b9">EC_EST</a>, <span class="stringliteral">&quot;establish that&quot;</span> },    </div><div class="line">        { <a class="code" href="../../dc/d70/namespacetricl.html#a6967089e2c0837f273d8cb5fd9f7e46da16f53be37a75a1cdfc726014c7f3810a">EC_TERM</a>, <span class="stringliteral">&quot;terminate that&quot;</span> },   </div><div class="line">        { <a class="code" href="../../dc/d70/namespacetricl.html#a6967089e2c0837f273d8cb5fd9f7e46dac508c68c92ee059322cb644dd330bbcf">EC_ACT</a>, <span class="stringliteral">&quot;let it occur that&quot;</span> }  </div><div class="line">    }</div><div class="ttc" id="namespacetricl_html_a6967089e2c0837f273d8cb5fd9f7e46da16f53be37a75a1cdfc726014c7f3810a"><div class="ttname"><a href="../../dc/d70/namespacetricl.html#a6967089e2c0837f273d8cb5fd9f7e46da16f53be37a75a1cdfc726014c7f3810a">tricl::EC_TERM</a></div><div class="ttdoc">Termination of a relationship. </div><div class="ttdef"><b>Definition:</b> data_model.h:189</div></div>
+<div class="ttc" id="namespacetricl_html_a6967089e2c0837f273d8cb5fd9f7e46dac508c68c92ee059322cb644dd330bbcf"><div class="ttname"><a href="../../dc/d70/namespacetricl.html#a6967089e2c0837f273d8cb5fd9f7e46dac508c68c92ee059322cb644dd330bbcf">tricl::EC_ACT</a></div><div class="ttdoc">Occurrence of an action (not yet implemented) </div><div class="ttdef"><b>Definition:</b> data_model.h:190</div></div>
+<div class="ttc" id="namespacetricl_html_a6967089e2c0837f273d8cb5fd9f7e46da928305067790de15396de8fcc92b72b9"><div class="ttname"><a href="../../dc/d70/namespacetricl.html#a6967089e2c0837f273d8cb5fd9f7e46da928305067790de15396de8fcc92b72b9">tricl::EC_EST</a></div><div class="ttdoc">Establishment of a relationship. </div><div class="ttdef"><b>Definition:</b> data_model.h:188</div></div>
 </div><!-- fragment -->
 <p>Labels for event classes. </p>
 <p>These labels are prepended to the event label (which is a simple sentence like "A loves B"). </p>
