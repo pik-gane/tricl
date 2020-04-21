@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['main',['main',['../d2/d27/tricl_8cpp.html#a0ddf1224851353fc92bfbff6f499fa97',1,'tricl.cpp']]]
+  ['leg_5fintersection',['leg_intersection',['../da/dac/angle_8h.html#aaf5e8f0118f2f20311f8b6ba80594bab',1,'angle.h']]]
 ];

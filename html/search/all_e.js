@@ -1,7 +1,7 @@
 var searchData=
 [
   ['r_5fis_5faction_5ftype',['r_is_action_type',['../df/d59/config_8cpp.html#acb03df27c0aec975d0d0a27e21f9b956',1,'r_is_action_type():&#160;config.cpp'],['../d5/dfb/global__variables_8h.html#acb03df27c0aec975d0d0a27e21f9b956',1,'r_is_action_type():&#160;config.cpp']]],
-  ['random_5fentity',['random_entity',['../d9/ddd/entity_8cpp.html#a98c686b5512ec703bd0da855cd296f24',1,'entity.cpp']]],
+  ['random_5fentity',['random_entity',['../d8/d83/entity_8h.html#a98c686b5512ec703bd0da855cd296f24',1,'entity.h']]],
   ['random_5fvariable',['random_variable',['../dc/d04/probability_8cpp.html#a29e835ad2ed1bccd97f457d7c0cb746e',1,'random_variable():&#160;probability.cpp'],['../d5/d87/probability_8h.html#a29e835ad2ed1bccd97f457d7c0cb746e',1,'random_variable():&#160;probability.cpp']]],
   ['rat12',['rat12',['../d4/d55/structtricl_1_1angle.html#af850c72e4b4b69131e171984213e306d',1,'tricl::angle::rat12()'],['../dc/d1b/structtricl_1_1angle__type.html#a3a134c76bb8582d630926496752bc0fd',1,'tricl::angle_type::rat12()']]],
   ['rat13',['rat13',['../d8/d01/structtricl_1_1link.html#a9a21745032378ca68f88966d78814be0',1,'tricl::link::rat13()'],['../d7/d76/structtricl_1_1link__type.html#ab567b0eff4a068b28141da69c810770d',1,'tricl::link_type::rat13()'],['../d4/d7e/structtricl_1_1event.html#a57d8ec5cf582b4cd2de127590d805325',1,'tricl::event::rat13()'],['../d3/d70/structtricl_1_1event__type.html#a12e8607ea565fb26c5392417bf4a34e9',1,'tricl::event_type::rat13()']]],
@@ -20,5 +20,6 @@ var searchData=
   ['rate',['rate',['../dc/d70/namespacetricl.html#ae42d2696f294300a43e0f5edf4875479',1,'tricl']]],
   ['read_5fconfig',['read_config',['../df/d59/config_8cpp.html#a7970057a69282958c52e4a5236a48df8',1,'config.cpp']]],
   ['relationship_5for_5faction_5ftype',['relationship_or_action_type',['../dc/d70/namespacetricl.html#a2d01894944fb58a8fedc0912a48d13f8',1,'tricl']]],
+  ['remove_5fevent',['remove_event',['../df/d1b/event_8cpp.html#a55e7ed06ea3900949b3bb7a464670054',1,'remove_event(event &amp;ev, event_data *evd_):&#160;event.cpp'],['../dd/d20/event_8h.html#a55e7ed06ea3900949b3bb7a464670054',1,'remove_event(event &amp;ev, event_data *evd_):&#160;event.cpp']]],
   ['rt_5fid',['RT_ID',['../d5/d44/data__model_8h.html#a549fa469b9ccb6e0fe046f797bc181e0',1,'data_model.h']]]
 ];

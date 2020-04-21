@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['init_5frandomness',['init_randomness',['../dc/d04/probability_8cpp.html#a59876affedc061069286bfd09a1c1d49',1,'init_randomness():&#160;probability.cpp'],['../d5/d87/probability_8h.html#a59876affedc061069286bfd09a1c1d49',1,'init_randomness():&#160;probability.cpp']]]
+  ['effective_5frate',['effective_rate',['../d5/d87/probability_8h.html#abfaa763b93af36afec58f5d42fdf69a1',1,'probability.h']]],
+  ['event_5fis_5fscheduled',['event_is_scheduled',['../dd/d20/event_8h.html#ab8644632b851d99741826fb61fb703bd',1,'event.h']]]
 ];

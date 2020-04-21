@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['options',['options',['../df/d59/config_8cpp.html#a15dfd425241f1a6bf6aeab6ef70fb896',1,'config.cpp']]]
+  ['main',['main',['../d2/d27/tricl_8cpp.html#a0ddf1224851353fc92bfbff6f499fa97',1,'tricl.cpp']]]
 ];

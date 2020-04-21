@@ -2,7 +2,7 @@
 \label{event_8cpp}\index{src/event.\+cpp@{src/event.\+cpp}}
 
 
-Handling of events.  
+Non-\/performance-\/critical handling of events.  
 
 
 {\ttfamily \#include $<$assert.\+h$>$}\newline
@@ -23,84 +23,137 @@ Include dependency graph for event.\+cpp\+:
 \includegraphics[width=350pt]{d6/d99/event_8cpp__incl}
 \end{center}
 \end{figure}
-\subsection*{Macros}
-\begin{DoxyCompactItemize}
-\item 
-\mbox{\Hypertarget{event_8cpp_ac1e75a2e1d58d4f43aaa35324bb26538}\label{event_8cpp_ac1e75a2e1d58d4f43aaa35324bb26538}} 
-\#define {\bfseries I\+F\+\_\+12}~if (which == 0)
-\item 
-\mbox{\Hypertarget{event_8cpp_a0add313a6fd3d8fae54c55f125be6f0f}\label{event_8cpp_a0add313a6fd3d8fae54c55f125be6f0f}} 
-\#define {\bfseries I\+F\+\_\+23}~if (which == 1)
-\end{DoxyCompactItemize}
 \subsection*{Functions}
 \begin{DoxyCompactItemize}
 \item 
-bool \hyperlink{event_8cpp_ab8644632b851d99741826fb61fb703bd}{event\+\_\+is\+\_\+scheduled} (\hyperlink{structtricl_1_1event}{event} \&ev, \hyperlink{structtricl_1_1event__data}{event\+\_\+data} $\ast$evd\+\_\+)
-\begin{DoxyCompactList}\small\item\em Return whether a future instance of the event is scheduled. \end{DoxyCompactList}\item 
-\mbox{\Hypertarget{event_8cpp_a4048cb830821ab767f91d751e7bd1f37}\label{event_8cpp_a4048cb830821ab767f91d751e7bd1f37}} 
-void {\bfseries \+\_\+schedule\+\_\+event} (\hyperlink{structtricl_1_1event}{event} \&ev, \hyperlink{structtricl_1_1event__data}{event\+\_\+data} $\ast$evd\+\_\+, double left\+\_\+tail, double right\+\_\+tail)
-\item 
-\mbox{\Hypertarget{event_8cpp_a269d75ea7ef6f98c60705a062e98f4e0}\label{event_8cpp_a269d75ea7ef6f98c60705a062e98f4e0}} 
-void {\bfseries schedule\+\_\+event} (\hyperlink{structtricl_1_1event}{event} \&ev, \hyperlink{structtricl_1_1event__data}{event\+\_\+data} $\ast$evd\+\_\+, double left\+\_\+tail, double right\+\_\+tail)
-\item 
-\mbox{\Hypertarget{event_8cpp_ad37a5884bb4d210596ad150d6efafed0}\label{event_8cpp_ad37a5884bb4d210596ad150d6efafed0}} 
-void {\bfseries reschedule\+\_\+event} (\hyperlink{structtricl_1_1event}{event} \&ev, \hyperlink{structtricl_1_1event__data}{event\+\_\+data} $\ast$evd\+\_\+, double left\+\_\+tail, double right\+\_\+tail)
-\item 
-\mbox{\Hypertarget{event_8cpp_aef94fa11ff43b90a11586d18670f2700}\label{event_8cpp_aef94fa11ff43b90a11586d18670f2700}} 
-void {\bfseries add\+\_\+event} (\hyperlink{structtricl_1_1event}{event} \&ev)
-\item 
-\mbox{\Hypertarget{event_8cpp_a55e7ed06ea3900949b3bb7a464670054}\label{event_8cpp_a55e7ed06ea3900949b3bb7a464670054}} 
-void {\bfseries remove\+\_\+event} (\hyperlink{structtricl_1_1event}{event} \&ev, \hyperlink{structtricl_1_1event__data}{event\+\_\+data} $\ast$evd\+\_\+)
-\item 
-\mbox{\Hypertarget{event_8cpp_a875f0862466ff1b831fee64602d92d76}\label{event_8cpp_a875f0862466ff1b831fee64602d92d76}} 
-void {\bfseries conditionally\+\_\+remove\+\_\+event} (\hyperlink{structtricl_1_1event}{event} \&ev)
-\item 
-\mbox{\Hypertarget{event_8cpp_adc013b33a8b8afbb4f75c8c95dc3b93a}\label{event_8cpp_adc013b33a8b8afbb4f75c8c95dc3b93a}} 
-void {\bfseries update\+\_\+adjacent\+\_\+events} (\hyperlink{structtricl_1_1event}{event} \&ev)
-\item 
-\mbox{\Hypertarget{event_8cpp_aec4dd06c452378363b04a58a0cfe8f8b}\label{event_8cpp_aec4dd06c452378363b04a58a0cfe8f8b}} 
-void {\bfseries add\+\_\+reverse\+\_\+event} (\hyperlink{structtricl_1_1event}{event} \&old\+\_\+ev)
-\item 
-\mbox{\Hypertarget{event_8cpp_af13ceffde477e67e6d9418750ce45107}\label{event_8cpp_af13ceffde477e67e6d9418750ce45107}} 
-void {\bfseries perform\+\_\+event} (\hyperlink{structtricl_1_1event}{event} \&ev)
-\item 
-\mbox{\Hypertarget{event_8cpp_ad57de4475b376dedfc003a1b09cfece8}\label{event_8cpp_ad57de4475b376dedfc003a1b09cfece8}} 
-bool {\bfseries pop\+\_\+next\+\_\+event} ()
-\end{DoxyCompactItemize}
+void \hyperlink{event_8cpp_aef94fa11ff43b90a11586d18670f2700}{add\+\_\+event} (\hyperlink{structtricl_1_1event}{event} \&ev)
+\begin{DoxyCompactList}\small\item\em Add (and then schedule) an event. \end{DoxyCompactList}\item 
+void \hyperlink{event_8cpp_a55e7ed06ea3900949b3bb7a464670054}{remove\+\_\+event} (\hyperlink{structtricl_1_1event}{event} \&ev, \hyperlink{structtricl_1_1event__data}{event\+\_\+data} $\ast$evd\+\_\+)
+\begin{DoxyCompactList}\small\item\em Remove a scheduled event. \end{DoxyCompactList}\item 
+void \hyperlink{event_8cpp_a875f0862466ff1b831fee64602d92d76}{conditionally\+\_\+remove\+\_\+event} (\hyperlink{structtricl_1_1event}{event} \&ev)
+\begin{DoxyCompactList}\small\item\em Remove event if scheduled. \end{DoxyCompactList}\item 
+void \hyperlink{event_8cpp_adc013b33a8b8afbb4f75c8c95dc3b93a}{update\+\_\+adjacent\+\_\+events} (\hyperlink{structtricl_1_1event}{event} \&ev)
+\begin{DoxyCompactList}\small\item\em Update all events which are adjacent to a given event because the event affects angles that might influence them. \end{DoxyCompactList}\item 
+void \hyperlink{event_8cpp_aec4dd06c452378363b04a58a0cfe8f8b}{add\+\_\+reverse\+\_\+event} (\hyperlink{structtricl_1_1event}{event} \&old\+\_\+ev)
+\begin{DoxyCompactList}\small\item\em Add the reverse event of a just performed event. \end{DoxyCompactList}\item 
+void \hyperlink{event_8cpp_af13ceffde477e67e6d9418750ce45107}{perform\+\_\+event} (\hyperlink{structtricl_1_1event}{event} \&ev)
+\begin{DoxyCompactList}\small\item\em Perform an event (usually the current event). \end{DoxyCompactList}\item 
+bool \hyperlink{event_8cpp_ad57de4475b376dedfc003a1b09cfece8}{pop\+\_\+next\+\_\+event} ()
+\begin{DoxyCompactList}\small\item\em Find the next occurring event. \end{DoxyCompactList}\end{DoxyCompactItemize}
 
 
 \subsection{Detailed Description}
-Handling of events. 
+Non-\/performance-\/critical handling of events. 
 
-An event is a tuple \{ec, e1, rat13, e3\} where ec is the event class (E\+C\+\_\+\+E\+ST or E\+C\+\_\+\+T\+E\+RM for establishment or termination of a relationship, E\+C\+\_\+\+A\+CT for the occurrence of an act), e1 and e3 are the affected entities, and rat13 is the relationship or action type.
-
-An event type is a tuple (ec, et1, rat13, et3\} where et1, et3 are two entity types.
-
-An event\textquotesingle{}s variable data (current attempt rate, success probability units, and next scheduled timepoint) is stored in a separate struct of type event\+\_\+data.
-
-\begin{DoxyAuthor}{Author}
-Jobst Heitzig, Potsdam Institute for Climate Impact Research, \href{mailto:heitzig@pik-potsdam.de}{\tt heitzig@pik-\/potsdam.\+de} 
-\end{DoxyAuthor}
-\begin{DoxyDate}{Date}
-Mar 30, 2020 
-\end{DoxyDate}
-
+See \hyperlink{data__model_8h}{data\+\_\+model.\+h} for how a \hyperlink{structtricl_1_1event}{tricl\+::event} relates to other tricl datatypes. 
 
 \subsection{Function Documentation}
-\mbox{\Hypertarget{event_8cpp_ab8644632b851d99741826fb61fb703bd}\label{event_8cpp_ab8644632b851d99741826fb61fb703bd}} 
-\index{event.\+cpp@{event.\+cpp}!event\+\_\+is\+\_\+scheduled@{event\+\_\+is\+\_\+scheduled}}
-\index{event\+\_\+is\+\_\+scheduled@{event\+\_\+is\+\_\+scheduled}!event.\+cpp@{event.\+cpp}}
-\subsubsection{\texorpdfstring{event\+\_\+is\+\_\+scheduled()}{event\_is\_scheduled()}}
-{\footnotesize\ttfamily bool event\+\_\+is\+\_\+scheduled (\begin{DoxyParamCaption}\item[{\hyperlink{structtricl_1_1event}{event} \&}]{ev,  }\item[{\hyperlink{structtricl_1_1event__data}{event\+\_\+data} $\ast$}]{evd\+\_\+ }\end{DoxyParamCaption})}
+\mbox{\Hypertarget{event_8cpp_aef94fa11ff43b90a11586d18670f2700}\label{event_8cpp_aef94fa11ff43b90a11586d18670f2700}} 
+\index{event.\+cpp@{event.\+cpp}!add\+\_\+event@{add\+\_\+event}}
+\index{add\+\_\+event@{add\+\_\+event}!event.\+cpp@{event.\+cpp}}
+\subsubsection{\texorpdfstring{add\+\_\+event()}{add\_event()}}
+{\footnotesize\ttfamily void add\+\_\+event (\begin{DoxyParamCaption}\item[{\hyperlink{structtricl_1_1event}{event} \&}]{ev }\end{DoxyParamCaption})}
 
 
 
-Return whether a future instance of the event is scheduled. 
+Add (and then schedule) an event. 
 
 
 \begin{DoxyParams}[1]{Parameters}
-\mbox{\tt in}  & {\em ev} & the event to check, passed by reference for performance \\
+\mbox{\tt in}  & {\em ev} & the event to be added \\
 \hline
-\mbox{\tt in}  & {\em evd\+\_\+} & the corresponding variable event data, passed by pointer for performance \\
+\end{DoxyParams}
+\mbox{\Hypertarget{event_8cpp_aec4dd06c452378363b04a58a0cfe8f8b}\label{event_8cpp_aec4dd06c452378363b04a58a0cfe8f8b}} 
+\index{event.\+cpp@{event.\+cpp}!add\+\_\+reverse\+\_\+event@{add\+\_\+reverse\+\_\+event}}
+\index{add\+\_\+reverse\+\_\+event@{add\+\_\+reverse\+\_\+event}!event.\+cpp@{event.\+cpp}}
+\subsubsection{\texorpdfstring{add\+\_\+reverse\+\_\+event()}{add\_reverse\_event()}}
+{\footnotesize\ttfamily void add\+\_\+reverse\+\_\+event (\begin{DoxyParamCaption}\item[{\hyperlink{structtricl_1_1event}{event} \&}]{old\+\_\+ev }\end{DoxyParamCaption})}
+
+
+
+Add the reverse event of a just performed event. 
+
+(the reverse of E\+C\+\_\+\+E\+ST is E\+C\+\_\+\+T\+E\+RM and vice versa, E\+C\+\_\+\+A\+CT has no reverse) 
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em old\+\_\+ev} & the just performed event whose reverse shall be added \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{event_8cpp_a875f0862466ff1b831fee64602d92d76}\label{event_8cpp_a875f0862466ff1b831fee64602d92d76}} 
+\index{event.\+cpp@{event.\+cpp}!conditionally\+\_\+remove\+\_\+event@{conditionally\+\_\+remove\+\_\+event}}
+\index{conditionally\+\_\+remove\+\_\+event@{conditionally\+\_\+remove\+\_\+event}!event.\+cpp@{event.\+cpp}}
+\subsubsection{\texorpdfstring{conditionally\+\_\+remove\+\_\+event()}{conditionally\_remove\_event()}}
+{\footnotesize\ttfamily void conditionally\+\_\+remove\+\_\+event (\begin{DoxyParamCaption}\item[{\hyperlink{structtricl_1_1event}{event} \&}]{ev }\end{DoxyParamCaption})}
+
+
+
+Remove event if scheduled. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em ev} & the event to remove \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{event_8cpp_af13ceffde477e67e6d9418750ce45107}\label{event_8cpp_af13ceffde477e67e6d9418750ce45107}} 
+\index{event.\+cpp@{event.\+cpp}!perform\+\_\+event@{perform\+\_\+event}}
+\index{perform\+\_\+event@{perform\+\_\+event}!event.\+cpp@{event.\+cpp}}
+\subsubsection{\texorpdfstring{perform\+\_\+event()}{perform\_event()}}
+{\footnotesize\ttfamily void perform\+\_\+event (\begin{DoxyParamCaption}\item[{\hyperlink{structtricl_1_1event}{event} \&}]{ev }\end{DoxyParamCaption})}
+
+
+
+Perform an event (usually the current event). 
+
+In this function, the order of updates is crucial for keeping data consistent\+: add reverse event, add or remove link, update adjacent events.
+
+If the relationship or action type rat13 is asymmetric and has a named inverse rat31, then also do the same things for the companion event that deals with the inverse link e3--rat31--$>$e1. 
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em ev} & the event to perform \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{event_8cpp_ad57de4475b376dedfc003a1b09cfece8}\label{event_8cpp_ad57de4475b376dedfc003a1b09cfece8}} 
+\index{event.\+cpp@{event.\+cpp}!pop\+\_\+next\+\_\+event@{pop\+\_\+next\+\_\+event}}
+\index{pop\+\_\+next\+\_\+event@{pop\+\_\+next\+\_\+event}!event.\+cpp@{event.\+cpp}}
+\subsubsection{\texorpdfstring{pop\+\_\+next\+\_\+event()}{pop\_next\_event()}}
+{\footnotesize\ttfamily bool pop\+\_\+next\+\_\+event (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Find the next occurring event. 
+
+Basically, find the minimum-\/time entry in the ordered map of scheduled events. (If that is a summary event, draw entities for it at random and check whether it succeeds; if it doesn\textquotesingle{}t succeed, repeat.)
+
+\begin{DoxyReturn}{Returns}
+whether an event was found that happens before the end of the simulation. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{event_8cpp_a55e7ed06ea3900949b3bb7a464670054}\label{event_8cpp_a55e7ed06ea3900949b3bb7a464670054}} 
+\index{event.\+cpp@{event.\+cpp}!remove\+\_\+event@{remove\+\_\+event}}
+\index{remove\+\_\+event@{remove\+\_\+event}!event.\+cpp@{event.\+cpp}}
+\subsubsection{\texorpdfstring{remove\+\_\+event()}{remove\_event()}}
+{\footnotesize\ttfamily void remove\+\_\+event (\begin{DoxyParamCaption}\item[{\hyperlink{structtricl_1_1event}{event} \&}]{ev,  }\item[{\hyperlink{structtricl_1_1event__data}{event\+\_\+data} $\ast$}]{evd\+\_\+ }\end{DoxyParamCaption})}
+
+
+
+Remove a scheduled event. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em ev} & the event to remove \\
+\hline
+\mbox{\tt in}  & {\em evd\+\_\+} & its data \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{event_8cpp_adc013b33a8b8afbb4f75c8c95dc3b93a}\label{event_8cpp_adc013b33a8b8afbb4f75c8c95dc3b93a}} 
+\index{event.\+cpp@{event.\+cpp}!update\+\_\+adjacent\+\_\+events@{update\+\_\+adjacent\+\_\+events}}
+\index{update\+\_\+adjacent\+\_\+events@{update\+\_\+adjacent\+\_\+events}!event.\+cpp@{event.\+cpp}}
+\subsubsection{\texorpdfstring{update\+\_\+adjacent\+\_\+events()}{update\_adjacent\_events()}}
+{\footnotesize\ttfamily void update\+\_\+adjacent\+\_\+events (\begin{DoxyParamCaption}\item[{\hyperlink{structtricl_1_1event}{event} \&}]{ev }\end{DoxyParamCaption})}
+
+
+
+Update all events which are adjacent to a given event because the event affects angles that might influence them. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em ev} & the event whose adjacent events may need update \\
 \hline
 \end{DoxyParams}

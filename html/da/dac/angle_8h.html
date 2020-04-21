@@ -69,13 +69,25 @@ $(function() {
 <div class="title">angle.h File Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><code>#include &quot;data_model.h&quot;</code><br />
+
+<p>Performance-critical inline functions for handling of angles.  
+<a href="#details">More...</a></p>
+<div class="textblock"><code>#include &quot;<a class="el" href="../../d5/dfb/global__variables_8h_source.html">global_variables.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="../../d5/d87/probability_8h_source.html">probability.h</a>&quot;</code><br />
+<code>#include &quot;debugging.h&quot;</code><br />
+<code>#include &quot;<a class="el" href="../../dd/d20/event_8h_source.html">event.h</a>&quot;</code><br />
+<code>#include &quot;io.h&quot;</code><br />
 </div><div class="textblock"><div class="dynheader">
 Include dependency graph for angle.h:</div>
 <div class="dyncontent">
 <div class="center"><img src="../../da/d9b/angle_8h__incl.png" border="0" usemap="#src_2angle_8h" alt=""/></div>
 <map name="src_2angle_8h" id="src_2angle_8h">
-<area shape="rect" id="node2" href="../../d5/d44/data__model_8h_source.html" title="data_model.h" alt="" coords="151,80,251,107"/>
+<area shape="rect" id="node2" href="../../d5/dfb/global__variables_8h.html" title="Definition of global data storage. " alt="" coords="475,229,616,256"/>
+<area shape="rect" id="node14" href="../../d5/d87/probability_8h.html" title="Inline functions dealing with probabilities. " alt="" coords="371,155,474,181"/>
+<area shape="rect" id="node16" href="../../db/dbb/debugging_8h_source.html" title="debugging.h" alt="" coords="498,155,601,181"/>
+<area shape="rect" id="node17" href="../../dd/d20/event_8h.html" title="Performance&#45;critical inline functions for handling of events. " alt="" coords="306,80,377,107"/>
+<area shape="rect" id="node18" href="../../dc/dac/io_8h_source.html" title="io.h" alt="" coords="198,155,245,181"/>
+<area shape="rect" id="node3" href="../../d5/d44/data__model_8h.html" title="The main data model. " alt="" coords="405,304,515,331"/>
 </map>
 </div>
 </div><div class="textblock"><div class="dynheader">
@@ -83,7 +95,8 @@ This graph shows which files directly or indirectly include this file:</div>
 <div class="dyncontent">
 <div class="center"><img src="../../d1/d39/angle_8h__dep__incl.png" border="0" usemap="#src_2angle_8hdep" alt=""/></div>
 <map name="src_2angle_8hdep" id="src_2angle_8hdep">
-<area shape="rect" id="node2" href="../../d4/d45/angle_8cpp.html" title="Functions dealing with angles. " alt="" coords="5,80,105,107"/>
+<area shape="rect" id="node2" href="../../db/d82/debugging_8cpp.html" title="Some stuff only needed for debugging. " alt="" coords="5,80,145,107"/>
+<area shape="rect" id="node3" href="../../df/d1b/event_8cpp.html" title="Non&#45;performance&#45;critical handling of events. " alt="" coords="170,80,279,107"/>
 </map>
 </div>
 </div>
@@ -91,69 +104,78 @@ This graph shows which files directly or indirectly include this file:</div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:a47e571c470e06056cb6537dcce1de7aa"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../da/dac/angle_8h.html#a47e571c470e06056cb6537dcce1de7aa">add_or_delete_angle</a> (event_class ec, entity e1, entity_type et1, relationship_or_action_type rat12, entity e2, entity_type et2, relationship_or_action_type rat23, entity e3, entity_type et3)</td></tr>
-<tr class="memdesc:a47e571c470e06056cb6537dcce1de7aa"><td class="mdescLeft">&#160;</td><td class="mdescRight">test.  <a href="#a47e571c470e06056cb6537dcce1de7aa">More...</a><br /></td></tr>
-<tr class="separator:a47e571c470e06056cb6537dcce1de7aa"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1a5dff9417edeae00cf8bfd75459fc36"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../da/dac/angle_8h.html#a1a5dff9417edeae00cf8bfd75459fc36">add_or_delete_angle</a> (<a class="el" href="../../dc/d70/namespacetricl.html#a6967089e2c0837f273d8cb5fd9f7e46d">event_class</a> ec_angle, <a class="el" href="../../dc/d70/namespacetricl.html#a57273122278e8b301844e2a2e1f0742f">entity</a> e1, <a class="el" href="../../dc/d70/namespacetricl.html#afd4de3aedd5e48cf955f03457386e98f">entity_type</a> et1, <a class="el" href="../../dc/d70/namespacetricl.html#a2d01894944fb58a8fedc0912a48d13f8">relationship_or_action_type</a> rat12, <a class="el" href="../../dc/d70/namespacetricl.html#a57273122278e8b301844e2a2e1f0742f">entity</a> e2, <a class="el" href="../../dc/d70/namespacetricl.html#afd4de3aedd5e48cf955f03457386e98f">entity_type</a> et2, <a class="el" href="../../dc/d70/namespacetricl.html#a2d01894944fb58a8fedc0912a48d13f8">relationship_or_action_type</a> rat23, <a class="el" href="../../dc/d70/namespacetricl.html#a57273122278e8b301844e2a2e1f0742f">entity</a> e3, <a class="el" href="../../dc/d70/namespacetricl.html#afd4de3aedd5e48cf955f03457386e98f">entity_type</a> et3)</td></tr>
+<tr class="memdesc:a1a5dff9417edeae00cf8bfd75459fc36"><td class="mdescLeft">&#160;</td><td class="mdescRight">Perform all necessary changes in state and event data due to the addition or deletion of an angle.  <a href="#a1a5dff9417edeae00cf8bfd75459fc36">More...</a><br /></td></tr>
+<tr class="separator:a1a5dff9417edeae00cf8bfd75459fc36"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aaf5e8f0118f2f20311f8b6ba80594bab"><td class="memItemLeft" align="right" valign="top">angle_vec&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../da/dac/angle_8h.html#aaf5e8f0118f2f20311f8b6ba80594bab">leg_intersection</a> (<a class="el" href="../../dc/d70/namespacetricl.html#a57273122278e8b301844e2a2e1f0742f">entity</a> e1, <a class="el" href="../../dc/d70/namespacetricl.html#ac36fc4606da3d7f9ffd1764942fe5940">outleg_set</a> &amp;out1, <a class="el" href="../../dc/d70/namespacetricl.html#a703ed53fa2dba74d8f51ede5fd46038d">inleg_set</a> &amp;in3, <a class="el" href="../../dc/d70/namespacetricl.html#a57273122278e8b301844e2a2e1f0742f">entity</a> e3)</td></tr>
+<tr class="memdesc:aaf5e8f0118f2f20311f8b6ba80594bab"><td class="mdescLeft">&#160;</td><td class="mdescRight">Compare each outleg of e1 with each inleg of e3 to find each angle from e1 to e3.  <a href="#aaf5e8f0118f2f20311f8b6ba80594bab">More...</a><br /></td></tr>
+<tr class="separator:aaf5e8f0118f2f20311f8b6ba80594bab"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<h2 class="groupheader">Function Documentation</h2>
-<a id="a47e571c470e06056cb6537dcce1de7aa"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a47e571c470e06056cb6537dcce1de7aa">&#9670;&nbsp;</a></span>add_or_delete_angle()</h2>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>Performance-critical inline functions for handling of angles. </p>
+<p>See <a class="el" href="../../d5/d44/data__model_8h.html">data_model.h</a> for how a <a class="el" href="../../d4/d55/structtricl_1_1angle.html">tricl::angle</a> relates to other tricl datatypes. </p>
+</div><h2 class="groupheader">Function Documentation</h2>
+<a id="a1a5dff9417edeae00cf8bfd75459fc36"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1a5dff9417edeae00cf8bfd75459fc36">&#9670;&nbsp;</a></span>add_or_delete_angle()</h2>
 
 <div class="memitem">
 <div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
       <table class="memname">
         <tr>
           <td class="memname">void add_or_delete_angle </td>
           <td>(</td>
-          <td class="paramtype">event_class&#160;</td>
-          <td class="paramname"><em>ec</em>, </td>
+          <td class="paramtype"><a class="el" href="../../dc/d70/namespacetricl.html#a6967089e2c0837f273d8cb5fd9f7e46d">event_class</a>&#160;</td>
+          <td class="paramname"><em>ec_angle</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">entity&#160;</td>
+          <td class="paramtype"><a class="el" href="../../dc/d70/namespacetricl.html#a57273122278e8b301844e2a2e1f0742f">entity</a>&#160;</td>
           <td class="paramname"><em>e1</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">entity_type&#160;</td>
+          <td class="paramtype"><a class="el" href="../../dc/d70/namespacetricl.html#afd4de3aedd5e48cf955f03457386e98f">entity_type</a>&#160;</td>
           <td class="paramname"><em>et1</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">relationship_or_action_type&#160;</td>
+          <td class="paramtype"><a class="el" href="../../dc/d70/namespacetricl.html#a2d01894944fb58a8fedc0912a48d13f8">relationship_or_action_type</a>&#160;</td>
           <td class="paramname"><em>rat12</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">entity&#160;</td>
+          <td class="paramtype"><a class="el" href="../../dc/d70/namespacetricl.html#a57273122278e8b301844e2a2e1f0742f">entity</a>&#160;</td>
           <td class="paramname"><em>e2</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">entity_type&#160;</td>
+          <td class="paramtype"><a class="el" href="../../dc/d70/namespacetricl.html#afd4de3aedd5e48cf955f03457386e98f">entity_type</a>&#160;</td>
           <td class="paramname"><em>et2</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">relationship_or_action_type&#160;</td>
+          <td class="paramtype"><a class="el" href="../../dc/d70/namespacetricl.html#a2d01894944fb58a8fedc0912a48d13f8">relationship_or_action_type</a>&#160;</td>
           <td class="paramname"><em>rat23</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">entity&#160;</td>
+          <td class="paramtype"><a class="el" href="../../dc/d70/namespacetricl.html#a57273122278e8b301844e2a2e1f0742f">entity</a>&#160;</td>
           <td class="paramname"><em>e3</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">entity_type&#160;</td>
+          <td class="paramtype"><a class="el" href="../../dc/d70/namespacetricl.html#afd4de3aedd5e48cf955f03457386e98f">entity_type</a>&#160;</td>
           <td class="paramname"><em>et3</em>&#160;</td>
         </tr>
         <tr>
@@ -162,12 +184,102 @@ Functions</h2></td></tr>
           <td></td><td></td>
         </tr>
       </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
 </div><div class="memdoc">
 
-<p>test. </p>
+<p>Perform all necessary changes in state and event data due to the addition or deletion of an angle. </p>
+<p>Iterate through all events that might be influenced by this angle, update their attempt rates and success probability units, and (re)schedule them based on the new rates.</p>
+<p>This is one of the performance bottleneck functions since it is called many times by <a class="el" href="../../df/d1b/event_8cpp.html#adc013b33a8b8afbb4f75c8c95dc3b93a">update_adjacent_events()</a>. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">ec</td><td>event class </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">ec_angle</td><td>class of the event that caused the change: EC_EST adds an angle, EC_TERM deletes one </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">e1</td><td>source entity </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">et1</td><td>its type </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">rat12</td><td>source-to-middle relationship or action type </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">e2</td><td>middle entity </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">et2</td><td>its type </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">rat23</td><td>middle-to-target relationship or action type </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">e3</td><td>target entity </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">et3</td><td>its type </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="aaf5e8f0118f2f20311f8b6ba80594bab"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aaf5e8f0118f2f20311f8b6ba80594bab">&#9670;&nbsp;</a></span>leg_intersection()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">angle_vec leg_intersection </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="../../dc/d70/namespacetricl.html#a57273122278e8b301844e2a2e1f0742f">entity</a>&#160;</td>
+          <td class="paramname"><em>e1</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="../../dc/d70/namespacetricl.html#ac36fc4606da3d7f9ffd1764942fe5940">outleg_set</a> &amp;&#160;</td>
+          <td class="paramname"><em>out1</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="../../dc/d70/namespacetricl.html#a703ed53fa2dba74d8f51ede5fd46038d">inleg_set</a> &amp;&#160;</td>
+          <td class="paramname"><em>in3</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="../../dc/d70/namespacetricl.html#a57273122278e8b301844e2a2e1f0742f">entity</a>&#160;</td>
+          <td class="paramname"><em>e3</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Compare each outleg of e1 with each inleg of e3 to find each angle from e1 to e3. </p>
+<p>This is one of the performance bottleneck functions since it is called by <a class="el" href="../../da/dac/angle_8h.html#a1a5dff9417edeae00cf8bfd75459fc36">add_or_delete_angle()</a>.</p>
+<p>(code was adapted from adapted from set_intersection template)</p>
+<dl class="section return"><dt>Returns</dt><dd>a vector of found angles </dd></dl>
+<h2>Algorithm: </h2>
+<p>The two sequences are sorted by e2 (since std::set is an ordered datatype and operator&lt; for legs was implemented accordingly). Pseudocode: </p><pre class="fragment">put blockstart = out1.end().
+repeat:
+  if out1.e2 &lt; in3.e2, advance out1.
+  else if out1.e2 &gt; in3.e2:
+    advance in3.
+    if blockstart != out1.end():
+      if in3.e2 == previous in3.e2, rewind out2 to blockstart
+      else put blockstart = out1.end().
+  else out1.e2 == in3.e2:
+    if blockstart == out1.end(), remember out1 position as blockstart
+    store found angle
+    advance out1
+</pre><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">e1</td><td>source entity </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">out1</td><td>set of outlegs of source entity </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">in3</td><td>set of inlegs of target entity </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">e3</td><td>target entity </td></tr>
   </table>
   </dd>
 </dl>

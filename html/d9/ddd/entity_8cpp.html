@@ -72,20 +72,17 @@ $(function() {
 
 <p>Handling of entities.  
 <a href="#details">More...</a></p>
-<div class="textblock"><code>#include &lt;iostream&gt;</code><br />
-<code>#include &lt;math.h&gt;</code><br />
-<code>#include &quot;<a class="el" href="../../d5/dfb/global__variables_8h_source.html">global_variables.h</a>&quot;</code><br />
-<code>#include &quot;entity.h&quot;</code><br />
-<code>#include &quot;<a class="el" href="../../d5/d87/probability_8h_source.html">probability.h</a>&quot;</code><br />
+<div class="textblock"><code>#include &quot;<a class="el" href="../../d5/dfb/global__variables_8h_source.html">global_variables.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="../../d8/d83/entity_8h_source.html">entity.h</a>&quot;</code><br />
 </div><div class="textblock"><div class="dynheader">
 Include dependency graph for entity.cpp:</div>
 <div class="dyncontent">
 <div class="center"><img src="../../d8/d92/entity_8cpp__incl.png" border="0" usemap="#src_2entity_8cpp" alt=""/></div>
 <map name="src_2entity_8cpp" id="src_2entity_8cpp">
-<area shape="rect" id="node4" href="../../d5/dfb/global__variables_8h.html" title="Definition of global data storage. " alt="" coords="223,155,364,181"/>
-<area shape="rect" id="node14" href="../../d8/d83/entity_8h_source.html" title="entity.h" alt="" coords="461,80,531,107"/>
-<area shape="rect" id="node15" href="../../d5/d87/probability_8h.html" title="Inline functions dealing with probabilities. " alt="" coords="333,80,435,107"/>
-<area shape="rect" id="node5" href="../../d5/d44/data__model_8h.html" title="The main data model. " alt="" coords="431,229,542,256"/>
+<area shape="rect" id="node2" href="../../d5/dfb/global__variables_8h.html" title="Definition of global data storage. " alt="" coords="305,229,447,256"/>
+<area shape="rect" id="node14" href="../../d8/d83/entity_8h.html" title="Performance&#45;critical inline functions for handling of entities. " alt="" coords="449,80,519,107"/>
+<area shape="rect" id="node3" href="../../d5/d44/data__model_8h.html" title="The main data model. " alt="" coords="422,304,533,331"/>
+<area shape="rect" id="node15" href="../../d5/d87/probability_8h.html" title="Inline functions dealing with probabilities. " alt="" coords="433,155,535,181"/>
 </map>
 </div>
 </div><table class="memberdecls">
@@ -94,14 +91,10 @@ Functions</h2></td></tr>
 <tr class="memitem:a0a2d9d57b1737f98889d96db80b44ea4"><td class="memItemLeft" align="right" valign="top"><a class="el" href="../../dc/d70/namespacetricl.html#a57273122278e8b301844e2a2e1f0742f">entity</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d9/ddd/entity_8cpp.html#a0a2d9d57b1737f98889d96db80b44ea4">add_entity</a> (<a class="el" href="../../dc/d70/namespacetricl.html#afd4de3aedd5e48cf955f03457386e98f">entity_type</a> et, string elabel)</td></tr>
 <tr class="memdesc:a0a2d9d57b1737f98889d96db80b44ea4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Add a new entity of a specific type.  <a href="#a0a2d9d57b1737f98889d96db80b44ea4">More...</a><br /></td></tr>
 <tr class="separator:a0a2d9d57b1737f98889d96db80b44ea4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a98c686b5512ec703bd0da855cd296f24"><td class="memItemLeft" align="right" valign="top"><a class="el" href="../../dc/d70/namespacetricl.html#a57273122278e8b301844e2a2e1f0742f">entity</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d9/ddd/entity_8cpp.html#a98c686b5512ec703bd0da855cd296f24">random_entity</a> (<a class="el" href="../../dc/d70/namespacetricl.html#afd4de3aedd5e48cf955f03457386e98f">entity_type</a> et)</td></tr>
-<tr class="memdesc:a98c686b5512ec703bd0da855cd296f24"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return a random entity of a specific type.  <a href="#a98c686b5512ec703bd0da855cd296f24">More...</a><br /></td></tr>
-<tr class="separator:a98c686b5512ec703bd0da855cd296f24"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Handling of entities. </p>
-<dl class="section author"><dt>Author</dt><dd>Jobst Heitzig, Potsdam Institute for Climate Impact Research, <a href="#" onclick="location.href='mai'+'lto:'+'hei'+'tz'+'ig@'+'pi'+'k-p'+'ot'+'sda'+'m.'+'de'; return false;">heitz<span style="display: none;">.nosp@m.</span>ig@p<span style="display: none;">.nosp@m.</span>ik-po<span style="display: none;">.nosp@m.</span>tsda<span style="display: none;">.nosp@m.</span>m.de</a> </dd></dl>
-<dl class="section date"><dt>Date</dt><dd>Mar 30, 2020 </dd></dl>
+<p>See <a class="el" href="../../d5/d44/data__model_8h.html">data_model.h</a> for how a <a class="el" href="../../dc/d70/namespacetricl.html#a57273122278e8b301844e2a2e1f0742f">tricl::entity</a> relates to other tricl datatypes. </p>
 </div><h2 class="groupheader">Function Documentation</h2>
 <a id="a0a2d9d57b1737f98889d96db80b44ea4"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a0a2d9d57b1737f98889d96db80b44ea4">&#9670;&nbsp;</a></span>add_entity()</h2>
@@ -130,38 +123,11 @@ Functions</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Add a new entity of a specific type. </p>
-<p>(the entity is not returned) </p>
+<dl class="section return"><dt>Returns</dt><dd>the new entity </dd></dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">et</td><td>entity type of the entity to be generated anew. </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">elabel</td><td>entity label (if "", will be generated) </td></tr>
-  </table>
-  </dd>
-</dl>
-
-</div>
-</div>
-<a id="a98c686b5512ec703bd0da855cd296f24"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a98c686b5512ec703bd0da855cd296f24">&#9670;&nbsp;</a></span>random_entity()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="../../dc/d70/namespacetricl.html#a57273122278e8b301844e2a2e1f0742f">entity</a> random_entity </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="../../dc/d70/namespacetricl.html#afd4de3aedd5e48cf955f03457386e98f">entity_type</a>&#160;</td>
-          <td class="paramname"><em>et</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Return a random entity of a specific type. </p>
-<p>The entity is drawn uniformly at random. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">et</td><td>Entity type of which a random entity is needed </td></tr>
   </table>
   </dd>
 </dl>

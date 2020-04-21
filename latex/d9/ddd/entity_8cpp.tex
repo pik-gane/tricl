@@ -5,11 +5,8 @@
 Handling of entities.  
 
 
-{\ttfamily \#include $<$iostream$>$}\newline
-{\ttfamily \#include $<$math.\+h$>$}\newline
 {\ttfamily \#include \char`\"{}global\+\_\+variables.\+h\char`\"{}}\newline
 {\ttfamily \#include \char`\"{}entity.\+h\char`\"{}}\newline
-{\ttfamily \#include \char`\"{}probability.\+h\char`\"{}}\newline
 Include dependency graph for entity.\+cpp\+:
 \nopagebreak
 \begin{figure}[H]
@@ -22,21 +19,13 @@ Include dependency graph for entity.\+cpp\+:
 \begin{DoxyCompactItemize}
 \item 
 \hyperlink{namespacetricl_a57273122278e8b301844e2a2e1f0742f}{entity} \hyperlink{entity_8cpp_a0a2d9d57b1737f98889d96db80b44ea4}{add\+\_\+entity} (\hyperlink{namespacetricl_afd4de3aedd5e48cf955f03457386e98f}{entity\+\_\+type} et, string elabel)
-\begin{DoxyCompactList}\small\item\em Add a new entity of a specific type. \end{DoxyCompactList}\item 
-\hyperlink{namespacetricl_a57273122278e8b301844e2a2e1f0742f}{entity} \hyperlink{entity_8cpp_a98c686b5512ec703bd0da855cd296f24}{random\+\_\+entity} (\hyperlink{namespacetricl_afd4de3aedd5e48cf955f03457386e98f}{entity\+\_\+type} et)
-\begin{DoxyCompactList}\small\item\em Return a random entity of a specific type. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\begin{DoxyCompactList}\small\item\em Add a new entity of a specific type. \end{DoxyCompactList}\end{DoxyCompactItemize}
 
 
 \subsection{Detailed Description}
 Handling of entities. 
 
-\begin{DoxyAuthor}{Author}
-Jobst Heitzig, Potsdam Institute for Climate Impact Research, \href{mailto:heitzig@pik-potsdam.de}{\tt heitzig@pik-\/potsdam.\+de} 
-\end{DoxyAuthor}
-\begin{DoxyDate}{Date}
-Mar 30, 2020 
-\end{DoxyDate}
-
+See \hyperlink{data__model_8h}{data\+\_\+model.\+h} for how a \hyperlink{namespacetricl_a57273122278e8b301844e2a2e1f0742f}{tricl\+::entity} relates to other tricl datatypes. 
 
 \subsection{Function Documentation}
 \mbox{\Hypertarget{entity_8cpp_a0a2d9d57b1737f98889d96db80b44ea4}\label{entity_8cpp_a0a2d9d57b1737f98889d96db80b44ea4}} 
@@ -49,25 +38,13 @@ Mar 30, 2020
 
 Add a new entity of a specific type. 
 
-(the entity is not returned) 
+\begin{DoxyReturn}{Returns}
+the new entity 
+\end{DoxyReturn}
+
 \begin{DoxyParams}[1]{Parameters}
 \mbox{\tt in}  & {\em et} & entity type of the entity to be generated anew. \\
 \hline
 \mbox{\tt in}  & {\em elabel} & entity label (if \char`\"{}\char`\"{}, will be generated) \\
-\hline
-\end{DoxyParams}
-\mbox{\Hypertarget{entity_8cpp_a98c686b5512ec703bd0da855cd296f24}\label{entity_8cpp_a98c686b5512ec703bd0da855cd296f24}} 
-\index{entity.\+cpp@{entity.\+cpp}!random\+\_\+entity@{random\+\_\+entity}}
-\index{random\+\_\+entity@{random\+\_\+entity}!entity.\+cpp@{entity.\+cpp}}
-\subsubsection{\texorpdfstring{random\+\_\+entity()}{random\_entity()}}
-{\footnotesize\ttfamily \hyperlink{namespacetricl_a57273122278e8b301844e2a2e1f0742f}{entity} random\+\_\+entity (\begin{DoxyParamCaption}\item[{\hyperlink{namespacetricl_afd4de3aedd5e48cf955f03457386e98f}{entity\+\_\+type}}]{et }\end{DoxyParamCaption})}
-
-
-
-Return a random entity of a specific type. 
-
-The entity is drawn uniformly at random. 
-\begin{DoxyParams}[1]{Parameters}
-\mbox{\tt in}  & {\em et} & Entity type of which a random entity is needed \\
 \hline
 \end{DoxyParams}

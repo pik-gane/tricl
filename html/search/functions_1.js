@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['effective_5frate',['effective_rate',['../d5/d87/probability_8h.html#abfaa763b93af36afec58f5d42fdf69a1',1,'probability.h']]],
-  ['event_5fis_5fscheduled',['event_is_scheduled',['../df/d1b/event_8cpp.html#ab8644632b851d99741826fb61fb703bd',1,'event.cpp']]]
+  ['compute_5fn_5fangles',['compute_n_angles',['../db/d82/debugging_8cpp.html#a8989a80ae48af3b19feed166bb0e2193',1,'debugging.cpp']]],
+  ['conditionally_5fremove_5fevent',['conditionally_remove_event',['../df/d1b/event_8cpp.html#a875f0862466ff1b831fee64602d92d76',1,'conditionally_remove_event(event &amp;ev):&#160;event.cpp'],['../dd/d20/event_8h.html#a875f0862466ff1b831fee64602d92d76',1,'conditionally_remove_event(event &amp;ev):&#160;event.cpp']]]
 ];
