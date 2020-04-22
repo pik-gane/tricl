@@ -1,0 +1,122 @@
+\hypertarget{io_8cpp}{}\section{src/io.cpp File Reference}
+\label{io_8cpp}\index{src/io.\+cpp@{src/io.\+cpp}}
+
+
+Handling of input/output other than gexf and graphviz.  
+
+
+{\ttfamily \#include \char`\"{}3rdparty/rapidcsv.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}global\+\_\+variables.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}entity.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}event.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}io.\+h\char`\"{}}\newline
+Include dependency graph for io.\+cpp\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{dd/d14/io_8cpp__incl}
+\end{center}
+\end{figure}
+\subsection*{Namespaces}
+\begin{DoxyCompactItemize}
+\item 
+ \hyperlink{namespacetricl}{tricl}
+\begin{DoxyCompactList}\small\item\em We use our own namespace to avoid clashes with 3rdparty names, e.\+g. \char`\"{}link\char`\"{}. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{namespacetricl_a0c8560d9e6008454c78d640b04cfec39}\label{namespacetricl_a0c8560d9e6008454c78d640b04cfec39}} 
+ostream \& {\bfseries tricl\+::operator$<$$<$} (ostream \&os, const \hyperlink{structtricl_1_1link__type}{link\+\_\+type} \&lt)
+\item 
+\mbox{\Hypertarget{namespacetricl_a5d13ae5cc1aee2bdd17da12ffc29738b}\label{namespacetricl_a5d13ae5cc1aee2bdd17da12ffc29738b}} 
+ostream \& {\bfseries tricl\+::operator$<$$<$} (ostream \&os, const \hyperlink{structtricl_1_1event__type}{event\+\_\+type} \&evt)
+\item 
+\mbox{\Hypertarget{namespacetricl_a9412301333adf45d8ce1059cfaf1adb0}\label{namespacetricl_a9412301333adf45d8ce1059cfaf1adb0}} 
+ostream \& {\bfseries tricl\+::operator$<$$<$} (ostream \&os, const \hyperlink{structtricl_1_1angle__type}{angle\+\_\+type} \&at)
+\item 
+\mbox{\Hypertarget{namespacetricl_a91e2fc74b8ef15e4fb23e5cab1f67da4}\label{namespacetricl_a91e2fc74b8ef15e4fb23e5cab1f67da4}} 
+ostream \& {\bfseries tricl\+::operator$<$$<$} (ostream \&os, const \hyperlink{structtricl_1_1event}{event} \&ev)
+\item 
+\mbox{\Hypertarget{namespacetricl_a65ebcedfa43301fd5be2b2cf34a4b660}\label{namespacetricl_a65ebcedfa43301fd5be2b2cf34a4b660}} 
+ostream \& {\bfseries tricl\+::operator$<$$<$} (ostream \&os, const \hyperlink{structtricl_1_1event__data}{event\+\_\+data} \&evd)
+\item 
+void \hyperlink{io_8cpp_abd249892d25bd839b49de0dadd223092}{log\+\_\+state} ()
+\begin{DoxyCompactList}\small\item\em Output simple statistics for current model state to stdout. \end{DoxyCompactList}\item 
+void \hyperlink{io_8cpp_a62a298a3d75d0c2bd86ddb9dfedbfc50}{read\+\_\+links\+\_\+csv} (string filename, int skip\+\_\+rows, int max\+\_\+rows, char delimiter, int e1\+\_\+col, int rat13\+\_\+col, int e3\+\_\+col, \hyperlink{namespacetricl_afd4de3aedd5e48cf955f03457386e98f}{entity\+\_\+type} et1\+\_\+default, \hyperlink{namespacetricl_a2d01894944fb58a8fedc0912a48d13f8}{relationship\+\_\+or\+\_\+action\+\_\+type} rat13\+\_\+fixed, \hyperlink{namespacetricl_afd4de3aedd5e48cf955f03457386e98f}{entity\+\_\+type} et3\+\_\+default, string e1\+\_\+prefix, string e3\+\_\+prefix)
+\begin{DoxyCompactList}\small\item\em Read initial links from a csv file. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{io_8cpp_a27ba802fd207e664e36150d6e0e3e609}\label{io_8cpp_a27ba802fd207e664e36150d6e0e3e609}} 
+void \hyperlink{io_8cpp_a27ba802fd207e664e36150d6e0e3e609}{dump\+\_\+links} ()
+\begin{DoxyCompactList}\small\item\em (for debugging purposes) \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{io_8cpp_a5b3a6892b038b8473206672ba86f7fd1}\label{io_8cpp_a5b3a6892b038b8473206672ba86f7fd1}} 
+void \hyperlink{io_8cpp_a5b3a6892b038b8473206672ba86f7fd1}{dump\+\_\+data} ()
+\begin{DoxyCompactList}\small\item\em (for debugging purposes) \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Handling of input/output other than gexf and graphviz. 
+
+
+
+\subsection{Function Documentation}
+\mbox{\Hypertarget{io_8cpp_abd249892d25bd839b49de0dadd223092}\label{io_8cpp_abd249892d25bd839b49de0dadd223092}} 
+\index{io.\+cpp@{io.\+cpp}!log\+\_\+state@{log\+\_\+state}}
+\index{log\+\_\+state@{log\+\_\+state}!io.\+cpp@{io.\+cpp}}
+\subsubsection{\texorpdfstring{log\+\_\+state()}{log\_state()}}
+{\footnotesize\ttfamily void log\+\_\+state (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Output simple statistics for current model state to stdout. 
+
+$<$ no. past events
+
+$<$ current no. (non-\/id.) links
+
+$<$ current no. angles influencing at least one event
+
+$<$ overall link density
+
+$<$ overall angle density
+
+$<$ quotient between angle density and \char`\"{}expected angle density\char`\"{} (square of link density) \mbox{\Hypertarget{io_8cpp_a62a298a3d75d0c2bd86ddb9dfedbfc50}\label{io_8cpp_a62a298a3d75d0c2bd86ddb9dfedbfc50}} 
+\index{io.\+cpp@{io.\+cpp}!read\+\_\+links\+\_\+csv@{read\+\_\+links\+\_\+csv}}
+\index{read\+\_\+links\+\_\+csv@{read\+\_\+links\+\_\+csv}!io.\+cpp@{io.\+cpp}}
+\subsubsection{\texorpdfstring{read\+\_\+links\+\_\+csv()}{read\_links\_csv()}}
+{\footnotesize\ttfamily void read\+\_\+links\+\_\+csv (\begin{DoxyParamCaption}\item[{string}]{filename,  }\item[{int}]{skip\+\_\+rows,  }\item[{int}]{max\+\_\+rows,  }\item[{char}]{delimiter,  }\item[{int}]{e1\+\_\+col,  }\item[{int}]{rat13\+\_\+col,  }\item[{int}]{e3\+\_\+col,  }\item[{\hyperlink{namespacetricl_afd4de3aedd5e48cf955f03457386e98f}{entity\+\_\+type}}]{et1\+\_\+default,  }\item[{\hyperlink{namespacetricl_a2d01894944fb58a8fedc0912a48d13f8}{relationship\+\_\+or\+\_\+action\+\_\+type}}]{rat13\+\_\+fixed,  }\item[{\hyperlink{namespacetricl_afd4de3aedd5e48cf955f03457386e98f}{entity\+\_\+type}}]{et3\+\_\+default,  }\item[{string}]{e1\+\_\+prefix,  }\item[{string}]{e3\+\_\+prefix }\end{DoxyParamCaption})}
+
+
+
+Read initial links from a csv file. 
+
+The file could either contain links of just one type, in which case you specify two columns (containing the source and target entity labels); or links of various types, in which case you also specify a column for the relationship or action type.
+
+If entity labels occur that have not been registered, they are assigned to the entity type given by et1\+\_\+default or et3\+\_\+default, respectively.
+
+Entity labels from the file are prefixed by e\+\_\+prefix before storing them in tricl, e.\+g. the file might contain label \char`\"{}1\char`\"{} and you want it to be treated as \char`\"{}agent 1\char`\"{}, so put e1\+\_\+prefix = \char`\"{}agent \char`\"{}; 
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em filename} & name of infile \\
+\hline
+\mbox{\tt in}  & {\em skip\+\_\+rows} & no. of rows to skip at start of file (e.\+g. header lines) \\
+\hline
+\mbox{\tt in}  & {\em max\+\_\+rows} & no. of rows to read at most \\
+\hline
+\mbox{\tt in}  & {\em delimiter} & delimiter, e.\+g. \char`\"{} \char`\"{} or \char`\"{},\char`\"{} or \char`\"{}\textbackslash{}t\char`\"{} \\
+\hline
+\mbox{\tt in}  & {\em e1\+\_\+col} & no. of column containing e1 labels \\
+\hline
+\mbox{\tt in}  & {\em rat13\+\_\+col} & no. of column containing rat13 labels (or -\/1 if type is fixed to value of \char`\"{}rat13\+\_\+fixed\char`\"{}) \\
+\hline
+\mbox{\tt in}  & {\em e3\+\_\+col} & no. of column containing e3 labels \\
+\hline
+\mbox{\tt in}  & {\em et1\+\_\+default} & default entity-\/type for previously unregistered e1s (if -\/1, no new e1s are allowed) \\
+\hline
+\mbox{\tt in}  & {\em rat13\+\_\+fixed} & fixed type if rat13\+\_\+col == -\/1 (otherwise N\+O\+\_\+\+R\+AT) \\
+\hline
+\mbox{\tt in}  & {\em et3\+\_\+default} & default entity-\/type for previously unregistered e3s (if -\/1, no new e3s are allowed) \\
+\hline
+\mbox{\tt in}  & {\em e1\+\_\+prefix} & prefix to prepend to e1 labels before storing them \\
+\hline
+\mbox{\tt in}  & {\em e3\+\_\+prefix} & prefix to prepend to e3 labels before storing them \\
+\hline
+\end{DoxyParams}

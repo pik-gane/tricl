@@ -1,10 +1,14 @@
 <map id="src/probability.h" name="src/probability.h">
-<area shape="rect" id="node2" href="$da/dac/angle_8h.html" title="Performance&#45;critical inline functions for handling of angles. " alt="" coords="33,155,126,181"/>
-<area shape="rect" id="node4" href="$df/d1b/event_8cpp.html" title="Non&#45;performance&#45;critical handling of events. " alt="" coords="170,229,279,256"/>
-<area shape="rect" id="node5" href="$dd/d20/event_8h.html" title="Performance&#45;critical inline functions for handling of events. " alt="" coords="92,80,187,107"/>
-<area shape="rect" id="node6" href="$d8/d83/entity_8h.html" title="Performance&#45;critical inline functions for handling of entities. " alt="" coords="262,80,355,107"/>
-<area shape="rect" id="node9" href="$dc/d04/probability_8cpp.html" title="Additional functions dealing with probabilities. " alt="" coords="380,80,520,107"/>
+<area shape="rect" id="node2" href="$da/dac/angle_8h.html" title="Performance&#45;critical inline functions for handling of angles. " alt="" coords="29,155,122,181"/>
+<area shape="rect" id="node4" href="$df/d1b/event_8cpp.html" title="Non&#45;performance&#45;critical handling of events. " alt="" coords="518,229,627,256"/>
+<area shape="rect" id="node5" href="$dd/d20/event_8h.html" title="Performance&#45;critical inline functions for handling of events. " alt="" coords="385,80,480,107"/>
+<area shape="rect" id="node6" href="$d0/dc9/init_8cpp.html" title="Do initialization tasks before simulation, after configuration. " alt="" coords="471,155,565,181"/>
+<area shape="rect" id="node8" href="$d2/d41/link_8cpp.html" title="Handling of links. " alt="" coords="146,155,242,181"/>
+<area shape="rect" id="node10" href="$d8/d83/entity_8h.html" title="Performance&#45;critical inline functions for handling of entities. " alt="" coords="625,80,718,107"/>
+<area shape="rect" id="node13" href="$dc/d04/probability_8cpp.html" title="Additional functions dealing with probabilities. " alt="" coords="1068,80,1208,107"/>
 <area shape="rect" id="node3" href="$db/d82/debugging_8cpp.html" title="Some stuff only needed for debugging. " alt="" coords="5,229,145,256"/>
-<area shape="rect" id="node7" href="$df/d59/config_8cpp.html" title="Handling of configuration files. " alt="" coords="313,155,424,181"/>
-<area shape="rect" id="node8" href="$d9/ddd/entity_8cpp.html" title="Handling of entities. " alt="" coords="448,155,556,181"/>
+<area shape="rect" id="node7" href="$d5/d5a/io_8cpp.html" title="Handling of input/output other than gexf and graphviz. " alt="" coords="589,155,673,181"/>
+<area shape="rect" id="node9" href="$de/d8c/simulate_8cpp.html" title="Run the actual simulation. " alt="" coords="267,155,396,181"/>
+<area shape="rect" id="node11" href="$df/d59/config_8cpp.html" title="Handling of configuration files. " alt="" coords="749,155,860,181"/>
+<area shape="rect" id="node12" href="$d9/ddd/entity_8cpp.html" title="Handling of entities. " alt="" coords="884,155,992,181"/>
 </map>

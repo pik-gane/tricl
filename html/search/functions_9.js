@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['tail2scale',['tail2scale',['../d5/d87/probability_8h.html#a96d584ab7ce9c4874bd2a0305679755a',1,'probability.h']]]
+  ['options',['options',['../df/d59/config_8cpp.html#a15dfd425241f1a6bf6aeab6ef70fb896',1,'config.cpp']]]
 ];

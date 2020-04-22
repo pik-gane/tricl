@@ -83,15 +83,20 @@ $(function() {
 <li>add more random network models</li>
 </ul>
 <p>convenience:</p><ul>
-<li>improve quiet status output</li>
-<li>remove redundant output from init that is already printed in config</li>
 <li>support custom prefixes for entity label generation</li>
+<li>check whether in <a class="el" href="d2/d2f/finish_8cpp.html#a6dfe1abe0d1eb3ddc1ca081de98b5342" title="Do stuff at end of the simulation. ">finish()</a>, current_t = max_t is correct</li>
 </ul>
 <p>optimization:</p><ul>
 <li>use const args as much as possible in inner loops (?)</li>
 <li>inline most called functions</li>
 <li>speed up probability2probunits by precomputing probability for events with constant success probability</li>
 <li>think of partial parallelization</li>
+</ul>
+<p>input/output:</p><ul>
+<li>include metadata into gexf files</li>
+<li>support "premerged" edges in gexf via &lt;spells&gt;&lt;spell start="..." end="..."&gt;&lt;/spell&gt;...&lt;/spells&gt;</li>
+<li>support prespecified positions in visualization, see here: <a href="https://github.com/gephi/gephi/issues/2038">https://github.com/gephi/gephi/issues/2038</a></li>
+<li>support entity type detection from columns in csv file</li>
 </ul>
 <h1>Terminology </h1>
 <ul>

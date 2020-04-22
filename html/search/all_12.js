@@ -1,6 +1,5 @@
 var searchData=
 [
-  ['verbose',['verbose',['../df/d59/config_8cpp.html#ab3f078684998b83967d507d0f453f454',1,'verbose():&#160;config.cpp'],['../d5/dfb/global__variables_8h.html#ab3f078684998b83967d507d0f453f454',1,'verbose():&#160;config.cpp']]],
-  ['verify_5fangle_5fconsistency',['verify_angle_consistency',['../db/d82/debugging_8cpp.html#ad45f6e1ec65e51f87af37e3a100e924b',1,'debugging.cpp']]],
-  ['verify_5fdata_5fconsistency',['verify_data_consistency',['../db/d82/debugging_8cpp.html#a75cdc015c7c73360c0e565f4bbea0279',1,'debugging.cpp']]]
+  ['uniform',['uniform',['../d5/d87/probability_8h.html#a4719dce3f1f52de89aedc43c5149c801',1,'probability.h']]],
+  ['update_5fadjacent_5fevents',['update_adjacent_events',['../df/d1b/event_8cpp.html#adc013b33a8b8afbb4f75c8c95dc3b93a',1,'update_adjacent_events(event &amp;ev):&#160;event.cpp'],['../dd/d20/event_8h.html#adc013b33a8b8afbb4f75c8c95dc3b93a',1,'update_adjacent_events(event &amp;ev):&#160;event.cpp']]]
 ];

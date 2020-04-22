@@ -2,4 +2,6 @@
 <area shape="rect" id="node2" href="$df/d59/config_8cpp.html" title="Handling of configuration files. " alt="" coords="5,80,116,107"/>
 <area shape="rect" id="node3" href="$d9/ddd/entity_8cpp.html" title="Handling of entities. " alt="" coords="140,80,248,107"/>
 <area shape="rect" id="node4" href="$df/d1b/event_8cpp.html" title="Non&#45;performance&#45;critical handling of events. " alt="" coords="273,80,382,107"/>
+<area shape="rect" id="node5" href="$d0/dc9/init_8cpp.html" title="Do initialization tasks before simulation, after configuration. " alt="" coords="406,80,499,107"/>
+<area shape="rect" id="node6" href="$d5/d5a/io_8cpp.html" title="Handling of input/output other than gexf and graphviz. " alt="" coords="524,80,608,107"/>
 </map>

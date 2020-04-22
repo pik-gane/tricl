@@ -1,0 +1,96 @@
+\hypertarget{gexf_8cpp}{}\section{src/gexf.cpp File Reference}
+\label{gexf_8cpp}\index{src/gexf.\+cpp@{src/gexf.\+cpp}}
+
+
+Handling of gexf and gexf.\+gz temporal graph output files.  
+
+
+{\ttfamily \#include \char`\"{}global\+\_\+variables.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}gexf.\+h\char`\"{}}\newline
+{\ttfamily \#include $<$boost/iostreams/filtering\+\_\+streambuf.\+hpp$>$}\newline
+{\ttfamily \#include $<$boost/iostreams/filter/gzip.\+hpp$>$}\newline
+Include dependency graph for gexf.\+cpp\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{d2/d53/gexf_8cpp__incl}
+\end{center}
+\end{figure}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{gexf_8cpp_a1c72a32278298aac6971e08a0124d55e}\label{gexf_8cpp_a1c72a32278298aac6971e08a0124d55e}} 
+ostream $\ast$ \hyperlink{gexf_8cpp_a1c72a32278298aac6971e08a0124d55e}{gexf} (N\+U\+LL)
+\begin{DoxyCompactList}\small\item\em actual stream to write to \end{DoxyCompactList}\item 
+ostream $\ast$ \hyperlink{gexf_8cpp_a9548b01298b60e87517c2f4d7a26b739}{get\+\_\+stream} (string fn, bool is\+\_\+gz)
+\item 
+void \hyperlink{gexf_8cpp_ab4b36012007039d12a7b7ca4933f680b}{init\+\_\+gexf} ()
+\begin{DoxyCompactList}\small\item\em Prepare gexf output. \end{DoxyCompactList}\item 
+void \hyperlink{gexf_8cpp_aa68938dd72f31b9cf8525249a272240e}{gexf\+\_\+output\+\_\+edge} (\hyperlink{structtricl_1_1tricllink}{tricl\+::tricllink} \&l)
+\begin{DoxyCompactList}\small\item\em Write a single edge to the proper file. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{gexf_8cpp_ac63f0acb9d3c33e1847cd93d188a0e15}\label{gexf_8cpp_ac63f0acb9d3c33e1847cd93d188a0e15}} 
+void \hyperlink{gexf_8cpp_ac63f0acb9d3c33e1847cd93d188a0e15}{finish\+\_\+gexf} ()
+\begin{DoxyCompactList}\small\item\em Complete and close all output files. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{gexf_8cpp_a6e5fdc0c22b628df18513b6554be48b1}\label{gexf_8cpp_a6e5fdc0c22b628df18513b6554be48b1}} 
+unordered\+\_\+map$<$ string, bool $>$ \hyperlink{gexf_8cpp_a6e5fdc0c22b628df18513b6554be48b1}{gexf\+\_\+is\+\_\+gz}
+\begin{DoxyCompactList}\small\item\em whether an output file is gzip-\/compressed \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{gexf_8cpp_a023bc66953de45c61693574c12a32ec3}\label{gexf_8cpp_a023bc66953de45c61693574c12a32ec3}} 
+unordered\+\_\+map$<$ string, ofstream $>$ {\bfseries gexf\+\_\+uncompressed}
+\item 
+\mbox{\Hypertarget{gexf_8cpp_aca8cc71916aad0a0b8e32654dc2bc70b}\label{gexf_8cpp_aca8cc71916aad0a0b8e32654dc2bc70b}} 
+unordered\+\_\+map$<$ string, ofstream $>$ \hyperlink{gexf_8cpp_aca8cc71916aad0a0b8e32654dc2bc70b}{gexf\+\_\+compressed}
+\begin{DoxyCompactList}\small\item\em streams for uncompressed and compressed output \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{gexf_8cpp_ac8678a3a4e1c09f3b2777b20bb82b6d6}\label{gexf_8cpp_ac8678a3a4e1c09f3b2777b20bb82b6d6}} 
+unordered\+\_\+map$<$ string, boost\+::iostreams\+::filtering\+\_\+streambuf$<$ boost\+::iostreams\+::output $>$ $>$ \hyperlink{gexf_8cpp_ac8678a3a4e1c09f3b2777b20bb82b6d6}{gexf\+\_\+buf}
+\begin{DoxyCompactList}\small\item\em buffer for compressed output \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{gexf_8cpp_ad59df978dd1e630ab3fa0b9b58b02a39}\label{gexf_8cpp_ad59df978dd1e630ab3fa0b9b58b02a39}} 
+unordered\+\_\+map$<$ \hyperlink{structtricl_1_1tricllink}{tricl\+::tricllink}, \hyperlink{namespacetricl_a720ff6a29f998e11e1d3622fc8df64b1}{timepoint} $>$ \hyperlink{gexf_8cpp_ad59df978dd1e630ab3fa0b9b58b02a39}{gexf\+\_\+edge2start} = \{\}
+\begin{DoxyCompactList}\small\item\em Time of establishment of edge. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Handling of gexf and gexf.\+gz temporal graph output files. 
+
+e.\+g. to be used by Gephi
+
+In the gexf output files, each entity is represented by a node, and each time interval at which a link existed is represented by a directed edge whose id, start and end attributes encode the time interval. Symmetric relationships/actions are thus represented by two directed edges.
+
+Depending on the analysis performed, edges might have to be \char`\"{}merged\char`\"{} to a single edge representing all time intervals of the link at once in Gephi. However, since gephi does not sufficiently support multiplex graphs, this merging will also merge links of different relationship or action type between the same source and target entities into one link.
+
+By default, all relationship or action types go to the main output file, but via the config file, individual types can also be suppressed or redirected to other files. (Note that gephi allows uniting several files into one workspace.) 
+
+\subsection{Function Documentation}
+\mbox{\Hypertarget{gexf_8cpp_a9548b01298b60e87517c2f4d7a26b739}\label{gexf_8cpp_a9548b01298b60e87517c2f4d7a26b739}} 
+\index{gexf.\+cpp@{gexf.\+cpp}!get\+\_\+stream@{get\+\_\+stream}}
+\index{get\+\_\+stream@{get\+\_\+stream}!gexf.\+cpp@{gexf.\+cpp}}
+\subsubsection{\texorpdfstring{get\+\_\+stream()}{get\_stream()}}
+{\footnotesize\ttfamily ostream$\ast$ get\+\_\+stream (\begin{DoxyParamCaption}\item[{string}]{fn,  }\item[{bool}]{is\+\_\+gz }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+\begin{DoxyReturn}{Returns}
+the stream to write to.
+\end{DoxyReturn}
+N\+O\+TE\+: for some reason this apparently cannot be stored permanently in a global variable between writes. \mbox{\Hypertarget{gexf_8cpp_aa68938dd72f31b9cf8525249a272240e}\label{gexf_8cpp_aa68938dd72f31b9cf8525249a272240e}} 
+\index{gexf.\+cpp@{gexf.\+cpp}!gexf\+\_\+output\+\_\+edge@{gexf\+\_\+output\+\_\+edge}}
+\index{gexf\+\_\+output\+\_\+edge@{gexf\+\_\+output\+\_\+edge}!gexf.\+cpp@{gexf.\+cpp}}
+\subsubsection{\texorpdfstring{gexf\+\_\+output\+\_\+edge()}{gexf\_output\_edge()}}
+{\footnotesize\ttfamily void gexf\+\_\+output\+\_\+edge (\begin{DoxyParamCaption}\item[{\hyperlink{structtricl_1_1tricllink}{tricl\+::tricllink} \&}]{l }\end{DoxyParamCaption})}
+
+
+
+Write a single edge to the proper file. 
+
+The unique edge id is $<$n\+\_\+events$>$\+\_\+$<$et1$>$\+\_\+$<$rat13$>$\+\_\+$<$et3$>$. Start and end time are stored both in the \char`\"{}start\char`\"{}/\char`\"{}end\char`\"{} xml attributes so that gephi\textquotesingle{}s timeline works properly, as well as in gexf \char`\"{}attributes\char`\"{} named \char`\"{}\+S\char`\"{}/\char`\"{}\+E\char`\"{} so that one can access them as global variables in gephi\textquotesingle{}s python scripting plugin. \mbox{\Hypertarget{gexf_8cpp_ab4b36012007039d12a7b7ca4933f680b}\label{gexf_8cpp_ab4b36012007039d12a7b7ca4933f680b}} 
+\index{gexf.\+cpp@{gexf.\+cpp}!init\+\_\+gexf@{init\+\_\+gexf}}
+\index{init\+\_\+gexf@{init\+\_\+gexf}!gexf.\+cpp@{gexf.\+cpp}}
+\subsubsection{\texorpdfstring{init\+\_\+gexf()}{init\_gexf()}}
+{\footnotesize\ttfamily void init\+\_\+gexf (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Prepare gexf output. 
+
+Opens files, streams, buffers and outputs file headers with all entities. 

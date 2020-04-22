@@ -96,6 +96,10 @@ This graph shows which files directly or indirectly include this file:</div>
 <map name="src_2event_8hdep" id="src_2event_8hdep">
 <area shape="rect" id="node2" href="../../da/dac/angle_8h.html" title="Performance&#45;critical inline functions for handling of angles. " alt="" coords="94,80,187,107"/>
 <area shape="rect" id="node4" href="../../df/d1b/event_8cpp.html" title="Non&#45;performance&#45;critical handling of events. " alt="" coords="170,155,279,181"/>
+<area shape="rect" id="node5" href="../../d0/dc9/init_8cpp.html" title="Do initialization tasks before simulation, after configuration. " alt="" coords="262,80,355,107"/>
+<area shape="rect" id="node6" href="../../d5/d5a/io_8cpp.html" title="Handling of input/output other than gexf and graphviz. " alt="" coords="380,80,464,107"/>
+<area shape="rect" id="node7" href="../../d2/d41/link_8cpp.html" title="Handling of links. " alt="" coords="489,80,585,107"/>
+<area shape="rect" id="node8" href="../../de/d8c/simulate_8cpp.html" title="Run the actual simulation. " alt="" coords="609,80,739,107"/>
 <area shape="rect" id="node3" href="../../db/d82/debugging_8cpp.html" title="Some stuff only needed for debugging. " alt="" coords="5,155,145,181"/>
 </map>
 </div>
@@ -168,6 +172,8 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>reschedule_event</b> 
 </div><div class="memdoc">
 
 <p>Add (and then schedule) an event. </p>
+<p>To determine the effective rate of the event, all influencing angles must be identified.</p>
+<p>This is a performance-critical function, using a large share of the model's CPU time. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">ev</td><td>the event to be added </td></tr>

@@ -1,0 +1,51 @@
+\hypertarget{link_8cpp}{}\section{src/link.cpp File Reference}
+\label{link_8cpp}\index{src/link.\+cpp@{src/link.\+cpp}}
+
+
+Handling of links.  
+
+
+{\ttfamily \#include \char`\"{}global\+\_\+variables.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}probability.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}event.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}gexf.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}link.\+h\char`\"{}}\newline
+Include dependency graph for link.\+cpp\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{dc/d7c/link_8cpp__incl}
+\end{center}
+\end{figure}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+bool \hyperlink{link_8cpp_a546b438f75d7e52da385ec7ce96066c1}{link\+\_\+exists} (\hyperlink{structtricl_1_1tricllink}{tricllink} \&l)
+\item 
+\mbox{\Hypertarget{link_8cpp_a7114ecac76d5a1544be514095f4649f8}\label{link_8cpp_a7114ecac76d5a1544be514095f4649f8}} 
+void \hyperlink{link_8cpp_a7114ecac76d5a1544be514095f4649f8}{add\+\_\+link} (\hyperlink{structtricl_1_1tricllink}{tricllink} \&l)
+\begin{DoxyCompactList}\small\item\em add a link. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{link_8cpp_a6619c2fbcfd2a7da11e4d476d995b5a1}\label{link_8cpp_a6619c2fbcfd2a7da11e4d476d995b5a1}} 
+void \hyperlink{link_8cpp_a6619c2fbcfd2a7da11e4d476d995b5a1}{delete\+\_\+link} (\hyperlink{structtricl_1_1tricllink}{tricllink} \&l)
+\begin{DoxyCompactList}\small\item\em delete a link. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{link_8cpp_a1ff65f4f1e4996c6ad02717bfd1be136}\label{link_8cpp_a1ff65f4f1e4996c6ad02717bfd1be136}} 
+void \hyperlink{link_8cpp_a1ff65f4f1e4996c6ad02717bfd1be136}{do\+\_\+random\+\_\+link} (\hyperlink{namespacetricl_af2e8973ba58a3dad9061296d8bee16a2}{probability} p, \hyperlink{namespacetricl_a57273122278e8b301844e2a2e1f0742f}{entity} e1, \hyperlink{namespacetricl_a2d01894944fb58a8fedc0912a48d13f8}{relationship\+\_\+or\+\_\+action\+\_\+type} rat13, \hyperlink{namespacetricl_a57273122278e8b301844e2a2e1f0742f}{entity} e3)
+\begin{DoxyCompactList}\small\item\em perform an event that generates a random link during installation. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Handling of links. 
+
+See \hyperlink{data__model_8h}{data\+\_\+model.\+h} for how a \hyperlink{structtricl_1_1tricllink}{tricl\+::tricllink} relates to other tricl datatypes. 
+
+\subsection{Function Documentation}
+\mbox{\Hypertarget{link_8cpp_a546b438f75d7e52da385ec7ce96066c1}\label{link_8cpp_a546b438f75d7e52da385ec7ce96066c1}} 
+\index{link.\+cpp@{link.\+cpp}!link\+\_\+exists@{link\+\_\+exists}}
+\index{link\+\_\+exists@{link\+\_\+exists}!link.\+cpp@{link.\+cpp}}
+\subsubsection{\texorpdfstring{link\+\_\+exists()}{link\_exists()}}
+{\footnotesize\ttfamily bool link\+\_\+exists (\begin{DoxyParamCaption}\item[{\hyperlink{structtricl_1_1tricllink}{tricllink} \&}]{l }\end{DoxyParamCaption})}
+
+\begin{DoxyReturn}{Returns}
+whether link currently exists. 
+\end{DoxyReturn}

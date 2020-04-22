@@ -1,0 +1,114 @@
+\hypertarget{init_8cpp}{}\section{src/init.cpp File Reference}
+\label{init_8cpp}\index{src/init.\+cpp@{src/init.\+cpp}}
+
+
+Do initialization tasks before simulation, after configuration.  
+
+
+{\ttfamily \#include \char`\"{}global\+\_\+variables.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}probability.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}entity.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}link.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}event.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}graphviz.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}gexf.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}init.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}io.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}debugging.\+h\char`\"{}}\newline
+Include dependency graph for init.\+cpp\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{df/d07/init_8cpp__incl}
+\end{center}
+\end{figure}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{init_8cpp_a3b42d3bd68c5200393c1f0809ed1facf}\label{init_8cpp_a3b42d3bd68c5200393c1f0809ed1facf}} 
+void \hyperlink{init_8cpp_a3b42d3bd68c5200393c1f0809ed1facf}{init\+\_\+data} ()
+\begin{DoxyCompactList}\small\item\em Set up the redundant auxiliary data stores. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{init_8cpp_aba22cd8158c56ed9baa7a901b16f004e}\label{init_8cpp_aba22cd8158c56ed9baa7a901b16f004e}} 
+void \hyperlink{init_8cpp_aba22cd8158c56ed9baa7a901b16f004e}{init\+\_\+entities} ()
+\begin{DoxyCompactList}\small\item\em Prepare all entities. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{init_8cpp_ae59f26fce089b362f09b373596db2825}\label{init_8cpp_ae59f26fce089b362f09b373596db2825}} 
+void \hyperlink{init_8cpp_ae59f26fce089b362f09b373596db2825}{init\+\_\+relationship\+\_\+or\+\_\+action\+\_\+types} ()
+\begin{DoxyCompactList}\small\item\em Analyse relationship or action types. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{init_8cpp_a21270908824afd19725a0d5aba339fcb}\label{init_8cpp_a21270908824afd19725a0d5aba339fcb}} 
+void \hyperlink{init_8cpp_a21270908824afd19725a0d5aba339fcb}{init\+\_\+events} ()
+\begin{DoxyCompactList}\small\item\em Set up initial schedule of summary events. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{init_8cpp_afa1de84622866c48f3c9debfdae27162}\label{init_8cpp_afa1de84622866c48f3c9debfdae27162}} 
+void \hyperlink{init_8cpp_afa1de84622866c48f3c9debfdae27162}{init\+\_\+links} ()
+\begin{DoxyCompactList}\small\item\em Add all initial links and corresponding events. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{init_8cpp_a02fd73d861ef2e4aabb38c0c9ff82947}\label{init_8cpp_a02fd73d861ef2e4aabb38c0c9ff82947}} 
+void \hyperlink{init_8cpp_a02fd73d861ef2e4aabb38c0c9ff82947}{init} ()
+\begin{DoxyCompactList}\small\item\em Perform all initialization tasks. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{init_8cpp_a41e5e4e1e8384638199deff086cbe4ad}\label{init_8cpp_a41e5e4e1e8384638199deff086cbe4ad}} 
+int \hyperlink{init_8cpp_a41e5e4e1e8384638199deff086cbe4ad}{n\+\_\+rats} = 0
+\begin{DoxyCompactList}\small\item\em No. of distinct relationship or action types. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{init_8cpp_a06f50231842da057123f740c26bee862}\label{init_8cpp_a06f50231842da057123f740c26bee862}} 
+unordered\+\_\+set$<$ \hyperlink{structtricl_1_1event__type}{event\+\_\+type} $>$ \hyperlink{init_8cpp_a06f50231842da057123f740c26bee862}{possible\+\_\+evts} = \{\}
+\begin{DoxyCompactList}\small\item\em Types of events that may occur at all. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{init_8cpp_a69b9cd60e82b0548a3b19a476f8b6f80}\label{init_8cpp_a69b9cd60e82b0548a3b19a476f8b6f80}} 
+\hyperlink{namespacetricl_ae42d2696f294300a43e0f5edf4875479}{rate} \hyperlink{init_8cpp_a69b9cd60e82b0548a3b19a476f8b6f80}{\+\_\+inflt2attempt\+\_\+rate} \mbox{[}M\+A\+X\+\_\+\+N\+\_\+\+I\+N\+F\+LT\mbox{]}
+\begin{DoxyCompactList}\small\item\em Redundant copy of \hyperlink{global__variables_8h_aa37926f8d74a0c74e47def544c4f872e}{inflt2attempt\+\_\+rate} as array. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{init_8cpp_ac531d1dd00471f6abbcb38732eab5676}\label{init_8cpp_ac531d1dd00471f6abbcb38732eab5676}} 
+\hyperlink{namespacetricl_af8f8f9076e92e1c664ffa96f18d038a5}{probunits} \hyperlink{init_8cpp_ac531d1dd00471f6abbcb38732eab5676}{\+\_\+inflt2delta\+\_\+probunits} \mbox{[}M\+A\+X\+\_\+\+N\+\_\+\+I\+N\+F\+LT\mbox{]}
+\begin{DoxyCompactList}\small\item\em Redundant copy of \hyperlink{global__variables_8h_aa4d1d1a030f8a8b177f11e3b4dc93011}{inflt2delta\+\_\+probunits} as array. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{init_8cpp_a5575d3ad7f54cb040bf940234988f10c}\label{init_8cpp_a5575d3ad7f54cb040bf940234988f10c}} 
+\hyperlink{namespacetricl_afd4de3aedd5e48cf955f03457386e98f}{entity\+\_\+type} \hyperlink{init_8cpp_a5575d3ad7f54cb040bf940234988f10c}{e2et} \mbox{[}\hyperlink{data__model_8h_acaa7fd772f80b3066211e5eb6e29ed91}{M\+A\+X\+\_\+\+N\+\_\+E}\mbox{]}
+\begin{DoxyCompactList}\small\item\em Entity type by entity (stored in an array for performance) \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{init_8cpp_a7153b9485cb42fcae606513208517a6b}\label{init_8cpp_a7153b9485cb42fcae606513208517a6b}} 
+unordered\+\_\+set$<$ \hyperlink{namespacetricl_a57273122278e8b301844e2a2e1f0742f}{entity} $>$ \hyperlink{init_8cpp_a7153b9485cb42fcae606513208517a6b}{es}
+\begin{DoxyCompactList}\small\item\em Set of all entities. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{init_8cpp_a5d94c0b6f86837212564c3e263e4ffdb}\label{init_8cpp_a5d94c0b6f86837212564c3e263e4ffdb}} 
+unordered\+\_\+map$<$ \hyperlink{structtricl_1_1entity__type__pair}{entity\+\_\+type\+\_\+pair}, unordered\+\_\+set$<$ \hyperlink{namespacetricl_a2d01894944fb58a8fedc0912a48d13f8}{relationship\+\_\+or\+\_\+action\+\_\+type} $>$ $>$ \hyperlink{init_8cpp_a5d94c0b6f86837212564c3e263e4ffdb}{ets2relations}
+\begin{DoxyCompactList}\small\item\em Possible relationship or action types by entity type pair. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{init_8cpp_a29508c6fbe67c716bed74a427640c7aa}\label{init_8cpp_a29508c6fbe67c716bed74a427640c7aa}} 
+unordered\+\_\+map$<$ \hyperlink{structtricl_1_1event}{event}, \hyperlink{namespacetricl_ae42d2696f294300a43e0f5edf4875479}{rate} $>$ \hyperlink{init_8cpp_a29508c6fbe67c716bed74a427640c7aa}{ev2max\+\_\+success\+\_\+probability}
+\begin{DoxyCompactList}\small\item\em Maximal possible success probability of summary events. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{init_8cpp_a7995d0e6f6203414b6d3a587cd914ccd}\label{init_8cpp_a7995d0e6f6203414b6d3a587cd914ccd}} 
+\hyperlink{namespacetricl_a720ff6a29f998e11e1d3622fc8df64b1}{timepoint} \hyperlink{init_8cpp_a7995d0e6f6203414b6d3a587cd914ccd}{current\+\_\+t} = 0
+\begin{DoxyCompactList}\small\item\em Current model time point. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{init_8cpp_af6fef9c00468567be81aa35cbd9954f8}\label{init_8cpp_af6fef9c00468567be81aa35cbd9954f8}} 
+long int \hyperlink{init_8cpp_af6fef9c00468567be81aa35cbd9954f8}{n\+\_\+events} = 0
+\begin{DoxyCompactList}\small\item\em No. of events that occurred so far. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{init_8cpp_a469af6042c7f42fa196518b3891eaf99}\label{init_8cpp_a469af6042c7f42fa196518b3891eaf99}} 
+\hyperlink{structtricl_1_1event}{event} \hyperlink{init_8cpp_a469af6042c7f42fa196518b3891eaf99}{current\+\_\+ev} = \{\}
+\begin{DoxyCompactList}\small\item\em Current event. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{init_8cpp_adf40548238257ccb72ce250dc8d24ecb}\label{init_8cpp_adf40548238257ccb72ce250dc8d24ecb}} 
+\hyperlink{structtricl_1_1event__data}{event\+\_\+data} $\ast$ \hyperlink{init_8cpp_adf40548238257ccb72ce250dc8d24ecb}{current\+\_\+evd\+\_\+} = N\+U\+LL
+\begin{DoxyCompactList}\small\item\em Pointer to event data of current event. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{init_8cpp_afde1d602246c7190d16eb890ee87f35b}\label{init_8cpp_afde1d602246c7190d16eb890ee87f35b}} 
+unordered\+\_\+map$<$ \hyperlink{namespacetricl_afd4de3aedd5e48cf955f03457386e98f}{entity\+\_\+type}, vector$<$ \hyperlink{namespacetricl_a57273122278e8b301844e2a2e1f0742f}{entity} $>$ $>$ \hyperlink{init_8cpp_afde1d602246c7190d16eb890ee87f35b}{et2es} = \{\}
+\begin{DoxyCompactList}\small\item\em Inverse of e2et. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{init_8cpp_a75a5d043ba4e509c67453695e7e5529c}\label{init_8cpp_a75a5d043ba4e509c67453695e7e5529c}} 
+unordered\+\_\+map$<$ \hyperlink{namespacetricl_a57273122278e8b301844e2a2e1f0742f}{entity}, \hyperlink{namespacetricl_ab38d0de463e15641fa11e175c60a265e}{outleg\+\_\+set} $>$ \hyperlink{init_8cpp_a75a5d043ba4e509c67453695e7e5529c}{e2outs} = \{\}
+\begin{DoxyCompactList}\small\item\em Set of current outlegs by source entity. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{init_8cpp_a8b3b3d5adbc11b8004154a178ff6b72b}\label{init_8cpp_a8b3b3d5adbc11b8004154a178ff6b72b}} 
+unordered\+\_\+map$<$ \hyperlink{namespacetricl_a57273122278e8b301844e2a2e1f0742f}{entity}, \hyperlink{namespacetricl_a024e365a54b0a7ed2094f9d452d52a84}{inleg\+\_\+set} $>$ \hyperlink{init_8cpp_a8b3b3d5adbc11b8004154a178ff6b72b}{e2ins} = \{\}
+\begin{DoxyCompactList}\small\item\em Set of current inlegs by source entity (redundant, but essential for performance) \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{init_8cpp_a350c4ac6a5a928c3d633cb168a210370}\label{init_8cpp_a350c4ac6a5a928c3d633cb168a210370}} 
+unordered\+\_\+map$<$ \hyperlink{structtricl_1_1link__type}{link\+\_\+type}, long int $>$ \hyperlink{init_8cpp_a350c4ac6a5a928c3d633cb168a210370}{lt2n} = \{\}
+\begin{DoxyCompactList}\small\item\em No. of current (non-\/id.) links by type incl. inverse relationships. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{init_8cpp_a2a10752aad7e37dad675c09c1d82d2bd}\label{init_8cpp_a2a10752aad7e37dad675c09c1d82d2bd}} 
+long int \hyperlink{init_8cpp_a2a10752aad7e37dad675c09c1d82d2bd}{n\+\_\+links} = 0
+\begin{DoxyCompactList}\small\item\em Total no. of current (non-\/id.) links incl. inverse relationships. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{init_8cpp_aa5d2c58e453251cc00477f3c945d7597}\label{init_8cpp_aa5d2c58e453251cc00477f3c945d7597}} 
+long int \hyperlink{init_8cpp_aa5d2c58e453251cc00477f3c945d7597}{n\+\_\+angles} = 0
+\begin{DoxyCompactList}\small\item\em Total no. of current (non-\/id.) angles that may influence at least one event. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{init_8cpp_abd93dcd3ef051b923d28ab67c676e0bb}\label{init_8cpp_abd93dcd3ef051b923d28ab67c676e0bb}} 
+unordered\+\_\+map$<$ \hyperlink{structtricl_1_1event}{event}, \hyperlink{structtricl_1_1event__data}{event\+\_\+data} $>$ \hyperlink{init_8cpp_abd93dcd3ef051b923d28ab67c676e0bb}{ev2data} = \{\}
+\begin{DoxyCompactList}\small\item\em Data of all currently scheduled events. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{init_8cpp_ad341486e8758a34dc041b76c3da467b8}\label{init_8cpp_ad341486e8758a34dc041b76c3da467b8}} 
+map$<$ \hyperlink{namespacetricl_a720ff6a29f998e11e1d3622fc8df64b1}{timepoint}, \hyperlink{structtricl_1_1event}{event} $>$ \hyperlink{init_8cpp_ad341486e8758a34dc041b76c3da467b8}{t2ev} = \{\}
+\begin{DoxyCompactList}\small\item\em Current schedule of events, inverse of ev2data\mbox{[}ev\mbox{]}.t. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Do initialization tasks before simulation, after configuration. 
+

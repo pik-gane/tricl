@@ -10,8 +10,7 @@ Performance-\/critical inline functions for handling of events.
 {\ttfamily \#include \char`\"{}probability.\+h\char`\"{}}\newline
 {\ttfamily \#include \char`\"{}io.\+h\char`\"{}}\newline
 {\ttfamily \#include \char`\"{}debugging.\+h\char`\"{}}\newline
-Include dependency graph for event.\+h\+:
-\nopagebreak
+Include dependency graph for event.\+h\+:\nopagebreak
 \begin{figure}[H]
 \begin{center}
 \leavevmode
@@ -23,7 +22,7 @@ This graph shows which files directly or indirectly include this file\+:
 \begin{figure}[H]
 \begin{center}
 \leavevmode
-\includegraphics[width=286pt]{d1/d41/event_8h__dep__incl}
+\includegraphics[width=350pt]{d1/d41/event_8h__dep__incl}
 \end{center}
 \end{figure}
 \subsection*{Functions}
@@ -81,7 +80,9 @@ See \hyperlink{data__model_8h}{data\+\_\+model.\+h} for how a \hyperlink{structt
 
 Add (and then schedule) an event. 
 
+To determine the effective rate of the event, all influencing angles must be identified.
 
+This is a performance-\/critical function, using a large share of the model\textquotesingle{}s C\+PU time. 
 \begin{DoxyParams}[1]{Parameters}
 \mbox{\tt in}  & {\em ev} & the event to be added \\
 \hline

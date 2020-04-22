@@ -1,0 +1,53 @@
+\hypertarget{graphviz_8cpp}{}\section{src/graphviz.cpp File Reference}
+\label{graphviz_8cpp}\index{src/graphviz.\+cpp@{src/graphviz.\+cpp}}
+
+
+Generate some overview diagrams using graphviz.  
+
+
+{\ttfamily \#include \char`\"{}global\+\_\+variables.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}graphviz.\+h\char`\"{}}\newline
+Include dependency graph for graphviz.\+cpp\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{d9/d34/graphviz_8cpp__incl}
+\end{center}
+\end{figure}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{graphviz_8cpp_aaf394e6a5fed99d06e917a7e211d3aa3}\label{graphviz_8cpp_aaf394e6a5fed99d06e917a7e211d3aa3}} 
+void \hyperlink{graphviz_8cpp_aaf394e6a5fed99d06e917a7e211d3aa3}{do\+\_\+graphviz\+\_\+type\+\_\+diagram} ()
+\begin{DoxyCompactList}\small\item\em Draw a type diagram containing all entity and relationship or action types. \end{DoxyCompactList}\item 
+void \hyperlink{graphviz_8cpp_af545e1fea7609a2adf8361bdc20c60cb}{do\+\_\+graphviz\+\_\+dynamics\+\_\+diagram} ()
+\begin{DoxyCompactList}\small\item\em Draw a modularized diagram showing the dynamic rules of the model. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{graphviz_8cpp_add89cd1e17640f583614ec489941b992}\label{graphviz_8cpp_add89cd1e17640f583614ec489941b992}} 
+void \hyperlink{graphviz_8cpp_add89cd1e17640f583614ec489941b992}{do\+\_\+graphviz\+\_\+diagrams} ()
+\begin{DoxyCompactList}\small\item\em Generate all diagrams. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{graphviz_8cpp_a6043750717e6c3815163bf21ff76eb94}\label{graphviz_8cpp_a6043750717e6c3815163bf21ff76eb94}} 
+ofstream \hyperlink{graphviz_8cpp_a6043750717e6c3815163bf21ff76eb94}{dot}
+\begin{DoxyCompactList}\small\item\em the respective output streams \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Generate some overview diagrams using graphviz. 
+
+This depends on \href{https://www.graphviz.org/}{\tt https\+://www.\+graphviz.\+org/} and will generate pdf files. Filenames start with the prefix specified in the config file as \char`\"{}diagram prefix\char`\"{}. 
+
+\subsection{Function Documentation}
+\mbox{\Hypertarget{graphviz_8cpp_af545e1fea7609a2adf8361bdc20c60cb}\label{graphviz_8cpp_af545e1fea7609a2adf8361bdc20c60cb}} 
+\index{graphviz.\+cpp@{graphviz.\+cpp}!do\+\_\+graphviz\+\_\+dynamics\+\_\+diagram@{do\+\_\+graphviz\+\_\+dynamics\+\_\+diagram}}
+\index{do\+\_\+graphviz\+\_\+dynamics\+\_\+diagram@{do\+\_\+graphviz\+\_\+dynamics\+\_\+diagram}!graphviz.\+cpp@{graphviz.\+cpp}}
+\subsubsection{\texorpdfstring{do\+\_\+graphviz\+\_\+dynamics\+\_\+diagram()}{do\_graphviz\_dynamics\_diagram()}}
+{\footnotesize\ttfamily void do\+\_\+graphviz\+\_\+dynamics\+\_\+diagram (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Draw a modularized diagram showing the dynamic rules of the model. 
+
+Each link type gets one panel with two subpanels for establishment and termination events for this link type. Each subpanel shows all angles influencing the event, annotated with the attempt rate and success probability units contributed by this influence type. 
