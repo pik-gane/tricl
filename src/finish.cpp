@@ -1,8 +1,6 @@
-/*
- * finish.cpp
+/** Do stuff at end of the simulation.
  *
- *  Created on: Mar 27, 2020
- *      Author: heitzig
+ *  \file
  */
 
 #include "global_variables.h"
@@ -11,16 +9,23 @@
 #include "gexf.h"
 #include "finish.h"
 
+/** Do stuff at end of the simulation.
+ */
 void finish ()
 {
-    current_t = max_t;
+    // forward to end of simulation time:
+    current_t = max_t;  // TODO: do we need this?
+
     if (verbose) {
         cout << "\nat t=" << current_t << ", " << t2ev.size() << " events on stack: " << endl;
         for (auto& [t, ev] : t2ev) {
             cout << " " << ev << " at " << t << endl;
         }
     }
-    log_status();
+    log_state();
+    cout << endl;
+
     finish_gexf();
+
     if (debug) verify_data_consistency();
 }

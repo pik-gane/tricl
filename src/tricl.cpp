@@ -42,9 +42,8 @@
  * - add more random network models
  *
  * convenience:
- * - improve quiet status output
- * - remove redundant output from init that is already printed in config
  * - support custom prefixes for entity label generation
+ * - check whether in finish(), current_t = max_t is correct
  *
  * optimization:
  * - use const args as much as possible in inner loops (?)
@@ -52,6 +51,11 @@
  * - speed up probability2probunits by precomputing probability for events with constant success probability
  * - think of partial parallelization
  *
+ * input/output:
+ * - include metadata into gexf files
+ * - support "premerged" edges in gexf via <spells><spell start="..." end="..."></spell>...</spells>
+ * - support prespecified positions in visualization, see here: <https://github.com/gephi/gephi/issues/2038>
+ * - support entity type detection from columns in csv file
  *
  * Terminology
  * ===========

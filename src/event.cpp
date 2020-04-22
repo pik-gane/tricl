@@ -19,6 +19,10 @@
 
 /** Add (and then schedule) an event.
  *
+ *  To determine the effective rate of the event, all influencing angles
+ *  must be identified.
+ *
+ *  This is a performance-critical function, using a large share of the model's CPU time.
  */
 void add_event (
         event& ev  ///< [in] the event to be added
@@ -95,6 +99,7 @@ void add_event (
         // -- non-termination events without influences are handled via summary events to keep maps sparse):
         if ((ec == EC_TERM) || (na > 0)) {
             assert (ev2data.count(ev) == 0);
+
             // register its data, at first with t=-inf (will be set upon scheduling):
             ev2data[ev] = { .n_angles = na, .attempt_rate = max(0.0, ar), .success_probunits = spu, .t = -INFINITY };
             if (debug) cout << "      attempt rate " << ar << ", success prob. " << probunits2probability(spu, evt2left_tail.at(evt), evt2right_tail.at(evt)) << endl;
@@ -116,8 +121,10 @@ void remove_event (
         )
 {
     assert (event_is_scheduled(ev, evd_));
-    t2ev.erase(evd_->t);
-    ev2data.erase(ev);
+
+    // keep t2ev and ev2data consistent:
+    t2ev.erase(evd_->t); ev2data.erase(ev);
+
     if (debug) cout << "        removed event: " << ev << " scheduled at " << evd_->t << endl;
 }
 
@@ -219,7 +226,7 @@ void perform_event (
     if (ec == EC_EST) {
         add_link(l);
     } else {
-        del_link(l);
+        delete_link(l);
     }
     // FINALLY update all adjacent events (including the reverse event) to reflect the change:
     update_adjacent_events(ev);
@@ -243,7 +250,7 @@ void perform_event (
         } else {
             if (debug) cout << " performing companion event: deleting inverse link \"" << e2label[e3]
                 << " " << rat2label[rat31] << " " << e2label[e1] << "\"" << endl;
-            del_link(inv_l);
+            delete_link(inv_l);
         }
         // FINALLY update all adjacent events (including the reverse event) to reflect the change:
         update_adjacent_events(companion_ev);
@@ -271,7 +278,7 @@ bool pop_next_event ()
         // get handle of earliest next scheduled event:
         auto tev = t2ev.begin();
         if (tev == t2ev.end()) { // no events are scheduled --> model has converged
-            log_status();
+            log_state();
             // jump to end
             current_t = max_t;
             return false;
@@ -349,7 +356,7 @@ bool pop_next_event ()
                     if (uniform(random_variable) < conditional_success_probability) { // success
                         // "return" event:
                         current_ev = actual_ev;
-                        if (!quiet) log_status();
+                        log_state();
                         found = true;
                     } else {
                         if (verbose) cout << "at t=" << current_t << " " << actual_ev << " did not succeed" << endl;
@@ -363,7 +370,7 @@ bool pop_next_event ()
         {
             // register event as current event:
             current_ev = ev;
-            if (!quiet) log_status();
+            log_state();
             auto evd_ = current_evd_ = &ev2data.at(ev);
             // remove it from all relevant data:
             remove_event(ev, evd_);

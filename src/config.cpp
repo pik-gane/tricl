@@ -364,13 +364,13 @@ void read_config (
     // named initial links:
     n = c["initial links"]["named"];
     if (n) {
-        if (verbose) cout << "named initial links:" << endl;
+        if (verbose) cout << " named initial links:" << endl;
         for (YAML::const_iterator it = n.begin(); it != n.end(); ++it) {
             if (!it->IsSequence()) throw "yaml subfield 'named' of 'initial links' must be a sequence";
             string e1label = (*it)[0].as<string>(),
                     rat13label = (*it)[1].as<string>(),
                     e3label = (*it)[2].as<string>();
-            if (verbose) cout << " " << e1label << " " << rat13label << " " << e3label << endl;
+            if (verbose) cout << "  " << e1label << " " << rat13label << " " << e3label << endl;
             try {
                 auto e1 = label2e.at(e1label), e3 = label2e.at(e3label);
                 auto rat13 = label2rat.at(rat13label);
@@ -387,26 +387,29 @@ void read_config (
     // random initial links:
     n1 = c["initial links"]["random"];
     if (n1) {
-        if (verbose) cout << "random initial links:" << endl;
+        if (verbose) cout << " random initial links for:" << endl;
         if (!n1.IsMap()) throw "yaml subfield 'random' of 'initial links' must be a map";
         for (YAML::const_iterator it1 = n1.begin(); it1 != n1.end(); ++it1) {
             auto lt = it1->first;
             if (!lt.IsSequence()) throw "keys in yaml map 'named' of 'initial links' must be of the form [entity type, relationship or action type, entity type]";
-            if (verbose) cout << " " << lt[0].as<string>() << " " << lt[1].as<string>() << " " << lt[2].as<string>() << endl;
+            if (verbose) cout << "  " << lt[0].as<string>() << " " << lt[1].as<string>() << " " << lt[2].as<string>() << endl;
             try {
                 auto et1 = label2et.at(lt[0].as<string>()),
                         et3 = label2et.at(lt[2].as<string>());
                 auto rat = label2rat.at(lt[1].as<string>());
                 auto spec = it1->second;
                 if (!spec.IsMap()) throw "values in yaml map 'named' of 'initial links' must be maps";
-                if (spec["density"] || spec["probability"]) { // Erdös-Renyi random graph, treated as block model with one block
+                if (spec["density"] || spec["probability"])
+                { // Erdös-Renyi random graph, treated as block model with one block
                     auto pw = parse_double((spec["density"] ? spec["density"] : spec["probability"]).as<string>());
                     if (!((0.0 <= pw) && (pw <= 1.0))) throw "'density'/'probability' must be between 0.0 and 1.0";
     //                auto rate = spec["rate"] ? spec["rate"].as<double>() : 1.0; // TODO: for action types
                     et2n_blocks[et1] = et2n_blocks[et3] = 1;
                     lt2initial_prob_within[{et1, rat, et3}] = pw;
                     lt2initial_prob_between[{et1, rat, et3}] = 0.0;
-                } else if (spec["blocks"]) {
+                }
+                else if (spec["blocks"])
+                {
                     if (et1 == et3) { // symmetric block model
                         int n = parse_int(spec["blocks"].as<string>());
                         // TODO: allow list of "sizes"
@@ -422,7 +425,9 @@ void read_config (
                         // TODO
                         throw "sorry, block model for asymmetric relationship or action types not supported yet!";
                     }
-                } else if (spec["dimension"]) {
+                }
+                else if (spec["dimension"])
+                {
                     // TODO: make sure no conflicts between several spatial models for same entity types!
                     int dim = parse_int(spec["dimension"].as<string>());
                     // TODO: allow list of "widths"
@@ -447,7 +452,7 @@ void read_config (
             auto n2 = it1->second;
             if ((key != "named") && (key != "random")) {
                 auto filename = key;
-                if (verbose) cout << "reading initial links from file " << filename << " ..." << endl;
+                if (verbose) cout << " reading initial links from file " << filename << " ..." << endl;
                 auto ext = filename.substr(filename.find_last_of(".") + 1);
                 if (ext == "csv") {
                     string et1label, rat13label, et3label;
@@ -482,14 +487,22 @@ void read_config (
                     int skip = n2["skip"] ? (parse_int(n2["skip"].as<string>())) : 0;
                     int max = n2["max"] ? (parse_int(n2["max"].as<string>())) : (INT_MAX - 1);
                     char delimiter = n2["delimiter"] ? n2["delimiter"].as<char>() : ',';
-                    string prefix = n2["prefix"] ? n2["prefix"].as<string>() : ""; // TODO: distinguish source, target prefixes
+                    string e1_prefix = "", e3_prefix = "";
+                    if (n2["prefix"]) {
+                        if (n2["prefix"].IsSequence()) {
+                            e1_prefix = n2["prefix"][0].as<string>();
+                            e3_prefix = n2["prefix"][0].as<string>();
+                        } else {
+                            e1_prefix = e3_prefix = n2["prefix"].as<string>();
+                        }
+                    }
                     auto cols = n2["cols"];
                     read_links_csv (filename, skip, max, delimiter,
                             cols[0].as<int>(),
                             (rat13 == NO_RAT) ? parse_int(cols[1].as<string>()) : -1,
                             (rat13 == NO_RAT) ? parse_int(cols[2].as<string>()) : parse_int(cols[1].as<string>()),
                             et1_default, rat13, et3_default,
-                            prefix);
+                            e1_prefix, e3_prefix);
                 } else {
                     throw "unsupported file extension";
                 }
@@ -499,13 +512,13 @@ void read_config (
     }
 
     // dynamics:
-    if (verbose) cout << "dynamics:" << endl;
+    if (verbose) cout << " dynamics:" << endl;
     n1 = c["dynamics"];
     if (!n1.IsMap()) throw "yaml field 'dynamics' must be a map";
     for (YAML::const_iterator it1 = n1.begin(); it1 != n1.end(); ++it1) {
         auto lt = it1->first;
         if (!lt.IsSequence()) throw "keys in yaml map 'dynamics' must be of the form [entity type, relationship or action type, entity type]";
-        if (verbose) cout << " " << lt[0].as<string>() << " " << lt[1].as<string>() << " " << lt[2].as<string>() << endl;
+        if (verbose) cout << "  " << lt[0].as<string>() << " " << lt[1].as<string>() << " " << lt[2].as<string>() << endl;
         try {
             auto et1l = lt[0].as<string>(), et3l = lt[2].as<string>();
             auto et1 = label2et.at(et1l), et3 = label2et.at(et3l);

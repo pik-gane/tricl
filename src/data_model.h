@@ -148,6 +148,10 @@ struct entity_type_pair
 
 /** A link encodes either the existence of a certain relationship between two entities
  *  (or the cumulative impact of all past actions of a certain type between two entities -- not yet implemented).
+ *
+ *  This struct is named "tricllink" rather than "link" since otherwise it collided with
+ *  something in boost/container/flat_set.h even though we have our own namespace.
+ *  TODO: understand why
  */
 struct tricllink
 {

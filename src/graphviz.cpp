@@ -1,8 +1,10 @@
-/*
- * graphviz.cpp
+/** Generate some overview diagrams using graphviz
  *
- *  Created on: Apr 14, 2020
- *      Author: heitzig
+ *  \file
+ *
+ *  This depends on <https://www.graphviz.org/> and will generate pdf files.
+ *  Filenames start with the prefix specified in the config file
+ *  as "diagram prefix".
  */
 
 /*
@@ -13,13 +15,16 @@
 #include "global_variables.h"
 #include "graphviz.h"
 
-ofstream dot;
+ofstream dot;  ///< the respective output streams
 
+/** Draw a type diagram containing all entity and relationship or action types
+ */
 void do_graphviz_type_diagram ()
 {
     auto dotname = diagram_fileprefix + "_types.dot",
             pdfname = diagram_fileprefix + "_types.pdf";
-    // compose graphviz dot file:
+
+    // compose graphviz input file in "dot" language:
     dot.open(dotname);
     dot << "digraph types {" << endl;
     dot << " rankdir=\"LR\"" << endl << " ranksep=2.0" << endl;
@@ -35,11 +40,12 @@ void do_graphviz_type_diagram ()
     }
     dot << "}" << endl;
     dot.close();
-    // use graphviz dot to render pdf:
+
+    // use graphviz program "dot" to render a pdf:
     string prg = "dot", cmd;
     if (true || debug) {
         cmd = prg + " -v -Tpdf -o\"" + pdfname + "\" \"" + dotname + "\" >\"" + diagram_fileprefix + "_types.log\" 2>&1";
-        cout << " rendering type diagram via command: " << cmd << endl;
+        if (!quiet) cout << " rendering type diagram via command: " << cmd << endl;
     } else {
         cmd = prg + " -Tpdf -o\"" + pdfname + "\" \"" + dotname + "\"";
     }
@@ -47,11 +53,20 @@ void do_graphviz_type_diagram ()
         cout << "WARNING: could not render type diagram. Is graphviz installed?" << endl;;
 }
 
+/** Draw a modularized diagram showing the dynamic rules of the model.
+ *
+ *  Each link type gets one panel
+ *  with two subpanels for establishment and termination events for this link type.
+ *  Each subpanel shows all angles influencing the event,
+ *  annotated with the attempt rate and success probability units
+ *  contributed by this influence type.
+ */
 void do_graphviz_dynamics_diagram ()
 {
     auto dotname = diagram_fileprefix + "_dynamics.dot",
             pdfname = diagram_fileprefix + "_dynamics.pdf";
-    // compose graphviz dot file:
+
+    // compose graphviz input file in "dot" language:
     dot.open(dotname);
     dot << "digraph dynamics {" << endl;
     dot << " rankdir=\"LR\"" << endl << " ranksep=0.5" << endl;
@@ -112,13 +127,15 @@ void do_graphviz_dynamics_diagram ()
         }
         dot << " }" << endl;
     }
+    // footnote legend:
     dot << " label = \"* AR = attempt rate, TI = tail indices, SPU = success probability units\"; labelloc = \"b\";" << endl << "}" << endl;
     dot.close();
-    // use graphviz dot to render pdf:
+
+    // use graphviz program "dot" to render a pdf:
     string prg = "dot", cmd;
     if (true || debug) {
         cmd = prg + " -v -Tpdf -o\"" + pdfname + "\" \"" + dotname + "\" >\"" + diagram_fileprefix + "_dynamics.log\" 2>&1";
-        cout << " rendering dynamics diagram via command: " << cmd << endl;
+        if (!quiet) cout << " rendering dynamics diagram via command: " << cmd << endl;
     } else {
         cmd = prg + " -Tpdf -o\"" + pdfname + "\" \"" + dotname + "\"";
     }
@@ -126,6 +143,8 @@ void do_graphviz_dynamics_diagram ()
         cout << "WARNING: could not render dynamics diagram. Is graphviz installed?" << endl;;
 }
 
+/** Generate all diagrams.
+ */
 void do_graphviz_diagrams ()
 {
     if (diagram_fileprefix != "") {

@@ -108,6 +108,7 @@ inline void add_or_delete_angle (
  *
  *  This is one of the performance bottleneck functions
  *  since it is called by \ref add_or_delete_angle().
+ *  It uses a large share of the model's CPU time.
  *
  *  (code was adapted from adapted from set_intersection template)
  *

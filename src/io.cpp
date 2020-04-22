@@ -1,10 +1,9 @@
-/*
- * io.cpp
+/** Handling of input/output other than gexf and graphviz.
  *
- *  Created on: Mar 27, 2020
- *      Author: heitzig
+ *  \file
  */
 
+// use header-only csv library:
 #include "3rdparty/rapidcsv.h"
 
 #include "global_variables.h"
@@ -12,6 +11,7 @@
 #include "event.h"
 #include "io.h"
 
+// overloaded streaming operators need to live in our special namespace:
 namespace tricl {
 
 ostream& operator<< (ostream& os, const link_type& lt) {
@@ -55,19 +55,27 @@ ostream& operator<< (ostream& os, const event_data& evd) {
     return os;
 }
 
-}
+} // end of namespace tricl
 
-void log_status ()
+
+/** Output simple statistics for current model state to stdout.
+ */
+void log_state ()
 {
     double
-        ne = (double) max_e,
-        nl = (double) n_links,
-        na = (double) n_angles,
-        ld = nl / (ne * ne),
-        ad = na / (ne * ne * ne),
-        q = (ld > 0.0) ? ad / (ld*ld) : 0.0
+        ne = (double) max_e,                 ///< no. past events
+        nl = (double) n_links,               ///< current no. (non-id.) links
+        na = (double) n_angles,              ///< current no. angles influencing at least one event
+        ld = nl / (ne * ne),                 ///< overall link density
+        ad = na / (ne * ne * ne),            ///< overall angle density
+        q = (ld > 0.0) ? ad / (ld*ld) : 0.0  ///< quotient between angle density and "expected angle density" (square of link density)
         ;
-    if (lt2n.size() > 1) {
+    if (quiet)
+    {
+        cout << fixed << n_events << ": ld " << ld << ", ad " << ad << ", q " << q << ".  t " << current_t << "\r";
+    }
+    else if (lt2n.size() > 1)
+    {
         cout << endl << fixed << n_events;
         for (auto& [lt, n] : lt2n) {
             auto rat13 = lt.rat13, rat31 = rat2inv.at(rat13);
@@ -77,25 +85,42 @@ void log_status ()
         }
         cout << " | stats: ld " << ld << ", ad " << ad << ", q " << q << endl;
         if (current_t < max_t) cout << "at t=" << current_t << " " << current_ev << defaultfloat << endl;
-    } else {
+    }
+    else
+    {
         cout << fixed << n_events << ": ld " << ld << ", ad " << ad << ", q " << q;
         if (current_t < max_t) cout << ".  t " << current_t << ": " << current_ev << defaultfloat;
         cout << endl;
     }
 }
 
+/** Read initial links from a csv file.
+ *
+ *  The file could either contain links of just one type,
+ *  in which case you specify two columns (containing the source and target entity labels);
+ *  or links of various types,
+ *  in which case you also specify a column for the relationship or action type.
+ *
+ *  If entity labels occur that have not been registered, they are assigned to
+ *  the entity type given by et1_default or et3_default, respectively.
+ *
+ *  Entity labels from the file are prefixed by e_prefix before storing them in tricl,
+ *  e.g. the file might contain label "1" and you want it to be treated as "agent 1",
+ *  so put e1_prefix = "agent ";
+ */
 void read_links_csv (
-        string filename,    ///< name of infile
-        int skip_rows,      ///< no. of rows to skip at start of file (e.g. header lines)
-        int max_rows,       ///< no. of rows to read at most
-        char delimiter,     ///< delimiter, e.g. " " or "," or "\t"
-        int e1_col,         ///< no. of column containing e1 labels
-        int rat13_col,      ///< no. of column containing rat13 labels (or -1 if type is fixed to value of "rat13_fixed")
-        int e3_col,         ///< no. of column containing e3 labels
-        entity_type et1_default, ///< default entity-type for previously unregistered e1s (if -1, no new e1s are allowed)
-        relationship_or_action_type rat13_fixed, ///< fixed type if rat13_col == -1 (otherwise NO_RAT)
-        entity_type et3_default, ///< default entity-type for previously unregistered e3s (if -1, no new e3s are allowed)
-        string e_prefix     ///< prefix to prepend to entity labels before storing them
+        string filename,    ///< [in] name of infile
+        int skip_rows,      ///< [in] no. of rows to skip at start of file (e.g. header lines)
+        int max_rows,       ///< [in] no. of rows to read at most
+        char delimiter,     ///< [in] delimiter, e.g. " " or "," or "\t"
+        int e1_col,         ///< [in] no. of column containing e1 labels
+        int rat13_col,      ///< [in] no. of column containing rat13 labels (or -1 if type is fixed to value of "rat13_fixed")
+        int e3_col,         ///< [in] no. of column containing e3 labels
+        entity_type et1_default, ///< [in] default entity-type for previously unregistered e1s (if -1, no new e1s are allowed)
+        relationship_or_action_type rat13_fixed, ///< [in] fixed type if rat13_col == -1 (otherwise NO_RAT)
+        entity_type et3_default, ///< [in] default entity-type for previously unregistered e3s (if -1, no new e3s are allowed)
+        string e1_prefix,   ///< [in] prefix to prepend to e1 labels before storing them
+        string e3_prefix    ///< [in] prefix to prepend to e3 labels before storing them
         )
 {
     rapidcsv::Document doc(filename,
@@ -110,7 +135,7 @@ void read_links_csv (
     if (rat13_col >= 0) rat13labels = doc.GetColumn<string>(rat13_col);
     for (int row = skip_rows; row < min(nrows, skip_rows+max_rows); row++) {
         if (debug) cout << "row " << row << " " << e1labels[row] << " " << e3labels[row] << endl;
-        auto e1label = e_prefix + e1labels[row], e3label = e_prefix + e3labels[row];
+        auto e1label = e1_prefix + e1labels[row], e3label = e3_prefix + e3labels[row];
         entity e1, e3;
         if (label2e.count(e1label) == 0) {
             if (et1_default == -1) throw "unknown entity " + e1label;
@@ -133,6 +158,8 @@ void read_links_csv (
     }
 }
 
+/** (for debugging purposes)
+ */
 void dump_links () {
     cout << "e2outs:" << endl;
     for (auto& [e1, outs1] : e2outs) {
@@ -144,7 +171,9 @@ void dump_links () {
     }
 }
 
-void dump_data () // dump important data to stdout for debugging
+/** (for debugging purposes)
+ */
+void dump_data ()
 {
     dump_links();
     cout << "t2be:" << endl;

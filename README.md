@@ -226,6 +226,10 @@ License
 Change log
 ----------
 
+2020-04-23
+- improved log output
+- in csv input, different prefixes for source and target entity labels can be used
+
 2020-04-22
 - added command-line options --quiet, --verbose, --seed X overriding the config file options
 

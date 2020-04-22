@@ -1,8 +1,6 @@
-/*
- * init.cpp
+/** Do initialization tasks before simulation, after configuration.
  *
- *  Created on: Mar 27, 2020
- *      Author: heitzig
+ *  \file
  */
 
 #include "global_variables.h"
@@ -47,14 +45,10 @@ unordered_map<event, event_data> ev2data = {};
 map<timepoint, event> t2ev = {};  // kept to equal inverse of ev2data.t
 
 
+/** Set up the redundant auxiliary data stores.
+ */
 void init_data ()
 {
-    if (debug) {
-        verbose = true;
-    }
-    if (verbose) {
-        quiet = false;
-    }
     // init with zeroes:
     for (int i=0; i<MAX_N_INFLT; i++) {
         _inflt2delta_probunits[i] = _inflt2attempt_rate[i] = 0;
@@ -70,6 +64,8 @@ void init_data ()
     }
 }
 
+/** Prepare all entities.
+ */
 void init_entities ()
 {
     // inspect pre-registered entities:
@@ -98,6 +94,8 @@ void init_entities ()
     if (max_e >= 1<<E_BITS) throw "too many entities (recompile with larger E_BITS?)";
 }
 
+/** Analyse relationship or action types.
+ */
 void init_relationship_or_action_types ()
 {
     // verify symmetry of relationship inversion map:
@@ -125,6 +123,8 @@ void init_relationship_or_action_types ()
     n_rats = rat2label.size();
 }
 
+/** Set up initial schedule of summary events.
+ */
 void init_events ()
 {
 
@@ -173,6 +173,8 @@ void init_events ()
     if (!quiet) cout << "  ...done."<< endl;
 }
 
+/** Add all initial links and corresponding events.
+ */
 void init_links ()
 {
     if (!quiet) cout << " perform events that add initial links..." << endl;
@@ -249,6 +251,8 @@ void init_links ()
     if (!quiet) cout << "  ...done."<< endl;
 }
 
+/** Perform all initialization tasks.
+ */
 void init ()
 {
     cout << "INITIALIZING..." << endl;
@@ -267,5 +271,4 @@ void init ()
     }
     cout << "...INITIALIZATION FINISHED." << endl << endl;
 }
-
 

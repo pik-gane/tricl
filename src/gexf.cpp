@@ -1,54 +1,94 @@
-/*
- * *gexf.cpp
+/** Handling of gexf and gexf.gz temporal graph output files.
  *
- *  Created on: Mar 27, 2020
- *      Author: heitzig
+ *  \file
+ *
+ *  e.g. to be used by Gephi
+ *
+ *  In the gexf output files, each entity is represented by a node,
+ *  and each time interval at which a link existed is represented by
+ *  a directed edge whose id, start and end attributes encode the time interval.
+ *  Symmetric relationships/actions are thus represented by two directed edges.
+ *
+ *  Depending on the analysis performed, edges might have to be "merged"
+ *  to a single edge representing all time intervals of the link at once in Gephi.
+ *  However, since gephi does not sufficiently support multiplex graphs,
+ *  this merging will also merge links of different relationship or action type
+ *  between the same source and target entities into one link.
+ *
+ *  By default, all relationship or action types go to the main output file,
+ *  but via the config file, individual types can also be suppressed or
+ *  redirected to other files.
+ *  (Note that gephi allows uniting several files into one workspace.)
  */
-
-/*
- * TODO:
- * - include metadata into gexf files
- */
-
-#define BOOST_IOSTREAMS_NO_LIB
 
 #include "global_variables.h"
 #include "gexf.h"
+
+// tell boost header files to use gzip and zlib instead of their own libs:
+#define BOOST_IOSTREAMS_NO_LIB
 #include <boost/iostreams/filtering_streambuf.hpp>
 #include <boost/iostreams/filter/gzip.hpp>
 
-unordered_map<string, bool> gexf_is_gz;
-unordered_map<string, ofstream> gexf_direct, gexf_indirect;
-unordered_map<string, boost::iostreams::filtering_streambuf<boost::iostreams::output>> gexf_buf;
-ostream* gexf(NULL);
-unordered_map<tricl::tricllink, timepoint> gexf_edge2start = {};
+unordered_map<string, bool> gexf_is_gz;  ///< whether an output file is gzip-compressed
+unordered_map<string, ofstream> gexf_uncompressed, gexf_compressed;  ///< streams for uncompressed and compressed output
+unordered_map<string, boost::iostreams::filtering_streambuf<boost::iostreams::output>> gexf_buf;  ///< buffer for compressed output
+ostream* gexf(NULL);  ///< actual stream to write to
 
-void init_gexf () {
+unordered_map<tricl::tricllink, timepoint> gexf_edge2start = {};  ///< Time of establishment of edge
+
+/** \returns the stream to write to.
+ *
+ *  NOTE: for some reason this apparently cannot be stored permanently in a global variable between writes.
+ */
+inline ostream* get_stream (string fn, bool is_gz)
+{
+    if (is_gz) {
+        ostream gexf_gz(&(gexf_buf[fn]));
+        gexf = (ostream*)(&gexf_gz);
+    } else {
+        gexf = (ostream*)(&(gexf_uncompressed[fn]));
+    }
+    return gexf;
+}
+
+/** Prepare gexf output.
+ *
+ *  Opens files, streams, buffers and outputs file headers with all entities.
+ */
+void init_gexf ()
+{
+    if (verbose) cout << " prepare gexf output files:" << endl;
     // open files:
     for (auto& [rat13, fn] : gexf_filename) {
         if ((fn != "") && (gexf_is_gz.count(fn)==0)) {
+            // get file extension:
             auto ext = fn.substr(fn.find_last_of(".") + 1);
-            if (ext == "gexf") {
+            if (ext == "gexf")
+            {
+                // uncompressed
                 gexf_is_gz[fn] = false;
-                gexf_direct[fn].open(fn);
-            } else {
-                gexf_is_gz[fn] = true;
-                if (ext != "gz") throw "files:gexf must end with .gexf or .gexf.gz";
-                gexf_indirect[fn] = ofstream(fn, std::ios_base::out | std::ios_base::binary | std::ios_base::trunc);
-                gexf_buf[fn].push(boost::iostreams::gzip_compressor());
-                gexf_buf[fn].push(gexf_indirect[fn]);
+                gexf_uncompressed[fn].open(fn);
             }
+            else if (ext == "gz")
+            {
+                // compressed
+                gexf_is_gz[fn] = true;
+                gexf_compressed[fn] = ofstream(fn, std::ios_base::out | std::ios_base::binary | std::ios_base::trunc);
+                // prepare boost's compression buffer:
+                gexf_buf[fn].push(boost::iostreams::gzip_compressor());
+                gexf_buf[fn].push(gexf_compressed[fn]);
+            }
+            else throw "files:gexf must end with .gexf or .gexf.gz";
         }
     }
+
     // output all nodes into all files:
     for (auto& [fn, is_gz] : gexf_is_gz) {
         if (fn != "") {
-            if (is_gz) {
-                ostream gexf_gz(&(gexf_buf[fn]));
-                gexf = (ostream*)(&gexf_gz);
-            } else {
-                gexf = (ostream*)(&(gexf_direct[fn]));
-            }
+            if (verbose) cout << "  " << fn << endl;
+            gexf = get_stream(fn, is_gz);
+            // give all attributes one-letter ids so that they can be accessed
+            // as global variables in Gephi's python scripting plugin:
             *gexf << R"V0G0N(<?xml version="1.0" encoding="UTF-8"?>
 <gexf xmlns="http://www.gexf.net/1.2draft" version="1.2" xmlns:viz="http://www.gexf.net/1.1draft/viz">
     <meta>
@@ -72,6 +112,7 @@ void init_gexf () {
                      << "\" start=\"0.0\" end=\"" << max_t
                      << "\"><attvalues><attvalue for=\"T\" value=\""
                      << et2label[et] << "\"/></attvalues>";
+                // output visualization information:
                 if (et2gexf_size.count(et) > 0) *gexf
                      << "<viz:size value=\"" << et2gexf_size[et] << "\"/>";
                 if (et2gexf_shape.count(et) > 0) *gexf
@@ -88,20 +129,23 @@ void init_gexf () {
     }
 }
 
+/** Write a single edge to the proper file.
+ *
+ *  The unique edge id is <n_events>_<et1>_<rat13>_<et3>.
+ *  Start and end time are stored both in the "start"/"end" xml attributes
+ *  so that gephi's timeline works properly,
+ *  as well as in gexf "attributes" named "S"/"E"
+ *  so that one can access them as global variables in gephi's python scripting plugin.
+ */
 void gexf_output_edge (tricl::tricllink& l) {
     auto e1 = l.e1, e3 = l.e3;
     auto rat13 = l.rat13;
     if (rat13 != RT_ID) {
         string fn = gexf_filename[rat13];
         if (fn != "") {
-            if (gexf_is_gz[fn]) {
-                ostream gexf_gz(&(gexf_buf[fn]));
-                gexf = (ostream*)(&gexf_gz);
-            } else {
-                gexf = (ostream*)(&(gexf_direct[fn]));
-            }
+            if (verbose) cout << "    writing link to " << fn << endl;
+            gexf = get_stream(fn, gexf_is_gz[fn]);
             double start = gexf_edge2start.at(l), end = current_t;
-            // unique edge id is <n_events>_<et1>_<rat13>_<et3>:
             *gexf << "\t\t\t<edge id=\"" << e1 << "_" << rat13 << "_" << e3 << "_" << n_events
                  << "\" source=\"" << e1
                  << "\" target=\"" << e3
@@ -120,31 +164,37 @@ void gexf_output_edge (tricl::tricllink& l) {
             *gexf << "</edge>" << endl;
         }
     }
-    if (gexf_edge2start.erase(l) != 1) throw "ups";
+    if (gexf_edge2start.erase(l) != 1) throw "missing link start time";
 }
 
+/** Complete and close all output files.
+ */
 void finish_gexf () {
-    current_t = max_t;
+
+    // write edges for still existing links:
+    if (verbose) cout << " write surviving links to gexf output files" << endl;
+    bool old_verbose = verbose;
+    verbose = false;
+    current_t = max_t;  // TODO: is this correct/neccessary/helpful?
     for (auto& [e1, outs] : e2outs) {
         for (auto& [rat13, e3] : outs) {
             tricl::tricllink l = { .e1 = e1, .rat13 = rat13, .e3 = e3 };
             if (rat13 != RT_ID) gexf_output_edge(l);
         }
     }
+    verbose = old_verbose;
+
     // output footer to all files:
+    if (!quiet) cout << " complete gexf output files:" << endl;
     for (auto& [fn, is_gz] : gexf_is_gz) {
         if (fn != "") {
-            if (is_gz) {
-                ostream gexf_gz(&(gexf_buf[fn]));
-                gexf = (ostream*)(&gexf_gz);
-            } else {
-                gexf = (ostream*)(&(gexf_direct[fn]));
-            }
+            if (!quiet) cout << "  " << fn << endl;
+            gexf = get_stream(fn, is_gz);
             *gexf << R"V0G0N(        </edges>
     </graph>
 </gexf>
 )V0G0N";
-            if (!is_gz) gexf_direct[fn].close();
+            if (!is_gz) gexf_uncompressed[fn].close();
         }
     }
 }

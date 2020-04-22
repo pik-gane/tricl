@@ -8,7 +8,7 @@ bool link_exists (tricllink& l);
 
 void add_link (tricllink& l);
 
-void del_link (tricllink& l);
+void delete_link (tricllink& l);
 
 void do_random_link (probability p, entity e1, relationship_or_action_type rat13, entity e3);
 

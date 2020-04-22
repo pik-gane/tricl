@@ -1,22 +1,21 @@
-/*
- * simulate.cpp
+/** Run the actual simulation.
  *
- *  Created on: Oct 18, 2019
- *      Author: Jobst Heitzig, PIK
+ *  \file
  */
 
 #include "global_variables.h"
 #include "event.h"
 #include "simulate.h"
 
+/** Perform next step.
+ *
+ *  \returns whether there was another step to perform.
+ */
 bool step ()
 {
     if ((n_events < max_n_events) && pop_next_event()) {
         ++n_events;
         perform_event(current_ev);
-        if (quiet) {
-            cout << round(current_t) << ": " << ((double)n_links)/((double)max_e*(double)max_e) << "                            \r";
-        }
         if (debug) cout << " " << t2ev.size() << " events on stack" << endl << endl;
         return true;
     } else {

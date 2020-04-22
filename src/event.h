@@ -52,19 +52,23 @@ inline void _schedule_event (event& ev, event_data* evd_, double left_tail, doub
     auto ar = evd_->attempt_rate;
     if (ar < 0.0) throw "negative attempt rate";
     assert (ar >= 0.0);
-    if (verbose) cout << "         (re)scheduling " << ev << ": ";
     if (event_is_summary(ev)) { // summary event: use only attempt rate (success will be tested in pop_next_event):
         t = current_t + exponential(random_variable) / (ar * ev2max_success_probability[ev]);
-        if (verbose) cout << "summary event, attempt rate " << ar << " → attempt at t=" << t << ", test success then" << endl;
+        if (verbose) cout << "         (re)scheduling " << ev << ": summary event, attempt rate " << ar << " → attempt at t=" << t << ", test success then" << endl;
     } else { // particular event: use effective rate:
         auto spu = evd_->success_probunits;
         if (spu == -INFINITY) {
             t = INFINITY;
-            if (verbose) cout << "zero success probability → t=" << t << endl;
+            if (debug) cout << "         (re)scheduling " << ev << ": zero success probability → t=" << t << endl;
         } else if (ar < INFINITY) {
             auto er = effective_rate(ar, spu, left_tail, right_tail);
             t = current_t + exponential(random_variable) / er;
-            if (verbose) cout << "ar " << ar << ", spu " << spu << " → eff. rate " << er << " → next at t=" << t << ((t==INFINITY) ? " (never)" : "") << endl;
+            if (verbose) {
+                if (t==INFINITY) {
+                    if (debug) cout << "         (re)scheduling " << ev << ": zero effective rate → t=" << t << endl;
+                }
+                else if (verbose) cout << "         (re)scheduling " << ev << ": ar " << ar << ", spu " << spu << " → eff. rate " << er << " → next at t=" << t << endl;
+            }
         } else {
             // event should happen "right away". to make sure all those events
             // occur in random order, we formally schedule them at some
