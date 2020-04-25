@@ -23,12 +23,14 @@ extern unordered_map<entity_type, vector<entity>> et2es;  ///< Inverse of e2et
 extern unordered_map<entity, label> e2label;   ///< Labels of entities
 extern unordered_map<string, entity> label2e;  ///< Inverse map of \ref e2label
 
-// Parameters:
+// Options and parameters:
 
 extern string config_yaml_filename; ///< Name of (or path to) main config file
-extern bool verbose;                ///< Whether to output more detailed information
-extern bool quiet;                  ///< Whether to suppress most output
+extern bool only_output_logl;       ///< Whether to restrict output to log-likelihood information
 extern bool debug;                  ///< Whether to output debug messages
+extern bool silent;                 ///< Whether to suppress all output except what was requested explicitly
+extern bool quiet;                  ///< Whether to suppress most output
+extern bool verbose;                ///< Whether to output more detailed information
 extern string diagram_fileprefix;   ///< Prefix of name of (or path to) generated diagram files
 extern timepoint max_t;             ///< Maximal model time to simulate until
 extern long int max_n_events;       ///< Max. no. events to simulate before stopping
@@ -68,7 +70,7 @@ extern unordered_map<event_type, probunits> evt2base_probunits;          ///< Ba
 extern unordered_map<influence_type, probunits> inflt2delta_probunits;   ///< Change in success probunits by influence type
 extern probunits _inflt2delta_probunits[MAX_N_INFLT];                     ///< Redundant copy of \ref inflt2delta_probunits as array
 extern unordered_map<entity_type_pair, unordered_set<relationship_or_action_type>> ets2relations;  ///< Possible relationship or action types by entity type pair
-extern unordered_map<event, rate> ev2max_success_probability;            ///< Maximal possible success probability of summary events
+extern unordered_map<event, rate> summary_ev2max_success_probability;            ///< Maximal possible success probability of summary events
 
 // gexf parameters:
 extern unordered_map<entity_type, double> et2gexf_size,                         ///< Node size for gexf file by entity type
@@ -87,11 +89,19 @@ extern unordered_map<relationship_or_action_type, int> rat2gexf_r,              
 // VARIABLE DATA:
 
 extern timepoint current_t;       ///< Current model time point
+extern timepoint last_dt;         ///< Time between last and current event
 extern long int n_events;         ///< No. of events that occurred so far
 extern event current_ev;          ///< Current event
 extern event_data* current_evd_;  ///< Pointer to event data of current event
-extern map<timepoint, event> t2ev;                ///< Current schedule of events, inverse of ev2data[ev].t
+extern map<timepoint, event> t2ev;                ///< Current schedule of events, inverse of ev2data[ev].t. CAUTION: this needs to be an ordered container type
 extern unordered_map<event, event_data> ev2data;  ///< Data of all currently scheduled events
+
+// log-likelihood computation:
+extern double cumulative_logl;    ///< Cumulative log-likelihood of evolution from initial state to current_t
+extern rate summary_ev2effective_rate;  ///< Current effective rates of summary events
+extern rate total_finite_effective_rate; ///< Current total effective rate of all events (without infinite rates)
+extern int n_infinite_effective_rates; ///< No. of currently scheduled events with infinite effective rate
+extern event_data sure_evd;
 
 // network state:
 extern unordered_map<entity, outleg_set> e2outs;  ///< Set of current outlegs by source entity

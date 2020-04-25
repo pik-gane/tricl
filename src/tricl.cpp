@@ -53,9 +53,19 @@
  *
  * input/output:
  * - include metadata into gexf files
- * - support "premerged" edges in gexf via <spells><spell start="..." end="..."></spell>...</spells>
+ * - support "premerged" edges in gexf via <spells><spell start="..." end="..."></spell>...</spells>,
+ *   by a postprocessing step that firts sorts and then merges the edges in the file by doing
+ *   ``gunzip -c myoutput.gexf.gz | sort -t"-" -k3 | mergelinks | gzip > mysortedoutput.gexf.gz``
+ *   for which we need to provide a binary "mergelinks"
  * - support prespecified positions in visualization, see here: <https://github.com/gephi/gephi/issues/2038>
  * - support entity type detection from columns in csv file
+ *
+ * model estimation:
+ * - add command line options --events=events.csv, --logl and --grad
+ * - if given, read lines from events.csv rather than pop_next_event
+ * - if --logl, accumulate loglikelhood instead of scheduling and write only logl to stdout
+ * - if --grad, also accumulate and output gradient w.r.t. metaparameters
+ * - write python template script for estimating metaparameters by max.likelihood method, using scipy.optimize
  *
  * Terminology
  * ===========

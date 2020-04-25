@@ -23,7 +23,7 @@ cxxopts::Options options("tricl", "a generic network-based social simulation mod
 // scalar parameters and their default values:
 unordered_map<relationship_or_action_type, string> gexf_filename = {};
 string diagram_fileprefix = "", gexf_default_filename = "";
-bool verbose = false, quiet = false, debug = false;
+bool silent = false, verbose = false, quiet = false, debug = false, only_output_logl = false;
 timepoint max_t = 0.0;
 long int max_n_events = LONG_MAX;
 unsigned seed = 0;
@@ -117,7 +117,7 @@ void read_config (
     // parse command line:
 
     if (argc<2) {
-        cout << "Usage:  tricl config_file.yaml  OR  tricl config_file.yaml [options]  OR  tricl config_file.yaml --help";
+        if (!silent) cout << "Usage:  tricl config_file.yaml  OR  tricl config_file.yaml [options]  OR  tricl config_file.yaml --help";
         exit(1);
     }
     config_yaml_filename = argv[1];
@@ -128,6 +128,8 @@ void read_config (
     if (n && !n.IsMap()) throw "yaml field 'options' must be a map";
     options.add_options()
             ("help", "Print help for " + config_yaml_filename)
+            ("silent", "silent mode", cxxopts::value<bool>()->default_value(
+                    (n && n["silent"]) ? n["silent"].as<string>() : "false"))
             ("quiet", "quiet mode", cxxopts::value<bool>()->default_value(
                     (n && n["quiet"]) ? n["quiet"].as<string>() : "false"))
             ("verbose", "verbose mode", cxxopts::value<bool>()->default_value(
@@ -136,13 +138,16 @@ void read_config (
                     (n && n["debug"]) ? n["debug"].as<string>() : "false"))
             ("seed", "random seed", cxxopts::value<unsigned>()->default_value(
                     (n && n["seed"]) ? n["seed"].as<string>() : "0"))
+            ("logl", "log-likelihood estimation mode", cxxopts::value<bool>())
+//            ("grad", "output gradient of log-likelihood", cxxopts::value<bool>())
+//            ("events", "input csv file with events", cxxopts::value<string>())
             ;
 
     // register command line options for all metaparameters in config file:
     n = c["metaparameters"];
     if (n) {
         if (!n.IsMap()) {
-            cout << options.help() << endl;
+            if (!silent) cout << options.help() << endl;
             throw "field 'metaparameters' in config file must be a map";
         }
         for (YAML::const_iterator it = n.begin(); it != n.end(); ++it) {  // iterate through the map
@@ -159,12 +164,14 @@ void read_config (
     // read command line:
     auto cmdlineopts = options.parse(argc, argv);
     if ((cmdlineopts.count("help") >= 1)) {
-        cout << options.help() << endl;
+        if (!silent) cout << options.help() << endl;
         exit(0);
     }
-    debug = cmdlineopts["debug"].as<bool>();
-    verbose = cmdlineopts["verbose"].as<bool>() || debug;
-    quiet = cmdlineopts["quiet"].as<bool>() && (!verbose);
+    only_output_logl = cmdlineopts["logl"].as<bool>();
+    silent = cmdlineopts["silent"].as<bool>() || only_output_logl;
+    debug = cmdlineopts["debug"].as<bool>() && (!silent);
+    quiet = (cmdlineopts["quiet"].as<bool>() && (!debug)) || silent;
+    verbose = cmdlineopts["verbose"].as<bool>() && (!quiet);
     seed = cmdlineopts["seed"].as<unsigned>();
 
     // read config file:
@@ -497,12 +504,14 @@ void read_config (
                         }
                     }
                     auto cols = n2["cols"];
+                    int e1_col = cols[0].as<int>(),
+                            rat13_col = (rat13 == NO_RAT) ? parse_int(cols[1].as<string>()) : -1,
+                            e3_col = (rat13 == NO_RAT) ? parse_int(cols[2].as<string>()) : parse_int(cols[1].as<string>());
                     read_links_csv (filename, skip, max, delimiter,
-                            cols[0].as<int>(),
-                            (rat13 == NO_RAT) ? parse_int(cols[1].as<string>()) : -1,
-                            (rat13 == NO_RAT) ? parse_int(cols[2].as<string>()) : parse_int(cols[1].as<string>()),
-                            et1_default, rat13, et3_default,
-                            e1_prefix, e3_prefix);
+                            e1_col, e1_prefix, -1, et1_default,
+                            rat13_col, rat13,
+                            e3_col, e3_prefix, -1, et3_default
+                            );
                 } else {
                     throw "unsupported file extension";
                 }

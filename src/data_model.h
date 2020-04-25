@@ -244,6 +244,7 @@ struct event_data
     int n_angles = 0;             ///< Current no. of angles influencing this event
     rate attempt_rate;            ///< Current attempt rate of this event
     probunits success_probunits;  ///< Current success probunits of this event
+    rate effective_rate;          ///< Current effective rate of this event
     timepoint t = -INFINITY;      ///< When this event would next happen if the system state does not chance in between
 };
 

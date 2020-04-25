@@ -23,9 +23,11 @@ void finish ()
         }
     }
     log_state();
-    cout << endl;
+    if (!silent) cout << endl;
 
     finish_gexf();
 
     if (debug) verify_data_consistency();
+
+    if (only_output_logl) cout << cumulative_logl << endl;
 }

@@ -24,14 +24,14 @@ entity_type e2et[MAX_N_E];
 // derived constants:
 unordered_set<entity> es;
 unordered_map<entity_type_pair, unordered_set<relationship_or_action_type>> ets2relations;  // possible relations
-unordered_map<event, rate> ev2max_success_probability; // max possible effective rate of summary events
+unordered_map<event, rate> summary_ev2max_success_probability; // max possible effective rate of summary events
 
 // variable data:
 
-timepoint current_t = 0;
+timepoint current_t = 0, last_dt = 0;
 long int n_events = 0;
 event current_ev = {};
-event_data* current_evd_ = NULL;
+event_data* current_evd_ = &sure_evd;
 
 // network state:
 unordered_map<entity_type, vector<entity>> et2es = {};  // kept to equal inverse of e2et
@@ -43,6 +43,11 @@ long int n_links = 0, n_angles = 0;
 // event data:
 unordered_map<event, event_data> ev2data = {};
 map<timepoint, event> t2ev = {};  // kept to equal inverse of ev2data.t
+
+// log-likelihood:
+double cumulative_logl = 0;
+rate total_finite_effective_rate = 0;
+int n_infinite_effective_rates = 0;
 
 
 /** Set up the redundant auxiliary data stores.
@@ -83,7 +88,7 @@ void init_entities ()
 
     // generate remaining entities:
     for (auto& [et, n] : et2remaining_n) {
-        cout << " entity type \"" << et2label[et] << "\" has " << et2n[et] << " entities" << endl;
+        if (!silent) cout << " entity type \"" << et2label[et] << "\" has " << et2n[et] << " entities" << endl;
         assert (n >= 0);
         while (n > 0) {
             add_entity(et, "");
@@ -135,13 +140,14 @@ void init_events ()
         if (ar > 0.0) possible_evts.insert(inflt.evt);
     }
     if (verbose) {
-        cout << " possible event types with base attempt rates and base success probabilities:" << endl;
+        if (!silent) cout << " possible event types with base attempt rates and base success probabilities:" << endl;
         for (auto& evt : possible_evts) cout << "  " << evt << ": " << evt2base_attempt_rate[evt] <<
                 ", " << probunits2probability(evt2base_probunits[evt], evt2left_tail[evt], evt2right_tail[evt]) << endl;
     }
 
-    if (!quiet) cout << " initial scheduling of summary events..." << endl;
     // summary events for purely spontaneous establishment without angles:
+
+    if (!quiet) cout << " initial scheduling of summary events..." << endl;
     for (auto& [ets, relations] : ets2relations) {
         auto et1 = ets.et1, et3 = ets.et3;
         for (auto& rat13 : relations) {
@@ -161,7 +167,7 @@ void init_events ()
                         break;
                     }
                 }
-                ev2max_success_probability[summary_ev] = probunits2probability(max_spu, evt2left_tail.at(evt), evt2right_tail.at(evt));
+                summary_ev2max_success_probability[summary_ev] = probunits2probability(max_spu, evt2left_tail.at(evt), evt2right_tail.at(evt));
                 if (verbose) cout << "  " << et2label[et1] << " " << rat2label[rat13] << " " << et2label[et3] << endl;
                 ev2data[summary_ev] = { .n_angles = 0,
                         .attempt_rate = ar * et2n[et1] * et2n[et3],
@@ -185,13 +191,21 @@ void init_links ()
         e2ins[e].insert({ e, RT_ID });
     }
 
+    // initialize loglikelihood:
+    n_infinite_effective_rates = 0;
+    total_finite_effective_rate = 0;
+    last_dt = 0;
+
     // preregistered links:
+
     for (auto l : initial_links) {
         assert (!link_exists(l));
         assert (l.rat13 != RT_ID);
-        event ev = { .ec = EC_EST, .e1 = l.e1, .rat13 = l.rat13, .e3 = l.e3 };
+        event ev = { .ec=EC_EST, l.e1, l.rat13, l.e3 };
         conditionally_remove_event(ev);
-        perform_event(ev);  // this automatically also adds the inverse link, if any.
+        // prepair total effective rate since call to perform_event will subtracted INFINITY from it:
+        add_effective_rate(INFINITY);
+        perform_event(ev, &sure_evd);  // this automatically also adds the inverse link, if any.
     }
 
     // random links:
@@ -247,6 +261,9 @@ void init_links ()
             }
         }
     }
+    // reset cumulative loglikelihood to count only what happens after initial state:
+    cumulative_logl = 0;
+
     if (debug) verify_angle_consistency();
     if (!quiet) cout << "  ...done."<< endl;
 }
@@ -255,8 +272,8 @@ void init_links ()
  */
 void init ()
 {
-    cout << "INITIALIZING..." << endl;
-    cout << " MAX_N_INFLT=" << MAX_N_INFLT << ", MAX_N_E=" << MAX_N_E << endl;
+    if (!silent) cout << "INITIALIZING..." << endl;
+    if (!silent) cout << " MAX_N_INFLT=" << MAX_N_INFLT << ", MAX_N_E=" << MAX_N_E << endl;
     init_randomness();
     init_data();
     init_entities();
@@ -269,6 +286,6 @@ void init ()
         dump_data();
         verify_data_consistency();
     }
-    cout << "...INITIALIZATION FINISHED." << endl << endl;
+    if (!silent) cout << "...INITIALIZATION FINISHED." << endl << endl;
 }
 

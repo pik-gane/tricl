@@ -5,6 +5,7 @@
 
 #include "data_model.h"
 
+
 namespace tricl {
 
     /** Labels for event classes.
@@ -18,5 +19,16 @@ namespace tricl {
         { EC_ACT, "let it occur that" }  ///< occurrence of an action
     };
 
-}
+} // end of namespace tricl
+
+
+/** Event data for initial events that lead to logl = 0 for these events
+ */
+event_data sure_evd = {
+        .n_angles = 0,
+        .attempt_rate = INFINITY,
+        .success_probunits = INFINITY,
+        .effective_rate = INFINITY,
+        .t = -INFINITY
+};
 

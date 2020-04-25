@@ -48,41 +48,65 @@ inline bool event_is_scheduled (
 inline void _schedule_event (event& ev, event_data* evd_, double left_tail, double right_tail)
 {
     assert(evd_ == &ev2data.at(ev));
-    timepoint t;
-    auto ar = evd_->attempt_rate;
+    rate ar = evd_->attempt_rate;
     if (ar < 0.0) throw "negative attempt rate";
-    assert (ar >= 0.0);
-    if (event_is_summary(ev)) { // summary event: use only attempt rate (success will be tested in pop_next_event):
-        t = current_t + exponential(random_variable) / (ar * ev2max_success_probability[ev]);
+    timepoint t;
+    if (event_is_summary(ev))  // summary event:
+    {
+        // use only attempt rate for scheduling (success will be tested in pop_next_event):
+        t = current_t + exponential(random_variable) / (ar * summary_ev2max_success_probability[ev]);
         if (verbose) cout << "         (re)scheduling " << ev << ": summary event, attempt rate " << ar << " → attempt at t=" << t << ", test success then" << endl;
-    } else { // particular event: use effective rate:
+        // effective rate is updated in update_adjacent_events
+    }
+    else  // particular event:
+    {
+        // use effective rate for scheduling:
         auto spu = evd_->success_probunits;
-        if (spu == -INFINITY) {
+        if (spu == -INFINITY)
+        {
+            evd_->effective_rate = 0;
             t = INFINITY;
             if (debug) cout << "         (re)scheduling " << ev << ": zero success probability → t=" << t << endl;
-        } else if (ar < INFINITY) {
-            auto er = effective_rate(ar, spu, left_tail, right_tail);
-            t = current_t + exponential(random_variable) / er;
+        }
+        else if (ar < INFINITY)
+        {
+            // compute effective rate:
+            rate er = evd_->effective_rate = effective_rate(ar, spu, left_tail, right_tail);
+            assert (er < INFINITY);
+            // register it in total:
+            add_effective_rate(er);
+
+            // draw time interval after which it would happen if nothing changes in between:
+            timepoint dt = exponential(random_variable) / er;
+            // add it to current time to get occurence time:
+            t = current_t + dt;
+
             if (verbose) {
                 if (t==INFINITY) {
                     if (debug) cout << "         (re)scheduling " << ev << ": zero effective rate → t=" << t << endl;
                 }
                 else if (verbose) cout << "         (re)scheduling " << ev << ": ar " << ar << ", spu " << spu << " → eff. rate " << er << " → next at t=" << t << endl;
             }
-        } else {
-            // event should happen "right away". to make sure all those events
-            // occur in random order, we formally schedule them at some
-            // random "past" time instead:
-            t = current_t - uniform(random_variable);
-            if (verbose) cout << "inf. attempt rate, success probability > 0 → \"immediate\" t=" << t << endl;
+        }
+        else  // event should happen "right away"
+        {
+            // to make sure all those events occur in random order,
+            // we formally schedule them at some random "past" time instead:
+            rate er = evd_->effective_rate = INFINITY;
+            // register it in total:
+            add_effective_rate(er);
+            t = current_t - abs(1 + current_t) * uniform(random_variable);
+            if (verbose) cout << "         (re)scheduling " << ev << ": ar inf, spu > 0 → eff. rate inf → next \"immediately\" at t=" << t << endl;
         }
     }
-    if (t == INFINITY) {
+    if (t == INFINITY)
+    {
         // replace INFINITY by some unique finite but non-reached time point:
         t = max_t * (1 + uniform(random_variable));
     }
-    t2ev[t] = ev;
+    // store time:
     evd_->t = t;
+    t2ev[t] = ev;
 }
 
 inline void schedule_event (event& ev, event_data* evd_, double left_tail, double right_tail)
@@ -98,7 +122,12 @@ inline void reschedule_event (event& ev, event_data* evd_, double left_tail, dou
 {
     assert(evd_ == &ev2data.at(ev));
     assert(event_is_scheduled(ev, evd_));
+
+    // remove from schedule and total_effective_rate:
     t2ev.erase(evd_->t);
+    subtract_effective_rate(evd_->effective_rate);
+
+    // schedule anew:
     _schedule_event(ev, evd_, left_tail, right_tail);
     if (debug) verify_data_consistency();
 }
@@ -113,7 +142,7 @@ void update_adjacent_events (event& ev);
 
 void add_reverse_event (event& old_ev);
 
-void perform_event (event& ev);
+void perform_event (event& ev, event_data* evd_);
 
 bool pop_next_event ();
 

@@ -28,6 +28,15 @@ Usage
 
 Caution: output files might get large! Try with small ``limits:events`` first and use gexf.gz file format!
 
+Legend to output
+----------------
+- logl: total log-likelihood of this realization so far
+- er: current rate of events [1/time]
+- ld: overall link density
+- ad: overall angle density
+- q: rough metric of clustering (= ad/ld²). 1 indicates a "normal level" of clustering
+- t: model time
+ 
 Config file syntax
 ------------------
 See folder ``config_files`` for examples.
@@ -92,9 +101,11 @@ files:
     # files not listed are not generated
 
 options:
-    quiet: <true or false>  # default: false
-    verbose: <true or false>  # default: false
-    debug: <true or false>  # default: false
+    silent:  <true or false>  # suppress all output, default: false
+    logl:    <true or false>  # only output final log-likelihood, default: false
+    quiet:   <true or false>  # suppress most output, default: false
+    verbose: <true or false>  # increase output, default: false
+    debug:   <true or false>  # output very much, default: false
 
 metaparameters:  
     # will be substituted for their values 
@@ -225,6 +236,9 @@ License
 
 Change log
 ----------
+
+2020-04-25
+- add computation and output of log-likelihood (not for prescribed trajectories yet) 
 
 2020-04-23
 - improved log output

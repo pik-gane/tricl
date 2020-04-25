@@ -27,14 +27,19 @@ void read_links_csv (
         int skip_rows,
         int max_rows,
         char delimiter,
+
         int e1_col,
-        int rat13_col,
-        int e3_col,
-        entity_type et1_default,
-        relationship_or_action_type rat13_fixed,
-        entity_type et3_default,
         string e1_prefix,
-        string e3_prefix
+        int et1_col,
+        entity_type et1_default,
+
+        int rat13_col,
+        relationship_or_action_type rat13_fixed,
+
+        int e3_col,
+        string e3_prefix,
+        int et3_col,
+        entity_type et3_default
         );
 
 void dump_links ();

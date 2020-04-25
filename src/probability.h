@@ -99,4 +99,36 @@ inline rate effective_rate (
     return r;
 }
 
+/** Add effective rate to total, taking care of infinite values.
+ */
+inline void add_effective_rate (rate er)
+{
+    if (er < INFINITY) total_finite_effective_rate += er;
+    else n_infinite_effective_rates++;
+}
+
+/** Subtract effective rate to total, taking care of infinite values.
+ */
+inline void subtract_effective_rate (rate er)
+{
+    if (er < INFINITY)
+    {
+        total_finite_effective_rate -= er;
+        assert (total_finite_effective_rate >= 0);
+    }
+    else
+    {
+        n_infinite_effective_rates--;
+        assert (n_infinite_effective_rates >= 0);
+    }
+}
+
+/** \returns actual total effective rate, taking care of infinite values.
+ */
+inline rate total_effective_rate ()
+{
+    return (n_infinite_effective_rates > 0) ? INFINITY : total_finite_effective_rate;
+}
+
+
 #endif

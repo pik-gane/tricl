@@ -42,34 +42,38 @@ void add_event (
 
         // base values:
         rate ar = evt2base_attempt_rate[evt];
-        auto spu = evt2base_probunits[evt];
+        probunits spu = evt2base_probunits[evt];
 
-        // legs:
+        // outlegs:
         auto outs1 = e2outs[e1];
-        auto ins3 = e2ins[e3];
-        if (ec == EC_TERM) {
-            for (auto& [rat12, e2] : outs1) {
-                influence_type inflt = { .evt = evt, .at = { .rat12 = rat12, .et2 = e2et[e2], .rat23 = NO_RAT } };
-                ar += _inflt2attempt_rate[INFLT(inflt)];
-                spu += _inflt2delta_probunits[INFLT(inflt)];
-            }
-            for (auto& [e2, rat23] : ins3) {
-                influence_type inflt = { .evt = evt, .at = { .rat12 = NO_RAT, .et2 = e2et[e2], .rat23 = rat23 } };
-                ar += _inflt2attempt_rate[INFLT(inflt)];
-                spu += _inflt2delta_probunits[INFLT(inflt)];
-            }
+        for (auto& l : outs1) {
+            auto rat12 = l.rat_out;
+            auto e2 = l.e_target;
+            influence_type inflt = { .evt = evt, .at = { .rat12 = rat12, .et2 = e2et[e2], .rat23 = NO_RAT } };
+            ar += _inflt2attempt_rate[INFLT(inflt)];
+            spu += _inflt2delta_probunits[INFLT(inflt)];
         }
 
-        if (debug) {
-            cout << "outs:" << endl;
-            for (auto& [rat13, e3] : outs1) cout << " " << e2label[e1] << " " << rat2label[rat13] << " " << e2label[e3] << endl;
-            cout << "ins:" << endl;
-            for (auto& [e1, rat13] : ins3) cout << " " << e2label[e1] << " " << rat2label[rat13] << " " << e2label[e3] << endl;
+        // inlegs (similarly):
+        auto ins3 = e2ins[e3];
+        for (auto& l : ins3) {
+            auto e2 = l.e_source;
+            auto rat23 = l.rat_in;
+            influence_type inflt = { .evt = evt, .at = { .rat12 = NO_RAT, .et2 = e2et[e2], .rat23 = rat23 } };
+            ar += _inflt2attempt_rate[INFLT(inflt)];
+            spu += _inflt2delta_probunits[INFLT(inflt)];
         }
+
+//        if (debug) {
+//            cout << "outs:" << endl;
+//            for (auto& l : outs1) cout << " " << e2label[e1] << " " << rat2label[l.rat_out] << " " << e2label[l.e_target] << endl;
+//            cout << "ins:" << endl;
+//            for (auto& l : ins3) cout << " " << e2label[l.e_source] << " " << rat2label[l.rat_in] << " " << e2label[e3] << endl;
+//        }
 
         // angles:
         int na = 0; // number of influencing angles
-        angle_vec angles = leg_intersection(e1, outs1, ins3, e3);
+        angle_vec angles = get_angles(e1, outs1, ins3, e3);
         for (auto a_it = angles.begin(); a_it != angles.end(); a_it++) {
             influence_type inflt = {
                     .evt = evt,
@@ -171,6 +175,7 @@ void update_adjacent_events (
             add_or_delete_angle(ec_ab, e1, et1, rat12, e2, et2, rat23, e3, et3);
         }
     }
+    // TODO: also care about where ea->eb is an outleg of e1
 
     if (debug) cout << "   angles with this as 2nd leg:" << endl;
     // source and target entity of the event are e2 and e3 for these angles:
@@ -183,6 +188,7 @@ void update_adjacent_events (
             add_or_delete_angle(ec_ab, e1, et1, rat12, e2, et2, rat23, e3, et3);
         }
     }
+    // TODO: also care about where ea->eb is an inleg of e3
 }
 
 /** Add the reverse event of a just performed event.
@@ -211,31 +217,51 @@ void add_reverse_event (
  *  the inverse link e3--rat31-->e1.
  */
 void perform_event (
-        event& ev  ///< [in] the event to perform
+        event& ev,        ///< [in] the event to perform
+        event_data* evd_  ///< [in] ptr to the corresponding event data
         )
 {
     if (debug) cout << " performing event: " << ev << endl;
 
     auto ec = ev.ec; auto e1 = ev.e1, e3 = ev.e3; auto rat13 = ev.rat13, rat31 = rat2inv.at(rat13);
     assert (rat13 != RT_ID);
-    tricllink l = { .e1 = e1, .rat13 = rat13, .e3 = e3 };
+    tricllink l = { e1, rat13, e3 };
+
+    // compute and store log-likelihood of next event happening at current_t and being current_t:
+    rate er = evd_->effective_rate, total_er = total_effective_rate();
+    assert (er > 0);
+    double logl = (er == INFINITY)
+            ? -log(n_infinite_effective_rates)  // log prob. of this immediate event being chosen from all immediate events
+            : -total_er * last_dt               // log probability density of next event occurring exactly at t
+              + log(er) - log(total_er);        // + log probability of that event being this event
+    cumulative_logl += logl;
+    // remove from total_effective_rate:
+    subtract_effective_rate(er);
+    if (verbose) cout << "  log-likelihoods: this " << logl << ", total " << cumulative_logl << endl;
+    if (debug) cout << "   total er " << total_finite_effective_rate << " + " << n_infinite_effective_rates << " * inf" << endl;
+    // TODO: what about companion event? probably we don't need to add its logl...
 
     // FIRST add the reverse event, so that its n_angles will reflect the situation before the change:
     add_reverse_event(ev);
     // THEN add or remove the link to perform the change:
-    if (ec == EC_EST) {
+    if (ec == EC_EST)
+    {
         add_link(l);
-    } else {
+    }
+    else
+    {
         delete_link(l);
     }
     // FINALLY update all adjacent events (including the reverse event) to reflect the change:
     update_adjacent_events(ev);
 
     // also perform companion event that deals with the inverse link:
-    if (rat31 != NO_RAT) {
+    if (rat31 != NO_RAT)
+    {
         event companion_ev = { .ec = ec, .e1 = e3, .rat13 = rat31, .e3 = e1 };
         tricllink inv_l = { .e1 = e3, .rat13 = rat31, .e3 = e1 }; // inverse link
-        if (ev2data.count(companion_ev) == 1) {
+        if (ev2data.count(companion_ev) == 1)
+        {
             if (debug) cout << " unscheduling companion event: " << companion_ev << endl;
             auto companion_evd_ = &ev2data.at(companion_ev);
             remove_event(companion_ev, companion_evd_);
@@ -243,11 +269,14 @@ void perform_event (
         // FIRST add the reverse event, so that its n_angles will reflect the situation before the change:
         add_reverse_event(companion_ev);
         // THEN add or remove the link to perform the change:
-        if (ec == EC_EST) {
+        if (ec == EC_EST)
+        {
             if (debug) cout << " performing companion event: adding inverse link \"" << e2label[e3]
                 << " " << rat2label[rat31] << " " << e2label[e1] << "\"" << endl;
             add_link(inv_l);
-        } else {
+        }
+        else
+        {
             if (debug) cout << " performing companion event: deleting inverse link \"" << e2label[e3]
                 << " " << rat2label[rat31] << " " << e2label[e1] << "\"" << endl;
             delete_link(inv_l);
@@ -255,8 +284,9 @@ void perform_event (
         // FINALLY update all adjacent events (including the reverse event) to reflect the change:
         update_adjacent_events(companion_ev);
     }
-    if (debug) {
-        dump_links();
+    if (debug)
+    {
+//        dump_links();
         verify_angle_consistency();
     }
 }
@@ -273,21 +303,25 @@ bool pop_next_event ()
 {
     // find next event:
     bool found = false;
-    while ((!found) && (current_t < max_t)) {
+    while ((!found) && (current_t < max_t))  // we may need several attempts to find an event that actually occurs...
+    {
 
         // get handle of earliest next scheduled event:
-        auto tev = t2ev.begin();
-        if (tev == t2ev.end()) { // no events are scheduled --> model has converged
+        auto tev_handle = t2ev.begin();
+        if (tev_handle == t2ev.end())  // no events are scheduled --> model has converged
+        {
             log_state();
-            // jump to end
+            // jump to end of simulation:
             current_t = max_t;
             return false;
         }
 
         // get corresponding timepoint:
-        timepoint t = tev->first;
-        if (t >= max_t) { // no events before max_t are scheduled
-            if (!quiet) {
+        timepoint t = tev_handle->first;
+        if (t >= max_t)  // no events before max_t are scheduled
+        {
+            if (!quiet)
+            {
                 if (t < INFINITY) cout << "next event would happen after time limit at t=" << t << endl;
                 else cout << "no further events are scheduled." << endl;
             }
@@ -297,14 +331,20 @@ bool pop_next_event ()
         }
 
         // get the corresponding event:
-        event ev = tev->second;
-        if (t > current_t) {
+        event ev = tev_handle->second;
+        if (t > current_t)  // event is not happening "right now"
+        {
             // advance model time to time of event:
+            last_dt = t - current_t;
             current_t = t;
-        } // otherwise it's an event happening "right now" scheduled formally for a past time to ensure a random order of those events.
+        }
+        else  // event is happening "right now" and was scheduled formally for a past time to ensure a random order of those events
+        {
+            last_dt = 0;
+        }
 
-        if (event_is_summary(ev)) { // event is a summary event, so has only types specified and needs to be tested for success
-
+        if (event_is_summary(ev))  // event is a summary event, so has only types specified and needs to be tested for success
+        {
             assert (ev.ec == EC_EST);
 
             // rename ev to summary_ev to avoid confusion with actual_ev below:
@@ -328,37 +368,65 @@ bool pop_next_event ()
             {
                 if (verbose) cout << "at t=" << current_t << ", entities to link were equal and are thus not linked" << endl;
             }
-            else // link can be established
+            else  // link can be established
             {
                 event actual_ev = { .ec = EC_EST, e1, rat13, e3 };
-                if (ev2data.count(actual_ev) > 0)
+                if (ev2data.count(actual_ev) > 0)  // the event was scheduled separately since it is influenced by at least one angle
                 {
-                    // the event was scheduled separately, e.g. due to an angle, so we do not perform it now.
+                    // --> don't perform it now.
                     if (verbose) cout << "at t=" << current_t << " " << actual_ev << " is scheduled separately at t=" << ev2data.at(actual_ev).t << ", so not performed now." << endl;
                 }
-                else // check if attempt succeeds
+                else  // event not scheduled separately (but may still be influenced by legs!)
                 {
                     // compile success units:
                     auto spu = evt2base_probunits.at(evt);
-                    for (auto& [rat12, e2] : e2outs[e1]) {
+                    // outlegs:
+                    for (auto& l : e2outs[e1])
+                    {
+                        auto rat12 = l.rat_out;
+                        auto e2 = l.e_target;
                         influence_type inflt = { .evt = evt, .at = { .rat12 = rat12, .et2 = e2et[e2], .rat23 = NO_RAT } };
                         if (inflt2delta_probunits.count(inflt) > 0) spu += inflt2delta_probunits.at(inflt);
                     }
-                    for (auto& [e2, rat23] : e2ins[e3]) {
+                    // inlegs:
+                    for (auto& l : e2ins[e3])
+                    {
+                        auto e2 = l.e_source;
+                        auto rat23 = l.rat_in;
                         influence_type inflt = { .evt = evt, .at = { .rat12 = NO_RAT, .et2 = e2et[e2], .rat23 = rat23 } };
                         if (inflt2delta_probunits.count(inflt) > 0) spu += inflt2delta_probunits.at(inflt);
                     }
                     // since the scheduling rate already contained the factor ev2max_sp[ev],
                     // we need to divide the success probability by it here:
-                    probability conditional_success_probability =
-                            probunits2probability(spu, evt2left_tail.at(evt), evt2right_tail.at(evt)) / ev2max_success_probability[ev];
-                    // check if success:
-                    if (uniform(random_variable) < conditional_success_probability) { // success
-                        // "return" event:
+                    probability
+                        success_probability =
+                            probunits2probability(spu, evt2left_tail.at(evt), evt2right_tail.at(evt)),
+                        conditional_success_probability =
+                            success_probability / summary_ev2max_success_probability[ev];
+                    // check if event succeeds:
+                    if (uniform(random_variable) < conditional_success_probability)  // success
+                    {
+                        auto summary_evd = ev2data.at(summary_ev);
+                        // compute actual effective rate of this particular event:
+                        rate actual_er = summary_evd.attempt_rate / et2n[et1] / et2n[et3]
+                                         * success_probability;
+                        // construct event data with proper effective rate for actual event:
+                        event_data actual_evd_ = {
+                                .n_angles = 0,  // unimportant, will not be used by perform_event
+                                .attempt_rate = INFINITY,  // unimportant, will not be used by perform_event
+                                .success_probunits = INFINITY,  // unimportant, will not be used by perform_event
+                                .effective_rate = actual_er,  // this is the only important entry!
+                                .t = current_t  // unimportant, will not be used by perform_event
+                        };
+                        // register event as current event:
                         current_ev = actual_ev;
+                        current_evd_ = &actual_evd_;
                         log_state();
                         found = true;
-                    } else {
+                        // but don't remove the summary event
+                    }
+                    else
+                    {
                         if (verbose) cout << "at t=" << current_t << " " << actual_ev << " did not succeed" << endl;
                     }
                 }
@@ -366,7 +434,7 @@ bool pop_next_event ()
             // set next_occurrence of this summary event:
             reschedule_event(summary_ev, &ev2data.at(summary_ev), evt2left_tail.at(evt), evt2right_tail.at(evt));
         }
-        else  // event has specific entities
+        else  // event is particular (has specific entities)
         {
             // register event as current event:
             current_ev = ev;

@@ -18,7 +18,7 @@ int compute_n_angles (event_type evt, entity e1, entity e3, bool print) {
     auto outs1 = e2outs[e1];
     auto ins3 = e2ins[e3];
     int na = 0;
-    angle_vec as = leg_intersection(e1, outs1, ins3, e3);
+    angle_vec as = get_angles(e1, outs1, ins3, e3);
     for (auto a_it = as.begin(); a_it < as.end(); a_it++) {
         influence_type inflt = { .evt = evt, .at = { .rat12 = a_it->rat12, .et2 = e2et[a_it->e2], .rat23 = a_it->rat23 } };
         auto dar = _inflt2attempt_rate[INFLT(inflt)];
@@ -54,11 +54,19 @@ void verify_angle_consistency () {
 void verify_data_consistency () {
     // e2outs:
     for (auto& [e1, outs1] : e2outs) {
-        for (auto& [rat13, e3] : outs1) assert (e2ins.at(e3).count({e1, rat13}) == 1);
+        for (auto& l : outs1) {
+            auto rat13 = l.rat_out;
+            auto e3 = l.e_target;
+            assert (e2ins.at(e3).count({e1, rat13}) == 1);
+        }
     }
     // e2ins:
     for (auto& [e3, ins3] : e2ins) {
-        for (auto& [e1, rat13] : ins3) assert (e2outs.at(e1).count({rat13, e3}) == 1);
+        for (auto& l : ins3) {
+            auto e1 = l.e_source;
+            auto rat13 = l.rat_in;
+            assert (e2outs.at(e1).count({rat13, e3}) == 1);
+        }
     }
     // ev2data:
     for (auto& [ev, evd] : ev2data) {

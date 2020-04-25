@@ -65,7 +65,9 @@ void do_random_link (probability p, entity e1, relationship_or_action_type rat13
         if (!link_exists(l)) {
             event ev = { .ec=EC_EST, e1, rat13, e3 };
             conditionally_remove_event(ev);
-            perform_event(ev);
+            // prepair total effective rate since call to perform_event will subtracted INFINITY from it:
+            add_effective_rate(INFINITY);
+            perform_event(ev, &sure_evd);
         }
     }
 }
