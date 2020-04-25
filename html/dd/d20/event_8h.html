@@ -144,9 +144,9 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>reschedule_event</b> 
 <tr class="memitem:aec4dd06c452378363b04a58a0cfe8f8b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dd/d20/event_8h.html#aec4dd06c452378363b04a58a0cfe8f8b">add_reverse_event</a> (<a class="el" href="../../d4/d7e/structtricl_1_1event.html">event</a> &amp;old_ev)</td></tr>
 <tr class="memdesc:aec4dd06c452378363b04a58a0cfe8f8b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Add the reverse event of a just performed event.  <a href="#aec4dd06c452378363b04a58a0cfe8f8b">More...</a><br /></td></tr>
 <tr class="separator:aec4dd06c452378363b04a58a0cfe8f8b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af13ceffde477e67e6d9418750ce45107"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dd/d20/event_8h.html#af13ceffde477e67e6d9418750ce45107">perform_event</a> (<a class="el" href="../../d4/d7e/structtricl_1_1event.html">event</a> &amp;ev)</td></tr>
-<tr class="memdesc:af13ceffde477e67e6d9418750ce45107"><td class="mdescLeft">&#160;</td><td class="mdescRight">Perform an event (usually the current event).  <a href="#af13ceffde477e67e6d9418750ce45107">More...</a><br /></td></tr>
-<tr class="separator:af13ceffde477e67e6d9418750ce45107"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abd0fec822d726403436f1bdad4aa7b51"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dd/d20/event_8h.html#abd0fec822d726403436f1bdad4aa7b51">perform_event</a> (<a class="el" href="../../d4/d7e/structtricl_1_1event.html">event</a> &amp;ev, <a class="el" href="../../d9/d16/structtricl_1_1event__data.html">event_data</a> *evd_)</td></tr>
+<tr class="memdesc:abd0fec822d726403436f1bdad4aa7b51"><td class="mdescLeft">&#160;</td><td class="mdescRight">Perform an event (usually the current event).  <a href="#abd0fec822d726403436f1bdad4aa7b51">More...</a><br /></td></tr>
+<tr class="separator:abd0fec822d726403436f1bdad4aa7b51"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad57de4475b376dedfc003a1b09cfece8"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dd/d20/event_8h.html#ad57de4475b376dedfc003a1b09cfece8">pop_next_event</a> ()</td></tr>
 <tr class="memdesc:ad57de4475b376dedfc003a1b09cfece8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Find the next occurring event.  <a href="#ad57de4475b376dedfc003a1b09cfece8">More...</a><br /></td></tr>
 <tr class="separator:ad57de4475b376dedfc003a1b09cfece8"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -281,8 +281,8 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>reschedule_event</b> 
 
 </div>
 </div>
-<a id="af13ceffde477e67e6d9418750ce45107"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af13ceffde477e67e6d9418750ce45107">&#9670;&nbsp;</a></span>perform_event()</h2>
+<a id="abd0fec822d726403436f1bdad4aa7b51"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#abd0fec822d726403436f1bdad4aa7b51">&#9670;&nbsp;</a></span>perform_event()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -291,8 +291,18 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>reschedule_event</b> 
           <td class="memname">void perform_event </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="../../d4/d7e/structtricl_1_1event.html">event</a> &amp;&#160;</td>
-          <td class="paramname"><em>ev</em></td><td>)</td>
+          <td class="paramname"><em>ev</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
           <td></td>
+          <td class="paramtype"><a class="el" href="../../d9/d16/structtricl_1_1event__data.html">event_data</a> *&#160;</td>
+          <td class="paramname"><em>evd_</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -303,6 +313,7 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>reschedule_event</b> 
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">ev</td><td>the event to perform </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">evd_</td><td>ptr to the corresponding event data </td></tr>
   </table>
   </dd>
 </dl>

@@ -29,7 +29,7 @@ This graph shows which files directly or indirectly include this file\+:\nopageb
 \item 
 void \hyperlink{angle_8h_a1a5dff9417edeae00cf8bfd75459fc36}{add\+\_\+or\+\_\+delete\+\_\+angle} (\hyperlink{namespacetricl_a6967089e2c0837f273d8cb5fd9f7e46d}{event\+\_\+class} ec\+\_\+angle, \hyperlink{namespacetricl_a57273122278e8b301844e2a2e1f0742f}{entity} e1, \hyperlink{namespacetricl_afd4de3aedd5e48cf955f03457386e98f}{entity\+\_\+type} et1, \hyperlink{namespacetricl_a2d01894944fb58a8fedc0912a48d13f8}{relationship\+\_\+or\+\_\+action\+\_\+type} rat12, \hyperlink{namespacetricl_a57273122278e8b301844e2a2e1f0742f}{entity} e2, \hyperlink{namespacetricl_afd4de3aedd5e48cf955f03457386e98f}{entity\+\_\+type} et2, \hyperlink{namespacetricl_a2d01894944fb58a8fedc0912a48d13f8}{relationship\+\_\+or\+\_\+action\+\_\+type} rat23, \hyperlink{namespacetricl_a57273122278e8b301844e2a2e1f0742f}{entity} e3, \hyperlink{namespacetricl_afd4de3aedd5e48cf955f03457386e98f}{entity\+\_\+type} et3)
 \begin{DoxyCompactList}\small\item\em Perform all necessary changes in state and event data due to the addition or deletion of an angle. \end{DoxyCompactList}\item 
-angle\+\_\+vec \hyperlink{angle_8h_a41fd7245e9c518d475b54f06b741fafb}{leg\+\_\+intersection} (const \hyperlink{namespacetricl_a57273122278e8b301844e2a2e1f0742f}{entity} e1, const \hyperlink{namespacetricl_ab38d0de463e15641fa11e175c60a265e}{outleg\+\_\+set} \&out1, const \hyperlink{namespacetricl_a024e365a54b0a7ed2094f9d452d52a84}{inleg\+\_\+set} \&in3, const \hyperlink{namespacetricl_a57273122278e8b301844e2a2e1f0742f}{entity} e3)
+angle\+\_\+vec \hyperlink{angle_8h_ae5e2eb6eb7c7a86006ad9b57d9737e4d}{get\+\_\+angles} (const \hyperlink{namespacetricl_a57273122278e8b301844e2a2e1f0742f}{entity} e1, const \hyperlink{namespacetricl_ab38d0de463e15641fa11e175c60a265e}{outleg\+\_\+set} \&out1, const \hyperlink{namespacetricl_a024e365a54b0a7ed2094f9d452d52a84}{inleg\+\_\+set} \&in3, const \hyperlink{namespacetricl_a57273122278e8b301844e2a2e1f0742f}{entity} e3)
 \begin{DoxyCompactList}\small\item\em Compare each outleg of e1 with each inleg of e3 to find each angle from e1 to e3. \end{DoxyCompactList}\end{DoxyCompactItemize}
 
 
@@ -72,11 +72,11 @@ This is one of the performance bottleneck functions since it is called many time
 \mbox{\tt in}  & {\em et3} & its type \\
 \hline
 \end{DoxyParams}
-\mbox{\Hypertarget{angle_8h_a41fd7245e9c518d475b54f06b741fafb}\label{angle_8h_a41fd7245e9c518d475b54f06b741fafb}} 
-\index{angle.\+h@{angle.\+h}!leg\+\_\+intersection@{leg\+\_\+intersection}}
-\index{leg\+\_\+intersection@{leg\+\_\+intersection}!angle.\+h@{angle.\+h}}
-\subsubsection{\texorpdfstring{leg\+\_\+intersection()}{leg\_intersection()}}
-{\footnotesize\ttfamily angle\+\_\+vec leg\+\_\+intersection (\begin{DoxyParamCaption}\item[{const \hyperlink{namespacetricl_a57273122278e8b301844e2a2e1f0742f}{entity}}]{e1,  }\item[{const \hyperlink{namespacetricl_ab38d0de463e15641fa11e175c60a265e}{outleg\+\_\+set} \&}]{out1,  }\item[{const \hyperlink{namespacetricl_a024e365a54b0a7ed2094f9d452d52a84}{inleg\+\_\+set} \&}]{in3,  }\item[{const \hyperlink{namespacetricl_a57273122278e8b301844e2a2e1f0742f}{entity}}]{e3 }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+\mbox{\Hypertarget{angle_8h_ae5e2eb6eb7c7a86006ad9b57d9737e4d}\label{angle_8h_ae5e2eb6eb7c7a86006ad9b57d9737e4d}} 
+\index{angle.\+h@{angle.\+h}!get\+\_\+angles@{get\+\_\+angles}}
+\index{get\+\_\+angles@{get\+\_\+angles}!angle.\+h@{angle.\+h}}
+\subsubsection{\texorpdfstring{get\+\_\+angles()}{get\_angles()}}
+{\footnotesize\ttfamily angle\+\_\+vec get\+\_\+angles (\begin{DoxyParamCaption}\item[{const \hyperlink{namespacetricl_a57273122278e8b301844e2a2e1f0742f}{entity}}]{e1,  }\item[{const \hyperlink{namespacetricl_ab38d0de463e15641fa11e175c60a265e}{outleg\+\_\+set} \&}]{out1,  }\item[{const \hyperlink{namespacetricl_a024e365a54b0a7ed2094f9d452d52a84}{inleg\+\_\+set} \&}]{in3,  }\item[{const \hyperlink{namespacetricl_a57273122278e8b301844e2a2e1f0742f}{entity}}]{e3 }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
 
 
 

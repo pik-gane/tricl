@@ -94,9 +94,16 @@ $(function() {
 </ul>
 <p>input/output:</p><ul>
 <li>include metadata into gexf files</li>
-<li>support "premerged" edges in gexf via &lt;spells&gt;&lt;spell start="..." end="..."&gt;&lt;/spell&gt;...&lt;/spells&gt;</li>
+<li>support "premerged" edges in gexf via &lt;spells&gt;&lt;spell start="..." end="..."&gt;&lt;/spell&gt;...&lt;/spells&gt;, by a postprocessing step that firts sorts and then merges the edges in the file by doing <code>gunzip -c myoutput.gexf.gz | sort -t"-" -k3 | mergelinks | gzip &gt; mysortedoutput.gexf.gz</code> for which we need to provide a binary "mergelinks"</li>
 <li>support prespecified positions in visualization, see here: <a href="https://github.com/gephi/gephi/issues/2038">https://github.com/gephi/gephi/issues/2038</a></li>
 <li>support entity type detection from columns in csv file</li>
+</ul>
+<p>model estimation:</p><ul>
+<li>add command line options &ndash;events=events.csv, &ndash;logl and &ndash;grad</li>
+<li>if given, read lines from events.csv rather than pop_next_event</li>
+<li>if &ndash;logl, accumulate loglikelhood instead of scheduling and write only logl to stdout</li>
+<li>if &ndash;grad, also accumulate and output gradient w.r.t. metaparameters</li>
+<li>write python template script for estimating metaparameters by max.likelihood method, using scipy.optimize</li>
 </ul>
 <h1>Terminology </h1>
 <ul>

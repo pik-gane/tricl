@@ -17,8 +17,7 @@ Include dependency graph for event.\+h\+:\nopagebreak
 \includegraphics[width=350pt]{d9/d06/event_8h__incl}
 \end{center}
 \end{figure}
-This graph shows which files directly or indirectly include this file\+:
-\nopagebreak
+This graph shows which files directly or indirectly include this file\+:\nopagebreak
 \begin{figure}[H]
 \begin{center}
 \leavevmode
@@ -58,7 +57,7 @@ void \hyperlink{event_8h_adc013b33a8b8afbb4f75c8c95dc3b93a}{update\+\_\+adjacent
 \begin{DoxyCompactList}\small\item\em Update all events which are adjacent to a given event because the event affects angles that might influence them. \end{DoxyCompactList}\item 
 void \hyperlink{event_8h_aec4dd06c452378363b04a58a0cfe8f8b}{add\+\_\+reverse\+\_\+event} (\hyperlink{structtricl_1_1event}{event} \&old\+\_\+ev)
 \begin{DoxyCompactList}\small\item\em Add the reverse event of a just performed event. \end{DoxyCompactList}\item 
-void \hyperlink{event_8h_af13ceffde477e67e6d9418750ce45107}{perform\+\_\+event} (\hyperlink{structtricl_1_1event}{event} \&ev)
+void \hyperlink{event_8h_abd0fec822d726403436f1bdad4aa7b51}{perform\+\_\+event} (\hyperlink{structtricl_1_1event}{event} \&ev, \hyperlink{structtricl_1_1event__data}{event\+\_\+data} $\ast$evd\+\_\+)
 \begin{DoxyCompactList}\small\item\em Perform an event (usually the current event). \end{DoxyCompactList}\item 
 bool \hyperlink{event_8h_ad57de4475b376dedfc003a1b09cfece8}{pop\+\_\+next\+\_\+event} ()
 \begin{DoxyCompactList}\small\item\em Find the next occurring event. \end{DoxyCompactList}\end{DoxyCompactItemize}
@@ -134,11 +133,11 @@ Return whether a future instance of the event is scheduled.
 \mbox{\tt in}  & {\em evd\+\_\+} & the corresponding variable event data, passed by pointer for performance \\
 \hline
 \end{DoxyParams}
-\mbox{\Hypertarget{event_8h_af13ceffde477e67e6d9418750ce45107}\label{event_8h_af13ceffde477e67e6d9418750ce45107}} 
+\mbox{\Hypertarget{event_8h_abd0fec822d726403436f1bdad4aa7b51}\label{event_8h_abd0fec822d726403436f1bdad4aa7b51}} 
 \index{event.\+h@{event.\+h}!perform\+\_\+event@{perform\+\_\+event}}
 \index{perform\+\_\+event@{perform\+\_\+event}!event.\+h@{event.\+h}}
 \subsubsection{\texorpdfstring{perform\+\_\+event()}{perform\_event()}}
-{\footnotesize\ttfamily void perform\+\_\+event (\begin{DoxyParamCaption}\item[{\hyperlink{structtricl_1_1event}{event} \&}]{ev }\end{DoxyParamCaption})}
+{\footnotesize\ttfamily void perform\+\_\+event (\begin{DoxyParamCaption}\item[{\hyperlink{structtricl_1_1event}{event} \&}]{ev,  }\item[{\hyperlink{structtricl_1_1event__data}{event\+\_\+data} $\ast$}]{evd\+\_\+ }\end{DoxyParamCaption})}
 
 
 
@@ -149,6 +148,8 @@ In this function, the order of updates is crucial for keeping data consistent\+:
 If the relationship or action type rat13 is asymmetric and has a named inverse rat31, then also do the same things for the companion event that deals with the inverse link e3--rat31--$>$e1. 
 \begin{DoxyParams}[1]{Parameters}
 \mbox{\tt in}  & {\em ev} & the event to perform \\
+\hline
+\mbox{\tt in}  & {\em evd\+\_\+} & ptr to the corresponding event data \\
 \hline
 \end{DoxyParams}
 \mbox{\Hypertarget{event_8h_ad57de4475b376dedfc003a1b09cfece8}\label{event_8h_ad57de4475b376dedfc003a1b09cfece8}} 

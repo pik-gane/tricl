@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['possible_5fevts',['possible_evts',['../d5/dfb/global__variables_8h.html#a06f50231842da057123f740c26bee862',1,'possible_evts():&#160;init.cpp'],['../d0/dc9/init_8cpp.html#a06f50231842da057123f740c26bee862',1,'possible_evts():&#160;init.cpp']]]
+  ['only_5foutput_5flogl',['only_output_logl',['../df/d59/config_8cpp.html#addeb0ec6f5426c6167bef980416a87f5',1,'only_output_logl():&#160;config.cpp'],['../d5/dfb/global__variables_8h.html#addeb0ec6f5426c6167bef980416a87f5',1,'only_output_logl():&#160;config.cpp']]]
 ];

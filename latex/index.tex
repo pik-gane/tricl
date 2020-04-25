@@ -45,9 +45,18 @@ optimization\+:
 input/output\+:
 \begin{DoxyItemize}
 \item include metadata into gexf files
-\item support \char`\"{}premerged\char`\"{} edges in gexf via $<$spells$>$$<$spell start=\char`\"{}...\char`\"{} end=\char`\"{}...\char`\"{}$>$$<$/spell$>$...$<$/spells$>$
+\item support \char`\"{}premerged\char`\"{} edges in gexf via $<$spells$>$$<$spell start=\char`\"{}...\char`\"{} end=\char`\"{}...\char`\"{}$>$$<$/spell$>$...$<$/spells$>$, by a postprocessing step that firts sorts and then merges the edges in the file by doing {\ttfamily gunzip -\/c myoutput.\+gexf.\+gz $\vert$ sort -\/t\char`\"{}-\/\char`\"{} -\/k3 $\vert$ mergelinks $\vert$ gzip $>$ mysortedoutput.\+gexf.\+gz} for which we need to provide a binary \char`\"{}mergelinks\char`\"{}
 \item support prespecified positions in visualization, see here\+: \href{https://github.com/gephi/gephi/issues/2038}{\tt https\+://github.\+com/gephi/gephi/issues/2038}
 \item support entity type detection from columns in csv file
+\end{DoxyItemize}
+
+model estimation\+:
+\begin{DoxyItemize}
+\item add command line options --events=events.\+csv, --logl and --grad
+\item if given, read lines from events.\+csv rather than pop\+\_\+next\+\_\+event
+\item if --logl, accumulate loglikelhood instead of scheduling and write only logl to stdout
+\item if --grad, also accumulate and output gradient w.\+r.\+t. metaparameters
+\item write python template script for estimating metaparameters by max.\+likelihood method, using scipy.\+optimize
 \end{DoxyItemize}
 
 \section*{Terminology }

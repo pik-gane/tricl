@@ -10,8 +10,7 @@ Handling of input/output other than gexf and graphviz.
 {\ttfamily \#include \char`\"{}entity.\+h\char`\"{}}\newline
 {\ttfamily \#include \char`\"{}event.\+h\char`\"{}}\newline
 {\ttfamily \#include \char`\"{}io.\+h\char`\"{}}\newline
-Include dependency graph for io.\+cpp\+:
-\nopagebreak
+Include dependency graph for io.\+cpp\+:\nopagebreak
 \begin{figure}[H]
 \begin{center}
 \leavevmode
@@ -43,7 +42,7 @@ ostream \& {\bfseries tricl\+::operator$<$$<$} (ostream \&os, const \hyperlink{s
 \item 
 void \hyperlink{io_8cpp_abd249892d25bd839b49de0dadd223092}{log\+\_\+state} ()
 \begin{DoxyCompactList}\small\item\em Output simple statistics for current model state to stdout. \end{DoxyCompactList}\item 
-void \hyperlink{io_8cpp_a62a298a3d75d0c2bd86ddb9dfedbfc50}{read\+\_\+links\+\_\+csv} (string filename, int skip\+\_\+rows, int max\+\_\+rows, char delimiter, int e1\+\_\+col, int rat13\+\_\+col, int e3\+\_\+col, \hyperlink{namespacetricl_afd4de3aedd5e48cf955f03457386e98f}{entity\+\_\+type} et1\+\_\+default, \hyperlink{namespacetricl_a2d01894944fb58a8fedc0912a48d13f8}{relationship\+\_\+or\+\_\+action\+\_\+type} rat13\+\_\+fixed, \hyperlink{namespacetricl_afd4de3aedd5e48cf955f03457386e98f}{entity\+\_\+type} et3\+\_\+default, string e1\+\_\+prefix, string e3\+\_\+prefix)
+void \hyperlink{io_8cpp_a9d823f13c802eb2c042f76e252b00cbe}{read\+\_\+links\+\_\+csv} (string filename, int skip\+\_\+rows, int max\+\_\+rows, char delimiter, int e1\+\_\+col, string e1\+\_\+prefix, int et1\+\_\+col, \hyperlink{namespacetricl_afd4de3aedd5e48cf955f03457386e98f}{entity\+\_\+type} et1\+\_\+default, int rat13\+\_\+col, \hyperlink{namespacetricl_a2d01894944fb58a8fedc0912a48d13f8}{relationship\+\_\+or\+\_\+action\+\_\+type} rat13\+\_\+fixed, int e3\+\_\+col, string e3\+\_\+prefix, int et3\+\_\+col, \hyperlink{namespacetricl_afd4de3aedd5e48cf955f03457386e98f}{entity\+\_\+type} et3\+\_\+default)
 \begin{DoxyCompactList}\small\item\em Read initial links from a csv file. \end{DoxyCompactList}\item 
 \mbox{\Hypertarget{io_8cpp_a27ba802fd207e664e36150d6e0e3e609}\label{io_8cpp_a27ba802fd207e664e36150d6e0e3e609}} 
 void \hyperlink{io_8cpp_a27ba802fd207e664e36150d6e0e3e609}{dump\+\_\+links} ()
@@ -79,11 +78,11 @@ $<$ overall link density
 
 $<$ overall angle density
 
-$<$ quotient between angle density and \char`\"{}expected angle density\char`\"{} (square of link density) \mbox{\Hypertarget{io_8cpp_a62a298a3d75d0c2bd86ddb9dfedbfc50}\label{io_8cpp_a62a298a3d75d0c2bd86ddb9dfedbfc50}} 
+$<$ quotient between angle density and \char`\"{}expected angle density\char`\"{} (square of link density) \mbox{\Hypertarget{io_8cpp_a9d823f13c802eb2c042f76e252b00cbe}\label{io_8cpp_a9d823f13c802eb2c042f76e252b00cbe}} 
 \index{io.\+cpp@{io.\+cpp}!read\+\_\+links\+\_\+csv@{read\+\_\+links\+\_\+csv}}
 \index{read\+\_\+links\+\_\+csv@{read\+\_\+links\+\_\+csv}!io.\+cpp@{io.\+cpp}}
 \subsubsection{\texorpdfstring{read\+\_\+links\+\_\+csv()}{read\_links\_csv()}}
-{\footnotesize\ttfamily void read\+\_\+links\+\_\+csv (\begin{DoxyParamCaption}\item[{string}]{filename,  }\item[{int}]{skip\+\_\+rows,  }\item[{int}]{max\+\_\+rows,  }\item[{char}]{delimiter,  }\item[{int}]{e1\+\_\+col,  }\item[{int}]{rat13\+\_\+col,  }\item[{int}]{e3\+\_\+col,  }\item[{\hyperlink{namespacetricl_afd4de3aedd5e48cf955f03457386e98f}{entity\+\_\+type}}]{et1\+\_\+default,  }\item[{\hyperlink{namespacetricl_a2d01894944fb58a8fedc0912a48d13f8}{relationship\+\_\+or\+\_\+action\+\_\+type}}]{rat13\+\_\+fixed,  }\item[{\hyperlink{namespacetricl_afd4de3aedd5e48cf955f03457386e98f}{entity\+\_\+type}}]{et3\+\_\+default,  }\item[{string}]{e1\+\_\+prefix,  }\item[{string}]{e3\+\_\+prefix }\end{DoxyParamCaption})}
+{\footnotesize\ttfamily void read\+\_\+links\+\_\+csv (\begin{DoxyParamCaption}\item[{string}]{filename,  }\item[{int}]{skip\+\_\+rows,  }\item[{int}]{max\+\_\+rows,  }\item[{char}]{delimiter,  }\item[{int}]{e1\+\_\+col,  }\item[{string}]{e1\+\_\+prefix,  }\item[{int}]{et1\+\_\+col,  }\item[{\hyperlink{namespacetricl_afd4de3aedd5e48cf955f03457386e98f}{entity\+\_\+type}}]{et1\+\_\+default,  }\item[{int}]{rat13\+\_\+col,  }\item[{\hyperlink{namespacetricl_a2d01894944fb58a8fedc0912a48d13f8}{relationship\+\_\+or\+\_\+action\+\_\+type}}]{rat13\+\_\+fixed,  }\item[{int}]{e3\+\_\+col,  }\item[{string}]{e3\+\_\+prefix,  }\item[{int}]{et3\+\_\+col,  }\item[{\hyperlink{namespacetricl_afd4de3aedd5e48cf955f03457386e98f}{entity\+\_\+type}}]{et3\+\_\+default }\end{DoxyParamCaption})}
 
 
 
@@ -103,20 +102,24 @@ Entity labels from the file are prefixed by e\+\_\+prefix before storing them in
 \hline
 \mbox{\tt in}  & {\em delimiter} & delimiter, e.\+g. \char`\"{} \char`\"{} or \char`\"{},\char`\"{} or \char`\"{}\textbackslash{}t\char`\"{} \\
 \hline
-\mbox{\tt in}  & {\em e1\+\_\+col} & no. of column containing e1 labels \\
-\hline
-\mbox{\tt in}  & {\em rat13\+\_\+col} & no. of column containing rat13 labels (or -\/1 if type is fixed to value of \char`\"{}rat13\+\_\+fixed\char`\"{}) \\
-\hline
-\mbox{\tt in}  & {\em e3\+\_\+col} & no. of column containing e3 labels \\
-\hline
-\mbox{\tt in}  & {\em et1\+\_\+default} & default entity-\/type for previously unregistered e1s (if -\/1, no new e1s are allowed) \\
-\hline
-\mbox{\tt in}  & {\em rat13\+\_\+fixed} & fixed type if rat13\+\_\+col == -\/1 (otherwise N\+O\+\_\+\+R\+AT) \\
-\hline
-\mbox{\tt in}  & {\em et3\+\_\+default} & default entity-\/type for previously unregistered e3s (if -\/1, no new e3s are allowed) \\
+\mbox{\tt in}  & {\em e1\+\_\+col} & no. of column containing e1 entity labels \\
 \hline
 \mbox{\tt in}  & {\em e1\+\_\+prefix} & prefix to prepend to e1 labels before storing them \\
 \hline
+\mbox{\tt in}  & {\em et1\+\_\+col} & no. of column containing et1 entity type labels (or -\/1 if et1\+\_\+default is used instead) \\
+\hline
+\mbox{\tt in}  & {\em et1\+\_\+default} & default entity-\/type for previously unregistered e1s (if -\/1, no new e1s are allowed or et1\+\_\+col is used instead) \\
+\hline
+\mbox{\tt in}  & {\em rat13\+\_\+col} & no. of column containing rat13 labels (or -\/1 if type is fixed to value of \char`\"{}rat13\+\_\+fixed\char`\"{}) \\
+\hline
+\mbox{\tt in}  & {\em rat13\+\_\+fixed} & fixed type if rat13\+\_\+col == -\/1 (otherwise N\+O\+\_\+\+R\+AT) \\
+\hline
+\mbox{\tt in}  & {\em e3\+\_\+col} & no. of column containing e3 entity labels \\
+\hline
 \mbox{\tt in}  & {\em e3\+\_\+prefix} & prefix to prepend to e3 labels before storing them \\
+\hline
+\mbox{\tt in}  & {\em et3\+\_\+col} & no. of column containing et3 entity type labels (or -\/1 if et3\+\_\+default is used instead) \\
+\hline
+\mbox{\tt in}  & {\em et3\+\_\+default} & default entity-\/type for previously unregistered e3s (if -\/1, no new e3s are allowed or et3\+\_\+col is used instead) \\
 \hline
 \end{DoxyParams}

@@ -119,9 +119,9 @@ ostream &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>tricl::opera
 <tr class="memitem:abd249892d25bd839b49de0dadd223092"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d5/d5a/io_8cpp.html#abd249892d25bd839b49de0dadd223092">log_state</a> ()</td></tr>
 <tr class="memdesc:abd249892d25bd839b49de0dadd223092"><td class="mdescLeft">&#160;</td><td class="mdescRight">Output simple statistics for current model state to stdout.  <a href="#abd249892d25bd839b49de0dadd223092">More...</a><br /></td></tr>
 <tr class="separator:abd249892d25bd839b49de0dadd223092"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a62a298a3d75d0c2bd86ddb9dfedbfc50"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d5/d5a/io_8cpp.html#a62a298a3d75d0c2bd86ddb9dfedbfc50">read_links_csv</a> (string filename, int skip_rows, int max_rows, char delimiter, int e1_col, int rat13_col, int e3_col, <a class="el" href="../../dc/d70/namespacetricl.html#afd4de3aedd5e48cf955f03457386e98f">entity_type</a> et1_default, <a class="el" href="../../dc/d70/namespacetricl.html#a2d01894944fb58a8fedc0912a48d13f8">relationship_or_action_type</a> rat13_fixed, <a class="el" href="../../dc/d70/namespacetricl.html#afd4de3aedd5e48cf955f03457386e98f">entity_type</a> et3_default, string e1_prefix, string e3_prefix)</td></tr>
-<tr class="memdesc:a62a298a3d75d0c2bd86ddb9dfedbfc50"><td class="mdescLeft">&#160;</td><td class="mdescRight">Read initial links from a csv file.  <a href="#a62a298a3d75d0c2bd86ddb9dfedbfc50">More...</a><br /></td></tr>
-<tr class="separator:a62a298a3d75d0c2bd86ddb9dfedbfc50"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9d823f13c802eb2c042f76e252b00cbe"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d5/d5a/io_8cpp.html#a9d823f13c802eb2c042f76e252b00cbe">read_links_csv</a> (string filename, int skip_rows, int max_rows, char delimiter, int e1_col, string e1_prefix, int et1_col, <a class="el" href="../../dc/d70/namespacetricl.html#afd4de3aedd5e48cf955f03457386e98f">entity_type</a> et1_default, int rat13_col, <a class="el" href="../../dc/d70/namespacetricl.html#a2d01894944fb58a8fedc0912a48d13f8">relationship_or_action_type</a> rat13_fixed, int e3_col, string e3_prefix, int et3_col, <a class="el" href="../../dc/d70/namespacetricl.html#afd4de3aedd5e48cf955f03457386e98f">entity_type</a> et3_default)</td></tr>
+<tr class="memdesc:a9d823f13c802eb2c042f76e252b00cbe"><td class="mdescLeft">&#160;</td><td class="mdescRight">Read initial links from a csv file.  <a href="#a9d823f13c802eb2c042f76e252b00cbe">More...</a><br /></td></tr>
+<tr class="separator:a9d823f13c802eb2c042f76e252b00cbe"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a27ba802fd207e664e36150d6e0e3e609"><td class="memItemLeft" align="right" valign="top"><a id="a27ba802fd207e664e36150d6e0e3e609"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d5/d5a/io_8cpp.html#a27ba802fd207e664e36150d6e0e3e609">dump_links</a> ()</td></tr>
 <tr class="memdesc:a27ba802fd207e664e36150d6e0e3e609"><td class="mdescLeft">&#160;</td><td class="mdescRight">(for debugging purposes) <br /></td></tr>
@@ -159,8 +159,8 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../.
 
 </div>
 </div>
-<a id="a62a298a3d75d0c2bd86ddb9dfedbfc50"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a62a298a3d75d0c2bd86ddb9dfedbfc50">&#9670;&nbsp;</a></span>read_links_csv()</h2>
+<a id="a9d823f13c802eb2c042f76e252b00cbe"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9d823f13c802eb2c042f76e252b00cbe">&#9670;&nbsp;</a></span>read_links_csv()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -198,14 +198,14 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../.
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>rat13_col</em>, </td>
+          <td class="paramtype">string&#160;</td>
+          <td class="paramname"><em>e1_prefix</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>e3_col</em>, </td>
+          <td class="paramname"><em>et1_col</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -216,26 +216,38 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../.
         <tr>
           <td class="paramkey"></td>
           <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>rat13_col</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
           <td class="paramtype"><a class="el" href="../../dc/d70/namespacetricl.html#a2d01894944fb58a8fedc0912a48d13f8">relationship_or_action_type</a>&#160;</td>
           <td class="paramname"><em>rat13_fixed</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>e3_col</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">string&#160;</td>
+          <td class="paramname"><em>e3_prefix</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>et3_col</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
           <td class="paramtype"><a class="el" href="../../dc/d70/namespacetricl.html#afd4de3aedd5e48cf955f03457386e98f">entity_type</a>&#160;</td>
-          <td class="paramname"><em>et3_default</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">string&#160;</td>
-          <td class="paramname"><em>e1_prefix</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">string&#160;</td>
-          <td class="paramname"><em>e3_prefix</em>&#160;</td>
+          <td class="paramname"><em>et3_default</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -255,14 +267,16 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../.
     <tr><td class="paramdir">[in]</td><td class="paramname">skip_rows</td><td>no. of rows to skip at start of file (e.g. header lines) </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">max_rows</td><td>no. of rows to read at most </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">delimiter</td><td>delimiter, e.g. " " or "," or "\t" </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">e1_col</td><td>no. of column containing e1 labels </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">rat13_col</td><td>no. of column containing rat13 labels (or -1 if type is fixed to value of "rat13_fixed") </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">e3_col</td><td>no. of column containing e3 labels </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">et1_default</td><td>default entity-type for previously unregistered e1s (if -1, no new e1s are allowed) </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">rat13_fixed</td><td>fixed type if rat13_col == -1 (otherwise NO_RAT) </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">et3_default</td><td>default entity-type for previously unregistered e3s (if -1, no new e3s are allowed) </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">e1_col</td><td>no. of column containing e1 entity labels </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">e1_prefix</td><td>prefix to prepend to e1 labels before storing them </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">et1_col</td><td>no. of column containing et1 entity type labels (or -1 if et1_default is used instead) </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">et1_default</td><td>default entity-type for previously unregistered e1s (if -1, no new e1s are allowed or et1_col is used instead) </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">rat13_col</td><td>no. of column containing rat13 labels (or -1 if type is fixed to value of "rat13_fixed") </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">rat13_fixed</td><td>fixed type if rat13_col == -1 (otherwise NO_RAT) </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">e3_col</td><td>no. of column containing e3 entity labels </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">e3_prefix</td><td>prefix to prepend to e3 labels before storing them </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">et3_col</td><td>no. of column containing et3 entity type labels (or -1 if et3_default is used instead) </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">et3_default</td><td>default entity-type for previously unregistered e3s (if -1, no new e3s are allowed or et3_col is used instead) </td></tr>
   </table>
   </dd>
 </dl>

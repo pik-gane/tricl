@@ -120,6 +120,16 @@ Functions</h2></td></tr>
 <tr class="memitem:abfaa763b93af36afec58f5d42fdf69a1"><td class="memItemLeft" align="right" valign="top"><a class="el" href="../../dc/d70/namespacetricl.html#ae42d2696f294300a43e0f5edf4875479">rate</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d5/d87/probability_8h.html#abfaa763b93af36afec58f5d42fdf69a1">effective_rate</a> (<a class="el" href="../../dc/d70/namespacetricl.html#ae42d2696f294300a43e0f5edf4875479">rate</a> attempt_rate, <a class="el" href="../../dc/d70/namespacetricl.html#af8f8f9076e92e1c664ffa96f18d038a5">probunits</a> success_pus, double left_tail, double right_tail)</td></tr>
 <tr class="memdesc:abfaa763b93af36afec58f5d42fdf69a1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Compute the current effective rate at which an event occurs from its current attempt rate and success probability units.  <a href="#abfaa763b93af36afec58f5d42fdf69a1">More...</a><br /></td></tr>
 <tr class="separator:abfaa763b93af36afec58f5d42fdf69a1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abd19a9ddc86a4f70890374440775af70"><td class="memItemLeft" align="right" valign="top"><a id="abd19a9ddc86a4f70890374440775af70"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d5/d87/probability_8h.html#abd19a9ddc86a4f70890374440775af70">add_effective_rate</a> (<a class="el" href="../../dc/d70/namespacetricl.html#ae42d2696f294300a43e0f5edf4875479">rate</a> er)</td></tr>
+<tr class="memdesc:abd19a9ddc86a4f70890374440775af70"><td class="mdescLeft">&#160;</td><td class="mdescRight">Add effective rate to total, taking care of infinite values. <br /></td></tr>
+<tr class="separator:abd19a9ddc86a4f70890374440775af70"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0015fe9345db1abfdc66ca64cf7b28ff"><td class="memItemLeft" align="right" valign="top"><a id="a0015fe9345db1abfdc66ca64cf7b28ff"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d5/d87/probability_8h.html#a0015fe9345db1abfdc66ca64cf7b28ff">subtract_effective_rate</a> (<a class="el" href="../../dc/d70/namespacetricl.html#ae42d2696f294300a43e0f5edf4875479">rate</a> er)</td></tr>
+<tr class="memdesc:a0015fe9345db1abfdc66ca64cf7b28ff"><td class="mdescLeft">&#160;</td><td class="mdescRight">Subtract effective rate to total, taking care of infinite values. <br /></td></tr>
+<tr class="separator:a0015fe9345db1abfdc66ca64cf7b28ff"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a597ea8b9a65b5faddf92c37de1a2c04f"><td class="memItemLeft" align="right" valign="top"><a class="el" href="../../dc/d70/namespacetricl.html#ae42d2696f294300a43e0f5edf4875479">rate</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d5/d87/probability_8h.html#a597ea8b9a65b5faddf92c37de1a2c04f">total_effective_rate</a> ()</td></tr>
+<tr class="separator:a597ea8b9a65b5faddf92c37de1a2c04f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="var-members"></a>
 Variables</h2></td></tr>
@@ -311,6 +321,32 @@ const double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hr
   </table>
   </dd>
 </dl>
+
+</div>
+</div>
+<a id="a597ea8b9a65b5faddf92c37de1a2c04f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a597ea8b9a65b5faddf92c37de1a2c04f">&#9670;&nbsp;</a></span>total_effective_rate()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="../../dc/d70/namespacetricl.html#ae42d2696f294300a43e0f5edf4875479">rate</a> total_effective_rate </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<dl class="section return"><dt>Returns</dt><dd>actual total effective rate, taking care of infinite values. </dd></dl>
 
 </div>
 </div>

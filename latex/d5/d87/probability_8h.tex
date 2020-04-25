@@ -14,8 +14,7 @@ Include dependency graph for probability.\+h\+:\nopagebreak
 \includegraphics[width=350pt]{d6/dd3/probability_8h__incl}
 \end{center}
 \end{figure}
-This graph shows which files directly or indirectly include this file\+:
-\nopagebreak
+This graph shows which files directly or indirectly include this file\+:\nopagebreak
 \begin{figure}[H]
 \begin{center}
 \leavevmode
@@ -32,7 +31,15 @@ double \hyperlink{probability_8h_a96d584ab7ce9c4874bd2a0305679755a}{tail2scale} 
 \hyperlink{namespacetricl_af2e8973ba58a3dad9061296d8bee16a2}{probability} \hyperlink{probability_8h_a278b4df0353e94d6cf8cfb59a0d8058a}{probunits2probability} (\hyperlink{namespacetricl_af8f8f9076e92e1c664ffa96f18d038a5}{probunits} pu, double left\+\_\+tail, double right\+\_\+tail)
 \begin{DoxyCompactList}\small\item\em Convert probability units to probability. \end{DoxyCompactList}\item 
 \hyperlink{namespacetricl_ae42d2696f294300a43e0f5edf4875479}{rate} \hyperlink{probability_8h_abfaa763b93af36afec58f5d42fdf69a1}{effective\+\_\+rate} (\hyperlink{namespacetricl_ae42d2696f294300a43e0f5edf4875479}{rate} attempt\+\_\+rate, \hyperlink{namespacetricl_af8f8f9076e92e1c664ffa96f18d038a5}{probunits} success\+\_\+pus, double left\+\_\+tail, double right\+\_\+tail)
-\begin{DoxyCompactList}\small\item\em Compute the current effective rate at which an event occurs from its current attempt rate and success probability units. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\begin{DoxyCompactList}\small\item\em Compute the current effective rate at which an event occurs from its current attempt rate and success probability units. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{probability_8h_abd19a9ddc86a4f70890374440775af70}\label{probability_8h_abd19a9ddc86a4f70890374440775af70}} 
+void \hyperlink{probability_8h_abd19a9ddc86a4f70890374440775af70}{add\+\_\+effective\+\_\+rate} (\hyperlink{namespacetricl_ae42d2696f294300a43e0f5edf4875479}{rate} er)
+\begin{DoxyCompactList}\small\item\em Add effective rate to total, taking care of infinite values. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{probability_8h_a0015fe9345db1abfdc66ca64cf7b28ff}\label{probability_8h_a0015fe9345db1abfdc66ca64cf7b28ff}} 
+void \hyperlink{probability_8h_a0015fe9345db1abfdc66ca64cf7b28ff}{subtract\+\_\+effective\+\_\+rate} (\hyperlink{namespacetricl_ae42d2696f294300a43e0f5edf4875479}{rate} er)
+\begin{DoxyCompactList}\small\item\em Subtract effective rate to total, taking care of infinite values. \end{DoxyCompactList}\item 
+\hyperlink{namespacetricl_ae42d2696f294300a43e0f5edf4875479}{rate} \hyperlink{probability_8h_a597ea8b9a65b5faddf92c37de1a2c04f}{total\+\_\+effective\+\_\+rate} ()
+\end{DoxyCompactItemize}
 \subsection*{Variables}
 \begin{DoxyCompactItemize}
 \item 
@@ -136,3 +143,12 @@ the scale parameter, $>$ 0
 \mbox{\tt in}  & {\em tail} & tail index to compute the scale parameter for, $>$= 0 \\
 \hline
 \end{DoxyParams}
+\mbox{\Hypertarget{probability_8h_a597ea8b9a65b5faddf92c37de1a2c04f}\label{probability_8h_a597ea8b9a65b5faddf92c37de1a2c04f}} 
+\index{probability.\+h@{probability.\+h}!total\+\_\+effective\+\_\+rate@{total\+\_\+effective\+\_\+rate}}
+\index{total\+\_\+effective\+\_\+rate@{total\+\_\+effective\+\_\+rate}!probability.\+h@{probability.\+h}}
+\subsubsection{\texorpdfstring{total\+\_\+effective\+\_\+rate()}{total\_effective\_rate()}}
+{\footnotesize\ttfamily \hyperlink{namespacetricl_ae42d2696f294300a43e0f5edf4875479}{rate} total\+\_\+effective\+\_\+rate (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+\begin{DoxyReturn}{Returns}
+actual total effective rate, taking care of infinite values. 
+\end{DoxyReturn}

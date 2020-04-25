@@ -9,8 +9,7 @@ Handling of gexf and gexf.\+gz temporal graph output files.
 {\ttfamily \#include \char`\"{}gexf.\+h\char`\"{}}\newline
 {\ttfamily \#include $<$boost/iostreams/filtering\+\_\+streambuf.\+hpp$>$}\newline
 {\ttfamily \#include $<$boost/iostreams/filter/gzip.\+hpp$>$}\newline
-Include dependency graph for gexf.\+cpp\+:
-\nopagebreak
+Include dependency graph for gexf.\+cpp\+:\nopagebreak
 \begin{figure}[H]
 \begin{center}
 \leavevmode
@@ -83,7 +82,7 @@ N\+O\+TE\+: for some reason this apparently cannot be stored permanently in a gl
 
 Write a single edge to the proper file. 
 
-The unique edge id is $<$n\+\_\+events$>$\+\_\+$<$et1$>$\+\_\+$<$rat13$>$\+\_\+$<$et3$>$. Start and end time are stored both in the \char`\"{}start\char`\"{}/\char`\"{}end\char`\"{} xml attributes so that gephi\textquotesingle{}s timeline works properly, as well as in gexf \char`\"{}attributes\char`\"{} named \char`\"{}\+S\char`\"{}/\char`\"{}\+E\char`\"{} so that one can access them as global variables in gephi\textquotesingle{}s python scripting plugin. \mbox{\Hypertarget{gexf_8cpp_ab4b36012007039d12a7b7ca4933f680b}\label{gexf_8cpp_ab4b36012007039d12a7b7ca4933f680b}} 
+The unique edge id is $<$et1$>$\+\_\+$<$rat13$>$\+\_\+$<$et3$>$\+\_\+$<$n\+\_\+events$>$. Start and end time are stored both in the \char`\"{}start\char`\"{}/\char`\"{}end\char`\"{} xml attributes so that gephi\textquotesingle{}s timeline works properly, as well as in gexf \char`\"{}attributes\char`\"{} named \char`\"{}\+S\char`\"{}/\char`\"{}\+E\char`\"{} so that one can access them as global variables in gephi\textquotesingle{}s python scripting plugin. \mbox{\Hypertarget{gexf_8cpp_ab4b36012007039d12a7b7ca4933f680b}\label{gexf_8cpp_ab4b36012007039d12a7b7ca4933f680b}} 
 \index{gexf.\+cpp@{gexf.\+cpp}!init\+\_\+gexf@{init\+\_\+gexf}}
 \index{init\+\_\+gexf@{init\+\_\+gexf}!gexf.\+cpp@{gexf.\+cpp}}
 \subsubsection{\texorpdfstring{init\+\_\+gexf()}{init\_gexf()}}
