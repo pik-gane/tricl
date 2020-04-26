@@ -30,7 +30,7 @@ void \hyperlink{event_8cpp_aef94fa11ff43b90a11586d18670f2700}{add\+\_\+event} (\
 void \hyperlink{event_8cpp_a55e7ed06ea3900949b3bb7a464670054}{remove\+\_\+event} (\hyperlink{structtricl_1_1event}{event} \&ev, \hyperlink{structtricl_1_1event__data}{event\+\_\+data} $\ast$evd\+\_\+)
 \begin{DoxyCompactList}\small\item\em Remove a scheduled event. \end{DoxyCompactList}\item 
 void \hyperlink{event_8cpp_a875f0862466ff1b831fee64602d92d76}{conditionally\+\_\+remove\+\_\+event} (\hyperlink{structtricl_1_1event}{event} \&ev)
-\begin{DoxyCompactList}\small\item\em Remove event if scheduled. \end{DoxyCompactList}\item 
+\begin{DoxyCompactList}\small\item\em Remove event if scheduled and adjust total effective rate (!). \end{DoxyCompactList}\item 
 void \hyperlink{event_8cpp_adc013b33a8b8afbb4f75c8c95dc3b93a}{update\+\_\+adjacent\+\_\+events} (\hyperlink{structtricl_1_1event}{event} \&ev)
 \begin{DoxyCompactList}\small\item\em Update all events which are adjacent to a given event because the event affects angles that might influence them. \end{DoxyCompactList}\item 
 void \hyperlink{event_8cpp_aec4dd06c452378363b04a58a0cfe8f8b}{add\+\_\+reverse\+\_\+event} (\hyperlink{structtricl_1_1event}{event} \&old\+\_\+ev)
@@ -87,7 +87,7 @@ Add the reverse event of a just performed event.
 
 
 
-Remove event if scheduled. 
+Remove event if scheduled and adjust total effective rate (!). 
 
 
 \begin{DoxyParams}[1]{Parameters}

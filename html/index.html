@@ -85,6 +85,7 @@ $(function() {
 <p>convenience:</p><ul>
 <li>support custom prefixes for entity label generation</li>
 <li>check whether in <a class="el" href="d2/d2f/finish_8cpp.html#a6dfe1abe0d1eb3ddc1ca081de98b5342" title="Do stuff at end of the simulation. ">finish()</a>, current_t = max_t is correct</li>
+<li>metaparameters: identifier: [value, description] &ndash;&gt; cmd. line help</li>
 </ul>
 <p>optimization:</p><ul>
 <li>use const args as much as possible in inner loops (?)</li>
@@ -94,6 +95,7 @@ $(function() {
 </ul>
 <p>input/output:</p><ul>
 <li>include metadata into gexf files</li>
+<li>redirect messages to log file</li>
 <li>support "premerged" edges in gexf via &lt;spells&gt;&lt;spell start="..." end="..."&gt;&lt;/spell&gt;...&lt;/spells&gt;, by a postprocessing step that firts sorts and then merges the edges in the file by doing <code>gunzip -c myoutput.gexf.gz | sort -t"-" -k3 | mergelinks | gzip &gt; mysortedoutput.gexf.gz</code> for which we need to provide a binary "mergelinks"</li>
 <li>support prespecified positions in visualization, see here: <a href="https://github.com/gephi/gephi/issues/2038">https://github.com/gephi/gephi/issues/2038</a></li>
 <li>support entity type detection from columns in csv file</li>

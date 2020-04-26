@@ -108,7 +108,7 @@ Functions</h2></td></tr>
 <tr class="memdesc:a55e7ed06ea3900949b3bb7a464670054"><td class="mdescLeft">&#160;</td><td class="mdescRight">Remove a scheduled event.  <a href="#a55e7ed06ea3900949b3bb7a464670054">More...</a><br /></td></tr>
 <tr class="separator:a55e7ed06ea3900949b3bb7a464670054"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a875f0862466ff1b831fee64602d92d76"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../df/d1b/event_8cpp.html#a875f0862466ff1b831fee64602d92d76">conditionally_remove_event</a> (<a class="el" href="../../d4/d7e/structtricl_1_1event.html">event</a> &amp;ev)</td></tr>
-<tr class="memdesc:a875f0862466ff1b831fee64602d92d76"><td class="mdescLeft">&#160;</td><td class="mdescRight">Remove event if scheduled.  <a href="#a875f0862466ff1b831fee64602d92d76">More...</a><br /></td></tr>
+<tr class="memdesc:a875f0862466ff1b831fee64602d92d76"><td class="mdescLeft">&#160;</td><td class="mdescRight">Remove event if scheduled and adjust total effective rate (!).  <a href="#a875f0862466ff1b831fee64602d92d76">More...</a><br /></td></tr>
 <tr class="separator:a875f0862466ff1b831fee64602d92d76"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:adc013b33a8b8afbb4f75c8c95dc3b93a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../df/d1b/event_8cpp.html#adc013b33a8b8afbb4f75c8c95dc3b93a">update_adjacent_events</a> (<a class="el" href="../../d4/d7e/structtricl_1_1event.html">event</a> &amp;ev)</td></tr>
 <tr class="memdesc:adc013b33a8b8afbb4f75c8c95dc3b93a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Update all events which are adjacent to a given event because the event affects angles that might influence them.  <a href="#adc013b33a8b8afbb4f75c8c95dc3b93a">More...</a><br /></td></tr>
@@ -198,7 +198,7 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Remove event if scheduled. </p>
+<p>Remove event if scheduled and adjust total effective rate (!). </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">ev</td><td>the event to remove </td></tr>

@@ -6,5 +6,6 @@ var searchData=
   ['success_5fprobunits',['success_probunits',['../d9/d16/structtricl_1_1event__data.html#af2cce9d4c534778696f87867c156d076',1,'tricl::event_data']]],
   ['summary_5fev2effective_5frate',['summary_ev2effective_rate',['../d5/dfb/global__variables_8h.html#affacd8f8be9853ab803153028bb9ad8b',1,'global_variables.h']]],
   ['summary_5fev2max_5fsuccess_5fprobability',['summary_ev2max_success_probability',['../d5/dfb/global__variables_8h.html#adf2b868c65f78bd08fcbc3ab6f397ff9',1,'summary_ev2max_success_probability():&#160;init.cpp'],['../d0/dc9/init_8cpp.html#adf2b868c65f78bd08fcbc3ab6f397ff9',1,'summary_ev2max_success_probability():&#160;init.cpp']]],
+  ['summary_5fevt2single_5feffective_5frate',['summary_evt2single_effective_rate',['../d5/dfb/global__variables_8h.html#ab13c08e8592e003c7e5599c77699b697',1,'summary_evt2single_effective_rate():&#160;init.cpp'],['../d0/dc9/init_8cpp.html#ab13c08e8592e003c7e5599c77699b697',1,'summary_evt2single_effective_rate():&#160;init.cpp']]],
   ['sure_5fevd',['sure_evd',['../d6/d80/constants_8cpp.html#adc431029dc16ccca4a57ad64bab62c40',1,'sure_evd():&#160;constants.cpp'],['../d5/dfb/global__variables_8h.html#adc431029dc16ccca4a57ad64bab62c40',1,'sure_evd():&#160;constants.cpp']]]
 ];

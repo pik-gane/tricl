@@ -32,6 +32,7 @@ convenience\+:
 \begin{DoxyItemize}
 \item support custom prefixes for entity label generation
 \item check whether in \hyperlink{finish_8cpp_a6dfe1abe0d1eb3ddc1ca081de98b5342}{finish()}, current\+\_\+t = max\+\_\+t is correct
+\item metaparameters\+: identifier\+: \mbox{[}value, description\mbox{]} --$>$ cmd. line help
 \end{DoxyItemize}
 
 optimization\+:
@@ -45,6 +46,7 @@ optimization\+:
 input/output\+:
 \begin{DoxyItemize}
 \item include metadata into gexf files
+\item redirect messages to log file
 \item support \char`\"{}premerged\char`\"{} edges in gexf via $<$spells$>$$<$spell start=\char`\"{}...\char`\"{} end=\char`\"{}...\char`\"{}$>$$<$/spell$>$...$<$/spells$>$, by a postprocessing step that firts sorts and then merges the edges in the file by doing {\ttfamily gunzip -\/c myoutput.\+gexf.\+gz $\vert$ sort -\/t\char`\"{}-\/\char`\"{} -\/k3 $\vert$ mergelinks $\vert$ gzip $>$ mysortedoutput.\+gexf.\+gz} for which we need to provide a binary \char`\"{}mergelinks\char`\"{}
 \item support prespecified positions in visualization, see here\+: \href{https://github.com/gephi/gephi/issues/2038}{\tt https\+://github.\+com/gephi/gephi/issues/2038}
 \item support entity type detection from columns in csv file
