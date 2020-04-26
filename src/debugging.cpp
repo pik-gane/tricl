@@ -10,6 +10,55 @@
 #include "angle.h"
 #include "io.h"
 
+/** Compute total finite event rate from scratch
+ *  in order to compare it with the stored one
+ */
+rate compute_total_finite_er ()
+{
+    rate ter = 0;
+    // go through all scheduled events:
+    for (auto& [ev, evd] : ev2data)
+    {
+        auto ec = ev.ec;
+        auto er = evd.effective_rate;
+        auto e1 = ev.e1, e3 = ev.e3;
+        auto rat13 = ev.rat13;
+        auto et1 = e2et[e1], et3 = e2et[e3];
+        event_type evt = {.ec=ec, et1, rat13, et3};
+        if (er < INFINITY) ter += er;
+        if (ec != EC_TERM)  // event is also covered by summary event
+        {
+            // subtract single er that will be added when processing summary event:
+            ter -= summary_evt2single_effective_rate[evt];
+        }
+    }
+    // go through all existing links:
+    for (auto& [e1, outs1] : e2outs)
+    {
+        for (auto& l : outs1)
+        {
+            auto rat13 = l.rat_out;
+            auto e3 = l.e_target;
+            auto et1 = e2et[e1], et3 = e2et[e3];
+            event_type evt = {.ec=EC_EST, et1, rat13, et3};
+            // subtract single er that was added when processing summary event:
+            ter -= summary_evt2single_effective_rate[evt];
+        }
+    }
+    // go through all entity types:
+    for (auto& [et, n] : et2n)
+    {
+        for (auto& rat13 : ets2relations[{et, et}])
+        {
+            event_type evt = {.ec=EC_EST, et, rat13, et};
+            // subtract n times single er since equal entities will not be linked:
+            ter -= n * summary_evt2single_effective_rate[evt];
+        }
+    }
+
+    return ter;
+}
+
 /** Find the no. of angles influencing an event from scratch
  *  in order to compare it with the stored no.
  */
@@ -21,6 +70,7 @@ int compute_n_angles (event_type evt, entity e1, entity e3, bool print) {
     angle_vec as = get_angles(e1, outs1, ins3, e3);
     for (auto a_it = as.begin(); a_it < as.end(); a_it++) {
         influence_type inflt = { .evt = evt, .at = { .rat12 = a_it->rat12, .et2 = e2et[a_it->e2], .rat23 = a_it->rat23 } };
+        cout << inflt.at << endl;
         auto dar = _inflt2attempt_rate[INFLT(inflt)];
         auto dsl = _inflt2delta_probunits[INFLT(inflt)];
         if (print) cout << " " << rat2label[a_it->rat12] << " " << e2label[a_it->e2] << " " << rat2label[a_it->rat23] << ", " << INFLT(inflt) << " " << dar << " " << dsl << endl;

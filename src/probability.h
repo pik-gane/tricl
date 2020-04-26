@@ -103,24 +103,36 @@ inline rate effective_rate (
  */
 inline void add_effective_rate (rate er)
 {
-    if (er < INFINITY) total_finite_effective_rate += er;
-    else n_infinite_effective_rates++;
+    if (er < INFINITY) {
+        total_finite_effective_rate += er;
+        if (debug) cout << "             finite er + " << er << " = " << total_finite_effective_rate << endl;
+    }
+    else {
+        n_infinite_effective_rates++;
+        if (debug) cout << "             infinite ers + 1 = " << n_infinite_effective_rates << endl;
+    }
 }
 
 /** Subtract effective rate to total, taking care of infinite values.
  */
-inline void subtract_effective_rate (rate er)
+inline void subtract_effective_rate (rate er, bool do_assert)
 {
     if (er < INFINITY)
     {
         total_finite_effective_rate -= er;
-        assert (total_finite_effective_rate >= 0);
+        if (debug) cout << "             finite er - " << er << " = " << total_finite_effective_rate << endl;
+        if (do_assert) assert (total_finite_effective_rate >= 0);
     }
     else
     {
         n_infinite_effective_rates--;
-        assert (n_infinite_effective_rates >= 0);
+        if (debug) cout << "             infinite ers - 1 = " << n_infinite_effective_rates << endl;
+        if (do_assert) assert (n_infinite_effective_rates >= 0);
     }
+}
+inline void subtract_effective_rate (rate er)
+{
+    subtract_effective_rate(er, true);
 }
 
 /** \returns actual total effective rate, taking care of infinite values.

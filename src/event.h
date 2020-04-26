@@ -50,18 +50,23 @@ inline void _schedule_event (event& ev, event_data* evd_, double left_tail, doub
     assert(evd_ == &ev2data.at(ev));
     rate ar = evd_->attempt_rate;
     if (ar < 0.0) throw "negative attempt rate";
+    auto spu = evd_->success_probunits;
     timepoint t;
     if (event_is_summary(ev))  // summary event:
     {
-        // use only attempt rate for scheduling (success will be tested in pop_next_event):
+        // use a common upper bound to the actual effective rate for scheduling (actual success will then later be tested in pop_next_event):
         t = current_t + exponential(random_variable) / (ar * summary_ev2max_success_probability[ev]);
         if (verbose) cout << "         (re)scheduling " << ev << ": summary event, attempt rate " << ar << " → attempt at t=" << t << ", test success then" << endl;
-        // effective rate is updated in update_adjacent_events
+        // compute base effective rate using base success probability units:
+        rate er = evd_->effective_rate = effective_rate(ar, spu, left_tail, right_tail);
+        assert (er < INFINITY);
+        // register it in total:
+        add_effective_rate(er);
+        // NOTE: in update_adjacent_events, particular events must get update total effective rate properly as the difference to this!
     }
     else  // particular event:
     {
         // use effective rate for scheduling:
-        auto spu = evd_->success_probunits;
         if (spu == -INFINITY)
         {
             evd_->effective_rate = 0;
@@ -125,7 +130,7 @@ inline void reschedule_event (event& ev, event_data* evd_, double left_tail, dou
 
     // remove from schedule and total_effective_rate:
     t2ev.erase(evd_->t);
-    subtract_effective_rate(evd_->effective_rate);
+    subtract_effective_rate(evd_->effective_rate, !event_is_summary(ev));
 
     // schedule anew:
     _schedule_event(ev, evd_, left_tail, right_tail);

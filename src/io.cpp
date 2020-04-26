@@ -58,11 +58,26 @@ ostream& operator<< (ostream& os, const event_data& evd) {
 } // end of namespace tricl
 
 
+int n_er_times_dt = 0;
+double sum_er_times_dt = 0, sum_er_times_dt_squared = 0;
+double avg_er_times_dt = 0;
+
 /** Output simple statistics for current model state to stdout.
  */
 void log_state ()
 {
     if (silent) return;
+    if (debug) if (last_dt > 0) {  // TODO find out why this product is not 1 on average!
+        n_er_times_dt++;
+        double f = total_finite_effective_rate * last_dt;
+        sum_er_times_dt += f;
+        sum_er_times_dt_squared += f*f;
+        double avg = sum_er_times_dt / n_er_times_dt,
+                stddev = sqrt(sum_er_times_dt_squared / n_er_times_dt - avg*avg),
+                stderr = stddev / sqrt(n_er_times_dt);
+        avg_er_times_dt = 0.99 * avg_er_times_dt + 0.01 * f;
+        cout << "!! " << avg << " +- " << stderr << ", " << avg_er_times_dt << ", er: " << total_finite_effective_rate << " =? " << compute_total_finite_er() << endl;
+    }
     double
         ne = (double) max_e,                 ///< no. past events
         nl = (double) n_links,               ///< current no. (non-id.) links

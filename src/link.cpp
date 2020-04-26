@@ -25,6 +25,7 @@ void add_link (tricllink& l)
 {
     assert ((!link_exists(l)) && (l.e1 != l.e3));
     auto e1 = l.e1, e3 = l.e3; auto rat13 = l.rat13;
+    auto et1 = e2et[e1], et3 = e2et[e3];
 
     // keep inleg and outleg sets consistent:
     e2outs[e1].insert({ .rat_out = rat13, .e_target = e3 });
@@ -34,7 +35,7 @@ void add_link (tricllink& l)
     if (rat13 != RT_ID) gexf_edge2start[l] = current_t;
 
     // update counts:
-    lt2n[{e2et[e1], rat13, e2et[e3]}]++;
+    lt2n[{et1, rat13, et3}]++;
     n_links++;
 }
 
@@ -44,6 +45,7 @@ void delete_link (tricllink& l)
 {
     assert (link_exists(l));
     auto e1 = l.e1, e3 = l.e3; auto rat13 = l.rat13;
+    auto et1 = e2et[e1], et3 = e2et[e3];
 
     // keep inleg and outleg sets consistent:
     e2outs[e1].erase({ .rat_out = rat13, .e_target = e3 });
@@ -53,7 +55,7 @@ void delete_link (tricllink& l)
     if (rat13 != RT_ID) gexf_output_edge(l);
 
     // update counts:
-    lt2n[{e2et[e1], rat13, e2et[e3]}]--;
+    lt2n[{et1, rat13, et3}]--;
     n_links--;
 }
 
@@ -66,7 +68,6 @@ void do_random_link (probability p, entity e1, relationship_or_action_type rat13
             event ev = { .ec=EC_EST, e1, rat13, e3 };
             conditionally_remove_event(ev);
             // prepair total effective rate since call to perform_event will subtracted INFINITY from it:
-            add_effective_rate(INFINITY);
             perform_event(ev, &sure_evd);
         }
     }

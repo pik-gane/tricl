@@ -44,6 +44,7 @@
  * convenience:
  * - support custom prefixes for entity label generation
  * - check whether in finish(), current_t = max_t is correct
+ * - metaparameters: identifier: [value, description] --> cmd. line help
  *
  * optimization:
  * - use const args as much as possible in inner loops (?)
@@ -53,6 +54,7 @@
  *
  * input/output:
  * - include metadata into gexf files
+ * - redirect messages to log file
  * - support "premerged" edges in gexf via <spells><spell start="..." end="..."></spell>...</spells>,
  *   by a postprocessing step that firts sorts and then merges the edges in the file by doing
  *   ``gunzip -c myoutput.gexf.gz | sort -t"-" -k3 | mergelinks | gzip > mysortedoutput.gexf.gz``

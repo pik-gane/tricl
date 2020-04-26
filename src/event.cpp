@@ -64,13 +64,6 @@ void add_event (
             spu += _inflt2delta_probunits[INFLT(inflt)];
         }
 
-//        if (debug) {
-//            cout << "outs:" << endl;
-//            for (auto& l : outs1) cout << " " << e2label[e1] << " " << rat2label[l.rat_out] << " " << e2label[l.e_target] << endl;
-//            cout << "ins:" << endl;
-//            for (auto& l : ins3) cout << " " << e2label[l.e_source] << " " << rat2label[l.rat_in] << " " << e2label[e3] << endl;
-//        }
-
         // angles:
         int na = 0; // number of influencing angles
         angle_vec angles = get_angles(e1, outs1, ins3, e3);
@@ -112,7 +105,11 @@ void add_event (
 
             if (debug) { verify_data_consistency(); verify_angle_consistency(); }
         }
-        else if (debug) cout << "      covered by summary event, not scheduled separately" << endl;
+        else {
+            if (debug) cout << "      covered by summary event, not scheduled separately" << endl;
+            // only add effective rate of addition via summary event:
+            add_effective_rate(summary_evt2single_effective_rate.at(evt));
+        }
     }
     else if (debug) cout << "     not adding impossible event: " << ev << endl;
 }
@@ -129,18 +126,27 @@ void remove_event (
     // keep t2ev and ev2data consistent:
     t2ev.erase(evd_->t); ev2data.erase(ev);
 
+    subtract_effective_rate(evd_->effective_rate);
+
     if (debug) cout << "        removed event: " << ev << " scheduled at " << evd_->t << endl;
 }
 
-/** Remove event if scheduled.
+/** Remove event if scheduled and adjust total effective rate (!).
  */
 void conditionally_remove_event(
         event& ev  ///< [in] the event to remove
         )
 {
-    if (ev2data.count(ev) == 1) {
+    if (ev2data.count(ev) == 1)  // event is scheduled
+    {
         auto evd_ = &ev2data.at(ev);
         remove_event(ev, evd_);
+    }
+    else if (ev.ec != EC_TERM)  // event is not scheduled by covered by summary event
+    {
+        event_type evt = {.ec=ev.ec, e2et[ev.e1], ev.rat13, e2et[ev.e3]};
+        // need to adjust effective rate:
+        subtract_effective_rate(summary_evt2single_effective_rate[evt]);
     }
 }
 
@@ -228,18 +234,16 @@ void perform_event (
     tricllink l = { e1, rat13, e3 };
 
     // compute and store log-likelihood of next event happening at current_t and being current_t:
-    rate er = evd_->effective_rate, total_er = total_effective_rate();
+    rate er = evd_->effective_rate,
+            last_total_er = total_effective_rate() + er;  // since er has already been subtracted in pop_next_event
     assert (er > 0);
-    double logl = (er == INFINITY)
+    double logl = (er >= INFINITY)
             ? -log(n_infinite_effective_rates)  // log prob. of this immediate event being chosen from all immediate events
-            : -total_er * last_dt               // log probability density of next event occurring exactly at t
-              + log(er) - log(total_er);        // + log probability of that event being this event
+            : -last_total_er * last_dt               // log probability density of next event occurring exactly at t
+              + log(er) - log(last_total_er);        // + log probability of that event being this event
     cumulative_logl += logl;
-    // remove from total_effective_rate:
-    subtract_effective_rate(er);
     if (verbose) cout << "  log-likelihoods: this " << logl << ", total " << cumulative_logl << endl;
     if (debug) cout << "   total er " << total_finite_effective_rate << " + " << n_infinite_effective_rates << " * inf" << endl;
-    // TODO: what about companion event? probably we don't need to add its logl...
 
     // FIRST add the reverse event, so that its n_angles will reflect the situation before the change:
     add_reverse_event(ev);
@@ -260,12 +264,17 @@ void perform_event (
     {
         event companion_ev = { .ec = ec, .e1 = e3, .rat13 = rat31, .e3 = e1 };
         tricllink inv_l = { .e1 = e3, .rat13 = rat31, .e3 = e1 }; // inverse link
+
+        // if scheduled, unschedule it:
         if (ev2data.count(companion_ev) == 1)
         {
             if (debug) cout << " unscheduling companion event: " << companion_ev << endl;
             auto companion_evd_ = &ev2data.at(companion_ev);
             remove_event(companion_ev, companion_evd_);
         }
+
+        // since companion event happens with probability one, it adds no log-likelihood
+
         // FIRST add the reverse event, so that its n_angles will reflect the situation before the change:
         add_reverse_event(companion_ev);
         // THEN add or remove the link to perform the change:
@@ -423,6 +432,8 @@ bool pop_next_event ()
                         current_evd_ = &actual_evd_;
                         log_state();
                         found = true;
+                        // adjust effective rate because summary addition event does no longer cover this pair:
+                        subtract_effective_rate(summary_evt2single_effective_rate.at(evt));
                         // but don't remove the summary event
                     }
                     else

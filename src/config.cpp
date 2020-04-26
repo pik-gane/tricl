@@ -170,8 +170,8 @@ void read_config (
     only_output_logl = cmdlineopts["logl"].as<bool>();
     silent = cmdlineopts["silent"].as<bool>() || only_output_logl;
     debug = cmdlineopts["debug"].as<bool>() && (!silent);
-    quiet = (cmdlineopts["quiet"].as<bool>() && (!debug)) || silent;
-    verbose = cmdlineopts["verbose"].as<bool>() && (!quiet);
+    quiet = (cmdlineopts["quiet"].as<bool>() || silent) && (!debug);
+    verbose = (cmdlineopts["verbose"].as<bool>() || debug) && (!quiet);
     seed = cmdlineopts["seed"].as<unsigned>();
 
     // read config file:
@@ -212,12 +212,14 @@ void read_config (
     // meta_date = n["date"].as<string>();
     // meta_email = n["email"].as<string>();
 
-    // files (mandatory):
+    // files:
     n = c["files"];
-    if (!n.IsMap()) throw "yaml field 'files' must be a map";
-    if (n["gexf"]) gexf_default_filename = n["gexf"].as<string>();
-    // log_filename = n["log"].as<string>();
-    if (n["diagram prefix"]) diagram_fileprefix = n["diagram prefix"].as<string>();
+    if (n) {
+        if (!n.IsMap()) throw "yaml field 'files' must be a map";
+        if (n["gexf"]) gexf_default_filename = n["gexf"].as<string>();
+        // log_filename = n["log"].as<string>();
+        if (n["diagram prefix"]) diagram_fileprefix = n["diagram prefix"].as<string>();
+    }
 
     // limits (at least one):
     n = c["limits"];

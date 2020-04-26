@@ -68,9 +68,10 @@ extern unordered_map<event_type, double> evt2left_tail,                  ///< Le
                                          evt2right_tail;                 ///< Right tail index for sigmoid function probunits2probability(), >= 0
 extern unordered_map<event_type, probunits> evt2base_probunits;          ///< Basic success probability units by event type
 extern unordered_map<influence_type, probunits> inflt2delta_probunits;   ///< Change in success probunits by influence type
-extern probunits _inflt2delta_probunits[MAX_N_INFLT];                     ///< Redundant copy of \ref inflt2delta_probunits as array
+extern probunits _inflt2delta_probunits[MAX_N_INFLT];                    ///< Redundant copy of \ref inflt2delta_probunits as array
 extern unordered_map<entity_type_pair, unordered_set<relationship_or_action_type>> ets2relations;  ///< Possible relationship or action types by entity type pair
-extern unordered_map<event, rate> summary_ev2max_success_probability;            ///< Maximal possible success probability of summary events
+extern unordered_map<event, rate> summary_ev2max_success_probability;    ///< Maximal possible success probability of summary events
+extern unordered_map<event_type, rate> summary_evt2single_effective_rate;  ///< Effective rate of a single instance of a summary event
 
 // gexf parameters:
 extern unordered_map<entity_type, double> et2gexf_size,                         ///< Node size for gexf file by entity type

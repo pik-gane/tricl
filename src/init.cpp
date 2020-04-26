@@ -25,6 +25,7 @@ entity_type e2et[MAX_N_E];
 unordered_set<entity> es;
 unordered_map<entity_type_pair, unordered_set<relationship_or_action_type>> ets2relations;  // possible relations
 unordered_map<event, rate> summary_ev2max_success_probability; // max possible effective rate of summary events
+unordered_map<event_type, rate> summary_evt2single_effective_rate;
 
 // variable data:
 
@@ -156,23 +157,36 @@ void init_events ()
                     .rat13 = rat13,
                     .e3 = (entity)-et3 };
             event_type evt = { .ec = EC_EST, .et1 = et1, .rat13 = rat13, .et3 = et3 };
-            auto ar = evt2base_attempt_rate[evt];
-            if (ar > 0) {
+            auto ar1 = evt2base_attempt_rate[evt];
+            if (ar1 > 0) {
                 // compile maximal success units. if no influences can increase the success units,
                 // this equals the base_probunits, otherwise it is infinite:
-                probunits max_spu = evt2base_probunits.at(evt);
+                probunits spu0 = evt2base_probunits.at(evt),
+                        max_spu = spu0;
+                double left_tail = evt2left_tail.at(evt), right_tail = evt2right_tail.at(evt);
+                summary_evt2single_effective_rate[evt] = effective_rate(ar1, spu0, left_tail, right_tail);
                 for (auto& [inflt, pu] : inflt2delta_probunits) {
                     if ((inflt.evt == evt) && (pu > 0.0)) {
                         max_spu = INFINITY;
                         break;
                     }
                 }
-                summary_ev2max_success_probability[summary_ev] = probunits2probability(max_spu, evt2left_tail.at(evt), evt2right_tail.at(evt));
+                summary_ev2max_success_probability[summary_ev] = probunits2probability(max_spu, left_tail, right_tail);
                 if (verbose) cout << "  " << et2label[et1] << " " << rat2label[rat13] << " " << et2label[et3] << endl;
-                ev2data[summary_ev] = { .n_angles = 0,
-                        .attempt_rate = ar * et2n[et1] * et2n[et3],
-                        .success_probunits = evt2base_probunits[evt] };
-                schedule_event(summary_ev, &ev2data[summary_ev], evt2left_tail.at(evt), evt2right_tail.at(evt));
+                rate ar_all = ar1 * et2n[et1] * et2n[et3];
+                ev2data[summary_ev] = {
+                        .n_angles = 0,
+                        .attempt_rate = ar_all,
+                        .success_probunits = spu0,
+                        .effective_rate = 0,  // will be computed when scheduled
+                        .t = -INFINITY
+                };
+                schedule_event(summary_ev, &ev2data[summary_ev], left_tail, right_tail);
+                // adjust effective rate because equal entities won't be linked:
+                if (et1 == et3)
+                {
+                    subtract_effective_rate(ar1 * et2n[et1]);
+                }
             }
         }
     }
@@ -191,11 +205,6 @@ void init_links ()
         e2ins[e].insert({ e, RT_ID });
     }
 
-    // initialize loglikelihood:
-    n_infinite_effective_rates = 0;
-    total_finite_effective_rate = 0;
-    last_dt = 0;
-
     // preregistered links:
 
     for (auto l : initial_links) {
@@ -204,7 +213,6 @@ void init_links ()
         event ev = { .ec=EC_EST, l.e1, l.rat13, l.e3 };
         conditionally_remove_event(ev);
         // prepair total effective rate since call to perform_event will subtracted INFINITY from it:
-        add_effective_rate(INFINITY);
         perform_event(ev, &sure_evd);  // this automatically also adds the inverse link, if any.
     }
 
