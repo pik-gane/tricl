@@ -1,0 +1,81 @@
+\hypertarget{classschedule}{}\section{schedule Class Reference}
+\label{classschedule}\index{schedule@{schedule}}
+
+
+An efficient container for pairs of (event, event\+\_\+data) that supports efficient.  
+
+
+
+
+{\ttfamily \#include $<$data\+\_\+model.\+h$>$}
+
+
+
+Collaboration diagram for schedule\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{d5/d61/classschedule__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Private Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{classschedule_aa3a27d94f17fe28dcc5c13c367df673a}\label{classschedule_aa3a27d94f17fe28dcc5c13c367df673a}} 
+\hyperlink{structtricl_1_1event__data}{event\+\_\+data} {\bfseries at} (const \hyperlink{structtricl_1_1event}{event} \&ev)
+\item 
+\mbox{\Hypertarget{classschedule_a835c0129ec6be3ca954191a26bfb5fee}\label{classschedule_a835c0129ec6be3ca954191a26bfb5fee}} 
+\hyperlink{structtricl_1_1event__data}{event\+\_\+data} {\bfseries pop} (const \hyperlink{structtricl_1_1event}{event} \&ev)
+\item 
+\mbox{\Hypertarget{classschedule_ae618be9f46d8c834617802d067167f05}\label{classschedule_ae618be9f46d8c834617802d067167f05}} 
+pair$<$ \hyperlink{structtricl_1_1event}{event}, \hyperlink{structtricl_1_1event__data}{event\+\_\+data} $>$ {\bfseries pop\+\_\+min\+\_\+t} ()
+\item 
+\mbox{\Hypertarget{classschedule_a052cfd038a553b18e22c5db9164b3f07}\label{classschedule_a052cfd038a553b18e22c5db9164b3f07}} 
+void {\bfseries erase} (const \hyperlink{structtricl_1_1event}{event} \&ev)
+\item 
+void \hyperlink{classschedule_a8a5b3520d96edd10b0c9c62026487997}{insert} (const \hyperlink{structtricl_1_1event}{event} \&ev, \hyperlink{structtricl_1_1event__data}{event\+\_\+data} evd)
+\item 
+\mbox{\Hypertarget{classschedule_abdbc97c36f98a5a6b7c1391204c69b72}\label{classschedule_abdbc97c36f98a5a6b7c1391204c69b72}} 
+void {\bfseries update} (const \hyperlink{structtricl_1_1event}{event} \&ev, \hyperlink{structtricl_1_1event__data}{event\+\_\+data} \&new\+\_\+evd)
+\end{DoxyCompactItemize}
+\subsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{classschedule_a4f196e63a4522977fed6d012e1d6734e}\label{classschedule_a4f196e63a4522977fed6d012e1d6734e}} 
+unordered\+\_\+map$<$ \hyperlink{structtricl_1_1event}{event}, \hyperlink{structtricl_1_1event__data}{event\+\_\+data} $>$ {\bfseries ev2data}
+\item 
+\mbox{\Hypertarget{classschedule_a97915cb3832f457318302af9ce498f84}\label{classschedule_a97915cb3832f457318302af9ce498f84}} 
+unordered\+\_\+map$<$ \hyperlink{namespacetricl_a720ff6a29f998e11e1d3622fc8df64b1}{timepoint}, \hyperlink{structtricl_1_1event}{event} $>$ {\bfseries real\+\_\+t2ev}
+\item 
+\mbox{\Hypertarget{classschedule_a9a874645cf930ba563997d8962572519}\label{classschedule_a9a874645cf930ba563997d8962572519}} 
+\hyperlink{namespacetricl_a720ff6a29f998e11e1d3622fc8df64b1}{timepoint} {\bfseries min\+\_\+t} = I\+N\+F\+I\+N\+I\+TY
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+An efficient container for pairs of (event, event\+\_\+data) that supports efficient. 
+
+
+\begin{DoxyItemize}
+\item lookup, deletion, insertion, and update of event\+\_\+data by event
+\item lookup of item with minimal event\+\_\+data.\+t 
+\end{DoxyItemize}
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{classschedule_a8a5b3520d96edd10b0c9c62026487997}\label{classschedule_a8a5b3520d96edd10b0c9c62026487997}} 
+\index{schedule@{schedule}!insert@{insert}}
+\index{insert@{insert}!schedule@{schedule}}
+\subsubsection{\texorpdfstring{insert()}{insert()}}
+{\footnotesize\ttfamily void schedule\+::insert (\begin{DoxyParamCaption}\item[{const \hyperlink{structtricl_1_1event}{event} \&}]{ev,  }\item[{\hyperlink{structtricl_1_1event__data}{event\+\_\+data}}]{evd }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [private]}}
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em evd} & a copy (!) of the data to store \\
+\hline
+\end{DoxyParams}
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+src/\hyperlink{data__model_8h}{data\+\_\+model.\+h}\end{DoxyCompactItemize}

@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['tricllink',['tricllink',['../da/de2/structtricl_1_1tricllink.html',1,'tricl']]]
+  ['schedule',['schedule',['../d8/d98/classschedule.html',1,'']]]
 ];

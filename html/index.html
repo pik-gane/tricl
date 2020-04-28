@@ -86,8 +86,10 @@ $(function() {
 <li>support custom prefixes for entity label generation</li>
 <li>check whether in <a class="el" href="d2/d2f/finish_8cpp.html#a6dfe1abe0d1eb3ddc1ca081de98b5342" title="Do stuff at end of the simulation. ">finish()</a>, current_t = max_t is correct</li>
 <li>metaparameters: identifier: [value, description] &ndash;&gt; cmd. line help</li>
+<li>add auxiliaries: identifier: expression</li>
 </ul>
 <p>optimization:</p><ul>
+<li>replace (ordered) map t2ev by unordered_map plus additional variable next_t as described in <a href="https://www.geeksforgeeks.org/design-a-stack-to-retrieve-original-elements-and-return-the-minimum-element-in-o1-time-and-o1-space/?ref=rp">https://www.geeksforgeeks.org/design-a-stack-to-retrieve-original-elements-and-return-the-minimum-element-in-o1-time-and-o1-space/?ref=rp</a></li>
 <li>use const args as much as possible in inner loops (?)</li>
 <li>inline most called functions</li>
 <li>speed up probability2probunits by precomputing probability for events with constant success probability</li>

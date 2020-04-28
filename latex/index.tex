@@ -33,10 +33,12 @@ convenience\+:
 \item support custom prefixes for entity label generation
 \item check whether in \hyperlink{finish_8cpp_a6dfe1abe0d1eb3ddc1ca081de98b5342}{finish()}, current\+\_\+t = max\+\_\+t is correct
 \item metaparameters\+: identifier\+: \mbox{[}value, description\mbox{]} --$>$ cmd. line help
+\item add auxiliaries\+: identifier\+: expression
 \end{DoxyItemize}
 
 optimization\+:
 \begin{DoxyItemize}
+\item replace (ordered) map t2ev by unordered\+\_\+map plus additional variable next\+\_\+t as described in \href{https://www.geeksforgeeks.org/design-a-stack-to-retrieve-original-elements-and-return-the-minimum-element-in-o1-time-and-o1-space/?ref=rp}{\tt https\+://www.\+geeksforgeeks.\+org/design-\/a-\/stack-\/to-\/retrieve-\/original-\/elements-\/and-\/return-\/the-\/minimum-\/element-\/in-\/o1-\/time-\/and-\/o1-\/space/?ref=rp}
 \item use const args as much as possible in inner loops (?)
 \item inline most called functions
 \item speed up probability2probunits by precomputing probability for events with constant success probability
