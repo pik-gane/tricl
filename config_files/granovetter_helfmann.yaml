@@ -1,0 +1,151 @@
+metadata:
+    name: continuous-time version of Helfmann's model
+    author: Jobst Heitzig
+    date: 28 April 2020
+    email: heitzig@pik-potsdam.de
+
+files:
+    gexf: granovetter_helfmann.gexf.gz
+    diagram prefix: granovetter_helfmann
+
+metaparameters:  
+    # will be substituted for their values 
+    # in expressions occurring in the rest of the config file
+
+    Na: 20      # no. of always active agents
+    Nc: 60      # no. of contingent agents
+    Nn: 20      # no. of never active agents
+    
+    k: 10       # mean degree in ER model
+    theta: 0.5  # threshold fraction
+    p: 0.5      # switching rate if threshold is met or in "explorative" state
+    e: 0.2      # effective exploration rate
+
+    T: 1000     # max. simulation time
+    E: 100000   # max. no. event pairs
+    
+    # derived:
+    N: Nc + Na + Nn  # total no. of agents
+    pER: k / (N-1)   # link density
+    q: 1 / (1/e - 1/p)  # rate of getting into "explorative" state 
+
+limits:
+    t: T
+    events: 2*E
+
+options:
+    quiet: false
+    verbose: false
+    debug: false
+    seed: 0
+
+entities:
+
+    # regular entity types:
+    a-agent: Na  # an always active agent
+    c-agent: Nc  # a contingently active agent
+    n-agent: Nn  # a never active agent
+
+    # single-entity types:
+    active:
+        - active  # each agent is always linked to this entity with one of two possible relationship types ("is" or "is not")
+
+relationship types:
+    knows: symmetric  # agent - agent, the underlying static network
+    is: ~    # agent - active
+    is not:  # agent - active
+        gexf: ~  # suppresses output since redundant
+    explores getting: 
+        gexf: ~  # suppresses output since redundant
+    explores stopping to be:
+        gexf: ~  # suppresses output since redundant
+
+initial links: 
+    random:
+        # network:
+        [a-agent, knows, a-agent]:
+            probability: pER
+        [a-agent, knows, c-agent]:
+            probability: pER
+        [a-agent, knows, n-agent]:
+            probability: pER
+        [c-agent, knows, c-agent]:
+            probability: pER
+        [c-agent, knows, n-agent]:
+            probability: pER
+        [n-agent, knows, n-agent]:
+            probability: pER
+            
+        # activity:
+        [a-agent, is, active]:
+            probability: 1
+        [a-agent, is not, active]:
+            probability: 0
+        [c-agent, is, active]:
+            probability: 0
+        [c-agent, is not, active]:
+            probability: 1
+        [n-agent, is, active]:
+            probability: 0
+        [n-agent, is not, active]:
+            probability: 1
+
+dynamics:
+
+    [c-agent, is, active]:
+        establish:  
+            attempt:
+                base: p *2  # twice (!) the individual rate of "updating" (since only half the updates succeed)
+            success:
+                tails: 0  # -> use expit sigmoid function
+                base: +10  # chosen so that base probability is approx. 1
+                [c-agent, knows, a-agent, is, active]: +20*(1-theta)
+                [c-agent, knows, c-agent, is, active]: +20*(1-theta)
+                [c-agent, knows, c-agent, is not, active]: -20*theta
+                [c-agent, knows, n-agent, is not, active]: -20*theta
+                   # if ki*theta many nbs are active and ki*(1-theta) many are inactive,
+                   # total success units are +10 + ki*theta * 20*(1-theta) - ki*(1-theta) * 20*theta = +10, hence prob. is approx 1.
+                   # if one less is active and one more is inactive,
+                   # total success units are +10 + (ki*theta - 1) * 20*(1-theta) - (ki*(1-theta) + 1) * 20*theta = -10, hence prob. is approx 0.
+                [c-agent, =, c-agent, explores getting, active]: inf
+        terminate:
+            attempt:
+                [c-agent, =, c-agent, is not, active]: inf
+
+    [c-agent, is not, active]:
+        establish:
+            attempt:
+                base: p *2  # twice (!) the individual rate of "updating" (since only half the updates succeed)
+            success:
+                tails: 0  # -> use expit sigmoid function
+                base: -10  # chosen so that base probability is approx. 0
+                [c-agent, knows, a-agent, is, active]: -20*(1-theta)
+                [c-agent, knows, c-agent, is, active]: -20*(1-theta)
+                [c-agent, knows, c-agent, is not, active]: +20*theta
+                [c-agent, knows, n-agent, is not, active]: +20*theta
+                   # if ki*theta many nbs are active and ki*(1-theta) many are inactive,
+                   # total success units are -10 - ki*theta * 20*(1-theta) + ki*(1-theta) * 20*theta = -10, hence prob. is approx 0.
+                   # if one less is active and one more is inactive,
+                   # total success units are -10 - (ki*theta - 1) * 20*(1-theta) + (ki*(1-theta) + 1) * 20*theta = +10, hence prob. is approx 1.
+                [c-agent, =, c-agent, explores stopping to be, active]: inf
+        terminate:
+            attempt:
+                [c-agent, =, c-agent, is, active]: inf
+
+    [c-agent, explores getting, active]:
+        establish:
+            attempt:
+                [c-agent, =, c-agent, is not, active]: q  # while inactive, consider exploring getting active
+            success: inf
+        terminate:
+            attempt:
+                [c-agent, =, c-agent, is, active]: inf  # once we're active, we stop exploring
+    
+    [c-agent, explores stopping to be, active]:
+        establish:
+            attempt:
+                [c-agent, =, c-agent, is, active]: q  # while active, consider exploring getting inactive
+            success: inf
+        terminate:
+            attempt:
+                [c-agent, =, c-agent, is not, active]: inf  # once we're inactive, we stop exploring

@@ -45,8 +45,10 @@
  * - support custom prefixes for entity label generation
  * - check whether in finish(), current_t = max_t is correct
  * - metaparameters: identifier: [value, description] --> cmd. line help
+ * - add auxiliaries: identifier: expression
  *
  * optimization:
+ * - replace (ordered) map t2ev by unordered_map plus additional variable next_t as described in https://www.geeksforgeeks.org/design-a-stack-to-retrieve-original-elements-and-return-the-minimum-element-in-o1-time-and-o1-space/?ref=rp
  * - use const args as much as possible in inner loops (?)
  * - inline most called functions
  * - speed up probability2probunits by precomputing probability for events with constant success probability

@@ -73,6 +73,7 @@ using std::cout;
 using std::cerr;
 using std::endl;
 using std::string;
+using std::pair;
 using std::to_string;
 using std::vector;
 using std::unordered_set;
@@ -369,10 +370,11 @@ struct influence_type
     }
 };
 
+
 } // end of namespace tricl
 
-
 using namespace tricl;
+
 
 // define hashing methods (must be outside namespace tricl):
 
@@ -449,5 +451,106 @@ template <> struct std::hash<event> {
         return (ev.ec ^ (ev.e1 << 2) ^ (ev.e3 << (2+E_BITS)) ^ (ev.rat13 << (2+E_BITS+E_BITS)));
     }
 };
+
+
+/** An efficient container for pairs of (event, event_data) that supports efficient
+ * - lookup, deletion, insertion, and update of event_data by event
+ * - lookup of item with minimal event_data.t
+ */
+class schedule
+{
+    unordered_map<event, event_data> ev2data;
+    unordered_map<timepoint, event> real_t2ev;
+    timepoint min_t = INFINITY;
+
+    inline event_data at (const event& ev)
+    {
+        assert(ev2data.count(ev) == 1);
+        // make a copy of stored data so that we do not corrupt the storage:
+        event_data evd = event_data(ev2data.at(ev));
+        if (evd.t < min_t)  // real t is min_t
+        {
+            // in the copy, convert stored pseudo-time to back actual time:
+            evd.t = min_t;
+        }
+        // return data:
+        return evd;
+    }
+    inline event_data pop (const event& ev)
+    {
+        assert(ev2data.count(ev) == 1);
+        // get stored data from ev hash table (no need to make a copy here):
+        event_data evd = ev2data.at(ev);
+        if (evd.t < min_t)  // real t is min_t
+        {
+            // convert stored pseudo-time back to actual time and adjust min_t:
+            timepoint temp = min_t;
+            min_t = 2*min_t - evd.t;
+            evd.t = temp;
+        }
+        // remove from both hash tables:
+        ev2data.erase(ev);
+        real_t2ev.erase(evd.t);
+        // return data:
+        return evd;
+    }
+    inline pair<event, event_data> pop_min_t ()
+    {
+        // get ev from t hash table:
+        event ev = real_t2ev.at(min_t);
+        event_data evd = pop(ev);
+        return pair<event, event_data> (ev, evd);
+    }
+    inline void erase (const event& ev)
+    {
+        // pop it without returning the data:
+        pop(ev);
+    }
+    inline void insert (
+            const event& ev,
+            event_data evd      ///< [in] a copy (!) of the data to store
+            )
+    {
+        assert(ev2data.count(ev) == 0);
+        // store ev in t hash table:
+        real_t2ev[evd.t] = ev;
+        if (evd.t < min_t)  // real t is new min_t
+        {
+            // convert actual time to a stored pseudo-time and adjust min_t:
+            timepoint temp = 2*evd.t - min_t;
+            min_t = evd.t;
+            evd.t = temp;
+        }
+        // store data in ev hash table:
+        ev2data[ev] = evd;
+    }
+    inline void update (const event& ev, event_data& new_evd)
+    {
+        // (basically a combination of erase and insert)
+        assert(ev2data.count(ev) == 1);
+        // get stored data from ev hash table (no need to make a copy here):
+        event_data old_evd = ev2data.at(ev);
+        if (old_evd.t < min_t)  // real t is min_t
+        {
+            // convert stored pseudo-time back to actual time and adjust min_t:
+            timepoint temp = min_t;
+            min_t = 2*min_t - old_evd.t;
+            old_evd.t = temp;
+        }
+        // update t hash table:
+        real_t2ev.erase(old_evd.t);
+        real_t2ev[new_evd.t] = ev;
+        if (new_evd.t < min_t)  // real t is new min_t
+        {
+            // convert actual time to a stored pseudo-time and adjust min_t:
+            timepoint temp = 2*new_evd.t - min_t;
+            min_t = new_evd.t;
+            new_evd.t = temp;
+        }
+        // update data in ev hash table:
+        ev2data[ev] = new_evd;
+    }
+};
+
 
 #endif

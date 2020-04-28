@@ -1,0 +1,100 @@
+metadata:
+    name: attempt at a model of identity 
+    description: 
+       based on ideas developed at PU
+    author: Jobst Heitzig
+    date: 27 April 2020
+    email: heitzig@pik-potsdam.de
+
+files:
+    gexf: identity.gexf.gz
+    diagram prefix: identity
+
+metaparameters:  
+    Tmax: 100
+    Emax: 100
+    Np: 1000
+    Ng: 10
+    Na: 10
+
+options:
+    quiet: false
+    verbose: false
+    debug: false
+    seed: 0
+
+limits:
+    t: Tmax
+    events: Emax
+
+entities:
+    person: Np
+    group: Ng
+    attribute: Na
+
+relationship types:
+    knows: symmetric  # person - person
+    has: ~  # person - attribute
+    identifies with: ~  # person - group
+    is associated with: symmetric  # group - attribute
+
+initial links: 
+    random:
+        [agent, knows, agent]:
+#            probability: k / (N-1)  # ER model
+            dimension: 2  # random geometric model
+            decay: d
+        [agent, is always, active]:
+            probability: a  # share of certainly actives
+        [agent, is never, active]:
+            probability: b / (1 - a)  
+                # share of certainly inactives divided by 1-a 
+                # (since a share of  a  of these will switch to certainly active at t=0 
+                # to avoid overlap between the two groups, see below) 
+        [agent, is not, active]:
+            probability: 1.0  # but this will change immediately for the certainly actives at time 0
+
+dynamics:
+
+    [agent, is, active]:
+        establish:
+            attempt:
+                base: 1.0 *2  # twice (!) the individual rate of "updating" (since only half the updates succeed)
+                [agent, =, agent, is always, active]: inf
+            success:
+                tails: 0  # -> use expit sigmoid function
+                base: +10  # chosen so that base probability is approx. 1
+                [agent, knows, agent, is, active]: +20*(1-rho)
+                [agent, knows, agent, is not, active]: -20*rho
+                # if ki*rho many nbs are active and ki*(1-rho) many are inactive,
+                # total success units are +10 + ki*rho * 20*(1-rho) - ki*(1-rho) * 20*rho = +10, hence prob. is approx 1.
+                # if one less is active and one more is inactive,
+                # total success units are +10 + (ki*rho - 1) * 20*(1-rho) - (ki*(1-rho) + 1) * 20*rho = -10, hence prob. is approx 0.
+        terminate:
+            attempt:
+                [agent, =, agent, is not, active]: inf
+
+    [agent, is not, active]:
+        establish:
+            attempt:
+                base: 1.0 *2  # twice (!) the individual rate of "updating" (since only half the updates succeed)
+                [agent, =, agent, is never, active]: inf
+            success:
+                tails: 0  # -> use expit sigmoid function
+                base: -10  # chosen so that base probability is approx. 0
+                [agent, knows, agent, is, active]: -20*(1-rho)
+                [agent, knows, agent, is not, active]: +20*rho
+                # if ki*rho many nbs are active and ki*(1-rho) many are inactive,
+                # total success units are -10 - ki*rho * 20*(1-rho) + ki*(1-rho) * 20*rho = -10, hence prob. is approx 0.
+                # if one less is active and one more is inactive,
+                # total success units are -10 - (ki*rho - 1) * 20*(1-rho) + (ki*(1-rho) + 1) * 20*rho = +10, hence prob. is approx 1.
+        terminate:
+            attempt:
+                [agent, =, agent, is, active]: inf
+
+    # this only ensures that at t=0, those who have randomly been deemed both
+    # certainly active and certainly inactive switch to certainly active:
+    [agent, is never, active]:
+        terminate:
+            attempt:
+                [agent, =, agent, is always, active]: inf
