@@ -15,6 +15,6 @@ var searchData=
   ['initial_5flinks',['initial_links',['../df/d59/config_8cpp.html#aac624aa46bb8ff15c75e7d457f22fada',1,'initial_links():&#160;config.cpp'],['../d5/dfb/global__variables_8h.html#aac624aa46bb8ff15c75e7d457f22fada',1,'initial_links():&#160;config.cpp']]],
   ['inleg',['inleg',['../d5/dc0/structtricl_1_1inleg.html',1,'tricl']]],
   ['inleg_5fset',['inleg_set',['../dc/d70/namespacetricl.html#a024e365a54b0a7ed2094f9d452d52a84',1,'tricl']]],
-  ['insert',['insert',['../d8/d98/classschedule.html#a8a5b3520d96edd10b0c9c62026487997',1,'schedule']]],
+  ['insert',['insert',['../d1/d1c/classschedule__t.html#ac103ad35f9b65078b79746a504f82287',1,'schedule_t']]],
   ['io_2ecpp',['io.cpp',['../d5/d5a/io_8cpp.html',1,'']]]
 ];

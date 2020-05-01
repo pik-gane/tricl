@@ -1,0 +1,96 @@
+\hypertarget{classschedule__t}{}\section{schedule\+\_\+t Class Reference}
+\label{classschedule__t}\index{schedule\+\_\+t@{schedule\+\_\+t}}
+
+
+An efficient container for pairs of (event, event\+\_\+data) that supports efficient.  
+
+
+
+
+{\ttfamily \#include $<$schedule.\+h$>$}
+
+
+
+Collaboration diagram for schedule\+\_\+t\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{d2/db1/classschedule__t__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Private Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{classschedule__t_acdc4eb553d3b3d32370e481e09648f91}\label{classschedule__t_acdc4eb553d3b3d32370e481e09648f91}} 
+auto {\bfseries \+\_\+find\+\_\+now} (const \hyperlink{structtricl_1_1event}{event} \&ev)
+\item 
+\mbox{\Hypertarget{classschedule__t_a985f7458ec7678df8ce215a6b62b4053}\label{classschedule__t_a985f7458ec7678df8ce215a6b62b4053}} 
+\hyperlink{structtricl_1_1event__data}{event\+\_\+data} {\bfseries at} (const \hyperlink{structtricl_1_1event}{event} \&ev)
+\item 
+\mbox{\Hypertarget{classschedule__t_a94dab3fd361972d4d3fd1ca5f1bc1ba1}\label{classschedule__t_a94dab3fd361972d4d3fd1ca5f1bc1ba1}} 
+void {\bfseries \+\_\+update\+\_\+min\+\_\+t\+\_\+later} (\hyperlink{namespacetricl_a720ff6a29f998e11e1d3622fc8df64b1}{timepoint} removed\+\_\+t)
+\item 
+\mbox{\Hypertarget{classschedule__t_a2f13d5051ff82db3127c7724bfdd84fa}\label{classschedule__t_a2f13d5051ff82db3127c7724bfdd84fa}} 
+\hyperlink{structtricl_1_1event__data}{event\+\_\+data} {\bfseries pop} (const \hyperlink{structtricl_1_1event}{event} \&ev)
+\item 
+\mbox{\Hypertarget{classschedule__t_ae0ef4c8aff56a3e48aa03289064eb0b8}\label{classschedule__t_ae0ef4c8aff56a3e48aa03289064eb0b8}} 
+void {\bfseries erase} (const \hyperlink{structtricl_1_1event}{event} \&ev)
+\item 
+\mbox{\Hypertarget{classschedule__t_abf71e35ffdc8ef4e9d63d371532a3444}\label{classschedule__t_abf71e35ffdc8ef4e9d63d371532a3444}} 
+pair$<$ \hyperlink{structtricl_1_1event}{event}, \hyperlink{structtricl_1_1event__data}{event\+\_\+data} $>$ {\bfseries pop\+\_\+min\+\_\+t} ()
+\item 
+void \hyperlink{classschedule__t_ac103ad35f9b65078b79746a504f82287}{insert} (const \hyperlink{structtricl_1_1event}{event} \&ev, \hyperlink{structtricl_1_1event__data}{event\+\_\+data} evd)
+\item 
+\mbox{\Hypertarget{classschedule__t_a1e2fab403a79b617d5db6f0d30c8e0af}\label{classschedule__t_a1e2fab403a79b617d5db6f0d30c8e0af}} 
+void {\bfseries update} (const \hyperlink{structtricl_1_1event}{event} \&ev, \hyperlink{structtricl_1_1event__data}{event\+\_\+data} \&new\+\_\+evd)
+\end{DoxyCompactItemize}
+\subsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{classschedule__t_a3d0b9475f8a6567648c7ad651e337132}\label{classschedule__t_a3d0b9475f8a6567648c7ad651e337132}} 
+vector$<$ pair$<$ \hyperlink{structtricl_1_1event}{event}, \hyperlink{namespacetricl_a720ff6a29f998e11e1d3622fc8df64b1}{timepoint} $>$ $>$ \hyperlink{classschedule__t_a3d0b9475f8a6567648c7ad651e337132}{ev\+\_\+t\+\_\+now} = \{\}
+\begin{DoxyCompactList}\small\item\em the small linear container for schedule class S\+C\+\_\+\+N\+OW \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classschedule__t_a50bc279aa9c818852757d7785be8b0d6}\label{classschedule__t_a50bc279aa9c818852757d7785be8b0d6}} 
+int {\bfseries n\+\_\+ev\+\_\+now} = 0
+\item 
+\mbox{\Hypertarget{classschedule__t_abcdcff8bed511cb5cde74d112644adff}\label{classschedule__t_abcdcff8bed511cb5cde74d112644adff}} 
+map$<$ \hyperlink{namespacetricl_a720ff6a29f998e11e1d3622fc8df64b1}{timepoint}, \hyperlink{structtricl_1_1event}{event} $>$ \hyperlink{classschedule__t_abcdcff8bed511cb5cde74d112644adff}{t2ev\+\_\+sooner} = \{\}
+\begin{DoxyCompactList}\small\item\em the tree-\/type container for schedule class S\+C\+\_\+\+T\+R\+EE \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classschedule__t_a237d5b21372294d0448a28f2355ec592}\label{classschedule__t_a237d5b21372294d0448a28f2355ec592}} 
+unordered\+\_\+map$<$ \hyperlink{structtricl_1_1event}{event}, \hyperlink{namespacetricl_a720ff6a29f998e11e1d3622fc8df64b1}{timepoint} $>$ \hyperlink{classschedule__t_a237d5b21372294d0448a28f2355ec592}{ev2t\+\_\+later} = \{\}
+\begin{DoxyCompactList}\small\item\em the hash table for schedule class S\+C\+\_\+\+H\+A\+SH \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classschedule__t_a68f25da0cba060c4ed786b6b20edc31f}\label{classschedule__t_a68f25da0cba060c4ed786b6b20edc31f}} 
+\hyperlink{namespacetricl_a720ff6a29f998e11e1d3622fc8df64b1}{timepoint} \hyperlink{classschedule__t_a68f25da0cba060c4ed786b6b20edc31f}{min\+\_\+t\+\_\+later} = I\+N\+F\+I\+N\+I\+TY
+\begin{DoxyCompactList}\small\item\em the smallest t of schedule class S\+\_\+\+L\+I\+ST \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classschedule__t_aaffcb55e6a97d302acdd1c4723af1a45}\label{classschedule__t_aaffcb55e6a97d302acdd1c4723af1a45}} 
+unordered\+\_\+map$<$ \hyperlink{structtricl_1_1event}{event}, \hyperlink{structtricl_1_1event__data}{event\+\_\+data} $>$ \hyperlink{classschedule__t_aaffcb55e6a97d302acdd1c4723af1a45}{ev2data} = \{\}
+\begin{DoxyCompactList}\small\item\em the hash table for all events\textquotesingle{} data \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+An efficient container for pairs of (event, event\+\_\+data) that supports efficient. 
+
+
+\begin{DoxyItemize}
+\item lookup, deletion, insertion, and update of event\+\_\+data by event
+\item lookup of item with minimal event\+\_\+data.\+t 
+\end{DoxyItemize}
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{classschedule__t_ac103ad35f9b65078b79746a504f82287}\label{classschedule__t_ac103ad35f9b65078b79746a504f82287}} 
+\index{schedule\+\_\+t@{schedule\+\_\+t}!insert@{insert}}
+\index{insert@{insert}!schedule\+\_\+t@{schedule\+\_\+t}}
+\subsubsection{\texorpdfstring{insert()}{insert()}}
+{\footnotesize\ttfamily void schedule\+\_\+t\+::insert (\begin{DoxyParamCaption}\item[{const \hyperlink{structtricl_1_1event}{event} \&}]{ev,  }\item[{\hyperlink{structtricl_1_1event__data}{event\+\_\+data}}]{evd }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [private]}}
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em evd} & a copy (!) of the data to store \\
+\hline
+\end{DoxyParams}
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+src/\hyperlink{schedule_8h}{schedule.\+h}\end{DoxyCompactItemize}

@@ -160,6 +160,12 @@ Enumerations</h2></td></tr>
  }<tr class="memdesc:a6967089e2c0837f273d8cb5fd9f7e46d"><td class="mdescLeft">&#160;</td><td class="mdescRight">(don't confuse with event_type!) The event class encodes what kind of change to the system state an event represents.  <a href="../../dc/d70/namespacetricl.html#a6967089e2c0837f273d8cb5fd9f7e46d">More...</a><br /></td></tr>
 </td></tr>
 <tr class="separator:a6967089e2c0837f273d8cb5fd9f7e46d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2d47d7069cd7cc5daa413ded7ebd8206"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d70/namespacetricl.html#a2d47d7069cd7cc5daa413ded7ebd8206">schedule_class</a> { <a class="el" href="../../dc/d70/namespacetricl.html#a2d47d7069cd7cc5daa413ded7ebd8206aa25b53f821bd7e3b075947c03418dc08">SC_NOW</a>, 
+<a class="el" href="../../dc/d70/namespacetricl.html#a2d47d7069cd7cc5daa413ded7ebd8206a66ea007cb2ea559e1c1a3c2eb903b4d5">SC_SOONER</a>, 
+<a class="el" href="../../dc/d70/namespacetricl.html#a2d47d7069cd7cc5daa413ded7ebd8206a36dfcabe451fb0ef7ca51b810f5c5c86">SC_LATER</a>, 
+<a class="el" href="../../dc/d70/namespacetricl.html#a2d47d7069cd7cc5daa413ded7ebd8206a5614eaeed7759691a1a30799d7bcd2f4">SC_NEVER</a>
+ }</td></tr>
+<tr class="separator:a2d47d7069cd7cc5daa413ded7ebd8206"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
@@ -263,6 +269,30 @@ Variables</h2></td></tr>
 <tr><td class="fieldname"><a id="a6967089e2c0837f273d8cb5fd9f7e46da16f53be37a75a1cdfc726014c7f3810a"></a>EC_TERM&#160;</td><td class="fielddoc"><p>Termination of a relationship. </p>
 </td></tr>
 <tr><td class="fieldname"><a id="a6967089e2c0837f273d8cb5fd9f7e46dac508c68c92ee059322cb644dd330bbcf"></a>EC_ACT&#160;</td><td class="fielddoc"><p>Occurrence of an action (not yet implemented) </p>
+</td></tr>
+</table>
+
+</div>
+</div>
+<a id="a2d47d7069cd7cc5daa413ded7ebd8206"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2d47d7069cd7cc5daa413ded7ebd8206">&#9670;&nbsp;</a></span>schedule_class</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">enum <a class="el" href="../../dc/d70/namespacetricl.html#a2d47d7069cd7cc5daa413ded7ebd8206">tricl::schedule_class</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<table class="fieldtable">
+<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="a2d47d7069cd7cc5daa413ded7ebd8206aa25b53f821bd7e3b075947c03418dc08"></a>SC_NOW&#160;</td><td class="fielddoc"><p>Events that happen immediately after the current event. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="a2d47d7069cd7cc5daa413ded7ebd8206a66ea007cb2ea559e1c1a3c2eb903b4d5"></a>SC_SOONER&#160;</td><td class="fielddoc"><p>Events that are sooner on average and stored in a tree-type container. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="a2d47d7069cd7cc5daa413ded7ebd8206a36dfcabe451fb0ef7ca51b810f5c5c86"></a>SC_LATER&#160;</td><td class="fielddoc"><p>Events that are later on average and stored in a hash-table-type container. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="a2d47d7069cd7cc5daa413ded7ebd8206a5614eaeed7759691a1a30799d7bcd2f4"></a>SC_NEVER&#160;</td><td class="fielddoc"><p>Events that happen after max simulation time. </p>
 </td></tr>
 </table>
 

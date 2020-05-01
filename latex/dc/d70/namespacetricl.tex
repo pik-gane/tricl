@@ -70,6 +70,12 @@ enum \hyperlink{namespacetricl_a6967089e2c0837f273d8cb5fd9f7e46d}{event\+\_\+cla
 \hyperlink{namespacetricl_a6967089e2c0837f273d8cb5fd9f7e46da16f53be37a75a1cdfc726014c7f3810a}{E\+C\+\_\+\+T\+E\+RM}, 
 \hyperlink{namespacetricl_a6967089e2c0837f273d8cb5fd9f7e46dac508c68c92ee059322cb644dd330bbcf}{E\+C\+\_\+\+A\+CT}
  \}\begin{DoxyCompactList}\small\item\em (don\textquotesingle{}t confuse with event\+\_\+type!) The event class encodes what kind of change to the system state an event represents. \end{DoxyCompactList}
+\item 
+enum \hyperlink{namespacetricl_a2d47d7069cd7cc5daa413ded7ebd8206}{schedule\+\_\+class} \{ \hyperlink{namespacetricl_a2d47d7069cd7cc5daa413ded7ebd8206aa25b53f821bd7e3b075947c03418dc08}{S\+C\+\_\+\+N\+OW}, 
+\hyperlink{namespacetricl_a2d47d7069cd7cc5daa413ded7ebd8206a66ea007cb2ea559e1c1a3c2eb903b4d5}{S\+C\+\_\+\+S\+O\+O\+N\+ER}, 
+\hyperlink{namespacetricl_a2d47d7069cd7cc5daa413ded7ebd8206a36dfcabe451fb0ef7ca51b810f5c5c86}{S\+C\+\_\+\+L\+A\+T\+ER}, 
+\hyperlink{namespacetricl_a2d47d7069cd7cc5daa413ded7ebd8206a5614eaeed7759691a1a30799d7bcd2f4}{S\+C\+\_\+\+N\+E\+V\+ER}
+ \}
 \end{DoxyCompactItemize}
 \subsection*{Functions}
 \begin{DoxyCompactItemize}
@@ -162,6 +168,30 @@ E\+C\+\_\+\+T\+E\+RM&Termination of a relationship. \\
 
 \raisebox{\heightof{T}}[0pt][0pt]{\index{E\+C\+\_\+\+A\+CT@{E\+C\+\_\+\+A\+CT}!tricl@{tricl}}\index{tricl@{tricl}!E\+C\+\_\+\+A\+CT@{E\+C\+\_\+\+A\+CT}}}\mbox{\Hypertarget{namespacetricl_a6967089e2c0837f273d8cb5fd9f7e46dac508c68c92ee059322cb644dd330bbcf}\label{namespacetricl_a6967089e2c0837f273d8cb5fd9f7e46dac508c68c92ee059322cb644dd330bbcf}} 
 E\+C\+\_\+\+A\+CT&Occurrence of an action (not yet implemented) \\
+\hline
+
+\end{DoxyEnumFields}
+\mbox{\Hypertarget{namespacetricl_a2d47d7069cd7cc5daa413ded7ebd8206}\label{namespacetricl_a2d47d7069cd7cc5daa413ded7ebd8206}} 
+\index{tricl@{tricl}!schedule\+\_\+class@{schedule\+\_\+class}}
+\index{schedule\+\_\+class@{schedule\+\_\+class}!tricl@{tricl}}
+\subsubsection{\texorpdfstring{schedule\+\_\+class}{schedule\_class}}
+{\footnotesize\ttfamily enum \hyperlink{namespacetricl_a2d47d7069cd7cc5daa413ded7ebd8206}{tricl\+::schedule\+\_\+class}}
+
+\begin{DoxyEnumFields}{Enumerator}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{S\+C\+\_\+\+N\+OW@{S\+C\+\_\+\+N\+OW}!tricl@{tricl}}\index{tricl@{tricl}!S\+C\+\_\+\+N\+OW@{S\+C\+\_\+\+N\+OW}}}\mbox{\Hypertarget{namespacetricl_a2d47d7069cd7cc5daa413ded7ebd8206aa25b53f821bd7e3b075947c03418dc08}\label{namespacetricl_a2d47d7069cd7cc5daa413ded7ebd8206aa25b53f821bd7e3b075947c03418dc08}} 
+S\+C\+\_\+\+N\+OW&Events that happen immediately after the current event. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{S\+C\+\_\+\+S\+O\+O\+N\+ER@{S\+C\+\_\+\+S\+O\+O\+N\+ER}!tricl@{tricl}}\index{tricl@{tricl}!S\+C\+\_\+\+S\+O\+O\+N\+ER@{S\+C\+\_\+\+S\+O\+O\+N\+ER}}}\mbox{\Hypertarget{namespacetricl_a2d47d7069cd7cc5daa413ded7ebd8206a66ea007cb2ea559e1c1a3c2eb903b4d5}\label{namespacetricl_a2d47d7069cd7cc5daa413ded7ebd8206a66ea007cb2ea559e1c1a3c2eb903b4d5}} 
+S\+C\+\_\+\+S\+O\+O\+N\+ER&Events that are sooner on average and stored in a tree-\/type container. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{S\+C\+\_\+\+L\+A\+T\+ER@{S\+C\+\_\+\+L\+A\+T\+ER}!tricl@{tricl}}\index{tricl@{tricl}!S\+C\+\_\+\+L\+A\+T\+ER@{S\+C\+\_\+\+L\+A\+T\+ER}}}\mbox{\Hypertarget{namespacetricl_a2d47d7069cd7cc5daa413ded7ebd8206a36dfcabe451fb0ef7ca51b810f5c5c86}\label{namespacetricl_a2d47d7069cd7cc5daa413ded7ebd8206a36dfcabe451fb0ef7ca51b810f5c5c86}} 
+S\+C\+\_\+\+L\+A\+T\+ER&Events that are later on average and stored in a hash-\/table-\/type container. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{S\+C\+\_\+\+N\+E\+V\+ER@{S\+C\+\_\+\+N\+E\+V\+ER}!tricl@{tricl}}\index{tricl@{tricl}!S\+C\+\_\+\+N\+E\+V\+ER@{S\+C\+\_\+\+N\+E\+V\+ER}}}\mbox{\Hypertarget{namespacetricl_a2d47d7069cd7cc5daa413ded7ebd8206a5614eaeed7759691a1a30799d7bcd2f4}\label{namespacetricl_a2d47d7069cd7cc5daa413ded7ebd8206a5614eaeed7759691a1a30799d7bcd2f4}} 
+S\+C\+\_\+\+N\+E\+V\+ER&Events that happen after max simulation time. \\
 \hline
 
 \end{DoxyEnumFields}
