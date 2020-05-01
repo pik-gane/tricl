@@ -13,9 +13,11 @@
 #include "angle.h"
 #include "link.h"
 #include "probability.h"
-#include "event.h"
 #include "io.h"
 #include "debugging.h"
+#include "schedule.h"
+
+#include "event.h"
 
 /** Add (and then schedule) an event.
  *
