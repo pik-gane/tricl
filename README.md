@@ -260,14 +260,12 @@ Change log
 Development
 -----------
 
-Code documentation is here: <https://mensch72.github.io/tricl/html/index.html>
-(automatically updated after each commit to the master branch).
- 
+To generate a local copy of the documentation:
+* execute ``doxygen`` in the top repository folder
+* find the documentation in the folder ``doc`` (will be ignored by git)
+
 To profile:
 ```shell
    valgrind --tool=callgrind --callgrind-out-file=callgrind.out tricl myconfig.yaml --quiet && kcachegrind callgrind.out &
 ```
 
-To generate a local copy of the documentation:
-* execute ``doxygen`` in the top repository folder
-* find the documentation in the folder ``doc`` (will be ignored by git)
