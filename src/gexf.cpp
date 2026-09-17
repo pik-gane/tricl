@@ -181,8 +181,8 @@ void finish_gexf () {
     bool old_verbose = verbose;
     verbose = false;
     // (current_t has been set to the end of the simulation by finish() already)
-    for (auto& [e1, outs] : e2outs) {
-        for (auto& [rat13, e3] : outs) {
+    for (entity e1 = 1; e1 <= max_e; e1++) {
+        for (auto& [rat13, e3] : e2outs[e1]) {
             tricl::tricllink l = { .e1 = e1, .rat13 = rat13, .e3 = e3 };
             if (rat13 != RT_ID) gexf_output_edge(l);
         }

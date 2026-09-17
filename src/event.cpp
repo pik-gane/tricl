@@ -32,12 +32,12 @@ void add_event (
 {
     auto ec = ev.ec; auto e1 = ev.e1, e3 = ev.e3; auto rat13 = ev.rat13;
     auto et1 = e2et[e1], et3 = e2et[e3];
-    event_type evt = { .ec=ec, et1, rat13, et3 };
 
     assert ((rat13 != RT_ID) && (e1 != e3));
 
     // only continue if event can happen at all:
-    if (possible_evts.count(evt) > 0) {
+    int evt_id = evt_id_of(ec, et1, rat13, et3);
+    if (evt_id >= 0) {
         // find and store attempt rate and success probunits by looping through all adjacent legs and angles
 
         if (debug) cout << "     adding event: " << ev << endl;
@@ -47,8 +47,8 @@ void add_event (
         event_data evd = {};
 
         // base values:
-        add_attempt_contribution(&evd, evt2base_attempt_rate[evt]);
-        add_probunits_contribution(&evd, evt2base_probunits[evt]);
+        add_attempt_contribution(&evd, evtid2base_attempt_rate[evt_id]);
+        add_probunits_contribution(&evd, evtid2base_probunits[evt_id]);
 
         const auto& outs1 = e2outs[e1];
         const auto& ins3 = e2ins[e3];
@@ -58,20 +58,16 @@ void add_event (
         {
             // outlegs:
             for (auto& l : outs1) {
-                auto rat12 = l.rat_out;
-                auto e2 = l.e_target;
-                influence_type inflt = { .evt = evt, .at = { .rat12 = rat12, .et2 = e2et[e2], .rat23 = NO_RAT } };
-                add_attempt_contribution(&evd, _inflt2attempt_rate[INFLT(inflt)]);
-                add_probunits_contribution(&evd, _inflt2delta_probunits[INFLT(inflt)]);
+                int idx = inflt_index(evt_id, l.rat_out, e2et[l.e_target], NO_RAT);
+                add_attempt_contribution(&evd, inflt_attempt_rate[idx]);
+                add_probunits_contribution(&evd, inflt_delta_probunits[idx]);
             }
 
             // inlegs (similarly):
             for (auto& l : ins3) {
-                auto e2 = l.e_source;
-                auto rat23 = l.rat_in;
-                influence_type inflt = { .evt = evt, .at = { .rat12 = NO_RAT, .et2 = e2et[e2], .rat23 = rat23 } };
-                add_attempt_contribution(&evd, _inflt2attempt_rate[INFLT(inflt)]);
-                add_probunits_contribution(&evd, _inflt2delta_probunits[INFLT(inflt)]);
+                int idx = inflt_index(evt_id, NO_RAT, e2et[l.e_source], l.rat_in);
+                add_attempt_contribution(&evd, inflt_attempt_rate[idx]);
+                add_probunits_contribution(&evd, inflt_delta_probunits[idx]);
             }
         }
 
@@ -80,15 +76,12 @@ void add_event (
         static angle_vec angles;  // reused buffer to avoid allocations
         get_angles(e1, outs1, ins3, e3, angles);
         for (auto a_it = angles.begin(); a_it != angles.end(); a_it++) {
-            influence_type inflt = {
-                    .evt = evt,
-                    .at = { .rat12 = a_it->rat12, .et2 = e2et[a_it->e2], .rat23 = a_it->rat23 }
-            };
             if (debug) cout << "      influences of angle \"" << e2label[e1] << " " << rat2label[a_it->rat12] << " " << e2label[a_it->e2] << " " << rat2label[a_it->rat23] << " " << e2label[e3] << "\":" << endl;
 
             // get influence of angle on event:
-            auto dar = _inflt2attempt_rate[INFLT(inflt)];
-            auto dspu = _inflt2delta_probunits[INFLT(inflt)];
+            int idx = inflt_index(evt_id, a_it->rat12, e2et[a_it->e2], a_it->rat23);
+            auto dar = inflt_attempt_rate[idx];
+            auto dspu = inflt_delta_probunits[idx];
             if (COUNT_ALL_ANGLES || (dar != 0.0) || (dspu != 0.0)) { // angle can influence event
                 // count this angle:
                 na++;
@@ -113,16 +106,17 @@ void add_event (
             evd.n_angles = na;
             evd.t = -INFINITY;
             ev2data[ev] = evd;
-            if (debug) cout << "      attempt rate " << total_attempt_rate(&evd) << ", success prob. " << probunits2probability(total_success_probunits(&evd), evt2left_tail.at(evt), evt2right_tail.at(evt)) << endl;
+            if (debug) cout << "      attempt rate " << total_attempt_rate(&evd) << ", success prob. "
+                    << probunits2probability(total_success_probunits(&evd), evtid2left_tail[evt_id], evtid2right_tail[evt_id], evtid2scale[evt_id]) << endl;
             // now schedule it:
-            schedule_event(ev, &ev2data[ev], evt2left_tail.at(evt), evt2right_tail.at(evt));
+            schedule_event(ev, &ev2data[ev], evt_id);
 
             if (debug) { verify_data_consistency(); verify_angle_consistency(); }
         }
         else {
             if (debug) cout << "      covered by summary event, not scheduled separately" << endl;
             // only add effective rate of addition via summary event:
-            add_effective_rate(summary_evt2single_effective_rate.at(evt));
+            add_effective_rate(evtid2summary_single_er[evt_id]);
         }
     }
     else if (debug) cout << "     not adding impossible event: " << ev << endl;
@@ -158,9 +152,8 @@ void conditionally_remove_event(
     }
     else if (ev.ec != EC_TERM)  // event is not scheduled by covered by summary event
     {
-        event_type evt = {.ec=ev.ec, e2et[ev.e1], ev.rat13, e2et[ev.e3]};
         // need to adjust effective rate:
-        subtract_effective_rate(summary_evt2single_effective_rate[evt]);
+        subtract_effective_rate(summary_single_er_of(ev.ec, e2et[ev.e1], ev.rat13, e2et[ev.e3]));
     }
 }
 
@@ -413,7 +406,8 @@ bool pop_next_event ()
 
             auto rat13 = summary_ev.rat13;
             tricllink l = { e1, rat13, e3 };
-            event_type evt = { .ec = EC_EST, et1, rat13, et3 };
+            int evt_id = evt_id_of(EC_EST, et1, rat13, et3);
+            assert (evt_id >= 0);
 
             if (link_exists(l))
             {
@@ -435,34 +429,28 @@ bool pop_next_event ()
                 {
                     // compile success units:
                     event_data tmp_evd = {};
-                    add_probunits_contribution(&tmp_evd, evt2base_probunits.at(evt));
+                    add_probunits_contribution(&tmp_evd, evtid2base_probunits[evt_id]);
                     if (any_leg_influences)  // (hub entities may have very many legs, so only loop if necessary)
                     {
                         // outlegs:
                         for (auto& l : e2outs[e1])
                         {
-                            auto rat12 = l.rat_out;
-                            auto e2 = l.e_target;
-                            influence_type inflt = { .evt = evt, .at = { .rat12 = rat12, .et2 = e2et[e2], .rat23 = NO_RAT } };
-                            if (inflt2delta_probunits.count(inflt) > 0) add_probunits_contribution(&tmp_evd, inflt2delta_probunits.at(inflt));
+                            add_probunits_contribution(&tmp_evd, inflt_delta_probunits[inflt_index(evt_id, l.rat_out, e2et[l.e_target], NO_RAT)]);
                         }
                         // inlegs:
                         for (auto& l : e2ins[e3])
                         {
-                            auto e2 = l.e_source;
-                            auto rat23 = l.rat_in;
-                            influence_type inflt = { .evt = evt, .at = { .rat12 = NO_RAT, .et2 = e2et[e2], .rat23 = rat23 } };
-                            if (inflt2delta_probunits.count(inflt) > 0) add_probunits_contribution(&tmp_evd, inflt2delta_probunits.at(inflt));
+                            add_probunits_contribution(&tmp_evd, inflt_delta_probunits[inflt_index(evt_id, NO_RAT, e2et[l.e_source], l.rat_in)]);
                         }
                     }
                     auto spu = total_success_probunits(&tmp_evd);
-                    // since the scheduling rate already contained the factor ev2max_sp[ev],
+                    // since the scheduling rate already contained the factor evtid2summary_max_success_probability,
                     // we need to divide the success probability by it here:
                     probability
                         success_probability =
-                            probunits2probability(spu, evt2left_tail.at(evt), evt2right_tail.at(evt)),
+                            probunits2probability(spu, evtid2left_tail[evt_id], evtid2right_tail[evt_id], evtid2scale[evt_id]),
                         conditional_success_probability =
-                            success_probability / summary_ev2max_success_probability[ev];
+                            success_probability / evtid2summary_max_success_probability[evt_id];
                     // check if event succeeds:
                     if (uniform(random_variable) < conditional_success_probability)  // success
                     {
@@ -482,7 +470,7 @@ bool pop_next_event ()
                         log_state();
                         found = true;
                         // adjust effective rate because summary addition event does no longer cover this pair:
-                        subtract_effective_rate(summary_evt2single_effective_rate.at(evt));
+                        subtract_effective_rate(evtid2summary_single_er[evt_id]);
                         // but don't remove the summary event
                     }
                     else
@@ -492,7 +480,7 @@ bool pop_next_event ()
                 }
             }
             // set next_occurrence of this summary event:
-            reschedule_event(summary_ev, &ev2data.at(summary_ev), evt2left_tail.at(evt), evt2right_tail.at(evt));
+            reschedule_event(summary_ev, &ev2data.at(summary_ev), evt_id);
         }
         else  // event is particular (has specific entities)
         {

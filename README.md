@@ -248,6 +248,12 @@ Change log
 ----------
 
 2026-09-17
+- performance: angles are found with a galloping intersection into a reusable buffer, per-type parameters live in
+  small dense tables instead of two 512 MB arrays and hash maps, the sigmoid's scale parameter is precomputed,
+  leg sets are vectors, and the status line is throttled. Measured (one core, seed 1): peak memory 1029 MB → 10 MB,
+  start-up 0.8 s → 0.01 s, ``granovetter_helfmann.yaml`` with k=10: 63k → 158k events/s at N=100,
+  14.7k → 147k at N=1000, 1.7k → 76k at N=10000; dense ``parameters_3blocks.yaml``: 163 s → 101 s.
+  Simulated trajectories are unchanged for a given seed.
 - fixed the log-likelihood computation (it contained a spurious -log(total rate) term, missed the waiting time
   of rejected summary event attempts and the probability of no further event until the time limit, and was infinite
   whenever an "immediate" event was the only pending one)

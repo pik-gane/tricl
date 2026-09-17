@@ -20,24 +20,19 @@
  *
  * Some data (which is accessed most often) is instead kept in vectors
  * whose indices are either entities (which are ints)
- * or integer hash values of influence types (constructed via the macro INFLT).
+ * or dense ids of event types and slots of angle types
+ * (see evt_id_of() and at_slot() in global_variables.h, set up in init_types()).
  *
- * All hashs are constructed as logical ORs of properly shifted ids,
- * hence valid ids are restricted by the respective numbers of bits reserved
- * for this id in the hash.
- *
- * This hash construction is governed by the bit size macros
- * #E_BITS, #ET_BITS, and #RAT_BITS,
- * which could be adapted in dependence on system architecture,
- * but must fulfil the following constraints:
- *   2 + 2 * #E_BITS + #RAT_BITS <= no. of bits in size_t (32 or 64)
- *   2^#E_BITS + 2^(6 + 3 * #RAT_BITS + 3 * #ET_BITS) <= available memory bytes
+ * All hashs are constructed as logical XORs of properly shifted ids.
+ * The bit size macros #E_BITS, #ET_BITS, and #RAT_BITS only govern this hash construction
+ * (ids exceeding the reserved number of bits merely cause more hash collisions),
+ * except that #E_BITS also limits the number of entities via the array \ref e2et.
+ * The constraint 2 + 2 * #E_BITS + #RAT_BITS <= no. of bits in size_t should hold.
  */
 
-// the following choices seem adequate for 64 bit system and >= 1 GB available memory:
 #define E_BITS 20   ///< No. of bits used for entities --> max. 1 mio. entities
-#define ET_BITS 4   ///< No. of bits used for entity types --> max. 16 entity types
-#define RAT_BITS 4  ///< No. of bits used for relationship or action types --> max. 16 relationship or action types
+#define ET_BITS 4   ///< No. of bits reserved for entity types in hashs
+#define RAT_BITS 4  ///< No. of bits reserved for relationship or action types in hashs
 
 #define MAX_N_E ((1<<E_BITS)-1)  ///< resulting max. no. of entities
 
@@ -444,13 +439,13 @@ template <> struct std::hash<angle_type> {
     }
 };
 
-#define INFLT(inflt) ((size_t)inflt.evt.ec ^ ((size_t)inflt.evt.et1 << 2) ^ ((size_t)inflt.evt.rat13 << (2+ET_BITS)) ^ ((size_t)inflt.evt.et3 << (2+ET_BITS+RAT_BITS)) ^ ((size_t)inflt.at.rat12 << (2+2*ET_BITS+RAT_BITS)) ^ ((size_t)inflt.at.et2 << (2+2*ET_BITS+2*RAT_BITS)) ^ ((size_t)inflt.at.rat23 << (2+3*ET_BITS+2*RAT_BITS)))
-#define MAX_N_INFLT (1 << (2+3*ET_BITS+3*RAT_BITS))
 /** Construct an integer hash for use in maps and sets by adding bit-shifted atteributes:
  */
 template <> struct std::hash<influence_type> {
     inline size_t operator()(const influence_type& inflt) const {
-        return (INFLT(inflt));
+        return ((size_t)inflt.evt.ec ^ ((size_t)inflt.evt.et1 << 2) ^ ((size_t)inflt.evt.rat13 << (2+ET_BITS))
+                ^ ((size_t)inflt.evt.et3 << (2+ET_BITS+RAT_BITS)) ^ ((size_t)inflt.at.rat12 << (2+2*ET_BITS+RAT_BITS))
+                ^ ((size_t)inflt.at.et2 << (2+2*ET_BITS+2*RAT_BITS)) ^ ((size_t)inflt.at.rat23 << (2+3*ET_BITS+2*RAT_BITS)));
     }
 };
 /** Construct an integer hash for use in maps and sets by adding bit-shifted atteributes:

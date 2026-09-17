@@ -44,34 +44,31 @@ inline void add_or_delete_angle (
     n_angles += ((e1 == e2) || (e2 == e3) || (e3 == e1)) ? 0 : (ec_angle == EC_EST) ? 1 : -1;
 
     // iterate through all possible source-target relationship or action types:
-    for (auto& rat13 : ets2relations[{ et1, et3 }])
+    for (auto& rat13 : ets2rats[(int) et1 * n_et_slots + (int) et3])
     {
         bool link13_exists = (e2outs[e1].count({ .rat_out = rat13, .e_target = e3 }) > 0);
 
         // construct the type of the corresponding event whose data might need an update:
         event_class ec13 = link13_exists ? EC_TERM : EC_EST;
-        event_type evt = { .ec=ec13, et1, rat13, et3 };
         if (debug) cout << "     possibly updating event: " << ec2label[ec13] <<  " \"" << e2label[e1] << " " << rat2label[rat13] << " " << e2label[e3] << "\"" << endl;
 
         // only continue if the event type can happen at all:
-        if (possible_evts.count(evt) > 0)
+        int evt_id = evt_id_of(ec13, et1, rat13, et3);
+        if (evt_id >= 0)
         {
             event ev = { .ec=ec13, e1, rat13, e3 };
-            if (debug) cout << "      event type " << evt << " has a base success prob. of "
-                    << probunits2probability(evt2base_probunits.at(evt), evt2left_tail.at(evt), evt2right_tail.at(evt)) << endl;
+            if (debug) cout << "      event type " << evtid2evt[evt_id] << " has a base success prob. of "
+                    << probunits2probability(evtid2base_probunits[evt_id], evtid2left_tail[evt_id], evtid2right_tail[evt_id], evtid2scale[evt_id]) << endl;
 
             // get influence of angle on event:
-            influence_type inflt = { .evt = evt, .at = { rat12, et2, rat23 } };
-            auto dar = _inflt2attempt_rate[INFLT(inflt)];
-            auto dspu = _inflt2delta_probunits[INFLT(inflt)];
+            int idx = inflt_index(evt_id, rat12, et2, rat23);
+            auto dar = inflt_attempt_rate[idx];
+            auto dspu = inflt_delta_probunits[idx];
 
             // only continue if influence is nonzero:
             if (COUNT_ALL_ANGLES || (dar != 0.0) || (dspu != 0.0))
             {
                 if (debug) cout << "       angle may influence attempt or success" << endl;
-                auto ar0 = evt2base_attempt_rate.at(evt);
-                auto spu0 = evt2base_probunits.at(evt);
-                auto left_tail = evt2left_tail.at(evt), right_tail = evt2right_tail.at(evt);
                 if (ec_angle == EC_EST)  // angle is added:
                 {
                     if (ev2data.count(ev) == 0)  // event is not already scheduled
@@ -80,15 +77,15 @@ inline void add_or_delete_angle (
                         if (ec13 != EC_TERM)  // event is ALSO covered by a summary event
                         {
                             // subtract that part covered by the summary event from the total effective rate:
-                            subtract_effective_rate(summary_evt2single_effective_rate[evt]);
+                            subtract_effective_rate(evtid2summary_single_er[evt_id]);
                         }
                         auto evd_ = &ev2data[ev];  // generates a new (zero-initialised) event_data object
                         evd_->n_angles = 1;
-                        add_attempt_contribution(evd_, ar0);
+                        add_attempt_contribution(evd_, evtid2base_attempt_rate[evt_id]);
                         add_attempt_contribution(evd_, dar);
-                        add_probunits_contribution(evd_, spu0);
+                        add_probunits_contribution(evd_, evtid2base_probunits[evt_id]);
                         add_probunits_contribution(evd_, dspu);
-                        schedule_event(ev, evd_, left_tail, right_tail);
+                        schedule_event(ev, evd_, evt_id);
                     }
                     else  // event is already scheduled
                     {
@@ -97,7 +94,7 @@ inline void add_or_delete_angle (
                         evd_->n_angles += 1;
                         add_attempt_contribution(evd_, dar);
                         add_probunits_contribution(evd_, dspu);
-                        reschedule_event(ev, evd_, left_tail, right_tail);
+                        reschedule_event(ev, evd_, evt_id);
                     }
                 }
                 else  // angle is removed
@@ -113,12 +110,12 @@ inline void add_or_delete_angle (
                         // remove specific event:
                         remove_event(ev, evd_);  // event must have been scheduled earlier when angle was added
                         // add that part covered by the summary event to the total effective rate:
-                        add_effective_rate(summary_evt2single_effective_rate[evt]);
+                        add_effective_rate(evtid2summary_single_er[evt_id]);
                     }
                     else
                     {
                         if (debug) cout << "        event will be rescheduled" << endl;
-                        reschedule_event(ev, evd_, left_tail, right_tail);  // event must have been scheduled earlier when angle was added
+                        reschedule_event(ev, evd_, evt_id);  // event must have been scheduled earlier when angle was added
                     }
                 }
             }

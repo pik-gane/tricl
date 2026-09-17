@@ -87,20 +87,26 @@ inline probunits total_success_probunits (const event_data* evd_)
     return (evd_->n_neg_inf_probunits > 0) ? -INFINITY : (evd_->n_pos_inf_probunits > 0) ? INFINITY : evd_->success_probunits;
 }
 
-inline void _schedule_event (event& ev, event_data* evd_, double left_tail, double right_tail)
+inline void _schedule_event (
+        event& ev,         ///< [in] the event to schedule
+        event_data* evd_,  ///< [in] its data
+        int evt_id         ///< [in] the dense id of its event type (see evt_id_of())
+        )
 {
     assert(evd_ == &ev2data.at(ev));
+    assert(evt_id >= 0);
     rate ar = total_attempt_rate(evd_);
     if (ar < 0.0) throw "negative attempt rate";
     auto spu = total_success_probunits(evd_);
+    double left_tail = evtid2left_tail[evt_id], right_tail = evtid2right_tail[evt_id], scale = evtid2scale[evt_id];
     timepoint t;
     if (event_is_summary(ev))  // summary event:
     {
         // use a common upper bound to the actual effective rate for scheduling (actual success will then later be tested in pop_next_event):
-        t = current_t + exponential(random_variable) / (ar * summary_ev2max_success_probability[ev]);
+        t = current_t + exponential(random_variable) / (ar * evtid2summary_max_success_probability[evt_id]);
         if (verbose) cout << "         (re)scheduling " << ev << ": summary event, attempt rate " << ar << " → attempt at t=" << t << ", test success then" << endl;
         // compute base effective rate using base success probability units:
-        rate er = evd_->effective_rate = effective_rate(ar, spu, left_tail, right_tail);
+        rate er = evd_->effective_rate = effective_rate(ar, spu, left_tail, right_tail, scale);
         assert (er < INFINITY);
         // register it in total:
         add_effective_rate(er);
@@ -118,7 +124,7 @@ inline void _schedule_event (event& ev, event_data* evd_, double left_tail, doub
         else if (ar < INFINITY)
         {
             // compute effective rate:
-            rate er = evd_->effective_rate = effective_rate(ar, spu, left_tail, right_tail);
+            rate er = evd_->effective_rate = effective_rate(ar, spu, left_tail, right_tail, scale);
             assert (er < INFINITY);
             // register it in total:
             add_effective_rate(er);
@@ -156,16 +162,16 @@ inline void _schedule_event (event& ev, event_data* evd_, double left_tail, doub
     t2ev[t] = ev;
 }
 
-inline void schedule_event (event& ev, event_data* evd_, double left_tail, double right_tail)
+inline void schedule_event (event& ev, event_data* evd_, int evt_id)
 {
     assert(evd_ == &ev2data.at(ev));
     if (event_is_scheduled(ev, evd_)) throw "event already scheduled";
     assert(!event_is_scheduled(ev, evd_));
-    _schedule_event(ev, evd_, left_tail, right_tail);
+    _schedule_event(ev, evd_, evt_id);
     if (debug) verify_data_consistency();
 }
 
-inline void reschedule_event (event& ev, event_data* evd_, double left_tail, double right_tail)
+inline void reschedule_event (event& ev, event_data* evd_, int evt_id)
 {
     assert(evd_ == &ev2data.at(ev));
     assert(event_is_scheduled(ev, evd_));
@@ -175,7 +181,7 @@ inline void reschedule_event (event& ev, event_data* evd_, double left_tail, dou
     subtract_effective_rate(evd_->effective_rate, !event_is_summary(ev));
 
     // schedule anew:
-    _schedule_event(ev, evd_, left_tail, right_tail);
+    _schedule_event(ev, evd_, evt_id);
     if (debug) verify_data_consistency();
 }
 

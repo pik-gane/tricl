@@ -24,28 +24,20 @@ rate compute_total_finite_er ()
     {
         auto ec = ev.ec;
         auto er = evd.effective_rate;
-        auto e1 = ev.e1, e3 = ev.e3;
-        auto rat13 = ev.rat13;
-        auto et1 = e2et[e1], et3 = e2et[e3];
-        event_type evt = {.ec=ec, et1, rat13, et3};
         if (er < INFINITY) ter += er;
-        if (ec != EC_TERM)  // event is also covered by summary event
+        if ((ec != EC_TERM) && !event_is_summary(ev))  // event is also covered by summary event
         {
             // subtract single er that will be added when processing summary event:
-            ter -= summary_evt2single_effective_rate[evt];
+            ter -= summary_single_er_of(ec, e2et[ev.e1], ev.rat13, e2et[ev.e3]);
         }
     }
     // go through all existing links:
-    for (auto& [e1, outs1] : e2outs)
+    for (entity e1 = 1; e1 <= max_e; e1++)
     {
-        for (auto& l : outs1)
+        for (auto& l : e2outs[e1])
         {
-            auto rat13 = l.rat_out;
-            auto e3 = l.e_target;
-            auto et1 = e2et[e1], et3 = e2et[e3];
-            event_type evt = {.ec=EC_EST, et1, rat13, et3};
             // subtract single er that was added when processing summary event:
-            ter -= summary_evt2single_effective_rate[evt];
+            ter -= summary_single_er_of(EC_EST, e2et[e1], l.rat_out, e2et[l.e_target]);
         }
     }
     // go through all entity types:
@@ -53,9 +45,8 @@ rate compute_total_finite_er ()
     {
         for (auto& rat13 : ets2relations[{et, et}])
         {
-            event_type evt = {.ec=EC_EST, et, rat13, et};
             // subtract n times single er since equal entities will not be linked:
-            ter -= n * summary_evt2single_effective_rate[evt];
+            ter -= n * summary_single_er_of(EC_EST, et, rat13, et);
         }
     }
 
@@ -72,12 +63,15 @@ int compute_n_angles (event_type evt, entity e1, entity e3, bool print) {
     int na = 0;
     angle_vec as;
     get_angles(e1, outs1, ins3, e3, as);
+    int evt_id = evt_id_of(evt.ec, evt.et1, evt.rat13, evt.et3);
     for (auto a_it = as.begin(); a_it < as.end(); a_it++) {
-        influence_type inflt = { .evt = evt, .at = { .rat12 = a_it->rat12, .et2 = e2et[a_it->e2], .rat23 = a_it->rat23 } };
-        if (print) cout << inflt.at << endl;
-        auto dar = _inflt2attempt_rate[INFLT(inflt)];
-        auto dsl = _inflt2delta_probunits[INFLT(inflt)];
-        if (print) cout << " " << rat2label[a_it->rat12] << " " << e2label[a_it->e2] << " " << rat2label[a_it->rat23] << ", " << INFLT(inflt) << " " << dar << " " << dsl << endl;
+        rate dar = 0; probunits dsl = 0;
+        if (evt_id >= 0) {
+            int idx = inflt_index(evt_id, a_it->rat12, e2et[a_it->e2], a_it->rat23);
+            dar = inflt_attempt_rate[idx];
+            dsl = inflt_delta_probunits[idx];
+        }
+        if (print) cout << " " << rat2label[a_it->rat12] << " " << e2label[a_it->e2] << " " << rat2label[a_it->rat23] << ", " << dar << " " << dsl << endl;
         if (COUNT_ALL_ANGLES || (dar != 0.0) || (dsl != 0.0)) { // angle can influence event
             na++;
         }
@@ -107,16 +101,16 @@ void verify_angle_consistency () {
  */
 void verify_data_consistency () {
     // e2outs:
-    for (auto& [e1, outs1] : e2outs) {
-        for (auto& l : outs1) {
+    for (entity e1 = 1; e1 <= max_e; e1++) {
+        for (auto& l : e2outs[e1]) {
             auto rat13 = l.rat_out;
             auto e3 = l.e_target;
             CHECK(e2ins.at(e3).count({e1, rat13}) == 1);
         }
     }
     // e2ins:
-    for (auto& [e3, ins3] : e2ins) {
-        for (auto& l : ins3) {
+    for (entity e3 = 1; e3 <= max_e; e3++) {
+        for (auto& l : e2ins[e3]) {
             auto e1 = l.e_source;
             auto rat13 = l.rat_in;
             CHECK(e2outs.at(e1).count({rat13, e3}) == 1);

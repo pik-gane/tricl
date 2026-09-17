@@ -57,7 +57,8 @@ inline double tail2scale (
 inline probability probunits2probability (
         probunits pu,      ///< [in] the probability units, -inf...inf
         double left_tail,  ///< [in] the tail index of the left (lower) tail, >= 0
-        double right_tail  ///< [in] the tail index of the right (upper) tail, >= 0
+        double right_tail, ///< [in] the tail index of the right (upper) tail, >= 0
+        double scale       ///< [in] the precomputed scale parameter, = tail2scale(left_tail) + tail2scale(right_tail)
         )
 {
     if ((left_tail == 0) && (right_tail == 0))
@@ -66,8 +67,6 @@ inline probability probunits2probability (
     }
     else
     {
-        double scale = tail2scale(left_tail) + tail2scale(right_tail);
-
         return (      pow(1 + log(1 + left_tail  * exp(- pu / scale)),
                           - 1 / left_tail)
                 + 1 - pow(1 + log(1 + right_tail * exp(  pu / scale)),
@@ -75,6 +74,14 @@ inline probability probunits2probability (
                ) / 2;
     }
     // TODO: what if only one tail index == 0 ?
+}
+
+/** Convert probability units to probability, computing the scale parameter on the fly
+ *  (for non-performance-critical uses; the simulation uses the precomputed scale from evtid2scale).
+ */
+inline probability probunits2probability (probunits pu, double left_tail, double right_tail)
+{
+    return probunits2probability(pu, left_tail, right_tail, tail2scale(left_tail) + tail2scale(right_tail));
 }
 
 /** Compute the current effective rate at which an event occurs
@@ -88,16 +95,24 @@ inline rate effective_rate (
         rate attempt_rate,      ///< [in] the event's current total attempt rate, 0...inf
         probunits success_pus,  ///< [in] the event's current total success probability units, -inf...inf
         double left_tail,       ///< [in] the left tail index of the sigmoid function to be used, >= 0
-        double right_tail       ///< [in] the right tail index of the sigmoid function to be used, >= 0
+        double right_tail,      ///< [in] the right tail index of the sigmoid function to be used, >= 0
+        double scale            ///< [in] the precomputed scale parameter of the sigmoid function
         )
 {
     assert (attempt_rate >= 0);
     if (attempt_rate == 0) return 0;
     if (success_pus == -INFINITY) return 0;  // impossible events never happen, even if attempted at an infinite rate
     if (attempt_rate == INFINITY) return INFINITY;
-    rate r = attempt_rate * probunits2probability(success_pus, left_tail, right_tail);
+    rate r = attempt_rate * probunits2probability(success_pus, left_tail, right_tail, scale);
     assert (r >= 0);
     return r;
+}
+
+/** Compute the effective rate, computing the sigmoid's scale parameter on the fly (for non-performance-critical uses).
+ */
+inline rate effective_rate (rate attempt_rate, probunits success_pus, double left_tail, double right_tail)
+{
+    return effective_rate(attempt_rate, success_pus, left_tail, right_tail, tail2scale(left_tail) + tail2scale(right_tail));
 }
 
 /** Add effective rate to total, taking care of infinite values.

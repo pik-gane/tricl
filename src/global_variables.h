@@ -64,18 +64,60 @@ extern unordered_map<link_type, probability> lt2spatial_decay;        ///< Rate 
 // dynamic parameters:
 
 extern unordered_set<event_type> possible_evts;                                    ///< Types of events that may occur at all
-extern unordered_map<event_type, rate> evt2base_attempt_rate;            ///< Basic attempt rate by event type
-extern unordered_map<influence_type, rate> inflt2attempt_rate;           ///< Additional attempt rate by influence type
-extern rate _inflt2attempt_rate[MAX_N_INFLT];                            ///< Redundant copy of \ref inflt2attempt_rate as array
+extern unordered_map<event_type, rate> evt2base_attempt_rate;            ///< Basic attempt rate by event type (as read from the config file)
+extern unordered_map<influence_type, rate> inflt2attempt_rate;           ///< Additional attempt rate by influence type (as read from the config file)
 extern unordered_map<event_type, double> evt2left_tail,                  ///< Left tail index for sigmoid function probunits2probability(), >=0
                                          evt2right_tail;                 ///< Right tail index for sigmoid function probunits2probability(), >= 0
-extern unordered_map<event_type, probunits> evt2base_probunits;          ///< Basic success probability units by event type
-extern unordered_map<influence_type, probunits> inflt2delta_probunits;   ///< Change in success probunits by influence type
-extern probunits _inflt2delta_probunits[MAX_N_INFLT];                    ///< Redundant copy of \ref inflt2delta_probunits as array
+extern unordered_map<event_type, probunits> evt2base_probunits;          ///< Basic success probability units by event type (as read from the config file)
+extern unordered_map<influence_type, probunits> inflt2delta_probunits;   ///< Change in success probunits by influence type (as read from the config file)
 extern bool any_leg_influences;                                          ///< Whether any influence type is a leg (rather than angle) influence with nonzero effect (if not, loops over legs can be skipped)
 extern unordered_map<entity_type_pair, unordered_set<relationship_or_action_type>> ets2relations;  ///< Possible relationship or action types by entity type pair
-extern unordered_map<event, rate> summary_ev2max_success_probability;    ///< Maximal possible success probability of summary events
-extern unordered_map<event_type, rate> summary_evt2single_effective_rate;  ///< Effective rate of a single instance of a summary event
+
+// dense indexing of types for fast parameter lookup in the simulation's hot loops (set up in init_types()):
+
+extern int n_et_slots;   ///< No. of entity type slots (= largest entity type id + 1)
+extern int n_rat_slots;  ///< No. of relationship or action type slots (= largest relationship or action type id + 1)
+extern int n_at_slots;   ///< No. of angle type slots (= n_rat_slots * n_et_slots * n_rat_slots)
+extern int n_evt_ids;    ///< No. of possible event types, which get dense ids 0 ... n_evt_ids-1
+extern vector<int> evt_slot2id;                      ///< Dense id of a possible event type by its slot (see evt_slot()), or -1 if the event type cannot occur
+extern vector<event_type> evtid2evt;                 ///< Event type by dense id
+extern vector<rate> evtid2base_attempt_rate;         ///< Base attempt rate by event type id
+extern vector<probunits> evtid2base_probunits;       ///< Base success probunits by event type id
+extern vector<double> evtid2left_tail,               ///< Left tail index of the sigmoid by event type id
+                      evtid2right_tail,              ///< Right tail index of the sigmoid by event type id
+                      evtid2scale;                   ///< Precomputed scale parameter of the sigmoid (see tail2scale()) by event type id
+extern vector<rate> evtid2summary_single_er;         ///< Effective rate of a single pair covered by the summary event of this event type (0 if there is no summary event)
+extern vector<probability> evtid2summary_max_success_probability;  ///< Upper bound of the success probability used for scheduling the summary event of this event type
+extern vector<rate> inflt_attempt_rate;              ///< Additional attempt rate by influence, indexed via inflt_index()
+extern vector<probunits> inflt_delta_probunits;      ///< Change in success probunits by influence, indexed via inflt_index()
+extern vector<vector<relationship_or_action_type>> ets2rats;  ///< Possible relationship or action types by et1 * n_et_slots + et3
+
+/** \returns the slot of an angle type in the influence tables. */
+inline int at_slot (relationship_or_action_type rat12, entity_type et2, relationship_or_action_type rat23)
+{
+    return ((int) rat12 * n_et_slots + (int) et2) * n_rat_slots + (int) rat23;
+}
+/** \returns the slot of an event type in \ref evt_slot2id. */
+inline int evt_slot (event_class ec, entity_type et1, relationship_or_action_type rat13, entity_type et3)
+{
+    return (((int) ec * n_et_slots + (int) et1) * n_rat_slots + (int) rat13) * n_et_slots + (int) et3;
+}
+/** \returns the dense id of an event type, or -1 if the event type cannot occur. */
+inline int evt_id_of (event_class ec, entity_type et1, relationship_or_action_type rat13, entity_type et3)
+{
+    return evt_slot2id[evt_slot(ec, et1, rat13, et3)];
+}
+/** \returns the index of an influence (event type id plus angle type) in the influence tables. */
+inline int inflt_index (int evt_id, relationship_or_action_type rat12, entity_type et2, relationship_or_action_type rat23)
+{
+    return evt_id * n_at_slots + at_slot(rat12, et2, rat23);
+}
+/** \returns the effective rate of a single pair covered by the summary event of an event type (0 if there is none). */
+inline rate summary_single_er_of (event_class ec, entity_type et1, relationship_or_action_type rat13, entity_type et3)
+{
+    int evt_id = evt_id_of(ec, et1, rat13, et3);
+    return (evt_id >= 0) ? evtid2summary_single_er[evt_id] : 0.0;
+}
 
 // gexf parameters:
 extern unordered_map<entity_type, double> et2gexf_size,                         ///< Node size for gexf file by entity type
@@ -109,8 +151,8 @@ extern int n_infinite_effective_rates; ///< No. of currently scheduled events wi
 extern event_data sure_evd;
 
 // network state:
-extern unordered_map<entity, outleg_set> e2outs;  ///< Set of current outlegs by source entity
-extern unordered_map<entity, inleg_set> e2ins;    ///< Set of current inlegs by source entity (redundant, but essential for performance)
+extern vector<outleg_set> e2outs;  ///< Set of current outlegs by source entity (entity ids are dense, 1 ... max_e)
+extern vector<inleg_set> e2ins;    ///< Set of current inlegs by target entity (redundant, but essential for performance)
 extern unordered_map<link_type, long int> lt2n;   ///< No. of current (non-id.) links by type incl. inverse relationships
 extern long int n_links;                          ///< Total no. of current (non-id.) links incl. inverse relationships
 extern long int n_angles;                         ///< Total no. of current (non-id.) angles that may influence at least one event

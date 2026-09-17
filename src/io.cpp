@@ -290,12 +290,12 @@ void output_json_summary ()
  */
 void dump_links () {
     cout << "e2outs:" << endl;
-    for (auto& [e1, outs1] : e2outs) {
-        for (auto& l : outs1) cout << " " << e2label[e1] << " " << rat2label[l.rat_out] << " " << e2label[l.e_target] << endl;
+    for (entity e1 = 1; e1 <= max_e; e1++) {
+        for (auto& l : e2outs[e1]) cout << " " << e2label[e1] << " " << rat2label[l.rat_out] << " " << e2label[l.e_target] << endl;
     }
     cout << "e2ins:" << endl;
-    for (auto& [e3, ins3] : e2ins) {
-        for (auto& l : ins3) cout << " " << e2label[l.e_source] << " " << rat2label[l.rat_in] << " " << e2label[e3] << endl;
+    for (entity e3 = 1; e3 <= max_e; e3++) {
+        for (auto& l : e2ins[e3]) cout << " " << e2label[l.e_source] << " " << rat2label[l.rat_in] << " " << e2label[e3] << endl;
     }
 }
 
