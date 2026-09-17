@@ -17,7 +17,8 @@ using std::uniform_real_distribution;
 using std::exponential_distribution;
 
 // random generators:
-extern mt19937 random_variable;                 ///< Our pseudo-random number generator
+extern mt19937 random_variable;                ///< Our pseudo-random number generator for the dynamics (scheduling of events, summary event draws)
+extern mt19937 initial_state_random_variable;  ///< A separate generator for the random initial state (block and geometric models), so that the initial state depends only on the config and the seed
 extern uniform_real_distribution<> uniform;     ///< uniform(random_variable) produces uniformly distributed numbers 0...1
 extern exponential_distribution<> exponential;  ///< exponential(random_variable) produces exponentially distributed numbers with mean 1
 

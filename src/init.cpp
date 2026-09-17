@@ -361,7 +361,7 @@ void init_links ()
     // block model:
     unordered_map<entity, int> e2block = { };
     for (auto& e : es) {
-        e2block[e] = floor(uniform(random_variable) * et2n_blocks[e2et[e]]);
+        e2block[e] = floor(uniform(initial_state_random_variable) * et2n_blocks[e2et[e]]);
     }
     for (auto& [lt, pw] : lt2initial_prob_within) { // TODO: add lt2initial_prob_between
         if (pw > 0) {
@@ -385,7 +385,7 @@ void init_links ()
         for (auto& e : et2es.at(et)) {
             e2coords[e] = vector<double>(dim);
             for (int d=0; d<dim; d++) {
-                auto coord = uniform(random_variable);
+                auto coord = uniform(initial_state_random_variable);
                 e2coords.at(e)[d] = coord;
             }
         }

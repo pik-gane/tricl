@@ -141,7 +141,8 @@ void remove_event (
     if (debug) cout << "        removed event: " << ev << " scheduled at " << evd_->t << endl;
 
     // keep t2ev and ev2data consistent (evd_ is invalid afterwards!):
-    t2ev.erase(evd_->t); ev2data.erase(ev);
+    if (scheduling_enabled) t2ev.erase(evd_->t);
+    ev2data.erase(ev);
 }
 
 /** Remove event if scheduled and adjust total effective rate (!).

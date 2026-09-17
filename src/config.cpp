@@ -24,7 +24,7 @@ cxxopts::Options options("tricl", "a generic network-based social simulation mod
 unordered_map<relationship_or_action_type, string> gexf_filename = {};
 string diagram_fileprefix = "", gexf_default_filename = "", events_out_filename = "";
 bool silent = false, verbose = false, quiet = false, debug = false, only_output_logl = false, output_summary = false,
-     compute_gradient = false, dump_parameters = false;
+     compute_gradient = false, dump_parameters = false, scheduling_enabled = true;
 string events_in_filename = "";
 timepoint max_t = INFINITY, never_t = 1e300;
 long int max_n_events = LONG_MAX;
@@ -258,6 +258,7 @@ void read_config (
     seed = cmdlineopts["seed"].as<unsigned>();
     events_out_filename = cmdlineopts["events-out"].as<string>();
     events_in_filename = cmdlineopts["events-in"].as<string>();
+    scheduling_enabled = (events_in_filename == "");  // replaying needs no schedule and no random numbers
 
     // read config file:
 

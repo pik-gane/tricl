@@ -120,15 +120,21 @@ void verify_data_consistency () {
         CHECK((evd.n_inf_attempt >= 0) && (evd.n_pos_inf_probunits >= 0) && (evd.n_neg_inf_probunits >= 0));
         if (!(evd.t > -INFINITY)) dump_data();
         CHECK(evd.t > -INFINITY);
-        if (!(((evd.t < INFINITY) && (t2ev.count(evd.t) == 1))
-                || ((evd.t == INFINITY) && (t2ev.count(evd.t) > 0))))
-            cout << ev << evd << " " << (evd.t == INFINITY) << " " << t2ev.count(evd.t) << endl;
-        CHECK(((evd.t < INFINITY) && (t2ev.count(evd.t) == 1))
-                || ((evd.t == INFINITY) && (t2ev.count(evd.t) > 0)));
+        if (scheduling_enabled) {
+            if (!((evd.t < INFINITY) && (t2ev.count(evd.t) == 1)))
+                cout << ev << evd << " " << (evd.t == INFINITY) << " " << t2ev.count(evd.t) << endl;
+            CHECK((evd.t < INFINITY) && (t2ev.count(evd.t) == 1));
+        } else {
+            CHECK(evd.t == INFINITY);
+        }
     }
     // t2be:
-    for (auto& [t, ev] : t2ev) {
-        CHECK(t > -INFINITY);
-        CHECK(ev2data.count(ev) == 1);
+    if (scheduling_enabled) {
+        for (auto& [t, ev] : t2ev) {
+            CHECK(t > -INFINITY);
+            CHECK(ev2data.count(ev) == 1);
+        }
+    } else {
+        CHECK(t2ev.empty());
     }
 }

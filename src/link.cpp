@@ -62,7 +62,7 @@ void delete_link (tricllink& l)
 /** perform an event that generates a random link during installation.
  */
 void do_random_link (probability p, entity e1, relationship_or_action_type rat13, entity e3) {
-    if (uniform(random_variable) < p) {
+    if (uniform(initial_state_random_variable) < p) {
         tricllink l = { e1, rat13, e3 };
         if (!link_exists(l)) {
             event ev = { .ec=EC_EST, e1, rat13, e3 };

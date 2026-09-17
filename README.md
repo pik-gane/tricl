@@ -52,6 +52,12 @@ and reports their log-likelihood under the model. The sequence must be complete,
 "immediate" events (with infinite rates) that the model performs in response to other events; events that are
 impossible under the model are reported as errors.
 
+Replaying draws no random numbers and keeps no schedule. The observation window ends at ``limits:t`` (the
+log-probability of no further event until then is included), or with the last event if ``limits:events`` is reached,
+exactly as in a simulation. Random initial links (block and geometric models) are generated from a separate random
+number generator seeded from ``--seed``, so the initial state of a simulation and of a replay with the same config
+and seed are identical, and replaying the events of a simulation reproduces its log-likelihood.
+
 With ``--grad``, the gradient of the log-likelihood with respect to all model parameters specified in the
 ``dynamics`` section (base attempt rates, attempt rates and probunits of individual influences) is computed
 analytically and included in the ``--summary`` output, keyed by labels like
@@ -277,6 +283,8 @@ Change log
 ----------
 
 2026-09-17
+- random initial links now use a separate random number generator (seeded from the seed), so the initial state does
+  not depend on the dynamics; trajectories for a given seed therefore differ from earlier versions
 - replay mode (``--events-in``) computing the log-likelihood of a given event sequence, analytic gradients of the
   log-likelihood w.r.t. all model parameters (``--grad``), ``--dump-parameters``, and Python scripts for
   maximum-likelihood estimation of metaparameters and parameter-recovery studies (folder ``python``)

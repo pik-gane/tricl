@@ -199,6 +199,12 @@ inline void subtract_summary_shares (int evt_id, double count)
     register_summary_share_gradient(evt_id, -count);
 }
 
+/** Compute and register an event's effective rate and, in simulation mode, draw the tentative time
+ *  at which it would happen if nothing changes in between and put it into the schedule.
+ *
+ *  In replay mode (scheduling_enabled == false), no random numbers are drawn and the schedule is not used;
+ *  the event is only marked as registered by setting its time to infinity.
+ */
 inline void _schedule_event (
         event& ev,         ///< [in] the event to schedule
         event_data* evd_,  ///< [in] its data
@@ -211,59 +217,74 @@ inline void _schedule_event (
     if (ar < 0.0) throw "negative attempt rate";
     auto spu = total_success_probunits(evd_);
     double left_tail = evtid2left_tail[evt_id], right_tail = evtid2right_tail[evt_id], scale = evtid2scale[evt_id];
-    timepoint t;
-    if (event_is_summary(ev))  // summary event:
+    bool is_summary = event_is_summary(ev);
+
+    // compute the effective rate and register it in the total (and in the gradient of the total):
+    rate er;
+    if (is_summary)
     {
-        // use a common upper bound to the actual effective rate for scheduling (actual success will then later be tested in pop_next_event):
-        t = current_t + exponential(random_variable) / (ar * evtid2summary_max_success_probability[evt_id]);
-        if (verbose) cout << "         (re)scheduling " << ev << ": summary event, attempt rate " << ar << " → attempt at t=" << t << ", test success then" << endl;
-        // compute base effective rate using base success probability units:
-        rate er = evd_->effective_rate = effective_rate(ar, spu, left_tail, right_tail, scale);
+        // the summary event's effective rate uses the base success probability units
+        // (the actual success of an attempt is tested later in pop_next_event):
+        er = evd_->effective_rate = effective_rate(ar, spu, left_tail, right_tail, scale);
         assert (er < INFINITY);
-        // register it in total:
         add_effective_rate(er);
         // NOTE: in update_adjacent_events, particular events must get update total effective rate properly as the difference to this!
+        // (the gradient contributions of a summary event never change and are registered once in init_events)
     }
-    else  // particular event:
+    else if (spu == -INFINITY)  // impossible event
     {
-        // use effective rate for scheduling:
-        if (spu == -INFINITY)
-        {
-            evd_->effective_rate = 0;
-            t = INFINITY;
-            if (debug) cout << "         (re)scheduling " << ev << ": zero success probability → t=" << t << endl;
-        }
-        else if (ar < INFINITY)
-        {
-            // compute effective rate:
-            rate er = evd_->effective_rate = effective_rate(ar, spu, left_tail, right_tail, scale);
-            assert (er < INFINITY);
-            // register it in total:
-            add_effective_rate(er);
-            register_event_rate_gradient(evd_, evt_id, +1);
+        er = evd_->effective_rate = 0;
+    }
+    else if (ar < INFINITY)
+    {
+        er = evd_->effective_rate = effective_rate(ar, spu, left_tail, right_tail, scale);
+        assert (er < INFINITY);
+        add_effective_rate(er);
+        register_event_rate_gradient(evd_, evt_id, +1);
+    }
+    else  // event should happen "right away"
+    {
+        er = evd_->effective_rate = INFINITY;
+        add_effective_rate(er);
+    }
 
-            // draw time interval after which it would happen if nothing changes in between:
-            timepoint dt = exponential(random_variable) / er;
-            // add it to current time to get occurence time:
-            t = current_t + dt;
+    if (!scheduling_enabled)
+    {
+        // replay mode: the event is registered but no tentative time is drawn:
+        evd_->t = INFINITY;
+        return;
+    }
 
-            if (verbose) {
-                if (t==INFINITY) {
-                    if (debug) cout << "         (re)scheduling " << ev << ": zero effective rate → t=" << t << endl;
-                }
-                else if (verbose) cout << "         (re)scheduling " << ev << ": ar " << ar << ", spu " << spu << " → eff. rate " << er << " → next at t=" << t << endl;
+    // draw the tentative time at which the event would happen if nothing changes in between:
+    timepoint t;
+    if (is_summary)
+    {
+        // use a common upper bound to the actual effective rate for scheduling:
+        t = current_t + exponential(random_variable) / (ar * evtid2summary_max_success_probability[evt_id]);
+        if (verbose) cout << "         (re)scheduling " << ev << ": summary event, attempt rate " << ar << " → attempt at t=" << t << ", test success then" << endl;
+    }
+    else if (spu == -INFINITY)
+    {
+        t = INFINITY;
+        if (debug) cout << "         (re)scheduling " << ev << ": zero success probability → t=" << t << endl;
+    }
+    else if (ar < INFINITY)
+    {
+        // draw time interval after which it would happen if nothing changes in between, and add it to the current time:
+        t = current_t + exponential(random_variable) / er;
+        if (verbose) {
+            if (t == INFINITY) {
+                if (debug) cout << "         (re)scheduling " << ev << ": zero effective rate → t=" << t << endl;
             }
+            else cout << "         (re)scheduling " << ev << ": ar " << ar << ", spu " << spu << " → eff. rate " << er << " → next at t=" << t << endl;
         }
-        else  // event should happen "right away"
-        {
-            // to make sure all those events occur in random order,
-            // we formally schedule them at some random "past" time instead:
-            rate er = evd_->effective_rate = INFINITY;
-            // register it in total:
-            add_effective_rate(er);
-            t = current_t - abs(1 + current_t) * uniform(random_variable);
-            if (verbose) cout << "         (re)scheduling " << ev << ": ar inf, spu > 0 → eff. rate inf → next \"immediately\" at t=" << t << endl;
-        }
+    }
+    else
+    {
+        // to make sure that all "immediate" events occur in random order,
+        // they are formally scheduled at some random "past" time:
+        t = current_t - abs(1 + current_t) * uniform(random_variable);
+        if (verbose) cout << "         (re)scheduling " << ev << ": ar inf, spu > 0 → eff. rate inf → next \"immediately\" at t=" << t << endl;
     }
     if (t == INFINITY)
     {
@@ -294,7 +315,7 @@ inline void unschedule_event (event& ev, event_data* evd_, int evt_id)
 {
     assert(evd_ == &ev2data.at(ev));
     assert(event_is_scheduled(ev, evd_));
-    t2ev.erase(evd_->t);
+    if (scheduling_enabled) t2ev.erase(evd_->t);
     bool is_summary = event_is_summary(ev);
     subtract_effective_rate(evd_->effective_rate, !is_summary);
     // (the gradient contributions of a summary event never change, so they are only registered once in init_events)

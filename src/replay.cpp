@@ -134,8 +134,9 @@ void replay ()
         if (n_events >= max_n_events) break;
     }
 
-    // the log-probability that nothing happens until the time limit:
-    if (max_t < INFINITY)
+    // the log-probability that nothing happens until the time limit
+    // (as in a simulation, the observation ends with the last event if the event limit was reached):
+    if ((max_t < INFINITY) && (n_events < max_n_events))
     {
         if (max_t < current_t) throw "the time limit limits:t lies before the last event in " + events_in_filename;
         finish_time();

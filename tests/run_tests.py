@@ -225,6 +225,13 @@ def gradient_test(binary, workdir):
             raise Failure("gradient component %r missing" % label)
         if not close(rep["gradient"][label], sim["gradient"][label]):
             raise Failure("replay gradient %r = %r differs from simulation %r" % (label, rep["gradient"][label], sim["gradient"][label]))
+    # replaying must not depend on the seed (no random numbers are drawn in replay mode):
+    code, out, err, secs = run_tricl(binary, config, ["--summary", "--grad", "--events-in", events_file, "--seed", "987654"], cwd)
+    if code != 0:
+        raise Failure("replay with another seed: exit code %d\n%s" % (code, err[-1000:]))
+    rep2 = parse_summary(out)
+    if rep2["logl"] != rep["logl"] or rep2["gradient"] != rep["gradient"]:
+        raise Failure("replay results depend on the seed: logl %r vs %r" % (rep2["logl"], rep["logl"]))
     # finite differences of the replayed log-likelihood w.r.t. each metaparameter:
     results = []
     for m, label in labels.items():
@@ -242,6 +249,31 @@ def gradient_test(binary, workdir):
             raise Failure("d logl / d %s: analytic %.10f, finite difference %.10f" % (m, an, fd))
         results.append("%s: %.4f" % (m, an))
     return "ok (%d events, logl %.4f, gradient %s)" % (sim["events"], sim["logl"], ", ".join(results))
+
+
+def replay_consistency_test(binary, workdir):
+    """Simulate example configs with random initial links, then replay their events: the log-likelihoods must agree."""
+    results = []
+    for config, max_events, seed in [("config_files/si.yaml", 5000, 3), ("config_files/sir_sd.yaml", 100000, 5)]:
+        cwd = tempfile.mkdtemp(prefix="tricl_", dir=workdir)
+        dst = os.path.join(cwd, os.path.basename(config))
+        limited_copy(os.path.join(ROOT, config), dst, max_events)
+        events_file = os.path.join(cwd, "events.csv")
+        code, out, err, secs = run_tricl(binary, dst, ["--summary", "--seed", str(seed), "--events-out", events_file], cwd)
+        if code != 0:
+            raise Failure("%s: simulation exit code %d\n%s" % (config, code, err[-1000:]))
+        sim = parse_summary(out)
+        code, out, err, secs = run_tricl(binary, dst, ["--summary", "--seed", str(seed), "--events-in", events_file], cwd)
+        if code != 0:
+            raise Failure("%s: replay exit code %d\n%s" % (config, code, err[-1000:]))
+        rep = parse_summary(out)
+        if rep["events"] != sim["events"] or rep["links"] != sim["links"] or rep["angles"] != sim["angles"]:
+            raise Failure("%s: replay ended with %d events, %d links, %d angles; simulation with %d, %d, %d"
+                          % (config, rep["events"], rep["links"], rep["angles"], sim["events"], sim["links"], sim["angles"]))
+        if not close(rep["logl"], sim["logl"]):
+            raise Failure("%s: replay logl %.12f differs from simulation logl %.12f" % (config, rep["logl"], sim["logl"]))
+        results.append("%s: %d events, logl %.3f, replay %.2fs" % (os.path.basename(config), sim["events"], sim["logl"], secs))
+    return "ok (" + "; ".join(results) + ")"
 
 
 def fit_test(binary, workdir):
@@ -334,6 +366,7 @@ def main():
         tests.append(("regression: " + case[0], lambda case=case: regression_test(binary, case, references, args.update, workdir)))
     tests.append(("exact log-likelihood", lambda: exact_logl_test(binary, workdir)))
     tests.append(("replay and gradient", lambda: gradient_test(binary, workdir)))
+    tests.append(("replay of example configs", lambda: replay_consistency_test(binary, workdir)))
     tests.append(("maximum-likelihood fit", lambda: fit_test(binary, workdir)))
     tests.append(("error handling", lambda: error_handling_tests(binary, workdir)))
 
