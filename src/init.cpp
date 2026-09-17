@@ -3,6 +3,8 @@
  *  \file
  */
 
+#include <sstream>
+
 #include "global_variables.h"
 #include "probability.h"
 #include "entity.h"
@@ -32,6 +34,14 @@ vector<probability> evtid2summary_max_success_probability;
 vector<rate> inflt_attempt_rate;
 vector<probunits> inflt_delta_probunits;
 vector<vector<relationship_or_action_type>> ets2rats;
+vector<vector<int>> evtid2infl_slots;
+vector<signed char> evtid_at2infl;
+
+// model parameters and gradients:
+vector<model_param> params;
+vector<int> evtid2base_attempt_param, evtid2base_probunits_param;
+vector<vector<int>> evtid2infl_attempt_param, evtid2infl_probunits_param;
+vector<double> grad_event_terms, grad_rate, grad_exposure;
 
 // derived constants:
 unordered_set<entity> es;
@@ -60,6 +70,14 @@ double cumulative_logl = 0;
 rate total_finite_effective_rate = 0;
 int n_infinite_effective_rates = 0;
 
+
+/** \returns the label of an event type as printed by operator<<. */
+static string evt_to_string (const event_type& evt)
+{
+    std::ostringstream os;
+    os << evt;
+    return os.str();
+}
 
 /** Look up a value in a map of per-event-type parameters, returning a default if missing. */
 template <class M, class V>
@@ -153,7 +171,63 @@ void init_types ()
         for (auto& rat : rats) ets2rats[(int) ets.et1 * n_et_slots + (int) ets.et3].push_back(rat);
     }
 
-    if (verbose) cout << " " << n_evt_ids << " possible event types, " << n_at_slots << " angle type slots" << endl;
+    // influences (angle types with nonzero effect) by event type, and the model parameters:
+    evtid2infl_slots.assign(n_evt_ids, {});
+    evtid_at2infl.assign((size_t) n_evt_ids * n_at_slots, -1);
+    params.clear();
+    evtid2base_attempt_param.assign(n_evt_ids, -1);
+    evtid2base_probunits_param.assign(n_evt_ids, -1);
+    evtid2infl_attempt_param.assign(n_evt_ids, {});
+    evtid2infl_probunits_param.assign(n_evt_ids, {});
+    auto register_infl = [&](int id, const angle_type& at) {
+        int slot = at_slot(at.rat12, at.et2, at.rat23);
+        if (evtid_at2infl[(size_t) id * n_at_slots + slot] >= 0) return;  // already registered
+        if ((inflt_attempt_rate[(size_t) id * n_at_slots + slot] == 0.0) && (inflt_delta_probunits[(size_t) id * n_at_slots + slot] == 0.0)) return;  // no effect
+        int j = evtid2infl_slots[id].size();
+        if (j >= MAX_INFL_PER_EVT) throw "too many angle types influence event type \"" + evt_to_string(evtid2evt[id]) + "\" (recompile with larger MAX_INFL_PER_EVT)";
+        evtid2infl_slots[id].push_back(slot);
+        evtid_at2infl[(size_t) id * n_at_slots + slot] = j;
+        evtid2infl_attempt_param[id].push_back(-1);
+        evtid2infl_probunits_param[id].push_back(-1);
+    };
+    // (iterate in a deterministic order: by event type id, then by the config maps)
+    for (int id = 0; id < n_evt_ids; id++) {
+        auto& evt = evtid2evt[id];
+        for (auto& [inflt, ar] : inflt2attempt_rate) if (inflt.evt == evt) register_infl(id, inflt.at);
+        for (auto& [inflt, spu] : inflt2delta_probunits) if (inflt.evt == evt) register_infl(id, inflt.at);
+        // parameters (only those specified in the config file; influence parameters only for influences with nonzero effect):
+        string evt_label = evt_to_string(evt);
+        if (evt2base_attempt_rate.count(evt) > 0) {
+            evtid2base_attempt_param[id] = params.size();
+            params.push_back({ PK_BASE_ATTEMPT, id, -1, evtid2base_attempt_rate[id], evt_label + " | base attempt" });
+        }
+        if (evt2base_probunits.count(evt) > 0) {
+            evtid2base_probunits_param[id] = params.size();
+            params.push_back({ PK_BASE_PROBUNITS, id, -1, evtid2base_probunits[id], evt_label + " | base probunits" });
+        }
+        for (size_t j = 0; j < evtid2infl_slots[id].size(); j++) {
+            int slot = evtid2infl_slots[id][j];
+            // reconstruct the angle type from the slot:
+            angle_type at = { .rat12 = (relationship_or_action_type) (slot / (n_et_slots * n_rat_slots)),
+                              .et2 = (entity_type) ((slot / n_rat_slots) % n_et_slots),
+                              .rat23 = (relationship_or_action_type) (slot % n_rat_slots) };
+            string at_label = rat2label[at.rat12] + " " + et2label[at.et2] + " " + rat2label[at.rat23];
+            influence_type inflt = { .evt = evt, .at = at };
+            if (inflt2attempt_rate.count(inflt) > 0) {
+                evtid2infl_attempt_param[id][j] = params.size();
+                params.push_back({ PK_INFL_ATTEMPT, id, (int) j, inflt_attempt_rate[(size_t) id * n_at_slots + slot], evt_label + " | attempt via " + at_label });
+            }
+            if (inflt2delta_probunits.count(inflt) > 0) {
+                evtid2infl_probunits_param[id][j] = params.size();
+                params.push_back({ PK_INFL_PROBUNITS, id, (int) j, inflt_delta_probunits[(size_t) id * n_at_slots + slot], evt_label + " | probunits via " + at_label });
+            }
+        }
+    }
+    grad_event_terms.assign(params.size(), 0.0);
+    grad_rate.assign(params.size(), 0.0);
+    grad_exposure.assign(params.size(), 0.0);
+
+    if (verbose) cout << " " << n_evt_ids << " possible event types, " << n_at_slots << " angle type slots, " << params.size() << " model parameters" << endl;
 }
 
 /** Prepare all entities.
@@ -245,11 +319,13 @@ void init_events ()
                 summary_evd.t = -INFINITY;
                 ev2data[summary_ev] = summary_evd;
                 schedule_event(summary_ev, &ev2data[summary_ev], evt_id);
+                // (the gradient contributions of the summary event are registered once here since its rate never changes)
+                register_summary_share_gradient(evt_id, (double) et2n[et1] * et2n[et3]);
                 // adjust effective rate because equal entities won't be linked
                 // (each of the n excluded pairs had contributed the single effective rate ar1 * p0):
                 if (et1 == et3)
                 {
-                    subtract_effective_rate(et2n[et1] * evtid2summary_single_er[evt_id]);
+                    subtract_summary_shares(evt_id, et2n[et1]);
                 }
             }
         }
@@ -333,11 +409,21 @@ void init_links ()
             }
         }
     }
-    // reset cumulative loglikelihood to count only what happens after initial state:
+    // reset cumulative loglikelihood (and its gradient) to count only what happens after initial state:
     cumulative_logl = 0;
+    std::fill(grad_event_terms.begin(), grad_event_terms.end(), 0.0);
+    std::fill(grad_exposure.begin(), grad_exposure.end(), 0.0);
 
     if (debug) verify_angle_consistency();
     if (!quiet) cout << "  ...done."<< endl;
+}
+
+/** Only set up the type indexing and model parameters (for --dump-parameters).
+ */
+void init_parameters_only ()
+{
+    init_relationship_or_action_types();
+    init_types();
 }
 
 /** Perform all initialization tasks.

@@ -36,6 +36,8 @@
 
 #define MAX_N_E ((1<<E_BITS)-1)  ///< resulting max. no. of entities
 
+#define MAX_INFL_PER_EVT 12  ///< Max. no. of angle types that may influence one event type (per-event angle counts are stored in a fixed-size array)
+
 
 // commonly used includes are all included here:
 
@@ -250,6 +252,7 @@ enum schedule_class {
 struct event_data
 {
     int n_angles = 0;                  ///< Current no. of angles influencing this event
+    unsigned short n_infl[MAX_INFL_PER_EVT] = {};  ///< Current no. of adjacent angles by influence index of the event type (see evtid2infl_slots), needed for gradients
     rate attempt_rate = 0;             ///< Sum of all finite contributions to the attempt rate of this event
     int n_inf_attempt = 0;             ///< No. of infinite contributions to the attempt rate (if > 0, the attempt rate is infinite)
     probunits success_probunits = 0;   ///< Sum of all finite contributions to the success probunits of this event

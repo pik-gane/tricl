@@ -1,0 +1,50 @@
+metadata:
+    name: three entities with triangle closure, constant rates
+    description: >
+        Used by tests/run_tests.py to check the gradient of the log-likelihood (--grad) against
+        finite differences, and the replay mode (--events-in) against the simulation.
+        Every model parameter is a metaparameter here, so it can be varied from the command line.
+    author: tricl test suite
+
+metaparameters:
+    A: 0.5      # base establishment attempt rate
+    K: 0.8      # additional establishment attempt rate per closing angle (triangle closure)
+    BE: 0.2     # base establishment success probunits
+    BEK: 0.5    # change of establishment success probunits per closing angle
+    D: 0.7      # base termination attempt rate
+    B0: 0.3     # base termination success probunits
+    BK: -0.4    # change of termination success probunits per angle (triangle stabilization)
+
+limits:
+    t: 40
+    events: 1000000
+
+options:
+    seed: 1
+
+entities:
+    thing:
+        - a
+        - b
+        - c
+
+relationship types:
+    knows: symmetric
+
+dynamics:
+    [thing, knows, thing]:
+        establish:
+            attempt:
+                base: A
+                [~, knows, thing, knows, ~]: K
+            success:
+                tails: 0
+                base: BE
+                [~, knows, thing, knows, ~]: BEK
+        terminate:
+            attempt:
+                base: D
+            success:
+                tails: 1
+                base: B0
+                [~, knows, thing, knows, ~]: BK

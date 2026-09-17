@@ -65,14 +65,9 @@ int compute_n_angles (event_type evt, entity e1, entity e3, bool print) {
     get_angles(e1, outs1, ins3, e3, as);
     int evt_id = evt_id_of(evt.ec, evt.et1, evt.rat13, evt.et3);
     for (auto a_it = as.begin(); a_it < as.end(); a_it++) {
-        rate dar = 0; probunits dsl = 0;
-        if (evt_id >= 0) {
-            int idx = inflt_index(evt_id, a_it->rat12, e2et[a_it->e2], a_it->rat23);
-            dar = inflt_attempt_rate[idx];
-            dsl = inflt_delta_probunits[idx];
-        }
-        if (print) cout << " " << rat2label[a_it->rat12] << " " << e2label[a_it->e2] << " " << rat2label[a_it->rat23] << ", " << dar << " " << dsl << endl;
-        if (COUNT_ALL_ANGLES || (dar != 0.0) || (dsl != 0.0)) { // angle can influence event
+        int j = (evt_id >= 0) ? infl_index_of(evt_id, a_it->rat12, e2et[a_it->e2], a_it->rat23) : -1;
+        if (print) cout << " " << rat2label[a_it->rat12] << " " << e2label[a_it->e2] << " " << rat2label[a_it->rat23] << ", influence index " << j << endl;
+        if (j >= 0) { // angle can influence event
             na++;
         }
     }

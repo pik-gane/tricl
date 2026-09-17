@@ -62,12 +62,13 @@ inline void add_or_delete_angle (
 
             // get influence of angle on event:
             int idx = inflt_index(evt_id, rat12, et2, rat23);
-            auto dar = inflt_attempt_rate[idx];
-            auto dspu = inflt_delta_probunits[idx];
+            int j = evtid_at2infl[idx];
 
             // only continue if influence is nonzero:
-            if (COUNT_ALL_ANGLES || (dar != 0.0) || (dspu != 0.0))
+            if (j >= 0)
             {
+                auto dar = inflt_attempt_rate[idx];
+                auto dspu = inflt_delta_probunits[idx];
                 if (debug) cout << "       angle may influence attempt or success" << endl;
                 if (ec_angle == EC_EST)  // angle is added:
                 {
@@ -77,10 +78,11 @@ inline void add_or_delete_angle (
                         if (ec13 != EC_TERM)  // event is ALSO covered by a summary event
                         {
                             // subtract that part covered by the summary event from the total effective rate:
-                            subtract_effective_rate(evtid2summary_single_er[evt_id]);
+                            subtract_summary_shares(evt_id, 1);
                         }
                         auto evd_ = &ev2data[ev];  // generates a new (zero-initialised) event_data object
                         evd_->n_angles = 1;
+                        evd_->n_infl[j] = 1;
                         add_attempt_contribution(evd_, evtid2base_attempt_rate[evt_id]);
                         add_attempt_contribution(evd_, dar);
                         add_probunits_contribution(evd_, evtid2base_probunits[evt_id]);
@@ -91,31 +93,40 @@ inline void add_or_delete_angle (
                     {
                         if (debug) cout << "        event will be rescheduled" << endl;
                         auto evd_ = &(ev2data.at(ev));
+                        // unregister the event's rate and gradient contributions BEFORE modifying its data:
+                        unschedule_event(ev, evd_, evt_id);
                         evd_->n_angles += 1;
+                        evd_->n_infl[j] += 1;
                         add_attempt_contribution(evd_, dar);
                         add_probunits_contribution(evd_, dspu);
-                        reschedule_event(ev, evd_, evt_id);
+                        _schedule_event(ev, evd_, evt_id);
+                        if (debug) verify_data_consistency();
                     }
                 }
                 else  // angle is removed
                 {
                     auto evd_ = &(ev2data.at(ev));
                     assert (evd_->n_angles > 0);  // since angle must have been added earlier to be removed now
+                    assert (evd_->n_infl[j] > 0);
+                    // unregister the event's rate and gradient contributions BEFORE modifying its data:
+                    unschedule_event(ev, evd_, evt_id);  // event must have been scheduled earlier when angle was added
                     evd_->n_angles -= 1;
+                    evd_->n_infl[j] -= 1;
                     remove_attempt_contribution(evd_, dar);
                     remove_probunits_contribution(evd_, dspu);
                     if ((ec13 != EC_TERM) && (evd_->n_angles == 0))  // only spontaneous non-termination event is left:
                     {
                         if (debug) cout << "        last angle was removed, so event will be removed because it is covered by a summary event" << endl;
                         // remove specific event:
-                        remove_event(ev, evd_);  // event must have been scheduled earlier when angle was added
+                        ev2data.erase(ev);
                         // add that part covered by the summary event to the total effective rate:
-                        add_effective_rate(evtid2summary_single_er[evt_id]);
+                        add_summary_shares(evt_id, 1);
                     }
                     else
                     {
                         if (debug) cout << "        event will be rescheduled" << endl;
-                        reschedule_event(ev, evd_, evt_id);  // event must have been scheduled earlier when angle was added
+                        _schedule_event(ev, evd_, evt_id);
+                        if (debug) verify_data_consistency();
                     }
                 }
             }

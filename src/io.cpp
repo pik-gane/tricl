@@ -8,6 +8,7 @@
 
 #include <iomanip>
 #include <chrono>
+#include <sstream>
 
 #include "global_variables.h"
 #include "entity.h"
@@ -271,19 +272,73 @@ void close_events_out ()
     if (events_out.is_open()) events_out.close();
 }
 
+/** Format a number for JSON output (infinities as in Python's json module).
+ */
+static string json_number (double x)
+{
+    if (x == INFINITY) return "Infinity";
+    if (x == -INFINITY) return "-Infinity";
+    if (x != x) return "NaN";
+    std::ostringstream os;
+    os << std::setprecision(17) << x;
+    return os.str();
+}
+
+/** Escape a string for JSON output.
+ */
+static string json_string (const string& s)
+{
+    string res = "\"";
+    for (char c : s) {
+        if ((c == '"') || (c == '\\')) { res += '\\'; res += c; }
+        else if (c == '\n') res += "\\n";
+        else res += c;
+    }
+    return res + "\"";
+}
+
+/** Output the model parameters as a JSON object (label: value).
+ */
+static void output_parameters_object ()
+{
+    cout << "{";
+    for (size_t k = 0; k < params.size(); k++) {
+        cout << (k > 0 ? ", " : "") << json_string(params[k].label) << ": " << json_number(params[k].value);
+    }
+    cout << "}";
+}
+
 /** Output a one-line JSON summary of the final state to stdout.
  */
 void output_json_summary ()
 {
     cout << std::setprecision(17)
          << "{\"events\": " << n_events
-         << ", \"t\": " << current_t
-         << ", \"logl\": " << cumulative_logl
+         << ", \"t\": " << json_number(current_t)
+         << ", \"logl\": " << json_number(cumulative_logl)
          << ", \"links\": " << n_links
          << ", \"angles\": " << n_angles
-         << ", \"total_rate\": " << total_finite_effective_rate
-         << ", \"seed\": " << seed
-         << "}" << endl;
+         << ", \"total_rate\": " << json_number(total_finite_effective_rate)
+         << ", \"seed\": " << seed;
+    if (compute_gradient) {
+        cout << ", \"gradient\": {";
+        for (size_t k = 0; k < params.size(); k++) {
+            cout << (k > 0 ? ", " : "") << json_string(params[k].label) << ": " << json_number(grad_event_terms[k] - grad_exposure[k]);
+        }
+        cout << "}";
+    }
+    cout << ", \"parameters\": ";
+    output_parameters_object();
+    cout << "}" << endl;
+}
+
+/** Output the model parameters as a one-line JSON object to stdout (for --dump-parameters).
+ */
+void output_parameters_json ()
+{
+    cout << "{\"parameters\": ";
+    output_parameters_object();
+    cout << "}" << endl;
 }
 
 /** (for debugging purposes)

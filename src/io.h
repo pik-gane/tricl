@@ -30,6 +30,8 @@ void close_events_out ();
 
 void output_json_summary ();
 
+void output_parameters_json ();
+
 void read_links_csv (
         string filename,
         int skip_rows,

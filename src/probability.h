@@ -84,6 +84,46 @@ inline probability probunits2probability (probunits pu, double left_tail, double
     return probunits2probability(pu, left_tail, right_tail, tail2scale(left_tail) + tail2scale(right_tail));
 }
 
+/** Derivative of \ref probunits2probability() w.r.t. the probability units.
+ *
+ *  \returns the derivative, >= 0 (0 for infinite probability units)
+ */
+inline double probunits2probability_derivative (
+        probunits pu,      ///< [in] the probability units, -inf...inf
+        double left_tail,  ///< [in] the tail index of the left (lower) tail, >= 0
+        double right_tail, ///< [in] the tail index of the right (upper) tail, >= 0
+        double scale       ///< [in] the precomputed scale parameter, = tail2scale(left_tail) + tail2scale(right_tail)
+        )
+{
+    if (!std::isfinite(pu)) return 0.0;
+    if ((left_tail == 0) && (right_tail == 0))
+    {
+        double p = 1 / (1 + exp(- pu));
+        return p * (1 - p);
+    }
+    else
+    {
+        // d/dpu of pow(1 + log(1 + L * exp(-pu/s)), -1/L) = v^(-1/L-1) * exp(-pu/s) / (s * u) with u = 1 + L exp(-pu/s), v = 1 + log(u);
+        // (this mirrors the formula in probunits2probability, including its behaviour for a single zero tail index)
+        double left = 0.0, right = 0.0;
+        if (left_tail > 0) {
+            double e = exp(- pu / scale);
+            if (std::isfinite(e)) {
+                double u = 1 + left_tail * e, v = 1 + log(u);
+                left = pow(v, - 1 / left_tail - 1) * e / (scale * u);
+            }
+        }
+        if (right_tail > 0) {
+            double e = exp(pu / scale);
+            if (std::isfinite(e)) {
+                double u = 1 + right_tail * e, v = 1 + log(u);
+                right = pow(v, - 1 / right_tail - 1) * e / (scale * u);
+            }
+        }
+        return (left + right) / 2;
+    }
+}
+
 /** Compute the current effective rate at which an event occurs
  *  from its current attempt rate and success probability units.
  *

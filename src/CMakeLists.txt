@@ -16,6 +16,7 @@ add_executable(tricl
     gexf.cpp
     init.cpp
     simulate.cpp
+    replay.cpp
     finish.cpp)
 
 # the bundled tinyexpr triggers a false-positive array-bounds warning in newer gcc versions:

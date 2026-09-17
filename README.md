@@ -32,9 +32,38 @@ Command line options:
 * ``--logl``: output only the final log-likelihood
 * ``--summary``: output only a one-line JSON summary of the final state (number of events, model time, log-likelihood, numbers of links and angles, total event rate, seed used)
 * ``--events-out FILE``: write all performed events to a csv file with columns ``t,event,source,relationship,target`` (overrides ``files:events``)
+* ``--events-in FILE``: replay the events in the csv file instead of simulating, and compute their log-likelihood (see below)
+* ``--grad``: also compute the gradient of the log-likelihood with respect to all model parameters (output with ``--summary``)
+* ``--dump-parameters``: only output the model parameters and their current values as JSON and exit
 * ``--NAME VALUE`` (or ``-X VALUE`` for one-letter names): override the metaparameter ``NAME`` defined in the config file by a value or expression
 
 Caution: output files might get large! Try with small ``limits:events`` first and use gexf.gz file format!
+
+Log-likelihood, replay mode and parameter estimation
+----------------------------------------------------
+Each run reports the log-likelihood of the simulated trajectory (``logl``): the sum over events of the log of the
+event's rate, minus the integral of the total event rate over time (the log-probability that nothing else happened),
+including the final interval until ``limits:t`` if that is finite.
+
+The same quantity can be computed for a *given* sequence of events: ``tricl config.yaml --events-in events.csv --summary``
+replays the events in the csv file (columns ``t,event,source,relationship,target``, as written by ``--events-out``;
+``event`` is ``establish`` or ``terminate``) instead of simulating, starting from the initial links in the config file,
+and reports their log-likelihood under the model. The sequence must be complete, i.e. it must also contain the
+"immediate" events (with infinite rates) that the model performs in response to other events; events that are
+impossible under the model are reported as errors.
+
+With ``--grad``, the gradient of the log-likelihood with respect to all model parameters specified in the
+``dynamics`` section (base attempt rates, attempt rates and probunits of individual influences) is computed
+analytically and included in the ``--summary`` output, keyed by labels like
+``"establish that user knows user | attempt via knows user knows"``. ``--dump-parameters`` prints these labels
+and their current values without running anything, which allows computing derivatives with respect to
+metaparameters by the chain rule. (Parameters can only be estimated if their current value is nonzero, since
+angles without effect are not tracked.)
+
+``python/tricl_fit.py config.yaml events.csv --fit NAME ... [--se]`` estimates metaparameters by maximum likelihood
+using these facilities (scipy is used if available), optionally with standard errors from the observed information,
+and ``python/tricl_recovery.py`` runs a parameter-recovery study (simulate with known values, re-estimate).
+See ``tests/configs/three_entities.yaml`` for a config in which every rate is a metaparameter.
 
 Legend to output
 ----------------
@@ -248,6 +277,9 @@ Change log
 ----------
 
 2026-09-17
+- replay mode (``--events-in``) computing the log-likelihood of a given event sequence, analytic gradients of the
+  log-likelihood w.r.t. all model parameters (``--grad``), ``--dump-parameters``, and Python scripts for
+  maximum-likelihood estimation of metaparameters and parameter-recovery studies (folder ``python``)
 - performance: angles are found with a galloping intersection into a reusable buffer, per-type parameters live in
   small dense tables instead of two 512 MB arrays and hash maps, the sigmoid's scale parameter is precomputed,
   leg sets are vectors, and the status line is throttled. Measured (one core, seed 1): peak memory 1029 MB → 10 MB,

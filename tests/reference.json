@@ -53,6 +53,24 @@
   "t": 20,
   "total_rate": -1.1640111097221961e-10
  },
+ "tests/configs/three_entities.yaml|100000|1": {
+  "angles": 6,
+  "events": 99,
+  "links": 6,
+  "logl": -180.2290096618575,
+  "parameters": {
+   "establish that thing knows thing | attempt via knows thing knows": 0.8,
+   "establish that thing knows thing | base attempt": 0.5,
+   "establish that thing knows thing | base probunits": 0.2,
+   "establish that thing knows thing | probunits via knows thing knows": 0.5,
+   "terminate that thing knows thing | base attempt": 0.7,
+   "terminate that thing knows thing | base probunits": 0.3,
+   "terminate that thing knows thing | probunits via knows thing knows": -0.4
+  },
+  "seed": 1,
+  "t": 40,
+  "total_rate": 1.6881519026453418
+ },
  "tests/configs/two_entities.yaml|100000|1": {
   "angles": 0,
   "events": 89,

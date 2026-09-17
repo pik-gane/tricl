@@ -80,11 +80,13 @@ void add_event (
 
             // get influence of angle on event:
             int idx = inflt_index(evt_id, a_it->rat12, e2et[a_it->e2], a_it->rat23);
-            auto dar = inflt_attempt_rate[idx];
-            auto dspu = inflt_delta_probunits[idx];
-            if (COUNT_ALL_ANGLES || (dar != 0.0) || (dspu != 0.0)) { // angle can influence event
+            int j = evtid_at2infl[idx];
+            if (j >= 0) { // angle can influence event
+                auto dar = inflt_attempt_rate[idx];
+                auto dspu = inflt_delta_probunits[idx];
                 // count this angle:
                 na++;
+                evd.n_infl[j]++;
                 if (debug) {
                     if (dar != 0.0) cout << "       on attempt rate:" << dar << endl;
                     if (dspu != 0.0) cout << "       on success probunit:" << dspu << endl;
@@ -116,7 +118,7 @@ void add_event (
         else {
             if (debug) cout << "      covered by summary event, not scheduled separately" << endl;
             // only add effective rate of addition via summary event:
-            add_effective_rate(evtid2summary_single_er[evt_id]);
+            add_summary_shares(evt_id, 1);
         }
     }
     else if (debug) cout << "     not adding impossible event: " << ev << endl;
@@ -131,12 +133,15 @@ void remove_event (
 {
     assert (event_is_scheduled(ev, evd_));
 
-    // keep t2ev and ev2data consistent:
-    t2ev.erase(evd_->t); ev2data.erase(ev);
-
     subtract_effective_rate(evd_->effective_rate);
+    if (compute_gradient && !event_is_summary(ev)) {
+        register_event_rate_gradient(evd_, evt_id_of(ev.ec, e2et[ev.e1], ev.rat13, e2et[ev.e3]), -1);
+    }
 
     if (debug) cout << "        removed event: " << ev << " scheduled at " << evd_->t << endl;
+
+    // keep t2ev and ev2data consistent (evd_ is invalid afterwards!):
+    t2ev.erase(evd_->t); ev2data.erase(ev);
 }
 
 /** Remove event if scheduled and adjust total effective rate (!).
@@ -153,7 +158,8 @@ void conditionally_remove_event(
     else if (ev.ec != EC_TERM)  // event is not scheduled by covered by summary event
     {
         // need to adjust effective rate:
-        subtract_effective_rate(summary_single_er_of(ev.ec, e2et[ev.e1], ev.rat13, e2et[ev.e3]));
+        int evt_id = evt_id_of(ev.ec, e2et[ev.e1], ev.rat13, e2et[ev.e3]);
+        if (evt_id >= 0) subtract_summary_shares(evt_id, 1);
     }
 }
 
@@ -319,14 +325,18 @@ void perform_event (
  *  Note that this is also called for time points of summary event attempts that turn out to be unsuccessful,
  *  since those are artefacts of the simulation algorithm and not model events.
  */
-inline void advance_time (timepoint t)
+void advance_time (timepoint t)
 {
     assert (t >= current_t);
     assert (n_infinite_effective_rates == 0);  // otherwise an immediate event would be pending
+    timepoint dt = t - current_t;
     if (total_finite_effective_rate > 0) {
-        double logl = - total_finite_effective_rate * (t - current_t);
+        double logl = - total_finite_effective_rate * dt;
         cumulative_logl += logl;
         if (verbose) cout << "  log-likelihood of no event from t=" << current_t << " to t=" << t << ": " << logl << ", total " << cumulative_logl << endl;
+    }
+    if (compute_gradient && (dt > 0)) {
+        for (size_t k = 0; k < grad_rate.size(); k++) grad_exposure[k] += grad_rate[k] * dt;
     }
     current_t = t;
 }
@@ -469,8 +479,9 @@ bool pop_next_event ()
                         current_evd_ = &actual_evd;
                         log_state();
                         found = true;
+                        add_summary_event_log_gradient(evt_id);
                         // adjust effective rate because summary addition event does no longer cover this pair:
-                        subtract_effective_rate(evtid2summary_single_er[evt_id]);
+                        subtract_summary_shares(evt_id, 1);
                         // but don't remove the summary event
                     }
                     else
@@ -487,9 +498,13 @@ bool pop_next_event ()
             // register event as current event:
             current_ev = ev;
             log_state();
-            auto evd_ = current_evd_ = &ev2data.at(ev);
+            // copy its data, since remove_event invalidates the stored data:
+            static event_data popped_evd;
+            popped_evd = ev2data.at(ev);
+            current_evd_ = &popped_evd;
+            add_event_log_gradient(&popped_evd, evt_id_of(ev.ec, e2et[ev.e1], ev.rat13, e2et[ev.e3]));
             // remove it from all relevant data:
-            remove_event(ev, evd_);
+            remove_event(ev, &ev2data.at(ev));
             found = true;
         }
     }

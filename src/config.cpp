@@ -23,7 +23,9 @@ cxxopts::Options options("tricl", "a generic network-based social simulation mod
 // scalar parameters and their default values:
 unordered_map<relationship_or_action_type, string> gexf_filename = {};
 string diagram_fileprefix = "", gexf_default_filename = "", events_out_filename = "";
-bool silent = false, verbose = false, quiet = false, debug = false, only_output_logl = false, output_summary = false;
+bool silent = false, verbose = false, quiet = false, debug = false, only_output_logl = false, output_summary = false,
+     compute_gradient = false, dump_parameters = false;
+string events_in_filename = "";
 timepoint max_t = INFINITY, never_t = 1e300;
 long int max_n_events = LONG_MAX;
 unsigned seed = 0;
@@ -196,8 +198,9 @@ void read_config (
             ("logl", "only output the final log-likelihood", cxxopts::value<bool>())
             ("summary", "output a one-line JSON summary of the final state", cxxopts::value<bool>())
             ("events-out", "csv file to write all performed events to (overrides files:events)", cxxopts::value<string>()->default_value(""))
-//            ("grad", "output gradient of log-likelihood", cxxopts::value<bool>())
-//            ("events", "input csv file with events", cxxopts::value<string>())
+            ("events-in", "csv file with events to replay instead of simulating (columns t,event,source,relationship,target), for computing their log-likelihood", cxxopts::value<string>()->default_value(""))
+            ("grad", "also compute the gradient of the log-likelihood w.r.t. all model parameters (output with --summary)", cxxopts::value<bool>())
+            ("dump-parameters", "only output the model parameters and their current values as JSON and exit", cxxopts::value<bool>())
             ;
 
     // register command line options for all metaparameters in config file:
@@ -246,12 +249,15 @@ void read_config (
     }
     only_output_logl = cmdlineopts["logl"].as<bool>();
     output_summary = cmdlineopts["summary"].as<bool>();
-    silent = cmdlineopts["silent"].as<bool>() || only_output_logl || output_summary;
+    compute_gradient = cmdlineopts["grad"].as<bool>();
+    dump_parameters = cmdlineopts["dump-parameters"].as<bool>();
+    silent = cmdlineopts["silent"].as<bool>() || only_output_logl || output_summary || dump_parameters;
     debug = cmdlineopts["debug"].as<bool>() && (!silent);
     quiet = (cmdlineopts["quiet"].as<bool>() || silent) && (!debug);
     verbose = (cmdlineopts["verbose"].as<bool>() || debug) && (!quiet);
     seed = cmdlineopts["seed"].as<unsigned>();
     events_out_filename = cmdlineopts["events-out"].as<string>();
+    events_in_filename = cmdlineopts["events-in"].as<string>();
 
     // read config file:
 

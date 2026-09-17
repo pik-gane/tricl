@@ -11,9 +11,6 @@
 
 #include "data_model.h"
 
-// during debugging, you may sometimes want to set the following to true:
-#define COUNT_ALL_ANGLES false
-
 // CONSTANT DATA:
 
 extern unordered_set<entity> es;               ///< Set of all entities
@@ -33,7 +30,10 @@ extern bool quiet;                  ///< Whether to suppress most output
 extern bool verbose;                ///< Whether to output more detailed information
 extern string diagram_fileprefix;   ///< Prefix of name of (or path to) generated diagram files
 extern string events_out_filename;  ///< Name of (or path to) csv file to write all performed events to (if "", none is written)
+extern string events_in_filename;   ///< Name of (or path to) csv file with events to replay instead of simulating (if "", simulate)
 extern bool output_summary;         ///< Whether to output a one-line JSON summary at the end
+extern bool compute_gradient;       ///< Whether to compute the gradient of the log-likelihood w.r.t. the model parameters
+extern bool dump_parameters;        ///< Whether to only output the model parameters as JSON and exit
 extern timepoint max_t;             ///< Maximal model time to simulate until (may be infinite if max_n_events is finite)
 extern timepoint never_t;           ///< Finite time point at or after which "never" happening events are formally scheduled (= max_t if finite)
 extern long int max_n_events;       ///< Max. no. events to simulate before stopping
@@ -118,6 +118,46 @@ inline rate summary_single_er_of (event_class ec, entity_type et1, relationship_
     int evt_id = evt_id_of(ec, et1, rat13, et3);
     return (evt_id >= 0) ? evtid2summary_single_er[evt_id] : 0.0;
 }
+
+// influences by event type (an "influence" is an angle type that has a nonzero effect on an event type):
+
+extern vector<vector<int>> evtid2infl_slots;  ///< Angle type slots of the influences of each event type, by event type id (at most MAX_INFL_PER_EVT each)
+extern vector<signed char> evtid_at2infl;     ///< Influence index (0 ... MAX_INFL_PER_EVT-1) by event type id * n_at_slots + angle type slot, or -1 if the angle type has no effect on the event type
+
+/** \returns the influence index of an angle type for an event type, or -1 if the angle type has no effect on the event type. */
+inline int infl_index_of (int evt_id, relationship_or_action_type rat12, entity_type et2, relationship_or_action_type rat23)
+{
+    return evtid_at2infl[inflt_index(evt_id, rat12, et2, rat23)];
+}
+
+// model parameters, for gradients of the log-likelihood:
+
+/** What kind of model parameter a \ref model_param is. */
+enum param_kind {
+    PK_BASE_ATTEMPT,     ///< base attempt rate of an event type
+    PK_INFL_ATTEMPT,     ///< additional attempt rate of an event type due to an influence
+    PK_BASE_PROBUNITS,   ///< base success probunits of an event type
+    PK_INFL_PROBUNITS    ///< change of the success probunits of an event type due to an influence
+};
+
+/** A model parameter as specified in the dynamics section of the config file. */
+struct model_param
+{
+    param_kind kind;   ///< What kind of parameter this is
+    int evt_id;        ///< Event type id the parameter belongs to
+    int infl_index;    ///< Influence index within the event type (for PK_INFL_*), or -1
+    double value;      ///< Current value
+    string label;      ///< Human-readable label, used in JSON output
+};
+
+extern vector<model_param> params;                        ///< All model parameters (in the order of their indices)
+extern vector<int> evtid2base_attempt_param;              ///< Index in params of the base attempt rate of an event type, or -1 if not specified in the config
+extern vector<int> evtid2base_probunits_param;            ///< Index in params of the base probunits of an event type, or -1 if not specified in the config
+extern vector<vector<int>> evtid2infl_attempt_param;      ///< Index in params of the attempt rate influence, by event type id and influence index, or -1
+extern vector<vector<int>> evtid2infl_probunits_param;    ///< Index in params of the probunits influence, by event type id and influence index, or -1
+extern vector<double> grad_event_terms;  ///< Sum over performed events of the gradient of log(event rate), by parameter index
+extern vector<double> grad_rate;         ///< Gradient of the current total effective rate, by parameter index
+extern vector<double> grad_exposure;     ///< Integral of grad_rate over model time so far, by parameter index (the gradient of the log-likelihood is grad_event_terms - grad_exposure)
 
 // gexf parameters:
 extern unordered_map<entity_type, double> et2gexf_size,                         ///< Node size for gexf file by entity type

@@ -42,6 +42,7 @@ REGRESSION_CASES = [
     ("config_files/granovetter_simple.yaml", 15001, 1),
     ("config_files/granovetter_helfmann.yaml", 20000, 1),
     ("tests/configs/two_entities.yaml", 100000, 1),
+    ("tests/configs/three_entities.yaml", 100000, 1),
 ]
 
 # tolerances for comparing floating point results with the references:
@@ -185,6 +186,92 @@ def exact_logl_test(binary, workdir):
     return "ok (" + "; ".join(results) + ")"
 
 
+def gradient_test(binary, workdir):
+    """Check --events-in replay against the simulation and --grad against finite differences."""
+    config = os.path.join(ROOT, "tests", "configs", "three_entities.yaml")
+    cwd = tempfile.mkdtemp(prefix="tricl_", dir=workdir)
+    events_file = os.path.join(cwd, "events.csv")
+    values = {"A": 0.5, "K": 0.8, "BE": 0.2, "BEK": 0.5, "D": 0.7, "B0": 0.3, "BK": -0.4}
+    est, term = "establish that thing knows thing", "terminate that thing knows thing"
+    labels = {"A": est + " | base attempt", "K": est + " | attempt via knows thing knows",
+              "BE": est + " | base probunits", "BEK": est + " | probunits via knows thing knows",
+              "D": term + " | base attempt", "B0": term + " | base probunits", "BK": term + " | probunits via knows thing knows"}
+    # parameter dump:
+    code, out, err, secs = run_tricl(binary, config, ["--dump-parameters"], cwd)
+    if code != 0:
+        raise Failure("--dump-parameters: exit code %d\n%s" % (code, err[-1000:]))
+    dumped = parse_summary(out)["parameters"]
+    for m, label in labels.items():
+        if label not in dumped or not close(dumped[label], values[m]):
+            raise Failure("--dump-parameters: expected %r = %r, got %r" % (label, values[m], dumped.get(label)))
+    # simulate with gradient, writing the events:
+    code, out, err, secs = run_tricl(binary, config, ["--summary", "--grad", "--seed", "1", "--events-out", events_file], cwd)
+    if code != 0:
+        raise Failure("simulation with --grad: exit code %d\n%s" % (code, err[-1000:]))
+    sim = parse_summary(out)
+    if sim["events"] < 20:
+        raise Failure("simulation produced only %d events" % sim["events"])
+    # replay the same events with gradient:
+    code, out, err, secs = run_tricl(binary, config, ["--summary", "--grad", "--events-in", events_file], cwd)
+    if code != 0:
+        raise Failure("replay with --grad: exit code %d\n%s" % (code, err[-1000:]))
+    rep = parse_summary(out)
+    if rep["events"] != sim["events"]:
+        raise Failure("replay performed %d events, simulation %d" % (rep["events"], sim["events"]))
+    if not close(rep["logl"], sim["logl"]):
+        raise Failure("replay logl %.12f differs from simulation logl %.12f" % (rep["logl"], sim["logl"]))
+    for label in labels.values():
+        if label not in rep["gradient"]:
+            raise Failure("gradient component %r missing" % label)
+        if not close(rep["gradient"][label], sim["gradient"][label]):
+            raise Failure("replay gradient %r = %r differs from simulation %r" % (label, rep["gradient"][label], sim["gradient"][label]))
+    # finite differences of the replayed log-likelihood w.r.t. each metaparameter:
+    results = []
+    for m, label in labels.items():
+        v = values[m]
+        h = 1e-4 * max(1.0, abs(v))
+        logls = []
+        for x in (v + h, v - h):
+            code, out, err, secs = run_tricl(binary, config, ["--summary", "--events-in", events_file, "--" + m, repr(x)], cwd)
+            if code != 0:
+                raise Failure("replay with --%s %r: exit code %d\n%s" % (m, x, code, err[-1000:]))
+            logls.append(parse_summary(out)["logl"])
+        fd = (logls[0] - logls[1]) / (2 * h)
+        an = rep["gradient"][label]
+        if not abs(fd - an) <= 1e-5 * max(1.0, abs(an)):
+            raise Failure("d logl / d %s: analytic %.10f, finite difference %.10f" % (m, an, fd))
+        results.append("%s: %.4f" % (m, an))
+    return "ok (%d events, logl %.4f, gradient %s)" % (sim["events"], sim["logl"], ", ".join(results))
+
+
+def fit_test(binary, workdir):
+    """Run the Python maximum-likelihood driver on simulated data of the three-entity model."""
+    sys.path.insert(0, os.path.join(ROOT, "python"))
+    from tricl_fit import TriclModel, fit, standard_errors
+    config = os.path.join(ROOT, "tests", "configs", "three_entities.yaml")
+    cwd = tempfile.mkdtemp(prefix="tricl_", dir=workdir)
+    events_file = os.path.join(cwd, "events.csv")
+    # longer observation window for more events:
+    code, out, err, secs = run_tricl(binary, config, ["--summary", "--seed", "7", "--events-out", events_file], cwd)
+    if code != 0:
+        raise Failure("simulation: exit code %d\n%s" % (code, err[-1000:]))
+    model = TriclModel(binary, config, events_file, quiet=True)
+    names = ["A", "D"]
+    start = {"A": 0.5 * 1.8, "D": 0.7 / 1.8}
+    logl0, _ = model.loglikelihood(start, gradient=False)
+    estimates, logl, grad, n_iter = fit(model, start, names, maxiter=50, quiet=True)
+    if not logl > logl0:
+        raise Failure("fit did not improve the log-likelihood (%.6f -> %.6f)" % (logl0, logl))
+    gnorm = math.sqrt(sum(g * g for g in grad.values()))
+    if not gnorm < 1e-3:
+        raise Failure("gradient norm after fitting is %.3g" % gnorm)
+    se = standard_errors(model, start, names, estimates)
+    for name in names:
+        if not (math.isfinite(se[name]) and se[name] > 0):
+            raise Failure("standard error of %s is %r" % (name, se[name]))
+    return "ok (logl %.3f -> %.3f, %s)" % (logl0, logl, ", ".join("%s=%.3f+-%.3f" % (n, estimates[n], se[n]) for n in names))
+
+
 def error_handling_tests(binary, workdir):
     cwd = tempfile.mkdtemp(prefix="tricl_", dir=workdir)
     results = []
@@ -246,6 +333,8 @@ def main():
     for case in REGRESSION_CASES:
         tests.append(("regression: " + case[0], lambda case=case: regression_test(binary, case, references, args.update, workdir)))
     tests.append(("exact log-likelihood", lambda: exact_logl_test(binary, workdir)))
+    tests.append(("replay and gradient", lambda: gradient_test(binary, workdir)))
+    tests.append(("maximum-likelihood fit", lambda: fit_test(binary, workdir)))
     tests.append(("error handling", lambda: error_handling_tests(binary, workdir)))
 
     n_failed = 0

@@ -87,6 +87,118 @@ inline probunits total_success_probunits (const event_data* evd_)
     return (evd_->n_neg_inf_probunits > 0) ? -INFINITY : (evd_->n_pos_inf_probunits > 0) ? INFINITY : evd_->success_probunits;
 }
 
+// Gradient bookkeeping (only active if compute_gradient is set).
+//
+// The log-likelihood is sum_i log(rate of event i) - integral of the total rate over time.
+// For an event with attempt rate A = a0 + sum_j n_j a_j and success probability sigma(B), B = b0 + sum_j n_j b_j,
+// where n_j is the number of adjacent angles of influence j, the rate is A * sigma(B), so that
+//   d rate / d a0 = sigma,  d rate / d a_j = n_j sigma,  d rate / d b0 = A sigma',  d rate / d b_j = n_j A sigma',
+// and the gradient of log(rate) is the same divided by the rate.
+// grad_rate holds the gradient of the total rate and is updated whenever an event's rate is registered or unregistered;
+// its integral over time (grad_exposure) is accumulated in advance_time().
+
+/** Add (sign = +1) or remove (sign = -1) the gradient contributions of a particular event's current rate to \ref grad_rate.
+ */
+inline void register_event_rate_gradient (const event_data* evd_, int evt_id, double sign)
+{
+    if (!compute_gradient) return;
+    rate A = total_attempt_rate(evd_);
+    if (!(A < INFINITY) || (A == 0)) return;  // immediate or impossible events have no (finite) gradient
+    probunits B = total_success_probunits(evd_);
+    if (B == -INFINITY) return;
+    double sigma = probunits2probability(B, evtid2left_tail[evt_id], evtid2right_tail[evt_id], evtid2scale[evt_id]),
+           dsigma = probunits2probability_derivative(B, evtid2left_tail[evt_id], evtid2right_tail[evt_id], evtid2scale[evt_id]);
+    int k = evtid2base_attempt_param[evt_id];
+    if (k >= 0) grad_rate[k] += sign * sigma;
+    const auto& ia = evtid2infl_attempt_param[evt_id];
+    for (size_t j = 0; j < ia.size(); j++) {
+        if ((ia[j] >= 0) && (evd_->n_infl[j] > 0)) grad_rate[ia[j]] += sign * evd_->n_infl[j] * sigma;
+    }
+    if (dsigma != 0.0) {
+        k = evtid2base_probunits_param[evt_id];
+        if (k >= 0) grad_rate[k] += sign * A * dsigma;
+        const auto& ib = evtid2infl_probunits_param[evt_id];
+        for (size_t j = 0; j < ib.size(); j++) {
+            if ((ib[j] >= 0) && (evd_->n_infl[j] > 0)) grad_rate[ib[j]] += sign * evd_->n_infl[j] * A * dsigma;
+        }
+    }
+}
+
+/** Add the gradient contributions of a number of pairs covered by the summary event of an event type to \ref grad_rate
+ *  (count may be negative to remove pairs).
+ */
+inline void register_summary_share_gradient (int evt_id, double count)
+{
+    if (!compute_gradient || (count == 0.0)) return;
+    rate a = evtid2base_attempt_rate[evt_id];
+    probunits b = evtid2base_probunits[evt_id];
+    if (b == -INFINITY) return;
+    int k = evtid2base_attempt_param[evt_id];
+    if (k >= 0) grad_rate[k] += count * probunits2probability(b, evtid2left_tail[evt_id], evtid2right_tail[evt_id], evtid2scale[evt_id]);
+    k = evtid2base_probunits_param[evt_id];
+    if (k >= 0) grad_rate[k] += count * a * probunits2probability_derivative(b, evtid2left_tail[evt_id], evtid2right_tail[evt_id], evtid2scale[evt_id]);
+}
+
+/** Add the gradient of log(rate) of a particular event that happens now to \ref grad_event_terms.
+ */
+inline void add_event_log_gradient (const event_data* evd_, int evt_id)
+{
+    if (!compute_gradient) return;
+    rate A = total_attempt_rate(evd_);
+    if (!(A < INFINITY) || (A == 0)) return;
+    probunits B = total_success_probunits(evd_);
+    if (B == -INFINITY) return;
+    double sigma = probunits2probability(B, evtid2left_tail[evt_id], evtid2right_tail[evt_id], evtid2scale[evt_id]),
+           dsigma = probunits2probability_derivative(B, evtid2left_tail[evt_id], evtid2right_tail[evt_id], evtid2scale[evt_id]);
+    int k = evtid2base_attempt_param[evt_id];
+    if (k >= 0) grad_event_terms[k] += 1 / A;
+    const auto& ia = evtid2infl_attempt_param[evt_id];
+    for (size_t j = 0; j < ia.size(); j++) {
+        if ((ia[j] >= 0) && (evd_->n_infl[j] > 0)) grad_event_terms[ia[j]] += evd_->n_infl[j] / A;
+    }
+    if ((dsigma != 0.0) && (sigma > 0.0)) {
+        k = evtid2base_probunits_param[evt_id];
+        if (k >= 0) grad_event_terms[k] += dsigma / sigma;
+        const auto& ib = evtid2infl_probunits_param[evt_id];
+        for (size_t j = 0; j < ib.size(); j++) {
+            if ((ib[j] >= 0) && (evd_->n_infl[j] > 0)) grad_event_terms[ib[j]] += evd_->n_infl[j] * dsigma / sigma;
+        }
+    }
+}
+
+/** Add the gradient of log(rate) of an event that happens now via a summary event to \ref grad_event_terms.
+ */
+inline void add_summary_event_log_gradient (int evt_id)
+{
+    if (!compute_gradient) return;
+    rate a = evtid2base_attempt_rate[evt_id];
+    probunits b = evtid2base_probunits[evt_id];
+    int k = evtid2base_attempt_param[evt_id];
+    if ((k >= 0) && (a > 0)) grad_event_terms[k] += 1 / a;
+    k = evtid2base_probunits_param[evt_id];
+    if ((k >= 0) && std::isfinite(b)) {
+        double sigma = probunits2probability(b, evtid2left_tail[evt_id], evtid2right_tail[evt_id], evtid2scale[evt_id]),
+               dsigma = probunits2probability_derivative(b, evtid2left_tail[evt_id], evtid2right_tail[evt_id], evtid2scale[evt_id]);
+        if (sigma > 0) grad_event_terms[k] += dsigma / sigma;
+    }
+}
+
+/** Add the rate of `count` pairs covered by the summary event of an event type to the total effective rate (and gradient).
+ */
+inline void add_summary_shares (int evt_id, double count)
+{
+    add_effective_rate(count * evtid2summary_single_er[evt_id]);
+    register_summary_share_gradient(evt_id, count);
+}
+
+/** Subtract the rate of `count` pairs covered by the summary event of an event type from the total effective rate (and gradient).
+ */
+inline void subtract_summary_shares (int evt_id, double count)
+{
+    subtract_effective_rate(count * evtid2summary_single_er[evt_id]);
+    register_summary_share_gradient(evt_id, -count);
+}
+
 inline void _schedule_event (
         event& ev,         ///< [in] the event to schedule
         event_data* evd_,  ///< [in] its data
@@ -128,6 +240,7 @@ inline void _schedule_event (
             assert (er < INFINITY);
             // register it in total:
             add_effective_rate(er);
+            register_event_rate_gradient(evd_, evt_id, +1);
 
             // draw time interval after which it would happen if nothing changes in between:
             timepoint dt = exponential(random_variable) / er;
@@ -171,16 +284,29 @@ inline void schedule_event (event& ev, event_data* evd_, int evt_id)
     if (debug) verify_data_consistency();
 }
 
-inline void reschedule_event (event& ev, event_data* evd_, int evt_id)
+/** Remove a scheduled event from the schedule and its rate (and gradient contributions) from the totals,
+ *  but keep its data, so that the data can be modified and the event be scheduled anew (or erased).
+ *
+ *  Must be called BEFORE the event's attempt rate or success probunits are modified,
+ *  since the gradient contributions must be removed with the same values they were registered with.
+ */
+inline void unschedule_event (event& ev, event_data* evd_, int evt_id)
 {
     assert(evd_ == &ev2data.at(ev));
     assert(event_is_scheduled(ev, evd_));
-
-    // remove from schedule and total_effective_rate:
     t2ev.erase(evd_->t);
-    subtract_effective_rate(evd_->effective_rate, !event_is_summary(ev));
+    bool is_summary = event_is_summary(ev);
+    subtract_effective_rate(evd_->effective_rate, !is_summary);
+    // (the gradient contributions of a summary event never change, so they are only registered once in init_events)
+    if (!is_summary) register_event_rate_gradient(evd_, evt_id, -1);
+    evd_->t = -INFINITY;
+}
 
-    // schedule anew:
+/** Reschedule an event whose data has NOT changed since it was scheduled (e.g. a summary event after an attempt).
+ */
+inline void reschedule_event (event& ev, event_data* evd_, int evt_id)
+{
+    unschedule_event(ev, evd_, evt_id);
     _schedule_event(ev, evd_, evt_id);
     if (debug) verify_data_consistency();
 }
@@ -196,6 +322,10 @@ void update_adjacent_events (event& ev);
 void add_reverse_event (event& old_ev);
 
 void perform_event (event& ev, event_data* evd_);
+
+void advance_time (timepoint t);
+
+void finish_time ();
 
 bool pop_next_event ();
 
