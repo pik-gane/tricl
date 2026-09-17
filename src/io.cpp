@@ -7,6 +7,7 @@
 #include "3rdparty/rapidcsv.h"
 
 #include <iomanip>
+#include <chrono>
 
 #include "global_variables.h"
 #include "entity.h"
@@ -92,7 +93,12 @@ void log_state (
         ;
     if (quiet)
     {
-        cout << fixed << n_events << ": logl " << cumulative_logl << ", er " << total_finite_effective_rate << ", ld " << ld << ", ad " << ad << ", q " << q << ".  t " << current_t << (final ? "\n" : "\r");
+        // in quiet mode, the status line is only updated a few times per second (formatting it for every event is costly):
+        static auto last_output_time = std::chrono::steady_clock::now() - std::chrono::hours(1);
+        auto now = std::chrono::steady_clock::now();
+        if ((!final) && (now - last_output_time < std::chrono::milliseconds(200))) return;
+        last_output_time = now;
+        cout << fixed << n_events << ": logl " << cumulative_logl << ", er " << total_finite_effective_rate << ", ld " << ld << ", ad " << ad << ", q " << q << ".  t " << current_t << (final ? "\n" : "\r") << std::flush;
     }
     else if (lt2n.size() > 1)
     {

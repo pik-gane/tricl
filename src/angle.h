@@ -130,115 +130,88 @@ inline void add_or_delete_angle (
     }
 }
 
+/** Advance an iterator over a range of legs sorted by their "other" entity
+ *  to the first leg whose other entity is >= key, using galloping (exponential + binary) search.
+ *
+ *  Precondition: it != end and e2of(*it) < key.
+ *
+ *  This makes the intersection of a small leg set with a large one (e.g. of a hub entity
+ *  that encodes a state and is linked to all agents) cost O(small * log(large)) instead of O(large).
+ */
+template <class It, class E2Of>
+inline It advance_legs_to (It it, It end, entity key, E2Of e2of)
+{
+    size_t n = end - it, step = 1, pos = 0;  // invariant: e2of(it[pos]) < key
+    while ((pos + step < n) && (e2of(it[pos + step]) < key)) {
+        pos += step;
+        step *= 2;
+    }
+    // now the answer lies in (pos, min(pos + step, n)]:
+    size_t lo = pos + 1, hi = min(pos + step, n);
+    while (lo < hi) {
+        size_t mid = lo + (hi - lo) / 2;
+        if (e2of(it[mid]) < key) lo = mid + 1; else hi = mid;
+    }
+    return it + lo;
+}
+
 /** Compare each \ref outleg of e1 with each \ref inleg of e3 to find each \ref angle from e1 to e3.
  *
  *  This is one of the performance bottleneck functions
- *  since it is called by \ref add_or_delete_angle().
- *  It uses a large share of the model's CPU time.
+ *  since it is called by \ref add_event() for every event that is added.
  *
- *  (code was adapted from adapted from set_intersection template)
+ *  Both leg sets are sorted by the middle entity e2 (see the comparison operators of \ref inleg and \ref outleg),
+ *  so the angles can be found by a merge-like intersection, in which the iterator over the larger set
+ *  is advanced by galloping search (see \ref advance_legs_to()).
  *
- *  \returns a vector of found angles
+ *  The found angles are appended to the caller-provided buffer (which is cleared first) in the order of
+ *  increasing e2, and for each e2 ordered by inleg first and outleg second.
+ *  (This order determines the summation order of floating point contributions and must not be changed
+ *  without regenerating the regression test references.)
  */
-inline angle_vec get_angles (
+inline void get_angles (
         const entity e1,         ///< [in] source entity
         const outleg_set& out1,  ///< [in] set of outlegs of source entity
         const inleg_set& in3,    ///< [in] set of inlegs of target entity
-        const entity e3          ///< [in] target entity
+        const entity e3,         ///< [in] target entity
+        angle_vec& result        ///< [out] buffer to store the found angles in (reused between calls to avoid allocations)
         )
 {
-    // allocate mem for result:
-    angle_vec result(max(out1.size(), in3.size()) * n_rats * n_rats);
-    // work with pointers (iterators):
-    auto out1_it = out1.begin();
-    auto in3_it = in3.begin();
-    auto result_it = result.begin();
-    /** Algorithm:
-    *  ----------
-    *  The two sequences are sorted by e2 (since std::set is an ordered datatype and operator< for legs was implemented accordingly).
-    *  Pseudocode:
-    *
-    *      put blockstart = out1.end().
-    *      repeat:
-    *        if out1.e2 < in3.e2, advance out1.
-    *        else if out1.e2 > in3.e2:
-    *          advance in3.
-    *          if blockstart != out1.end():
-    *            if in3.e2 == previous in3.e2, rewind out2 to blockstart
-    *            else put blockstart = out1.end().
-    *        else out1.e2 == in3.e2:
-    *          if blockstart == out1.end(), remember out1 position as blockstart
-    *          store found angle
-    *          advance out1
-    */
-    auto out1end = out1.end(), blockstart = out1end;
-    auto in3end = in3.end();
-    if (out1_it != out1end) {
-        entity last_e2 = out1_it->e_target;
-        while (in3_it != in3end)
+    result.clear();
+    auto o = out1.begin(), oend = out1.end();
+    auto i = in3.begin(), iend = in3.end();
+    auto oe2 = [](const outleg& l) { return l.e_target; };
+    auto ie2 = [](const inleg& l) { return l.e_source; };
+    while ((o != oend) && (i != iend))
+    {
+        entity eo = o->e_target, ei = i->e_source;
+        if (eo < ei)
         {
-            if (out1_it == out1end)
-            {
-                if (blockstart == out1end)
-                {
-                    break;
-                }
-                else
-                {
-                    ++in3_it;
-                    if (in3_it == in3end) {
-                        break;
-                    }
-                    if (in3_it->e_source == last_e2)
-                    {
-                        out1_it = blockstart;
-                    }
-                    else
-                    {
-                        break;
-                    }
-                }
-            }
-            if (debug) cout << "         checking: " << rat2label[out1_it->rat_out] << " " << e2label[out1_it->e_target] << ", "
-                  << e2label[in3_it->e_source] << " " << rat2label[in3_it->rat_in] << endl;
-            if (out1_it->e_target < in3_it->e_source)
-            {
-                ++out1_it;
-            }
-            else if (in3_it->e_source < out1_it->e_target)
-            {
-                ++in3_it;
-                if (in3_it == in3end) break;
-                if (blockstart != out1end)
-                {
-                    if (in3_it->e_source == last_e2)
-                    {
-                        out1_it = blockstart;
-                    }
-                    else
-                    {
-                        blockstart = out1end;
-                    }
+            o = advance_legs_to(o, oend, ei, oe2);
+        }
+        else if (ei < eo)
+        {
+            i = advance_legs_to(i, iend, eo, ie2);
+        }
+        else  // common middle entity e2 = eo = ei
+        {
+            // find the ends of the blocks of legs with this middle entity (at most n_rats legs each):
+            auto oblockend = o;
+            while ((oblockend != oend) && (oblockend->e_target == eo)) ++oblockend;
+            auto iblockend = i;
+            while ((iblockend != iend) && (iblockend->e_source == eo)) ++iblockend;
+            // store all combinations:
+            for (auto ii = i; ii != iblockend; ++ii) {
+                for (auto oo = o; oo != oblockend; ++oo) {
+                    result.push_back({ .rat12 = oo->rat_out, .e2 = eo, .rat23 = ii->rat_in });
+                    if (debug) cout << "      angle: " << e2label[e1] << " " << rat2label[oo->rat_out] << " "
+                          << e2label[eo] << " " << rat2label[ii->rat_in] << " " << e2label[e3] << endl;
                 }
             }
-            else
-            {
-                if (blockstart == out1end)
-                {
-                    blockstart = out1_it;
-                }
-                last_e2 = out1_it->e_target;
-                *result_it = { .rat12 = out1_it->rat_out, .e2 = last_e2, .rat23 = in3_it->rat_in };
-                if (debug) cout << "      angle: " << e2label[e1] << " " << rat2label[result_it->rat12] << " "
-                      << e2label[last_e2] << " " << rat2label[result_it->rat23] << " " << e2label[e3] << endl;
-                ++result_it;
-                ++out1_it;
-            }
+            o = oblockend;
+            i = iblockend;
         }
     }
-    // shorten result to actual length and return it:
-    result.resize(result_it - result.begin());
-    return result;
 }
 
 #endif

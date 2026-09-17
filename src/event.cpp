@@ -50,29 +50,35 @@ void add_event (
         add_attempt_contribution(&evd, evt2base_attempt_rate[evt]);
         add_probunits_contribution(&evd, evt2base_probunits[evt]);
 
-        // outlegs:
         const auto& outs1 = e2outs[e1];
-        for (auto& l : outs1) {
-            auto rat12 = l.rat_out;
-            auto e2 = l.e_target;
-            influence_type inflt = { .evt = evt, .at = { .rat12 = rat12, .et2 = e2et[e2], .rat23 = NO_RAT } };
-            add_attempt_contribution(&evd, _inflt2attempt_rate[INFLT(inflt)]);
-            add_probunits_contribution(&evd, _inflt2delta_probunits[INFLT(inflt)]);
-        }
-
-        // inlegs (similarly):
         const auto& ins3 = e2ins[e3];
-        for (auto& l : ins3) {
-            auto e2 = l.e_source;
-            auto rat23 = l.rat_in;
-            influence_type inflt = { .evt = evt, .at = { .rat12 = NO_RAT, .et2 = e2et[e2], .rat23 = rat23 } };
-            add_attempt_contribution(&evd, _inflt2attempt_rate[INFLT(inflt)]);
-            add_probunits_contribution(&evd, _inflt2delta_probunits[INFLT(inflt)]);
+
+        // legs (only if any leg influences are configured at all, since hub entities may have very many legs):
+        if (any_leg_influences)
+        {
+            // outlegs:
+            for (auto& l : outs1) {
+                auto rat12 = l.rat_out;
+                auto e2 = l.e_target;
+                influence_type inflt = { .evt = evt, .at = { .rat12 = rat12, .et2 = e2et[e2], .rat23 = NO_RAT } };
+                add_attempt_contribution(&evd, _inflt2attempt_rate[INFLT(inflt)]);
+                add_probunits_contribution(&evd, _inflt2delta_probunits[INFLT(inflt)]);
+            }
+
+            // inlegs (similarly):
+            for (auto& l : ins3) {
+                auto e2 = l.e_source;
+                auto rat23 = l.rat_in;
+                influence_type inflt = { .evt = evt, .at = { .rat12 = NO_RAT, .et2 = e2et[e2], .rat23 = rat23 } };
+                add_attempt_contribution(&evd, _inflt2attempt_rate[INFLT(inflt)]);
+                add_probunits_contribution(&evd, _inflt2delta_probunits[INFLT(inflt)]);
+            }
         }
 
         // angles:
         int na = 0; // number of influencing angles
-        angle_vec angles = get_angles(e1, outs1, ins3, e3);
+        static angle_vec angles;  // reused buffer to avoid allocations
+        get_angles(e1, outs1, ins3, e3, angles);
         for (auto a_it = angles.begin(); a_it != angles.end(); a_it++) {
             influence_type inflt = {
                     .evt = evt,
@@ -182,7 +188,8 @@ void update_adjacent_events (
     // source and target entity of the event are e1 and e2 for these angles:
     e1 = ea; rat12 = rab; e2 = eb;
     et1 = e2et[e1]; et2 = e2et[e2];
-    auto outlegs = e2outs[eb]; // these legs then provide rat23 and e3 of the angles
+    // (references are safe here since add_or_delete_angle does not modify the leg sets)
+    const auto& outlegs = e2outs[eb]; // these legs then provide rat23 and e3 of the angles
     for (auto& l : outlegs) {
         rat23 = l.rat_out; e3 = l.e_target; et3 = e2et[e3];
         if (e1 != e3) { // since we allow no self-links except identity
@@ -195,7 +202,7 @@ void update_adjacent_events (
     // source and target entity of the event are e2 and e3 for these angles:
     e2 = ea; rat23 = rab; e3 = eb;
     et2 = e2et[e2]; et3 = e2et[e3];
-    auto inlegs = e2ins[ea]; // these legs then provide e1 and rat12 of the angles
+    const auto& inlegs = e2ins[ea]; // these legs then provide e1 and rat12 of the angles
     for (auto& l : inlegs) {
         e1 = l.e_source; rat12 = l.rat_in; et1 = e2et[e1];
         if (e1 != e3) { // since we allow no self-links except identity
@@ -429,21 +436,24 @@ bool pop_next_event ()
                     // compile success units:
                     event_data tmp_evd = {};
                     add_probunits_contribution(&tmp_evd, evt2base_probunits.at(evt));
-                    // outlegs:
-                    for (auto& l : e2outs[e1])
+                    if (any_leg_influences)  // (hub entities may have very many legs, so only loop if necessary)
                     {
-                        auto rat12 = l.rat_out;
-                        auto e2 = l.e_target;
-                        influence_type inflt = { .evt = evt, .at = { .rat12 = rat12, .et2 = e2et[e2], .rat23 = NO_RAT } };
-                        if (inflt2delta_probunits.count(inflt) > 0) add_probunits_contribution(&tmp_evd, inflt2delta_probunits.at(inflt));
-                    }
-                    // inlegs:
-                    for (auto& l : e2ins[e3])
-                    {
-                        auto e2 = l.e_source;
-                        auto rat23 = l.rat_in;
-                        influence_type inflt = { .evt = evt, .at = { .rat12 = NO_RAT, .et2 = e2et[e2], .rat23 = rat23 } };
-                        if (inflt2delta_probunits.count(inflt) > 0) add_probunits_contribution(&tmp_evd, inflt2delta_probunits.at(inflt));
+                        // outlegs:
+                        for (auto& l : e2outs[e1])
+                        {
+                            auto rat12 = l.rat_out;
+                            auto e2 = l.e_target;
+                            influence_type inflt = { .evt = evt, .at = { .rat12 = rat12, .et2 = e2et[e2], .rat23 = NO_RAT } };
+                            if (inflt2delta_probunits.count(inflt) > 0) add_probunits_contribution(&tmp_evd, inflt2delta_probunits.at(inflt));
+                        }
+                        // inlegs:
+                        for (auto& l : e2ins[e3])
+                        {
+                            auto e2 = l.e_source;
+                            auto rat23 = l.rat_in;
+                            influence_type inflt = { .evt = evt, .at = { .rat12 = NO_RAT, .et2 = e2et[e2], .rat23 = rat23 } };
+                            if (inflt2delta_probunits.count(inflt) > 0) add_probunits_contribution(&tmp_evd, inflt2delta_probunits.at(inflt));
+                        }
                     }
                     auto spu = total_success_probunits(&tmp_evd);
                     // since the scheduling rate already contained the factor ev2max_sp[ev],

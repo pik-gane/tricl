@@ -67,10 +67,11 @@ rate compute_total_finite_er ()
  */
 int compute_n_angles (event_type evt, entity e1, entity e3, bool print) {
     if (print) cout << evt << endl;
-    auto outs1 = e2outs[e1];
-    auto ins3 = e2ins[e3];
+    const auto& outs1 = e2outs[e1];
+    const auto& ins3 = e2ins[e3];
     int na = 0;
-    angle_vec as = get_angles(e1, outs1, ins3, e3);
+    angle_vec as;
+    get_angles(e1, outs1, ins3, e3, as);
     for (auto a_it = as.begin(); a_it < as.end(); a_it++) {
         influence_type inflt = { .evt = evt, .at = { .rat12 = a_it->rat12, .et2 = e2et[a_it->e2], .rat23 = a_it->rat23 } };
         if (print) cout << inflt.at << endl;

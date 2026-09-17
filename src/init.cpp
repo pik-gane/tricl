@@ -19,6 +19,7 @@ int n_rats = 0; // total no. of rats
 unordered_set<event_type> possible_evts = {};
 rate _inflt2attempt_rate[MAX_N_INFLT];
 probunits _inflt2delta_probunits[MAX_N_INFLT];
+bool any_leg_influences = false;
 entity_type e2et[MAX_N_E];
 
 // derived constants:
@@ -67,6 +68,14 @@ void init_data ()
     for (auto& [inflt, spu] : inflt2delta_probunits) {
         assert (!( inflt.evt.ec == EC_EST && ( inflt.at.rat12 == NO_RAT || inflt.at.rat23 == NO_RAT ) ));
         _inflt2delta_probunits[INFLT(inflt)] = spu;
+    }
+    // find out whether legs (rather than angles) can influence anything at all:
+    any_leg_influences = false;
+    for (auto& [inflt, ar] : inflt2attempt_rate) {
+        if (((inflt.at.rat12 == NO_RAT) || (inflt.at.rat23 == NO_RAT)) && (ar != 0.0)) any_leg_influences = true;
+    }
+    for (auto& [inflt, spu] : inflt2delta_probunits) {
+        if (((inflt.at.rat12 == NO_RAT) || (inflt.at.rat23 == NO_RAT)) && (spu != 0.0)) any_leg_influences = true;
     }
 }
 
