@@ -19,3 +19,6 @@ find_package(Boost REQUIRED)      # only header-only parts are used (container, 
 find_package(yaml-cpp REQUIRED)
 
 add_subdirectory(src)
+
+enable_testing()
+add_subdirectory(tests)

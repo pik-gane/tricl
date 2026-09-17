@@ -310,11 +310,12 @@ void read_config (
     n = c["files"];
     if (n) {
         if (!n.IsMap()) throw "yaml field 'files' must be a map";
-        if (n["gexf"]) gexf_default_filename = n["gexf"].as<string>();
+        // (a null value, e.g. "gexf: ~", means no such file)
+        if (n["gexf"] && !n["gexf"].IsNull()) gexf_default_filename = n["gexf"].as<string>();
         // log_filename = n["log"].as<string>();
-        if (n["diagram prefix"]) diagram_fileprefix = n["diagram prefix"].as<string>();
-        if (n["events"] && (events_out_filename == "")) events_out_filename = n["events"].as<string>();
-        if (n["stats"] && (stats_out_filename == "")) stats_out_filename = n["stats"].as<string>();
+        if (n["diagram prefix"] && !n["diagram prefix"].IsNull()) diagram_fileprefix = n["diagram prefix"].as<string>();
+        if (n["events"] && !n["events"].IsNull() && (events_out_filename == "")) events_out_filename = n["events"].as<string>();
+        if (n["stats"] && !n["stats"].IsNull() && (stats_out_filename == "")) stats_out_filename = n["stats"].as<string>();
     }
     if (dump_model || dump_parameters) {
         // no output files when only dumping the model:

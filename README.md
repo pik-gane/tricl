@@ -284,12 +284,25 @@ dynamics:
                 base: <basic attempt rate>  # default: 0.0
                 [~, <relationship label>, <entity type label>, <relationship label>, ~]: <additional attempt rate due to this type of angle>
             success:  # success probability units
-                tails: <common tail index>  # or [<left tail index>, <righ tail index>], default: 1.0
+                tails: <common tail index>  # or [<left tail index>, <right tail index>], default: 1.0 (see below)
                 base: <basic success probability units>  # default: 0.0
                 [~, <relationship label>, <entity type label>, <relationship label>, ~]: <additional success probability unist due to this type of angle>  # may be negative
         terminate:  # specify how this type of link is terminated (if at all)
             # specify attempt, success as above
 ```
+Success probability units ``pu`` are converted into a success probability by a sigmoidal function with two tail indices
+``σ0`` (left tail) and ``σ1`` (right tail):
+```
+f(pu) = T_σ0(-v) / 2 + 1/2 - T_σ1(v) / 2,   v = pu / (k(σ0) + k(σ1)),
+T_σ(x) = (1 + σ ln(1 + e^x))^(-1/σ) for σ > 0,   T_0(x) = 1 / (1 + e^x),
+k(σ) = (1 + σ ln 2)^(-1 - 1/σ),   k(0) = 1/2.
+```
+For tail indices ``[0, 0]`` this is exactly the expit function ``1 / (1 + e^-pu)`` (logistic), so that probability units are
+log-odds. A positive tail index makes the corresponding tail decay like a power law with exponent ``-1/σ`` instead of
+exponentially (the tails of the expit function are replaced by the q-exponential ``(1 + σy)^(-1/σ)`` of ``y = ln(1 + e^x)``).
+For all tail indices the function is strictly increasing, depends continuously on the tail indices, and has slope 1/4 at
+``pu = 0``, so probability units keep their meaning near zero. The default tail index of 1 gives tails ``~ 1/|pu|``.
+
 ```yaml    
 visualization:  
 
@@ -316,6 +329,15 @@ Change log
 ----------
 
 2026-09-17
+- new form of the sigmoidal function converting probability units to probabilities (q-exponential tails, see above):
+  the old formula was broken for exactly one zero tail index (that tail was frozen at 1, so success probabilities
+  never fell below 1/2) and its scale constant for tail index 0 was 0 due to integer division; the new one is exactly
+  the expit for tail indices ``[0, 0]``, continuous in the tail indices, and normalised to slope 1/4 at zero
+  probability units for all tail indices (the old general formula had slope 1). For the default tail indices ``[1, 1]``
+  the new function equals the old one with the probability units multiplied by 4, so configs that do not set ``tails``
+  and use finite success probability units change behaviour; multiply their probability units by 4 to restore it
+  (done for ``parameters_3blocks.yaml``, whose clusters otherwise dissolve instead of merging). Unit tests in
+  ``tests/test_sigmoid.cpp``.
 - ``python/tricl_macro.py`` generates and integrates a mean-field approximation of a model and compares it with
   simulations; new options ``--dump-model``, ``--stats-out``, ``--stats-every``
 - ``python/tricl_rdf.py`` converts RDF data into config skeletons and gexf output into RDF-star

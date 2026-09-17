@@ -44,29 +44,36 @@ import tempfile
 # ------------------------------------------------------------------------------------------------------------
 # the sigmoid of tricl (see src/probability.h)
 
+def softplus(x):
+    return x + math.log1p(math.exp(-x)) if x > 0 else math.log1p(math.exp(x))
+
+
+def tail_term(tail, x):
+    """T_tail(x) = (1 + tail ln(1 + e^x))^(-1/tail), or 1/(1 + e^x) for tail 0."""
+    y = softplus(x)
+    return math.exp(-y) if tail == 0 else math.exp(-math.log1p(tail * y) / tail)
+
+
+def tail_term_complement(tail, x):
+    y = softplus(x)
+    return -math.expm1(-y) if tail == 0 else -math.expm1(-math.log1p(tail * y) / tail)
+
+
 def tail2scale(tail):
-    return 1 / 2 / math.e if tail == 0 else 1 / (1 + tail) / (1 + math.log(1 + tail)) ** (1 + 1 / tail) / 2
+    """k(tail) = (1 + tail ln 2)^(-1 - 1/tail), k(0) = 1/2."""
+    return 0.5 if tail == 0 else math.exp(-(1 + 1 / tail) * math.log1p(tail * math.log(2.0)))
 
 
 def sigmoid(pu, left_tail, right_tail):
+    """The sigmoidal function of tricl: T_left(-v)/2 + 1/2 - T_right(v)/2 with v = pu / (k(left) + k(right))."""
     if pu == math.inf:
         return 1.0
     if pu == -math.inf:
         return 0.0
     if left_tail == 0 and right_tail == 0:
-        return 1 / (1 + math.exp(-pu))
-    scale = tail2scale(left_tail) + tail2scale(right_tail)
-
-    def term(tail, x):
-        if tail == 0:
-            return 1.0
-        try:
-            e = math.exp(x)
-        except OverflowError:
-            return 0.0
-        return (1 + math.log(1 + tail * e)) ** (-1 / tail)
-
-    return (term(left_tail, -pu / scale) + 1 - term(right_tail, pu / scale)) / 2
+        return 1 / (1 + math.exp(-pu)) if pu > -700 else 0.0
+    v = pu / (tail2scale(left_tail) + tail2scale(right_tail))
+    return (tail_term(left_tail, -v) + tail_term_complement(right_tail, v)) / 2
 
 
 # ------------------------------------------------------------------------------------------------------------

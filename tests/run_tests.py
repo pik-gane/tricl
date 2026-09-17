@@ -414,6 +414,18 @@ def macro_test(binary, workdir):
         mean, exact[-1], si_final, states[-1][k], mean_g)
 
 
+def sigmoid_unit_test(binary, workdir):
+    """Run the C++ unit tests of the sigmoidal function (built as build/tests/test_sigmoid)."""
+    build_dir = os.path.dirname(os.path.dirname(binary))
+    test_binary = os.path.join(build_dir, "tests", "test_sigmoid")
+    if not os.path.exists(test_binary):
+        raise Failure("test binary %s not found (configure and build the whole project)" % test_binary)
+    p = subprocess.run([test_binary], capture_output=True, text=True)
+    if p.returncode != 0:
+        raise Failure("test_sigmoid failed:\n%s" % (p.stdout + p.stderr)[-3000:])
+    return "ok (" + p.stdout.strip().split("\n")[-1] + ")"
+
+
 def error_handling_tests(binary, workdir):
     cwd = tempfile.mkdtemp(prefix="tricl_", dir=workdir)
     results = []
@@ -471,7 +483,7 @@ def main():
             references = json.load(f)
 
     workdir = tempfile.mkdtemp(prefix="tricl_tests_")
-    tests = []
+    tests = [("sigmoid unit tests", lambda: sigmoid_unit_test(binary, workdir))]
     for case in REGRESSION_CASES:
         tests.append(("regression: " + case[0], lambda case=case: regression_test(binary, case, references, args.update, workdir)))
     tests.append(("exact log-likelihood", lambda: exact_logl_test(binary, workdir)))

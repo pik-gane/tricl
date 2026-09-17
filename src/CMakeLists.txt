@@ -1,5 +1,5 @@
-add_executable(tricl
-    tricl.cpp
+# everything except main() goes into a library, so that unit tests can link against it:
+add_library(tricl_core STATIC
     3rdparty/tinyexpr.c
     3rdparty/gzip.cpp
     3rdparty/zlib.cpp
@@ -29,5 +29,8 @@ else()
     set(TRICL_YAML_CPP_TARGET yaml-cpp)
 endif()
 
-target_include_directories(tricl PRIVATE ${Boost_INCLUDE_DIRS})
-target_link_libraries(tricl ${TRICL_YAML_CPP_TARGET} ZLIB::ZLIB)
+target_include_directories(tricl_core PUBLIC ${CMAKE_CURRENT_SOURCE_DIR} ${Boost_INCLUDE_DIRS})
+target_link_libraries(tricl_core PUBLIC ${TRICL_YAML_CPP_TARGET} ZLIB::ZLIB)
+
+add_executable(tricl tricl.cpp)
+target_link_libraries(tricl tricl_core)
