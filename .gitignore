@@ -36,3 +36,6 @@
 *.app
 /build/
 /doc/
+# Python
+__pycache__/
+*.pyc
