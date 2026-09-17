@@ -331,15 +331,16 @@ dynamics:
 Success probability units ``pu`` are converted into a success probability by a sigmoidal function with two tail indices
 ``σ0`` (left tail) and ``σ1`` (right tail):
 ```
-f(pu) = T_σ0(-v) / 2 + 1/2 - T_σ1(v) / 2,   v = pu / (k(σ0) + k(σ1)),
+f(pu) = T_σ0(-v) / 2 + 1/2 - T_σ1(v) / 2,   v = 4 pu / (k(σ0) + k(σ1)),
 T_σ(x) = (1 + σ ln(1 + e^x))^(-1/σ) for σ > 0,   T_0(x) = 1 / (1 + e^x),
 k(σ) = (1 + σ ln 2)^(-1 - 1/σ),   k(0) = 1/2.
 ```
-For tail indices ``[0, 0]`` this is exactly the expit function ``1 / (1 + e^-pu)`` (logistic), so that probability units are
-log-odds. A positive tail index makes the corresponding tail decay like a power law with exponent ``-1/σ`` instead of
-exponentially (the tails of the expit function are replaced by the q-exponential ``(1 + σy)^(-1/σ)`` of ``y = ln(1 + e^x)``).
-For all tail indices the function is strictly increasing, depends continuously on the tail indices, and has slope 1/4 at
-``pu = 0``, so probability units keep their meaning near zero. The default tail index of 1 gives tails ``~ 1/|pu|``.
+For tail indices ``[0, 0]`` this is exactly the expit (logistic) function of ``4 pu``, ``1 / (1 + e^-4pu)``. A positive tail
+index makes the corresponding tail decay like a power law with exponent ``-1/σ`` instead of exponentially (the tails of
+the expit function are replaced by the q-exponential ``(1 + σy)^(-1/σ)`` of ``y = ln(1 + e^x)``). For all tail indices the
+function is strictly increasing, depends continuously on the tail indices, and has slope 1 at ``pu = 0`` (``k(σ)`` is
+minus twice the slope of ``T_σ`` at 0), so near zero, probability units are probability differences. The default tail
+index of 1 gives tails ``~ 1/|pu|``, and for tail indices ``[1, 1]`` the function is the same as in earlier versions of tricl.
 
 ```yaml    
 visualization:  
@@ -369,13 +370,17 @@ Change log
 2026-09-17
 - new form of the sigmoidal function converting probability units to probabilities (q-exponential tails, see above):
   the old formula was broken for exactly one zero tail index (that tail was frozen at 1, so success probabilities
-  never fell below 1/2) and its scale constant for tail index 0 was 0 due to integer division; the new one is exactly
-  the expit for tail indices ``[0, 0]``, continuous in the tail indices, and normalised to slope 1/4 at zero
-  probability units for all tail indices (the old general formula had slope 1). For the default tail indices ``[1, 1]``
-  the new function equals the old one with the probability units multiplied by 4, so configs that do not set ``tails``
-  and use finite success probability units change behaviour; multiply their probability units by 4 to restore it
-  (done for ``parameters_3blocks.yaml``, whose clusters otherwise dissolve instead of merging). Unit tests in
-  ``tests/test_sigmoid.cpp``.
+  never fell below 1/2) and its scale constant for tail index 0 was 0 due to integer division; the new one is
+  continuous in the tail indices and normalised to slope 1 at zero probability units for *all* tail indices, as the
+  old general formula was. For the default tail indices ``[1, 1]`` it is the same function as before, so configs
+  using the default tails are unaffected. For tail indices ``[0, 0]`` it is the expit function of ``4 pu`` (the old
+  code used the expit of ``pu`` there, with slope 1/4), so configs with ``tails: 0`` and finite success probability
+  units (``granovetter_simple.yaml``, ``granovetter_helfmann.yaml``) now have a 4 times steeper sigmoid; their
+  probability units of ±10 still give probabilities of practically 0 and 1 as intended, so their behaviour changes
+  only marginally (divide the units by 4 to restore it exactly). The old formula also overflowed to a probability
+  of exactly 0 below about -124 probability units with the default tails, where the power-law tail actually gives
+  small positive values (e.g. 8.7e-5 at -1000, as used in ``sir_sd.yaml``, whose results therefore change; use ``-inf``
+  or ``tails: 0`` for events that should be practically impossible). Unit tests in ``tests/test_sigmoid.cpp``.
 - fixed: random initial links of a symmetric relationship type between entities of *different* types were never
   generated when the entity ids of the source type happened to be larger than those of the target type (which
   depended on the internal ordering of the entity types). In ``granovetter_helfmann.yaml`` this meant that there were

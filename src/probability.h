@@ -106,24 +106,23 @@ inline double tail_term_slope (
     return base * expit(x);
 }
 
-/** Compute the scale factor k(tail) = (1 + tail * ln 2)^(-1 - 1/tail) for a tail index.
+/** Compute the scale factor s(tail) = k(tail) / 4 with k(tail) = (1 + tail * ln 2)^(-1 - 1/tail) for a tail index.
  *
- *  k(0) = 1/2 is the limit for tail -> 0.
+ *  k(tail) = -2 dT_tail(0)/dx is minus twice the slope of the tail term at zero, and k(0) = 1/2 is its limit for tail -> 0.
  *  The sum of the two scale factors of an event type normalises the probability units
- *  so that the sigmoidal function has slope 1/4 at zero probability units for all tail indices,
- *  the same slope as the expit function.
+ *  so that the sigmoidal function has slope 1 at zero probability units for all tail indices.
  *
  *  Auxiliary function for \ref probunits2probability().
  *
- *  \returns the scale factor, 0 < k <= 1/2
+ *  \returns the scale factor, 0 < s <= 1/8
  */
 inline double tail2scale (
         double tail  ///< [in] tail index to compute the scale factor for, >= 0
         )
 {
     return (tail == 0)
-            ? 0.5
-            : std::exp(- (1 + 1 / tail) * std::log1p(tail * ln2));
+            ? 0.125
+            : std::exp(- (1 + 1 / tail) * std::log1p(tail * ln2)) / 4;
 }
 
 /** Convert probability units to probability.
@@ -131,16 +130,18 @@ inline double tail2scale (
  *  This is a smooth sigmoidal function
  *  that also depends continuously on two tail indices as parameters:
  *
- *      f(pu) = T_left(-v) / 2 + 1/2 - T_right(v) / 2,   v = pu / (k(left) + k(right)),
+ *      f(pu) = T_left(-v) / 2 + 1/2 - T_right(v) / 2,   v = pu / (s(left) + s(right)) = 4 pu / (k(left) + k(right)),
  *
- *  with the tail term T (see \ref tail_term()) and the scale factors k (see \ref tail2scale()).
- *  If both tail indices are zero, this is exactly the expit (= inverse logit) function 1 / (1 + e^-pu).
+ *  with the tail term T (see \ref tail_term()) and the scale factors s = k / 4 (see \ref tail2scale()).
+ *  If both tail indices are zero, this is exactly the expit (= inverse logit) function of 4 pu, 1 / (1 + e^-4pu).
  *  If a tail index is positive, the corresponding tail
  *  converges with a power-law decay to its limit 0 (left tail) or 1 (right tail),
  *  where the power-law exponent is 1 / tail index;
  *  if it is zero, the corresponding tail converges exponentially.
  *  Any combination of tail indices is allowed, including exactly one zero tail index.
- *  For all tail indices the function is strictly increasing and has slope 1/4 at pu == 0.
+ *  For all tail indices the function is strictly increasing and has slope 1 at pu == 0,
+ *  so that near zero, probability units are probability differences.
+ *  For tail indices [1, 1] (the default) this is the same function as in earlier versions of tricl.
  *
  *  \returns the probability, 0...1
  */
@@ -154,7 +155,7 @@ inline probability probunits2probability (
     if ((left_tail == 0) && (right_tail == 0))
     {
         // (this is what the general formula gives for these tail indices, computed more cheaply)
-        return expit(pu);
+        return expit(4 * pu);
     }
     double v = pu / scale;
     // both summands vanish for pu -> -inf, so small probabilities are computed without cancellation:
@@ -171,7 +172,7 @@ inline probability probunits2probability (probunits pu, double left_tail, double
 
 /** Derivative of \ref probunits2probability() w.r.t. the probability units.
  *
- *  \returns the derivative, >= 0 (0 for infinite probability units); 1/4 at pu == 0 for all tail indices
+ *  \returns the derivative, >= 0 (0 for infinite probability units); 1 at pu == 0 for all tail indices
  */
 inline double probunits2probability_derivative (
         probunits pu,      ///< [in] the probability units, -inf...inf
@@ -183,8 +184,8 @@ inline double probunits2probability_derivative (
     if (!std::isfinite(pu)) return 0.0;
     if ((left_tail == 0) && (right_tail == 0))
     {
-        double p = expit(pu);
-        return p * (1 - p);
+        double p = expit(4 * pu);
+        return 4 * p * (1 - p);
     }
     double v = pu / scale;
     return (tail_term_slope(left_tail, - v) + tail_term_slope(right_tail, v)) / (2 * scale);

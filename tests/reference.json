@@ -1,9 +1,9 @@
 {
  "config_files/granovetter_helfmann.yaml|20000|1": {
-  "angles": 10788,
+  "angles": 10889,
   "events": 20000,
-  "links": 1098,
-  "logl": -21175.654965120222,
+  "links": 1108,
+  "logl": -21258.30883430736,
   "parameters": {
    "establish that c-agent explores getting active | attempt via = c-agent is not": 0.3333333333333333,
    "establish that c-agent explores getting active | base probunits": Infinity,
@@ -39,14 +39,14 @@
    "terminate that c-agent is not active | probunits via = c-agent is": 0
   },
   "seed": 1,
-  "t": 222.25493085714064,
-  "total_rate": 44.33333334570031
+  "t": 221.41372603681666,
+  "total_rate": 44.49999999999977
  },
  "config_files/granovetter_simple.yaml|15001|1": {
   "angles": 17534,
   "events": 15001,
   "links": 4816,
-  "logl": -9252.91131572164,
+  "logl": -9190.815912185866,
   "parameters": {
    "establish that agent is active | attempt via = agent is always": Infinity,
    "establish that agent is active | base attempt": 2,
@@ -71,8 +71,8 @@
    "terminate that agent is not active | probunits via = agent is": 0
   },
   "seed": 1,
-  "t": 38.91035810878928,
-  "total_rate": 122.01924959914365
+  "t": 37.96984804604398,
+  "total_rate": 124
  },
  "config_files/parameters_3blocks.yaml|2000|1": {
   "angles": 2837792,
@@ -86,7 +86,7 @@
    "establish that user knows user | probunits via knows user knows": 0,
    "terminate that user knows user | base attempt": 10,
    "terminate that user knows user | base probunits": 0,
-   "terminate that user knows user | probunits via knows user knows": -1.2
+   "terminate that user knows user | probunits via knows user knows": -0.3
   },
   "seed": 1,
   "t": 1.1977806005254652,
@@ -136,7 +136,7 @@
   "angles": 827004,
   "events": 7373,
   "links": 28804,
-  "logl": 22061.98952939082,
+  "logl": 22062.095703625644,
   "parameters": {
    "establish that agent has died of covid-19 | attempt via is infectious for covid-19 =": 0.1,
    "establish that agent has died of covid-19 | base probunits": Infinity,
@@ -169,13 +169,13 @@
   },
   "seed": 1,
   "t": 20,
-  "total_rate": -1.3869794202037156e-11
+  "total_rate": -3.774403012357652e-11
  },
  "tests/configs/three_entities.yaml|100000|1": {
-  "angles": 2,
-  "events": 120,
-  "links": 4,
-  "logl": -190.68267808783878,
+  "angles": 0,
+  "events": 119,
+  "links": 2,
+  "logl": -186.20682043698062,
   "parameters": {
    "establish that thing knows thing | attempt via knows thing knows": 0.8,
    "establish that thing knows thing | base attempt": 0.5,
@@ -187,7 +187,7 @@
   },
   "seed": 1,
   "t": 40,
-  "total_rate": 3.3449719015015886
+  "total_rate": 2.4382999847609947
  },
  "tests/configs/two_entities.yaml|100000|1": {
   "angles": 0,

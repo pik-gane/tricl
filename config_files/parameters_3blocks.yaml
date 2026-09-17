@@ -60,7 +60,4 @@ dynamics:  # all values default to 0.0
       attempt:
         basic: 10.0  # basic decay rate of links
       success:  # basic probability units = 0.0 --> basic probability = 0.5
-        [~, knows, user, knows, ~]: -1.2  # triangles make decay less likely
-          # (was -0.3 with the earlier form of the sigmoidal function; for the default tail indices the current form
-          # equals the earlier one with probability units multiplied by 4. with -0.3 the clusters now dissolve
-          # instead of merging.)
+        [~, knows, user, knows, ~]: -0.3  # triangles make decay less likely

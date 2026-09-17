@@ -60,18 +60,18 @@ def tail_term_complement(tail, x):
 
 
 def tail2scale(tail):
-    """k(tail) = (1 + tail ln 2)^(-1 - 1/tail), k(0) = 1/2."""
-    return 0.5 if tail == 0 else math.exp(-(1 + 1 / tail) * math.log1p(tail * math.log(2.0)))
+    """s(tail) = k(tail) / 4 with k(tail) = (1 + tail ln 2)^(-1 - 1/tail), k(0) = 1/2 (normalises the slope at 0 to 1)."""
+    return 0.125 if tail == 0 else math.exp(-(1 + 1 / tail) * math.log1p(tail * math.log(2.0))) / 4
 
 
 def sigmoid(pu, left_tail, right_tail):
-    """The sigmoidal function of tricl: T_left(-v)/2 + 1/2 - T_right(v)/2 with v = pu / (k(left) + k(right))."""
+    """The sigmoidal function of tricl: T_left(-v)/2 + 1/2 - T_right(v)/2 with v = pu / (s(left) + s(right)); slope 1 at 0."""
     if pu == math.inf:
         return 1.0
     if pu == -math.inf:
         return 0.0
     if left_tail == 0 and right_tail == 0:
-        return 1 / (1 + math.exp(-pu)) if pu > -700 else 0.0
+        return 1 / (1 + math.exp(-4 * pu)) if pu > -175 else 0.0
     v = pu / (tail2scale(left_tail) + tail2scale(right_tail))
     return (tail_term(left_tail, -v) + tail_term_complement(right_tail, v)) / 2
 

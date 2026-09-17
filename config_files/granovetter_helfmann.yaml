@@ -97,7 +97,7 @@ dynamics:
             attempt:
                 base: p *2  # twice (!) the individual rate of "updating" (since only half the updates succeed)
             success:
-                tails: 0  # -> use expit sigmoid function
+                tails: 0  # -> exponential tails, i.e. the expit (logistic) function of 4 times the probability units
                 base: +10  # chosen so that base probability is approx. 1
                 [c-agent, knows, a-agent, is, active]: +20*(1-theta)
                 [c-agent, knows, c-agent, is, active]: +20*(1-theta)
@@ -117,7 +117,7 @@ dynamics:
             attempt:
                 base: p *2  # twice (!) the individual rate of "updating" (since only half the updates succeed)
             success:
-                tails: 0  # -> use expit sigmoid function
+                tails: 0  # -> exponential tails, i.e. the expit (logistic) function of 4 times the probability units
                 base: -10  # chosen so that base probability is approx. 0
                 [c-agent, knows, a-agent, is, active]: -20*(1-theta)
                 [c-agent, knows, c-agent, is, active]: -20*(1-theta)
