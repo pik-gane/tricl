@@ -130,6 +130,7 @@ typedef size_t relationship_or_action_type;  ///< >= 1
 
 #define NO_RAT 0  ///< Missing value for relationship or action type, used in angles to encode legs
 #define RT_ID 1   ///< Relationship type for identity relationship "=", always present
+#define NO_ET 0   ///< Missing value for entity type (actual entity types are >= 1)
 
 
 // complex types:
@@ -246,15 +247,22 @@ enum schedule_class {
 /** For performance reasons, the mutable data of an \ref event is stored in a separate struct.
  *
  *  These structs appear as values in a map whose key is the corresponding event.
+ *
+ *  Infinite contributions to the attempt rate or the success probability units
+ *  are not added to the floating point sums (inf - inf would be NaN when a contribution is removed again)
+ *  but counted separately. Use total_attempt_rate() and total_success_probunits() to get the effective values.
  */
 struct event_data
 {
-    int n_angles = 0;              ///< Current no. of angles influencing this event
-    rate attempt_rate;             ///< Current attempt rate of this event
-    probunits success_probunits;   ///< Current success probunits of this event
-    rate effective_rate;           ///< Current effective rate of this event
-    timepoint t = -INFINITY;       ///< When this event would next happen if the system state does not chance in between
-    schedule_class sc = SC_LATER;  ///< Schedule class of the event
+    int n_angles = 0;                  ///< Current no. of angles influencing this event
+    rate attempt_rate = 0;             ///< Sum of all finite contributions to the attempt rate of this event
+    int n_inf_attempt = 0;             ///< No. of infinite contributions to the attempt rate (if > 0, the attempt rate is infinite)
+    probunits success_probunits = 0;   ///< Sum of all finite contributions to the success probunits of this event
+    int n_pos_inf_probunits = 0;       ///< No. of +inf contributions to the success probunits (if > 0 and no -inf contributions, success is certain)
+    int n_neg_inf_probunits = 0;       ///< No. of -inf contributions to the success probunits (if > 0, success is impossible)
+    rate effective_rate = 0;           ///< Current effective rate of this event
+    timepoint t = -INFINITY;           ///< When this event would next happen if the system state does not chance in between
+    schedule_class sc = SC_LATER;      ///< Schedule class of the event
 };
 
 /** An inleg represents a leg "incoming" to a target entity.

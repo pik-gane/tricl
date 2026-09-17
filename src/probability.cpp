@@ -18,9 +18,9 @@ exponential_distribution<> exponential(1);
  */
 void init_randomness ()
 {
-    auto theseed = (seed == 0) ? ran_dev() : seed;
-    if (!quiet) cout << " using random seed " << theseed << endl;
-    random_variable = mt19937(theseed);
+    if (seed == 0) seed = ran_dev();  // store the actually used seed for reporting
+    if (!quiet) cout << " using random seed " << seed << endl;
+    random_variable = mt19937(seed);
 }
 
 

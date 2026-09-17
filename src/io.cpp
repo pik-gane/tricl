@@ -6,6 +6,8 @@
 // use header-only csv library:
 #include "3rdparty/rapidcsv.h"
 
+#include <iomanip>
+
 #include "global_variables.h"
 #include "entity.h"
 #include "event.h"
@@ -51,7 +53,7 @@ ostream& operator<< (ostream& os, const event& ev) {
 }
 
 ostream& operator<< (ostream& os, const event_data& evd) {
-    os << "na=" << evd.n_angles << " ar=" << evd.attempt_rate << " spu=" << evd.success_probunits << " er=" << evd.effective_rate << " t=" << evd.t;
+    os << "na=" << evd.n_angles << " ar=" << total_attempt_rate(&evd) << " spu=" << total_success_probunits(&evd) << " er=" << evd.effective_rate << " t=" << evd.t;
     return os;
 }
 
@@ -64,7 +66,9 @@ double avg_er_times_dt = 0;
 
 /** Output simple statistics for current model state to stdout.
  */
-void log_state ()
+void log_state (
+        bool final  ///< [in] whether this is the final state of the simulation
+        )
 {
     if (silent) return;
     if (debug) if (last_dt > 0) {  // TODO find out why this product is not 1 on average!
@@ -88,7 +92,7 @@ void log_state ()
         ;
     if (quiet)
     {
-        cout << fixed << n_events << ": logl " << cumulative_logl << ", er " << total_finite_effective_rate << ", ld " << ld << ", ad " << ad << ", q " << q << ".  t " << current_t << "\r";
+        cout << fixed << n_events << ": logl " << cumulative_logl << ", er " << total_finite_effective_rate << ", ld " << ld << ", ad " << ad << ", q " << q << ".  t " << current_t << (final ? "\n" : "\r");
     }
     else if (lt2n.size() > 1)
     {
@@ -141,9 +145,13 @@ void read_links_csv (
         int e3_col,         ///< [in] no. of column containing e3 entity labels
         string e3_prefix,    ///< [in] prefix to prepend to e3 labels before storing them
         int et3_col,        ///< [in] no. of column containing et3 entity type labels (or -1 if et3_default is used instead)
-        entity_type et3_default  ///< [in] default entity-type for previously unregistered e3s (if -1, no new e3s are allowed or et3_col is used instead)
+        entity_type et3_default  ///< [in] default entity-type for previously unregistered e3s (if NO_ET, no new e3s are allowed or et3_col is used instead)
         )
 {
+    {
+        std::ifstream test(filename);
+        if (!test.good()) throw "cannot open initial links file \"" + filename + "\"";
+    }
     rapidcsv::Document doc(filename,
             rapidcsv::LabelParams(-1, -1), // access all rows and cols
             rapidcsv::SeparatorParams(delimiter)
@@ -169,7 +177,7 @@ void read_links_csv (
                 if (label2et.count(et1labels[row])) et1 = label2et.at(et1labels[row]);
                 else throw "unknown et1 label " + et1labels[row];
             }
-            else if (et1_default != -1) et1 = et1_default;
+            else if (et1_default != NO_ET) et1 = et1_default;
             else throw "cannot determine entity type for " + e1label;
             e1 = add_entity(et1, e1label);
             if (verbose) cout << "  entity " << e1 << ": " << et2label.at(et1) << ": " << e1label << endl;
@@ -189,7 +197,7 @@ void read_links_csv (
                 if (label2et.count(et3labels[row])) et3 = label2et.at(et3labels[row]);
                 else throw "unknown et3 label " + et3labels[row];
             }
-            else if (et3_default != -1) et3 = et3_default;
+            else if (et3_default != NO_ET) et3 = et3_default;
             else throw "cannot determine entity type for " + e3label;
             e3 = add_entity(et3, e3label);
             if (verbose) cout << "  entity " << e3 << ": " << et2label.at(et3) << ": " << e3label << endl;
@@ -206,6 +214,70 @@ void read_links_csv (
         if (debug) cout << rat13 << endl;
         initial_links.insert({ e1, rat13, e3 });
     }
+}
+
+// output of performed events to a csv file:
+
+ofstream events_out;  ///< stream for the optional csv output of all performed events
+
+/** Quote a string for csv output if necessary.
+ */
+static string csv_quote (const string& s)
+{
+    if (s.find_first_of(",\"\n") == string::npos) return s;
+    string res = "\"";
+    for (char c : s) {
+        if (c == '"') res += "\"\""; else res += c;
+    }
+    return res + "\"";
+}
+
+/** Open the csv file for performed events (if requested) and write its header.
+ *
+ *  Columns: model time, event class ("establish" or "terminate"), source entity label,
+ *  relationship type label, target entity label.
+ *  Companion events for inverse relationship types are not written since they are implied.
+ */
+void open_events_out ()
+{
+    if (events_out_filename == "") return;
+    events_out.open(events_out_filename);
+    if (!events_out.good()) throw "cannot open events output file \"" + events_out_filename + "\"";
+    events_out << std::setprecision(17) << "t,event,source,relationship,target" << endl;
+}
+
+/** Write a performed event to the csv file (if open).
+ */
+void write_event_out (const event& ev)
+{
+    if (!events_out.is_open()) return;
+    events_out << current_t
+            << "," << ((ev.ec == EC_EST) ? "establish" : (ev.ec == EC_TERM) ? "terminate" : "act")
+            << "," << csv_quote(e2label[ev.e1])
+            << "," << csv_quote(rat2label[ev.rat13])
+            << "," << csv_quote(e2label[ev.e3]) << "\n";
+}
+
+/** Close the csv file for performed events (if open).
+ */
+void close_events_out ()
+{
+    if (events_out.is_open()) events_out.close();
+}
+
+/** Output a one-line JSON summary of the final state to stdout.
+ */
+void output_json_summary ()
+{
+    cout << std::setprecision(17)
+         << "{\"events\": " << n_events
+         << ", \"t\": " << current_t
+         << ", \"logl\": " << cumulative_logl
+         << ", \"links\": " << n_links
+         << ", \"angles\": " << n_angles
+         << ", \"total_rate\": " << total_finite_effective_rate
+         << ", \"seed\": " << seed
+         << "}" << endl;
 }
 
 /** (for debugging purposes)

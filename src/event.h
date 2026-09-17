@@ -45,12 +45,54 @@ inline bool event_is_scheduled (
     return (evd_->t > -INFINITY);
 }
 
+// Helpers for accumulating attempt rate and success probunits contributions
+// (infinite contributions are counted rather than summed, see event_data):
+
+/** Add a contribution to the attempt rate of an event. */
+inline void add_attempt_contribution (event_data* evd_, rate dar)
+{
+    if (dar == INFINITY) evd_->n_inf_attempt++;
+    else evd_->attempt_rate += dar;
+}
+/** Remove a contribution from the attempt rate of an event. */
+inline void remove_attempt_contribution (event_data* evd_, rate dar)
+{
+    if (dar == INFINITY) { evd_->n_inf_attempt--; assert (evd_->n_inf_attempt >= 0); }
+    else evd_->attempt_rate = max(0.0, evd_->attempt_rate - dar);
+}
+/** Add a contribution to the success probunits of an event. */
+inline void add_probunits_contribution (event_data* evd_, probunits dspu)
+{
+    if (dspu == INFINITY) evd_->n_pos_inf_probunits++;
+    else if (dspu == -INFINITY) evd_->n_neg_inf_probunits++;
+    else evd_->success_probunits += dspu;
+}
+/** Remove a contribution from the success probunits of an event. */
+inline void remove_probunits_contribution (event_data* evd_, probunits dspu)
+{
+    if (dspu == INFINITY) { evd_->n_pos_inf_probunits--; assert (evd_->n_pos_inf_probunits >= 0); }
+    else if (dspu == -INFINITY) { evd_->n_neg_inf_probunits--; assert (evd_->n_neg_inf_probunits >= 0); }
+    else evd_->success_probunits -= dspu;
+}
+/** \returns the total attempt rate of an event, taking infinite contributions into account. */
+inline rate total_attempt_rate (const event_data* evd_)
+{
+    return (evd_->n_inf_attempt > 0) ? INFINITY : evd_->attempt_rate;
+}
+/** \returns the total success probunits of an event, taking infinite contributions into account.
+ *  A -inf contribution (impossible) dominates a +inf contribution (certain).
+ */
+inline probunits total_success_probunits (const event_data* evd_)
+{
+    return (evd_->n_neg_inf_probunits > 0) ? -INFINITY : (evd_->n_pos_inf_probunits > 0) ? INFINITY : evd_->success_probunits;
+}
+
 inline void _schedule_event (event& ev, event_data* evd_, double left_tail, double right_tail)
 {
     assert(evd_ == &ev2data.at(ev));
-    rate ar = evd_->attempt_rate;
+    rate ar = total_attempt_rate(evd_);
     if (ar < 0.0) throw "negative attempt rate";
-    auto spu = evd_->success_probunits;
+    auto spu = total_success_probunits(evd_);
     timepoint t;
     if (event_is_summary(ev))  // summary event:
     {
@@ -107,7 +149,7 @@ inline void _schedule_event (event& ev, event_data* evd_, double left_tail, doub
     if (t == INFINITY)
     {
         // replace INFINITY by some unique finite but non-reached time point:
-        t = max_t * (1 + uniform(random_variable));
+        t = never_t * (1 + uniform(random_variable));
     }
     // store time:
     evd_->t = t;

@@ -3,8 +3,11 @@
  *  \file
  */
 
-#include "assert.h"
 #include <iostream>
+#include <cstdlib>
+
+/// Consistency check that stays active in optimized builds (unlike assert), used by the --debug mode.
+#define CHECK(cond) if (!(cond)) { cerr << "CONSISTENCY CHECK FAILED: " #cond " (" << __FILE__ << ":" << __LINE__ << ")" << endl; abort(); }
 
 #include "global_variables.h"
 #include "angle.h"
@@ -70,7 +73,7 @@ int compute_n_angles (event_type evt, entity e1, entity e3, bool print) {
     angle_vec as = get_angles(e1, outs1, ins3, e3);
     for (auto a_it = as.begin(); a_it < as.end(); a_it++) {
         influence_type inflt = { .evt = evt, .at = { .rat12 = a_it->rat12, .et2 = e2et[a_it->e2], .rat23 = a_it->rat23 } };
-        cout << inflt.at << endl;
+        if (print) cout << inflt.at << endl;
         auto dar = _inflt2attempt_rate[INFLT(inflt)];
         auto dsl = _inflt2delta_probunits[INFLT(inflt)];
         if (print) cout << " " << rat2label[a_it->rat12] << " " << e2label[a_it->e2] << " " << rat2label[a_it->rat23] << ", " << INFLT(inflt) << " " << dar << " " << dsl << endl;
@@ -94,7 +97,7 @@ void verify_angle_consistency () {
            compute_n_angles({ ev.ec, et1, ev.rat13, et3 }, e1, e3, true);
 //           dump_data();
         }
-        assert(n == evd.n_angles);
+        CHECK(n == evd.n_angles);
     }
     // angles -> ec2data: TODO
 }
@@ -107,7 +110,7 @@ void verify_data_consistency () {
         for (auto& l : outs1) {
             auto rat13 = l.rat_out;
             auto e3 = l.e_target;
-            assert (e2ins.at(e3).count({e1, rat13}) == 1);
+            CHECK(e2ins.at(e3).count({e1, rat13}) == 1);
         }
     }
     // e2ins:
@@ -115,25 +118,27 @@ void verify_data_consistency () {
         for (auto& l : ins3) {
             auto e1 = l.e_source;
             auto rat13 = l.rat_in;
-            assert (e2outs.at(e1).count({rat13, e3}) == 1);
+            CHECK(e2outs.at(e1).count({rat13, e3}) == 1);
         }
     }
     // ev2data:
     for (auto& [ev, evd] : ev2data) {
-        assert (evd.n_angles >= 0);
-        assert (evd.attempt_rate >= 0.0);
-        assert (evd.success_probunits > -INFINITY);
+        CHECK(evd.n_angles >= 0);
+        CHECK(evd.attempt_rate >= 0.0);
+        CHECK(evd.attempt_rate < INFINITY);
+        CHECK(std::isfinite(evd.success_probunits));
+        CHECK((evd.n_inf_attempt >= 0) && (evd.n_pos_inf_probunits >= 0) && (evd.n_neg_inf_probunits >= 0));
         if (!(evd.t > -INFINITY)) dump_data();
-        assert (evd.t > -INFINITY);
+        CHECK(evd.t > -INFINITY);
         if (!(((evd.t < INFINITY) && (t2ev.count(evd.t) == 1))
                 || ((evd.t == INFINITY) && (t2ev.count(evd.t) > 0))))
             cout << ev << evd << " " << (evd.t == INFINITY) << " " << t2ev.count(evd.t) << endl;
-        assert (((evd.t < INFINITY) && (t2ev.count(evd.t) == 1))
+        CHECK(((evd.t < INFINITY) && (t2ev.count(evd.t) == 1))
                 || ((evd.t == INFINITY) && (t2ev.count(evd.t) > 0)));
     }
     // t2be:
     for (auto& [t, ev] : t2ev) {
-        assert (t > -INFINITY);
-        assert (ev2data.count(ev) == 1);
+        CHECK(t > -INFINITY);
+        CHECK(ev2data.count(ev) == 1);
     }
 }

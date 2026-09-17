@@ -174,18 +174,17 @@ void init_events ()
                 summary_ev2max_success_probability[summary_ev] = probunits2probability(max_spu, left_tail, right_tail);
                 if (verbose) cout << "  " << et2label[et1] << " " << rat2label[rat13] << " " << et2label[et3] << endl;
                 rate ar_all = ar1 * et2n[et1] * et2n[et3];
-                ev2data[summary_ev] = {
-                        .n_angles = 0,
-                        .attempt_rate = ar_all,
-                        .success_probunits = spu0,
-                        .effective_rate = 0,  // will be computed when scheduled
-                        .t = -INFINITY
-                };
+                event_data summary_evd = {};
+                summary_evd.attempt_rate = ar_all;  // finite, see config validation
+                add_probunits_contribution(&summary_evd, spu0);
+                summary_evd.t = -INFINITY;
+                ev2data[summary_ev] = summary_evd;
                 schedule_event(summary_ev, &ev2data[summary_ev], left_tail, right_tail);
-                // adjust effective rate because equal entities won't be linked:
+                // adjust effective rate because equal entities won't be linked
+                // (each of the n excluded pairs had contributed the single effective rate ar1 * p0):
                 if (et1 == et3)
                 {
-                    subtract_effective_rate(ar1 * et2n[et1]);
+                    subtract_effective_rate(et2n[et1] * summary_evt2single_effective_rate[evt]);
                 }
             }
         }
@@ -288,6 +287,7 @@ void init ()
     init_relationship_or_action_types();
     init_events();
     init_links();
+    open_events_out();  // only after initial links, so that only simulated events are written
     init_gexf();
     do_graphviz_diagrams();
     if (debug) {

@@ -234,7 +234,18 @@ int main (int argc, char *argv[])
     }
     catch (const char* msg)
     {
-      cerr << "ERROR: exiting with message: " << msg << endl;
+        cerr << "ERROR: exiting with message: " << msg << endl;
+        return 1;
+    }
+    catch (const string& msg)
+    {
+        cerr << "ERROR: exiting with message: " << msg << endl;
+        return 1;
+    }
+    catch (const std::exception& e)
+    {
+        cerr << "ERROR: exiting with message: " << e.what() << endl;
+        return 1;
     }
     return 0;
 }

@@ -49,8 +49,8 @@ void do_graphviz_type_diagram ()
     } else {
         cmd = prg + " -Tpdf -o\"" + pdfname + "\" \"" + dotname + "\"";
     }
-    if (system(cmd.c_str()) != 0)
-        cout << "WARNING: could not render type diagram. Is graphviz installed?" << endl;;
+    if ((system(cmd.c_str()) != 0) && !silent)
+        cout << "WARNING: could not render type diagram. Is graphviz installed?" << endl;
 }
 
 /** Draw a modularized diagram showing the dynamic rules of the model.
@@ -139,8 +139,8 @@ void do_graphviz_dynamics_diagram ()
     } else {
         cmd = prg + " -Tpdf -o\"" + pdfname + "\" \"" + dotname + "\"";
     }
-    if (system(cmd.c_str()) != 0)
-        cout << "WARNING: could not render dynamics diagram. Is graphviz installed?" << endl;;
+    if ((system(cmd.c_str()) != 0) && !silent)
+        cout << "WARNING: could not render dynamics diagram. Is graphviz installed?" << endl;
 }
 
 /** Generate all diagrams.

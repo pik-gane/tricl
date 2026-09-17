@@ -1,0 +1,19 @@
+cff-version: 1.2.0
+message: "If you use tricl in your research, please cite it as below."
+title: "tricl: a generic continuous-time model of typed multi-relational network dynamics"
+type: software
+authors:
+  - family-names: Heitzig
+    given-names: Jobst
+    affiliation: Potsdam Institute for Climate Impact Research
+    email: heitzig@pik-potsdam.de
+repository-code: "https://github.com/pik-gane/tricl"
+license: GPL-3.0
+version: 0.1.0
+date-released: 2026-09-17
+keywords:
+  - social simulation
+  - adaptive networks
+  - continuous-time Markov chain
+  - multi-relational networks
+  - kinetic Monte Carlo

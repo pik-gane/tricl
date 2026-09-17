@@ -93,7 +93,8 @@ inline rate effective_rate (
 {
     assert (attempt_rate >= 0);
     if (attempt_rate == 0) return 0;
-    if (attempt_rate == INFINITY) return INFINITY;  // even if pus == -inf !
+    if (success_pus == -INFINITY) return 0;  // impossible events never happen, even if attempted at an infinite rate
+    if (attempt_rate == INFINITY) return INFINITY;
     rate r = attempt_rate * probunits2probability(success_pus, left_tail, right_tail);
     assert (r >= 0);
     return r;
@@ -114,6 +115,12 @@ inline void add_effective_rate (rate er)
 }
 
 /** Subtract effective rate to total, taking care of infinite values.
+ *
+ *  Since the total is maintained incrementally in floating point arithmetic,
+ *  it may drift by a tiny amount; hence only clearly negative values are treated as an inconsistency
+ *  (and only if do_assert is set: when rescheduling a summary event, the total may legitimately become
+ *  negative for a moment, since the summary event's rate also covers pairs whose share has been subtracted).
+ *  The total is also recomputed exactly every now and then in step().
  */
 inline void subtract_effective_rate (rate er, bool do_assert)
 {
@@ -121,7 +128,7 @@ inline void subtract_effective_rate (rate er, bool do_assert)
     {
         total_finite_effective_rate -= er;
         if (debug) cout << "             finite er - " << er << " = " << total_finite_effective_rate << endl;
-        if (do_assert) assert (total_finite_effective_rate >= 0);
+        if (do_assert) assert (total_finite_effective_rate > -1e-6 * max(1.0, er));
     }
     else
     {

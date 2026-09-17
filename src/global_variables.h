@@ -32,7 +32,10 @@ extern bool silent;                 ///< Whether to suppress all output except w
 extern bool quiet;                  ///< Whether to suppress most output
 extern bool verbose;                ///< Whether to output more detailed information
 extern string diagram_fileprefix;   ///< Prefix of name of (or path to) generated diagram files
-extern timepoint max_t;             ///< Maximal model time to simulate until
+extern string events_out_filename;  ///< Name of (or path to) csv file to write all performed events to (if "", none is written)
+extern bool output_summary;         ///< Whether to output a one-line JSON summary at the end
+extern timepoint max_t;             ///< Maximal model time to simulate until (may be infinite if max_n_events is finite)
+extern timepoint never_t;           ///< Finite time point at or after which "never" happening events are formally scheduled (= max_t if finite)
 extern long int max_n_events;       ///< Max. no. events to simulate before stopping
 extern unsigned seed;               ///< Random seed (if 0, generate a random seed)
 extern unordered_map<relationship_or_action_type, string> gexf_filename;  ///< Names of (or paths to) generated gexf (or gexf.gz) files by relationship or action type

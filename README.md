@@ -3,22 +3,22 @@ TriCl model in C++
 
 Dependencies
 ------------
-* C++ language standard >=17
-* rapidcsv: <https://github.com/d99kris/rapidcsv>
-* zlib <https://www.zlib.net/> (instead of using the heavier and harder to install libboost_iostreams shared library)
-* boost::iostreams header files: <https://www.boost.org/doc/libs/1_72_0/libs/iostreams/doc/index.html> 
+* C++ language standard >=17 and CMake >= 3.10
+* yaml-cpp: <https://github.com/jbeder/yaml-cpp> (Debian/Ubuntu package ``libyaml-cpp-dev``)
+* zlib <https://www.zlib.net/> (package ``zlib1g-dev``; used instead of the heavier and harder to install libboost_iostreams shared library)
+* boost header files (package ``libboost-dev``): ``boost::container::flat_set`` and ``boost::iostreams``
+* optional: graphviz (``dot``) for the structural diagrams, doxygen for the code documentation
+* bundled in ``src/3rdparty``: rapidcsv, tinyexpr, cxxopts, and two source files of boost::iostreams
 
 Installation
 ------------
-* ``cd`` to some place
-* ``git clone https://github.com/mensch72/tricl.git``
+* ``git clone https://github.com/pik-gane/tricl.git``
 * ``cd tricl``
-* ``mkdir -p build/default``
-* ``cd build/default``
 * if necessary, set the environmental variables CC, CXX, CPATH, LIBRARY_PATH, LD_LIBRARY_PATH to point to your C compiler, C++ compiler, static library path, an shared library path
-* ``cmake ../../``
-* ``cmake --build .``
-* ``cp src/tricl`` to wherever you want the binary
+* ``cmake -S . -B build`` (add ``-DCMAKE_BUILD_TYPE=Debug`` for a build with assertions and debug symbols; the default is an optimized ``Release`` build)
+* ``cmake --build build``
+* ``cp build/src/tricl`` to wherever you want the binary
+* optionally run the tests: ``python3 tests/run_tests.py`` (needs only the Python standard library)
 
 Usage
 -----
@@ -26,11 +26,19 @@ Usage
 * run model with ``tricl someconfigfile.yaml [options]`` (or first list options with ``tricl someconfigfile.yaml --help``)
 * visualize or analyse output gexf-file, e.g. with gephi <https://gephi.org/>
 
+Command line options:
+* ``--seed N``: random seed (0 = choose randomly), overrides ``options:seed``
+* ``--quiet``, ``--verbose``, ``--debug``, ``--silent``: amount of output, override the corresponding config file options
+* ``--logl``: output only the final log-likelihood
+* ``--summary``: output only a one-line JSON summary of the final state (number of events, model time, log-likelihood, numbers of links and angles, total event rate, seed used)
+* ``--events-out FILE``: write all performed events to a csv file with columns ``t,event,source,relationship,target`` (overrides ``files:events``)
+* ``--NAME VALUE`` (or ``-X VALUE`` for one-letter names): override the metaparameter ``NAME`` defined in the config file by a value or expression
+
 Caution: output files might get large! Try with small ``limits:events`` first and use gexf.gz file format!
 
 Legend to output
 ----------------
-- logl: total log-likelihood of this realization so far
+- logl: log-likelihood of this realization so far (log of the probability density of the simulated trajectory given the initial state, including the probability that no other event happened in between; events that happen "immediately" contribute the log-probability of their random order)
 - er: current rate of events [1/time]
 - ld: overall link density
 - ad: overall angle density
@@ -58,7 +66,7 @@ map name:
 ~  # empty value
 inf  # infinity
 ```
-In addition, numerical values can not only be specified as numeric lieterals but also via simple mathematical expressions such as ``3 * sin(pi/5)^2``.
+In addition, numerical values can not only be specified as numeric literals but also via simple mathematical expressions such as ``3 * sin(pi/5)^2`` (using the syntax of tinyexpr <https://github.com/codeplea/tinyexpr>, extended by the symbols ``inf``, ``infinity``, ``eps``, and the metaparameters defined in the config file). Infinity can be written as ``inf`` or as YAML's ``.inf``. Expressions that cannot be parsed (e.g. because they use an undefined metaparameter) are reported as errors.
 
 A tricl config file has this overall structure (where stuff in ``<this kind of brackets>`` is a placeholder):
 ```yaml
@@ -98,6 +106,7 @@ files:
     gexf: <where to output the resulting temporal network>  
         # must end in either .gexf or .gexf.gz (recommended) 
     diagram prefix: <filename prefix for structural diagram output>
+    events: <csv file to write all performed events to>  # columns: t, event, source, relationship, target
     # files not listed are not generated
 
 options:
@@ -120,6 +129,7 @@ metaparameters:
 limits:
     t: <max. simulation time>  # default: .inf
     events: <max. no. of simulated events>  # default: .inf
+    # at least one of the two must be finite
 ```
 ```yaml
 entities:  
@@ -232,10 +242,28 @@ Third-party code used
 
 License
 -------
-?
+GNU General Public License v3.0, see file ``LICENSE``.
 
 Change log
 ----------
+
+2026-09-17
+- fixed the log-likelihood computation (it contained a spurious -log(total rate) term, missed the waiting time
+  of rejected summary event attempts and the probability of no further event until the time limit, and was infinite
+  whenever an "immediate" event was the only pending one)
+- fixed the bookkeeping of the total event rate (the summary event share of the inverse link of a symmetric or inverse
+  relationship was never removed; the total is now also protected against floating point drift)
+- infinite contributions to attempt rates and success probunits are now counted separately, so that removing one of
+  several infinite contributions no longer yields NaN
+- expressions in config files that cannot be parsed now produce an error instead of silently becoming NaN;
+  YAML's ``.inf`` is accepted; unknown entity, entity type and relationship labels are reported by name;
+  missing input files are reported by name; ``limits:t`` may be infinite if ``limits:events`` is finite
+- new options ``--summary``, ``--events-out``, ``files:events``; one-letter metaparameters can be given as ``--X value``
+- the build now uses CMake build types (optimized ``Release`` build by default), ``find_package`` for the dependencies,
+  and returns a non-zero exit code on errors
+- added a test suite (``tests/run_tests.py``) and GitHub Actions workflows for building, testing and publishing the
+  documentation (replacing the defunct Travis CI setup)
+- moved the unfinished ``identity.yaml`` to ``config_files/drafts``
 
 2020-04-25
 - add computation and output of log-likelihood (not for prescribed trajectories yet) 
@@ -260,9 +288,19 @@ Change log
 Development
 -----------
 
+Tests: ``python3 tests/run_tests.py [--bin build/src/tricl]`` runs all example configs with fixed seeds and reduced
+event limits, compares the final state (no. of events, model time, log-likelihood, numbers of links and angles) with the
+reference values in ``tests/reference.json``, checks the log-likelihood of a tiny model against an exact formula, and
+checks the error handling of the config parser. After an intentional change of the simulated trajectories (e.g. a change
+in the order of random draws), regenerate the references with ``--update``. The GitHub Actions workflow in
+``.github/workflows/ci.yml`` runs the tests for every push in Release and Debug builds.
+
+Consistency checks: ``tricl myconfig.yaml --debug`` verifies the internal data structures after every event (slow).
+
 To generate a local copy of the documentation:
 * execute ``doxygen`` in the top repository folder
 * find the documentation in the folder ``doc`` (will be ignored by git)
+* the workflow in ``.github/workflows/docs.yml`` publishes the documentation to the ``gh-pages`` branch on every push to ``master``
 
 To profile:
 ```shell

@@ -1,0 +1,65 @@
+{
+ "config_files/granovetter_helfmann.yaml|20000|1": {
+  "angles": 2448,
+  "events": 20000,
+  "links": 512,
+  "logl": -21123.294062820372,
+  "seed": 1,
+  "t": 222.0035813254096,
+  "total_rate": 48.999863810515826
+ },
+ "config_files/granovetter_simple.yaml|15001|1": {
+  "angles": 17873,
+  "events": 15001,
+  "links": 4898,
+  "logl": -10002.928563724166,
+  "seed": 1,
+  "t": 56.70526034950621,
+  "total_rate": 95.01725209292681
+ },
+ "config_files/parameters_3blocks.yaml|2000|1": {
+  "angles": 2904952,
+  "events": 2000,
+  "links": 29416,
+  "logl": -6528.915223962281,
+  "seed": 1,
+  "t": 1.2021531348698835,
+  "total_rate": 2181.5045598803013
+ },
+ "config_files/si.yaml|5000|1": {
+  "angles": 192089,
+  "events": 5000,
+  "links": 13850,
+  "logl": -7878.0107440134225,
+  "seed": 1,
+  "t": 28.808520845987196,
+  "total_rate": 584.3980000000016
+ },
+ "config_files/sir.yaml|20000|1": {
+  "angles": 189319,
+  "events": 2,
+  "links": 13526,
+  "logl": -0.9673643417462918,
+  "seed": 1,
+  "t": 0.13710858059317324,
+  "total_rate": 1.0269562977782698e-15
+ },
+ "config_files/sir_sd.yaml|10000|1": {
+  "angles": 786600,
+  "events": 7200,
+  "links": 28272,
+  "logl": 21413.961485871572,
+  "seed": 1,
+  "t": 20,
+  "total_rate": -1.1640111097221961e-10
+ },
+ "tests/configs/two_entities.yaml|100000|1": {
+  "angles": 0,
+  "events": 89,
+  "links": 2,
+  "logl": -102.37676634760606,
+  "seed": 1,
+  "t": 50,
+  "total_rate": 1.3000000000000003
+ }
+}

@@ -111,8 +111,9 @@ void init_gexf ()
             for (auto& e : es) {
                 auto et = e2et[e];
                 *gexf << "<node id=\"" << e << "\" label=\"" << e2label[e]
-                     << "\" start=\"0.0\" end=\"" << max_t
-                     << "\"><attvalues><attvalue for=\"T\" value=\""
+                     << "\" start=\"0.0\"";
+                if (max_t < INFINITY) *gexf << " end=\"" << max_t << "\"";
+                *gexf << "><attvalues><attvalue for=\"T\" value=\""
                      << et2label[et] << "\"/></attvalues>";
                 // output visualization information:
                 if (et2gexf_size.count(et) > 0) *gexf
@@ -179,7 +180,7 @@ void finish_gexf () {
     if (verbose) cout << " write surviving links to gexf output files" << endl;
     bool old_verbose = verbose;
     verbose = false;
-    current_t = max_t;  // TODO: is this correct/neccessary/helpful?
+    // (current_t has been set to the end of the simulation by finish() already)
     for (auto& [e1, outs] : e2outs) {
         for (auto& [rat13, e3] : outs) {
             tricl::tricllink l = { .e1 = e1, .rat13 = rat13, .e3 = e3 };

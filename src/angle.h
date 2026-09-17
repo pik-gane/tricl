@@ -82,10 +82,12 @@ inline void add_or_delete_angle (
                             // subtract that part covered by the summary event from the total effective rate:
                             subtract_effective_rate(summary_evt2single_effective_rate[evt]);
                         }
-                        auto evd_ = &ev2data[ev];  // generates a new event_data object
+                        auto evd_ = &ev2data[ev];  // generates a new (zero-initialised) event_data object
                         evd_->n_angles = 1;
-                        evd_->attempt_rate = ar0 + dar;
-                        evd_->success_probunits = spu0 + dspu;
+                        add_attempt_contribution(evd_, ar0);
+                        add_attempt_contribution(evd_, dar);
+                        add_probunits_contribution(evd_, spu0);
+                        add_probunits_contribution(evd_, dspu);
                         schedule_event(ev, evd_, left_tail, right_tail);
                     }
                     else  // event is already scheduled
@@ -93,8 +95,8 @@ inline void add_or_delete_angle (
                         if (debug) cout << "        event will be rescheduled" << endl;
                         auto evd_ = &(ev2data.at(ev));
                         evd_->n_angles += 1;
-                        evd_->attempt_rate += dar;
-                        evd_->success_probunits += dspu;
+                        add_attempt_contribution(evd_, dar);
+                        add_probunits_contribution(evd_, dspu);
                         reschedule_event(ev, evd_, left_tail, right_tail);
                     }
                 }
@@ -103,8 +105,8 @@ inline void add_or_delete_angle (
                     auto evd_ = &(ev2data.at(ev));
                     assert (evd_->n_angles > 0);  // since angle must have been added earlier to be removed now
                     evd_->n_angles -= 1;
-                    evd_->attempt_rate = max(0.0, evd_->attempt_rate - dar);
-                    evd_->success_probunits -= dspu;
+                    remove_attempt_contribution(evd_, dar);
+                    remove_probunits_contribution(evd_, dspu);
                     if ((ec13 != EC_TERM) && (evd_->n_angles == 0))  // only spontaneous non-termination event is left:
                     {
                         if (debug) cout << "        last angle was removed, so event will be removed because it is covered by a summary event" << endl;
