@@ -43,6 +43,8 @@ extern string entities_out_filename; ///< Name of (or path to) csv file to write
 extern timepoint max_t;             ///< Maximal model time to simulate until (may be infinite if max_n_events is finite)
 extern timepoint never_t;           ///< Finite time point at or after which "never" happening events are formally scheduled (= max_t if finite)
 extern long int max_n_events;       ///< Max. no. events to simulate before stopping
+extern double max_wall_seconds;     ///< Max. wall-clock time of the simulation loop in seconds (infinite if not limited)
+extern bool wall_time_exceeded;     ///< Whether the simulation was stopped because of the wall-clock time limit
 extern unsigned seed;               ///< Random seed (if 0, generate a random seed)
 extern unordered_map<relationship_or_action_type, string> gexf_filename;  ///< Names of (or paths to) generated gexf (or gexf.gz) files by relationship or action type
 

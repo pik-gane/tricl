@@ -18,7 +18,8 @@ Installation
 * ``cmake -S . -B build`` (add ``-DCMAKE_BUILD_TYPE=Debug`` for a build with assertions and debug symbols; the default is an optimized ``Release`` build)
 * ``cmake --build build``
 * ``cp build/src/tricl`` to wherever you want the binary
-* optionally run the tests: ``python3 tests/run_tests.py`` (needs only the Python standard library)
+* optionally run the tests: ``python3 tests/run_tests.py`` (needs only the Python standard library) and the throughput
+  benchmark ``python3 tests/benchmark.py``; see ``CONTRIBUTING.md`` for the repository layout and conventions
 
 Usage
 -----
@@ -40,6 +41,7 @@ Command line options:
 * ``--stats-out FILE`` and ``--stats-every DT``: write the numbers of links by link type (and the total numbers of links and angles) to a csv file every ``DT`` model time units (also ``files:stats`` in the config file)
 * ``--links-out FILE``: write the time interval of every link to a csv file with columns ``source,relationship,target,start,end`` (the temporal network, see below; also ``files:links``)
 * ``--entities-out FILE``: write all entities to a csv file with columns ``id,label,type`` (also ``files:entities``)
+* ``--max-events N``, ``--max-t T``: override ``limits:events`` and ``limits:t``; ``--max-wall SECONDS`` (also ``limits:wall``): stop the simulation after this much wall-clock time (the run then ends with the state at the last event, like with the event limit)
 * ``--NAME VALUE`` (or ``-X VALUE`` for one-letter names): override the metaparameter ``NAME`` defined in the config file by a value or expression
 
 Caution: output files might get large! Try with small ``limits:events`` first and use gexf.gz file format!
@@ -139,6 +141,39 @@ triples, and angles are property paths of length two. ``python/tricl_rdf.py`` co
   tricl into RDF-star (Turtle-star): every interval during which a link existed becomes
   ``<< :source :relationship :target >> tricl:from T1 ; tricl:until T2 .``
 
+A first fit to real data: military alliances
+--------------------------------------------
+``python/tricl_atop.py --fit`` estimates a model of the formation and dissolution of defense pacts between states
+from the ATOP alliance data (Leeds et al. 2002, v5.1) and the Correlates of War state system membership list, as
+shipped in the R package `peacesciencer` (downloaded from its GitHub repository; needs ``pyreadr``). Every maximal
+run of years in which a pair of states has a defense pledge becomes one link interval of a symmetric relationship
+type ``defense``; membership of a state in the international system is a link ``[state, is in, system]`` to a hub
+entity, so that "both states are members" is the angle ``[~, is in, system, contains, ~]``. The model has six
+metaparameters: formation attempts at rate ``a0`` per pair of member states plus ``a1`` per common defense ally
+(the angle ``[~, defense, state, defense, ~]``), dissolution attempts at rate ``d0`` with success probability units
+``-b1`` per common ally (``tails: 0``), and entry and exit rates of states. Data: 217 states, 1816-2018, 3000 pact
+intervals (1707 still in effect in 2018), 4514 events. Maximum-likelihood estimates (standard errors from the
+observed information; the whole fit takes about a minute):
+
+| parameter | estimate | meaning |
+|---|---|---|
+| ``a0`` | 1.78e-4 ± 0.08e-4 /yr | formation rate per pair of member states without common allies |
+| ``a1`` | 1.02e-2 ± 0.02e-2 /yr | additional formation rate per common defense ally |
+| ``d0`` | 0.108 ± 0.005 /yr | dissolution attempt rate |
+| ``b1`` | 0.037 ± 0.001 | probability units by which each common ally lowers the dissolution success |
+| ``entry``, ``exit`` | 0.0081 ± 0.0005, 0.0031 ± 0.0004 /yr | entry and exit rates of states |
+
+So a pair with one common ally forms a pact about 58 times as fast as a pair without, and the dissolution hazard
+``d0 · expit(-4 b1 k)`` falls from 0.054/yr without common allies (a mean lifetime of 18 years) to 0.035/yr with
+five, 0.020/yr with ten and 0.002/yr with 26 (the size of NATO). Dropping the ally-of-ally term lowers the
+log-likelihood from -20841 to -30155, dropping the stabilisation term to -21618. Two cautions: the likelihood in
+``b1`` has a second, much worse local maximum at negative values (a saturated sigmoid), so the fit must start near
+the optimum (the generated config does; ``tricl_fit.py`` from other start values can end there); and a multilateral
+treaty appears as many simultaneous dyadic events, whose order within a year is a convention (by state codes;
+with a random order, ``--shuffle``, ``a0`` changes by a quarter and ``a1`` and ``b1`` by a few percent), so both
+effects partly reflect treaty-level events. Other pledge types (``--types``), contiguity, disputes or major-power
+status can be added as further relationship types and hub entities in the same way.
+
 Legend to output
 ----------------
 - logl: log-likelihood of this realization so far (log of the probability density of the simulated trajectory given the initial state, including the probability that no other event happened in between; events that happen "immediately" contribute the log-probability of their random order)
@@ -236,6 +271,7 @@ limits:
     t: <max. simulation time>  # default: .inf
     events: <max. no. of simulated events>  # default: .inf
     # at least one of the two must be finite
+    wall: <max. wall-clock time of the simulation in seconds>  # optional
 ```
 ```yaml
 entities:  
@@ -385,6 +421,9 @@ Change log
   generated when the entity ids of the source type happened to be larger than those of the target type (which
   depended on the internal ordering of the entity types). In ``granovetter_helfmann.yaml`` this meant that there were
   no ``knows`` links between always active, contingent and never active agents at all; results of that config change.
+- ``python/tricl_atop.py``: a first fit to real data (formation and dissolution of military alliances, see above)
+- new options ``--max-events``, ``--max-t`` and ``--max-wall`` (also ``limits:wall``); ``CONTRIBUTING.md``, a throughput
+  benchmark ``tests/benchmark.py`` and a sanitizer build in the continuous integration
 - new options ``--links-out`` and ``--entities-out`` (also ``files:links``, ``files:entities``) writing the temporal
   network as a plain interval list, and ``python/tricl_movie.py`` rendering it as a movie (see above); the Gephi
   workflow in ``gephi/`` is now legacy

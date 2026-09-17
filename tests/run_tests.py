@@ -533,6 +533,39 @@ def temporal_network_test(binary, workdir):
     return "ok (%s; 3 frames and a gif rendered)" % result
 
 
+def atop_pipeline_test(binary, workdir):
+    """python/tricl_atop.py converts dyad-year alliance data into a replayable tricl model (synthetic data)."""
+    sys.path.insert(0, os.path.join(ROOT, "python"))
+    import tricl_atop
+    cwd = tempfile.mkdtemp(prefix="tricl_", dir=workdir)
+    # three states: A and B in the system from the start, C enters in 1820 and leaves in 1830 (so its pact with A,
+    # 1825-1827, needs C to be a member); A-B allied 1816-1818 and again 1822-...(censored); B-C allied 1826-1826
+    states = [{"stateabb": "A", "ccode": 1, "styear": 1816, "stmonth": 1, "stday": 1, "endyear": 1840, "endmonth": 12, "endday": 31},
+              {"stateabb": "B", "ccode": 2, "styear": 1816, "stmonth": 1, "stday": 1, "endyear": 1840, "endmonth": 12, "endday": 31},
+              {"stateabb": "C", "ccode": 3, "styear": 1820, "stmonth": 3, "stday": 1, "endyear": 1830, "endmonth": 6, "endday": 30}]
+    def rows(a, b, years):
+        return [{"ccode1": x, "ccode2": y, "year": yr, "atop_defense": 1, "atop_offense": 0, "atop_neutral": 0, "atop_nonagg": 0, "atop_consul": 0}
+                for yr in years for (x, y) in ((a, b), (b, a))]
+    alliances = rows(1, 2, [1816, 1817, 1818]) + rows(1, 2, range(1822, 1841)) + rows(1, 3, [1825, 1826, 1827]) + rows(2, 3, [1826])
+    alliances += [{"ccode1": 1, "ccode2": 2, "year": 1819, "atop_defense": 0, "atop_offense": 0, "atop_neutral": 0, "atop_nonagg": 0, "atop_consul": 0}]
+    info = tricl_atop.build(alliances, states, cwd, ("defense",), 1816, 1840)
+    # initial: A, B members + A-B pact; events: A-B terminate 1819, C enters 1820, A-B establish 1822, A-C establish 1825,
+    # B-C establish 1826, B-C terminate 1827, A-C terminate 1828, C exits 1831 -> 8 events, the A-B pact from 1822 is censored
+    if info["states"] != 3 or info["initial_links"] != 3 or info["events"] != 8 or info["censored"] != 1:
+        raise Failure("unexpected conversion result: %r" % info)
+    with open(os.path.join(cwd, "events.csv"), newline="") as f:
+        events = [(float(r["t"]), r["event"], r["source"], r["relationship"], r["target"]) for r in csv.DictReader(f)]
+    if events[0] != (3.0, "terminate", "A", "defense", "B") or events[1] != (4.0, "establish", "C", "is in", "system") or events[-1] != (15.0, "terminate", "C", "is in", "system"):
+        raise Failure("unexpected events: %r" % events)
+    code, out, err, secs = run_tricl(binary, os.path.join(cwd, "model.yaml"), ["--events-in", "events.csv", "--summary", "--grad"], cwd)
+    if code != 0:
+        raise Failure("replay of the converted events failed with exit code %d:\n%s" % (code, err[-1000:]))
+    summary = parse_summary(out)
+    if summary["events"] != 8 or summary["t"] != 25 or not math.isfinite(summary["logl"]):
+        raise Failure("unexpected replay summary: %r" % {k: summary[k] for k in ("events", "t", "logl")})
+    return "ok (3 states, 8 events replayed, logl %.3f)" % summary["logl"]
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--bin", default=os.path.join(ROOT, "build", "src", "tricl"))
@@ -561,6 +594,7 @@ def main():
     tests.append(("rdf import and export", lambda: rdf_test(binary, workdir)))
     tests.append(("macroscopic approximation", lambda: macro_test(binary, workdir)))
     tests.append(("temporal network export and movie", lambda: temporal_network_test(binary, workdir)))
+    tests.append(("alliance data pipeline", lambda: atop_pipeline_test(binary, workdir)))
     tests.append(("error handling", lambda: error_handling_tests(binary, workdir)))
 
     n_failed = 0

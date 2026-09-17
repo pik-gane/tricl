@@ -35,3 +35,31 @@ jobs:
           cd "$(mktemp -d)"
           "$GITHUB_WORKSPACE/build/src/tricl" "$GITHUB_WORKSPACE/tests/configs/two_entities.yaml" --debug --seed 1 > debug.log
           tail -n 3 debug.log
+
+  sanitizers:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends cmake g++ libyaml-cpp-dev libboost-dev zlib1g-dev
+
+      - name: Configure with AddressSanitizer and UndefinedBehaviorSanitizer
+        run: cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug -DCMAKE_CXX_FLAGS="-fsanitize=address,undefined -fno-omit-frame-pointer" -DCMAKE_EXE_LINKER_FLAGS="-fsanitize=address,undefined"
+
+      - name: Build
+        run: cmake --build build -j 2
+
+      - name: Run the small configs and a replay under the sanitizers
+        env:
+          UBSAN_OPTIONS: print_stacktrace=1:halt_on_error=1
+          ASAN_OPTIONS: detect_leaks=0
+        run: |
+          cd "$(mktemp -d)"
+          for c in tests/configs/two_entities.yaml tests/configs/three_entities.yaml config_files/granovetter_helfmann.yaml config_files/sir_sd.yaml; do
+            "$GITHUB_WORKSPACE/build/src/tricl" "$GITHUB_WORKSPACE/$c" --summary --seed 1 --max-events 3000 --events-out events.csv --links-out links.csv --entities-out entities.csv
+            "$GITHUB_WORKSPACE/build/src/tricl" "$GITHUB_WORKSPACE/$c" --summary --seed 1 --max-events 3000 --events-in events.csv --grad
+          done
+          "$GITHUB_WORKSPACE/build/tests/test_sigmoid"

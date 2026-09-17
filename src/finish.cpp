@@ -16,8 +16,8 @@ void finish ()
     // forward to end of simulation time
     // (unless the simulation ended due to the event limit, in which case current_t is the time of the last event,
     // or the time limit is infinite):
-    if ((n_events >= max_n_events) || (max_t == INFINITY)) {
-        if (!quiet) cout << "stopped at t=" << current_t << " after " << n_events << " events." << endl;
+    if ((n_events >= max_n_events) || (max_t == INFINITY) || wall_time_exceeded) {
+        if (!quiet) cout << (wall_time_exceeded ? "wall-clock time limit reached, " : "") << "stopped at t=" << current_t << " after " << n_events << " events." << endl;
     } else {
         current_t = max_t;
     }

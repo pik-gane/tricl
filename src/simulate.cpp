@@ -8,6 +8,9 @@
 #include "debugging.h"
 #include "simulate.h"
 
+#include <chrono>
+
+#define CHECK_WALL_TIME_EVERY 64  ///< No. of events after which the wall-clock time limit is checked
 #define RECOMPUTE_TOTAL_ER_EVERY 65536  ///< No. of events after which the total effective rate is recomputed exactly to remove floating point drift
 
 /** Perform next step.
@@ -16,6 +19,12 @@
  */
 bool step ()
 {
+    static const auto start = std::chrono::steady_clock::now();
+    if ((max_wall_seconds < INFINITY) && (n_events % CHECK_WALL_TIME_EVERY == 0)
+            && (std::chrono::duration<double>(std::chrono::steady_clock::now() - start).count() > max_wall_seconds)) {
+        wall_time_exceeded = true;
+        return false;
+    }
     if ((n_events < max_n_events) && pop_next_event()) {
         ++n_events;
         write_stats_until(current_t);  // (the state before the event holds until current_t)

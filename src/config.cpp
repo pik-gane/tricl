@@ -30,6 +30,8 @@ unordered_set<relationship_or_action_type> inverse_only_rats = {};
 double stats_every = 1.0;
 timepoint max_t = INFINITY, never_t = 1e300;
 long int max_n_events = LONG_MAX;
+double max_wall_seconds = INFINITY;
+bool wall_time_exceeded = false;
 unsigned seed = 0;
 
 // maps and sets of parameters with some defaults:
@@ -208,6 +210,9 @@ void read_config (
             ("stats-every", "model time interval between rows of the stats file", cxxopts::value<double>()->default_value("1.0"))
             ("links-out", "csv file to write the time interval of every link to (columns source,relationship,target,start,end; overrides files:links)", cxxopts::value<string>()->default_value(""))
             ("entities-out", "csv file to write all entities with their labels and types to (columns id,label,type; overrides files:entities)", cxxopts::value<string>()->default_value(""))
+            ("max-events", "stop after this many events (overrides limits:events)", cxxopts::value<string>()->default_value(""))
+            ("max-t", "stop at this model time (overrides limits:t)", cxxopts::value<string>()->default_value(""))
+            ("max-wall", "stop the simulation after this many seconds of wall-clock time (the final state is then the state at the last event)", cxxopts::value<string>()->default_value(""))
             ;
 
     // register command line options for all metaparameters in config file:
@@ -346,7 +351,24 @@ void read_config (
         if (!(v >= 0)) throw "limit: events must be non-negative";
         if (v < (double) LONG_MAX) max_n_events = floor(v);
     }
-    // max_wall_time = n["wall"] ? n["wall"].as<double>() : INFINITY;  // TODO: support this option
+    if (n["wall"] && !n["wall"].IsNull()) {
+        max_wall_seconds = parse_double(n["wall"].as<string>());
+        if (!(max_wall_seconds > 0)) throw "limit: wall must be positive";
+    }
+    // command line overrides of the limits:
+    if (cmdlineopts["max-events"].as<string>() != "") {
+        double v = parse_double(cmdlineopts["max-events"].as<string>());
+        if (!(v >= 0)) throw "--max-events must be non-negative";
+        max_n_events = (v < (double) LONG_MAX) ? floor(v) : LONG_MAX;
+    }
+    if (cmdlineopts["max-t"].as<string>() != "") {
+        max_t = parse_double(cmdlineopts["max-t"].as<string>());
+        if (!(max_t >= 0)) throw "--max-t must be non-negative";
+    }
+    if (cmdlineopts["max-wall"].as<string>() != "") {
+        max_wall_seconds = parse_double(cmdlineopts["max-wall"].as<string>());
+        if (!(max_wall_seconds > 0)) throw "--max-wall must be positive";
+    }
     if ((max_t==INFINITY) && (max_n_events==LONG_MAX)) throw
             "must specify at least one of limits:t, limits:events";
     // events that never happen are formally scheduled at time points >= never_t, which must be finite:
