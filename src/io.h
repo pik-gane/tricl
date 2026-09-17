@@ -32,6 +32,14 @@ void output_json_summary ();
 
 void output_parameters_json ();
 
+void output_model_json ();
+
+void open_stats_out ();
+
+void write_stats_until (timepoint t);
+
+void close_stats_out ();
+
 void read_links_csv (
         string filename,
         int skip_rows,

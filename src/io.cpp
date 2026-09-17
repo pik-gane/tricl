@@ -355,6 +355,104 @@ void output_parameters_json ()
     cout << "}" << endl;
 }
 
+/** Output the model structure as JSON to stdout (for --dump-model):
+ *  entity types with their numbers of entities, relationship types with their inverses,
+ *  link types with their current (initial) numbers of links, and the possible event types
+ *  with base rates, tail indices and influences.
+ */
+void output_model_json ()
+{
+    cout << "{\"entity_types\": {";
+    bool first = true;
+    for (auto& [et, l] : et2label) {
+        cout << (first ? "" : ", ") << json_string(l) << ": " << et2n[et];
+        first = false;
+    }
+    cout << "}, \"relationship_types\": {";
+    first = true;
+    for (auto& [rat, l] : rat2label) {
+        if (rat == RT_ID) continue;
+        auto inv = rat2inv.count(rat) ? rat2inv.at(rat) : NO_RAT;
+        cout << (first ? "" : ", ") << json_string(l) << ": {\"inverse\": " << ((inv == NO_RAT) ? string("null") : json_string(rat2label[inv])) << "}";
+        first = false;
+    }
+    cout << "}, \"link_types\": [";
+    first = true;
+    for (auto& [lt, n] : lt2n) {
+        cout << (first ? "" : ", ") << "{\"source\": " << json_string(et2label[lt.et1]) << ", \"relationship\": " << json_string(rat2label[lt.rat13])
+             << ", \"target\": " << json_string(et2label[lt.et3]) << ", \"links\": " << n << "}";
+        first = false;
+    }
+    cout << "], \"event_types\": [";
+    for (int id = 0; id < n_evt_ids; id++) {
+        auto& evt = evtid2evt[id];
+        cout << (id > 0 ? ", " : "") << "{\"class\": " << json_string((evt.ec == EC_EST) ? "establish" : (evt.ec == EC_TERM) ? "terminate" : "act")
+             << ", \"source\": " << json_string(et2label[evt.et1]) << ", \"relationship\": " << json_string(rat2label[evt.rat13])
+             << ", \"target\": " << json_string(et2label[evt.et3])
+             << ", \"base_attempt\": " << json_number(evtid2base_attempt_rate[id])
+             << ", \"base_probunits\": " << json_number(evtid2base_probunits[id])
+             << ", \"left_tail\": " << json_number(evtid2left_tail[id]) << ", \"right_tail\": " << json_number(evtid2right_tail[id])
+             << ", \"influences\": [";
+        for (size_t j = 0; j < evtid2infl_slots[id].size(); j++) {
+            int slot = evtid2infl_slots[id][j];
+            auto rat12 = (relationship_or_action_type) (slot / (n_et_slots * n_rat_slots));
+            auto et2 = (entity_type) ((slot / n_rat_slots) % n_et_slots);
+            auto rat23 = (relationship_or_action_type) (slot % n_rat_slots);
+            cout << (j > 0 ? ", " : "") << "{\"rat12\": " << json_string(rat2label[rat12]) << ", \"et2\": " << json_string(et2label[et2])
+                 << ", \"rat23\": " << json_string(rat2label[rat23])
+                 << ", \"attempt\": " << json_number(inflt_attempt_rate[(size_t) id * n_at_slots + slot])
+                 << ", \"probunits\": " << json_number(inflt_delta_probunits[(size_t) id * n_at_slots + slot]) << "}";
+        }
+        cout << "]}";
+    }
+    cout << "], \"t_max\": " << json_number(max_t) << ", \"events_max\": " << ((max_n_events == LONG_MAX) ? string("null") : to_string(max_n_events))
+         << ", \"seed\": " << seed << "}" << endl;
+}
+
+// output of link counts by link type at regular model time intervals:
+
+ofstream stats_out;          ///< stream for the optional csv output of link counts
+timepoint next_stats_t = 0;  ///< model time of the next row to write
+vector<link_type> stats_link_types;  ///< the link types in column order
+
+/** Open the stats csv file (if requested) and write its header.
+ */
+void open_stats_out ()
+{
+    if (stats_out_filename == "") return;
+    stats_out.open(stats_out_filename);
+    if (!stats_out.good()) throw "cannot open stats output file \"" + stats_out_filename + "\"";
+    stats_out << std::setprecision(17) << "t";
+    stats_link_types.clear();
+    for (auto& [lt, n] : lt2n) {
+        stats_link_types.push_back(lt);
+        stats_out << "," << csv_quote(et2label[lt.et1] + " " + rat2label[lt.rat13] + " " + et2label[lt.et3]);
+    }
+    stats_out << ",links,angles" << endl;
+    next_stats_t = 0;
+}
+
+/** Write rows for all grid time points up to (and including) t, using the current state
+ *  (which is the state that holds from the last event until t).
+ */
+void write_stats_until (timepoint t)
+{
+    if (!stats_out.is_open()) return;
+    while (next_stats_t <= t) {
+        stats_out << next_stats_t;
+        for (auto& lt : stats_link_types) stats_out << "," << lt2n[lt];
+        stats_out << "," << n_links << "," << n_angles << "\n";
+        next_stats_t += stats_every;
+    }
+}
+
+/** Close the stats csv file (if open).
+ */
+void close_stats_out ()
+{
+    if (stats_out.is_open()) stats_out.close();
+}
+
 /** (for debugging purposes)
  */
 void dump_links () {

@@ -35,6 +35,8 @@ Command line options:
 * ``--events-in FILE``: replay the events in the csv file instead of simulating, and compute their log-likelihood (see below)
 * ``--grad``: also compute the gradient of the log-likelihood with respect to all model parameters (output with ``--summary``)
 * ``--dump-parameters``: only output the model parameters and their current values as JSON and exit
+* ``--dump-model``: only output the model structure (entity types with counts, relationship types, link types with initial link counts, event types with influences) as JSON after initialization and exit
+* ``--stats-out FILE`` and ``--stats-every DT``: write the numbers of links by link type (and the total numbers of links and angles) to a csv file every ``DT`` model time units (also ``files:stats`` in the config file)
 * ``--NAME VALUE`` (or ``-X VALUE`` for one-letter names): override the metaparameter ``NAME`` defined in the config file by a value or expression
 
 Caution: output files might get large! Try with small ``limits:events`` first and use gexf.gz file format!
@@ -70,6 +72,21 @@ angles without effect are not tracked.)
 using these facilities (scipy is used if available), optionally with standard errors from the observed information,
 and ``python/tricl_recovery.py`` runs a parameter-recovery study (simulate with known values, re-estimate).
 See ``tests/configs/three_entities.yaml`` for a config in which every rate is a metaparameter.
+
+Macroscopic approximation
+-------------------------
+``python3 python/tricl_macro.py config.yaml [--seeds 1 2 3] [--t-max T] [--dt DT] [--closure poisson|mean]``
+derives a system of ordinary differential equations for the numbers of links of every link type from the model
+(read via ``tricl config.yaml --dump-model``), integrates it, and optionally compares it with simulations for the
+given seeds (using ``--stats-out``, which writes the numbers of links by link type every ``--stats-every`` model
+time units). The closure treats the numbers of angles adjacent to a dyad as independent Poisson variables whose
+means are products of the current link densities, and averages the event rates over them; it therefore neglects
+all correlations between links, and its deviation from the simulation measures the effect of network structure
+(clustering, triadic closure). For a model with constant rates and no angle influences, the approximation is exact
+in expectation (see ``tests/configs/mean_field.yaml``). Rules of the form "terminate a link immediately when a link
+of another type exists on the same dyad" (the idiom for mutually exclusive states, e.g. ``is``/``is not``) are
+recognised and handled as state switches; other immediate events (infinite rates) are replaced by a large finite
+rate, so models relying on them are only approximated roughly.
 
 RDF and knowledge graphs
 ------------------------
@@ -299,6 +316,8 @@ Change log
 ----------
 
 2026-09-17
+- ``python/tricl_macro.py`` generates and integrates a mean-field approximation of a model and compares it with
+  simulations; new options ``--dump-model``, ``--stats-out``, ``--stats-every``
 - ``python/tricl_rdf.py`` converts RDF data into config skeletons and gexf output into RDF-star
 - fixed: csv quoting of entity labels was kept in the labels; labels were not escaped in gexf output;
   gzipped gexf output was written through a dangling stream pointer (worked by accident) and is now flushed properly

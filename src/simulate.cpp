@@ -18,6 +18,7 @@ bool step ()
 {
     if ((n_events < max_n_events) && pop_next_event()) {
         ++n_events;
+        write_stats_until(current_t);  // (the state before the event holds until current_t)
         perform_event(current_ev, current_evd_);
         if (debug) cout << " " << t2ev.size() << " events on stack" << endl << endl;
         if (n_events % RECOMPUTE_TOTAL_ER_EVERY == 0) {

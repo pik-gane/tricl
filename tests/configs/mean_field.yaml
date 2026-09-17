@@ -1,0 +1,27 @@
+metadata:
+    name: linear state switching, for testing the macroscopic approximation
+    description: >
+        400 agents switch between "is active" and not, with constant rates and no angle influences,
+        so that the mean-field equation dn/dt = (N - n) * 0.3 - n * 0.2 is exact in expectation.
+        Used by tests/run_tests.py.
+    author: tricl test suite
+
+limits:
+    t: 10
+
+entities:
+    agent: 400
+    active:
+        - active
+
+relationship types:
+    is: ~
+
+dynamics:
+    [agent, is, active]:
+        establish:
+            attempt: 0.3
+            success: inf
+        terminate:
+            attempt: 0.2
+            success: inf

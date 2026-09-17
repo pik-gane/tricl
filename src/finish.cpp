@@ -31,6 +31,8 @@ void finish ()
     log_state(true);
     if (!silent) cout << endl;
 
+    write_stats_until(current_t);
+    close_stats_out();
     finish_gexf();
     close_events_out();
 

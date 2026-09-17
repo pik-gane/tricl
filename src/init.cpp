@@ -438,6 +438,7 @@ void init ()
     init_events();
     init_links();
     open_events_out();  // only after initial links, so that only simulated events are written
+    open_stats_out();
     init_gexf();
     do_graphviz_diagrams();
     if (debug) {

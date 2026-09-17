@@ -34,7 +34,10 @@ extern string events_in_filename;   ///< Name of (or path to) csv file with even
 extern bool output_summary;         ///< Whether to output a one-line JSON summary at the end
 extern bool compute_gradient;       ///< Whether to compute the gradient of the log-likelihood w.r.t. the model parameters
 extern bool dump_parameters;        ///< Whether to only output the model parameters as JSON and exit
+extern bool dump_model;             ///< Whether to only output the model structure (types, event types, initial link counts) as JSON after initialization and exit
 extern bool scheduling_enabled;     ///< Whether tentative event times are drawn and kept in the schedule (true when simulating, false when replaying)
+extern string stats_out_filename;   ///< Name of (or path to) csv file to write link counts by link type to at regular model time intervals (if "", none is written)
+extern double stats_every;          ///< Model time interval between rows of the stats file
 extern timepoint max_t;             ///< Maximal model time to simulate until (may be infinite if max_n_events is finite)
 extern timepoint never_t;           ///< Finite time point at or after which "never" happening events are formally scheduled (= max_t if finite)
 extern long int max_n_events;       ///< Max. no. events to simulate before stopping

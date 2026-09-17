@@ -367,6 +367,52 @@ dynamics:
     return "ok (%d events simulated, %d link intervals exported)" % (summary["events"], n_intervals)
 
 
+def macro_test(binary, workdir):
+    """The macroscopic approximation must be exact for a linear model, and must run on an example with angles."""
+    sys.path.insert(0, os.path.join(ROOT, "python"))
+    from tricl_macro import MacroModel, dump_model, simulate_stats, with_time_limit
+    cwd = tempfile.mkdtemp(prefix="tricl_", dir=workdir)
+    config = os.path.join(ROOT, "tests", "configs", "mean_field.yaml")
+    model = dump_model(binary, config, {}, 1)
+    macro = MacroModel(model, warn=lambda s: None)
+    times, states = macro.integrate(10.0, 1.0)
+    i = macro.index[("agent", "is", "active")]
+    # exact solution of dn/dt = 0.3 (400 - n) - 0.2 n with n(0) = 0:
+    exact = [400 * 0.3 / 0.5 * (1 - math.exp(-0.5 * t)) for t in times]
+    for t, n, x in zip(times, states, exact):
+        if abs(n[i] - x) > 1e-3 * max(1.0, x):
+            raise Failure("ODE integration: n(%g) = %.6f, exact %.6f" % (t, n[i], x))
+    sim = simulate_stats(binary, with_time_limit(config, 10.0), [1, 2, 3], 10.0, 1.0, {}, cwd)
+    label = "agent is active"
+    final = [sim[s][10][label] for s in sim]
+    mean = sum(final) / len(final)
+    if abs(mean - exact[-1]) > 0.1 * exact[-1]:
+        raise Failure("simulation mean %.1f at t=10 differs from mean field %.1f by more than 10%%" % (mean, exact[-1]))
+    # smoke test on an example with angle influences (SIS on a random geometric graph):
+    model = dump_model(binary, os.path.join(ROOT, "config_files", "si.yaml"), {}, 1)
+    macro = MacroModel(model, warn=lambda s: None)
+    times, states = macro.integrate(20.0, 2.0)
+    j = macro.index[("agent", "is", "infected")]
+    if not all(math.isfinite(n[j]) and 0 <= n[j] <= 1000 for n in states) or states[-1][j] <= states[0][j]:
+        raise Failure("approximation of si.yaml gives implausible infected counts %r" % [n[j] for n in states])
+    # threshold model with mutually exclusive states (immediate events handled structurally):
+    config = os.path.join(ROOT, "config_files", "granovetter_helfmann.yaml")
+    model = dump_model(binary, config, {}, 1)
+    macro = MacroModel(model, warn=lambda s: None)
+    if macro.stiff:
+        raise Failure("the immediate events of granovetter_helfmann.yaml were not recognised as state switches")
+    times, states = macro.integrate(30.0, 5.0)
+    k = macro.index[("c-agent", "is", "active")]
+    sim = simulate_stats(binary, with_time_limit(config, 30.0), [1, 2, 3], 30.0, 5.0, {}, cwd)
+    label = "c-agent is active"
+    final = [sim[s][6][label] for s in sim]
+    mean_g = sum(final) / len(final)
+    if not (math.isfinite(states[-1][k]) and abs(states[-1][k] - mean_g) <= 0.25 * 60):
+        raise Failure("granovetter: approximation %.1f vs simulation mean %.1f active c-agents at t=30" % (states[-1][k], mean_g))
+    return "ok (linear model: sim. mean %.1f vs mean field %.1f at t=10; si.yaml: %.0f infected at t=20; granovetter: %.1f vs sim. %.1f active at t=30)" % (
+        mean, exact[-1], states[-1][j], states[-1][k], mean_g)
+
+
 def error_handling_tests(binary, workdir):
     cwd = tempfile.mkdtemp(prefix="tricl_", dir=workdir)
     results = []
@@ -432,6 +478,7 @@ def main():
     tests.append(("replay of example configs", lambda: replay_consistency_test(binary, workdir)))
     tests.append(("maximum-likelihood fit", lambda: fit_test(binary, workdir)))
     tests.append(("rdf import and export", lambda: rdf_test(binary, workdir)))
+    tests.append(("macroscopic approximation", lambda: macro_test(binary, workdir)))
     tests.append(("error handling", lambda: error_handling_tests(binary, workdir)))
 
     n_failed = 0

@@ -226,6 +226,11 @@ int main (int argc, char *argv[])
         }
         init();
         if (debug) verify_data_consistency();
+        if (dump_model)
+        {
+            output_model_json();
+            return 0;
+        }
 
         if (events_in_filename != "")
         {

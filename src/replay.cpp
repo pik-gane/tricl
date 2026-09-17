@@ -129,6 +129,7 @@ void replay ()
         current_evd_ = &evd;
         ++n_events;
         log_state();
+        write_stats_until(current_t);  // (the state before the event holds until current_t)
         perform_event(ev, &evd);
         if (n_events % RECOMPUTE_TOTAL_ER_EVERY == 0) total_finite_effective_rate = max(0.0, compute_total_finite_er());
         if (n_events >= max_n_events) break;

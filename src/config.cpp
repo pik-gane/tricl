@@ -24,8 +24,9 @@ cxxopts::Options options("tricl", "a generic network-based social simulation mod
 unordered_map<relationship_or_action_type, string> gexf_filename = {};
 string diagram_fileprefix = "", gexf_default_filename = "", events_out_filename = "";
 bool silent = false, verbose = false, quiet = false, debug = false, only_output_logl = false, output_summary = false,
-     compute_gradient = false, dump_parameters = false, scheduling_enabled = true;
-string events_in_filename = "";
+     compute_gradient = false, dump_parameters = false, dump_model = false, scheduling_enabled = true;
+string events_in_filename = "", stats_out_filename = "";
+double stats_every = 1.0;
 timepoint max_t = INFINITY, never_t = 1e300;
 long int max_n_events = LONG_MAX;
 unsigned seed = 0;
@@ -201,6 +202,9 @@ void read_config (
             ("events-in", "csv file with events to replay instead of simulating (columns t,event,source,relationship,target), for computing their log-likelihood", cxxopts::value<string>()->default_value(""))
             ("grad", "also compute the gradient of the log-likelihood w.r.t. all model parameters (output with --summary)", cxxopts::value<bool>())
             ("dump-parameters", "only output the model parameters and their current values as JSON and exit", cxxopts::value<bool>())
+            ("dump-model", "only output the model structure (types, event types with influences, initial link counts) as JSON after initialization and exit", cxxopts::value<bool>())
+            ("stats-out", "csv file to write the numbers of links by link type to at regular model time intervals", cxxopts::value<string>()->default_value(""))
+            ("stats-every", "model time interval between rows of the stats file", cxxopts::value<double>()->default_value("1.0"))
             ;
 
     // register command line options for all metaparameters in config file:
@@ -251,7 +255,8 @@ void read_config (
     output_summary = cmdlineopts["summary"].as<bool>();
     compute_gradient = cmdlineopts["grad"].as<bool>();
     dump_parameters = cmdlineopts["dump-parameters"].as<bool>();
-    silent = cmdlineopts["silent"].as<bool>() || only_output_logl || output_summary || dump_parameters;
+    dump_model = cmdlineopts["dump-model"].as<bool>();
+    silent = cmdlineopts["silent"].as<bool>() || only_output_logl || output_summary || dump_parameters || dump_model;
     debug = cmdlineopts["debug"].as<bool>() && (!silent);
     quiet = (cmdlineopts["quiet"].as<bool>() || silent) && (!debug);
     verbose = (cmdlineopts["verbose"].as<bool>() || debug) && (!quiet);
@@ -259,6 +264,9 @@ void read_config (
     events_out_filename = cmdlineopts["events-out"].as<string>();
     events_in_filename = cmdlineopts["events-in"].as<string>();
     scheduling_enabled = (events_in_filename == "");  // replaying needs no schedule and no random numbers
+    stats_out_filename = cmdlineopts["stats-out"].as<string>();
+    stats_every = cmdlineopts["stats-every"].as<double>();
+    if (!(stats_every > 0)) throw "--stats-every must be positive";
 
     // read config file:
 
@@ -306,6 +314,14 @@ void read_config (
         // log_filename = n["log"].as<string>();
         if (n["diagram prefix"]) diagram_fileprefix = n["diagram prefix"].as<string>();
         if (n["events"] && (events_out_filename == "")) events_out_filename = n["events"].as<string>();
+        if (n["stats"] && (stats_out_filename == "")) stats_out_filename = n["stats"].as<string>();
+    }
+    if (dump_model || dump_parameters) {
+        // no output files when only dumping the model:
+        gexf_default_filename = "";
+        diagram_fileprefix = "";
+        events_out_filename = "";
+        stats_out_filename = "";
     }
 
     // limits (at least one):
