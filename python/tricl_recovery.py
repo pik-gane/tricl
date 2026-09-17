@@ -39,7 +39,7 @@ def main():
 
     binary = os.path.abspath(args.bin)
     config = os.path.abspath(args.config)
-    workdir = args.workdir or tempfile.mkdtemp(prefix="tricl_recovery_")
+    workdir = os.path.abspath(args.workdir) if args.workdir else tempfile.mkdtemp(prefix="tricl_recovery_")
     os.makedirs(workdir, exist_ok=True)
     config_meta = read_metaparameters(config)
     true = {name: float(config_meta[name]) for name in args.fit}
