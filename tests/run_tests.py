@@ -395,6 +395,7 @@ def macro_test(binary, workdir):
     j = macro.index[("agent", "is", "infected")]
     if not all(math.isfinite(n[j]) and 0 <= n[j] <= 1000 for n in states) or states[-1][j] <= states[0][j]:
         raise Failure("approximation of si.yaml gives implausible infected counts %r" % [n[j] for n in states])
+    si_final = states[-1][j]
     # threshold model with mutually exclusive states (immediate events handled structurally):
     config = os.path.join(ROOT, "config_files", "granovetter_helfmann.yaml")
     model = dump_model(binary, config, {}, 1)
@@ -410,7 +411,7 @@ def macro_test(binary, workdir):
     if not (math.isfinite(states[-1][k]) and abs(states[-1][k] - mean_g) <= 0.25 * 60):
         raise Failure("granovetter: approximation %.1f vs simulation mean %.1f active c-agents at t=30" % (states[-1][k], mean_g))
     return "ok (linear model: sim. mean %.1f vs mean field %.1f at t=10; si.yaml: %.0f infected at t=20; granovetter: %.1f vs sim. %.1f active at t=30)" % (
-        mean, exact[-1], states[-1][j], states[-1][k], mean_g)
+        mean, exact[-1], si_final, states[-1][k], mean_g)
 
 
 def error_handling_tests(binary, workdir):
