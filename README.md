@@ -421,6 +421,12 @@ Change log
   generated when the entity ids of the source type happened to be larger than those of the target type (which
   depended on the internal ordering of the entity types). In ``granovetter_helfmann.yaml`` this meant that there were
   no ``knows`` links between always active, contingent and never active agents at all; results of that config change.
+- the simulation now uses Gillespie's direct method with a sum tree of event rates (``src/schedule.h``) instead of
+  the next-reaction scheme with an ordered map of tentative event times: one exponential and one uniform random
+  number per event instead of one exponential per rate change, an exact total rate for the scheduling, and a
+  much cheaper initialisation of dense models (the 3-blocks example initialises in a quarter of the time). The
+  event statistics are unchanged (checked over hundreds of seeds), but the trajectory for a given seed differs
+  from earlier versions, so the regression references are regenerated.
 - ``python/tricl_atop.py``: a first fit to real data (formation and dissolution of military alliances, see above)
 - new options ``--max-events``, ``--max-t`` and ``--max-wall`` (also ``limits:wall``); ``CONTRIBUTING.md``, a throughput
   benchmark ``tests/benchmark.py`` and a sanitizer build in the continuous integration

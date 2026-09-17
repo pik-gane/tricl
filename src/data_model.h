@@ -234,13 +234,6 @@ struct event_type
     }
 };
 
-enum schedule_class {
-    SC_NOW,     ///< Events that happen immediately after the current event
-    SC_SOONER,  ///< Events that are sooner on average and stored in a tree-type container
-    SC_LATER,   ///< Events that are later on average and stored in a hash-table-type container
-    SC_NEVER,   ///< Events that happen after max simulation time
-};
-
 /** For performance reasons, the mutable data of an \ref event is stored in a separate struct.
  *
  *  These structs appear as values in a map whose key is the corresponding event.
@@ -259,8 +252,9 @@ struct event_data
     int n_pos_inf_probunits = 0;       ///< No. of +inf contributions to the success probunits (if > 0 and no -inf contributions, success is certain)
     int n_neg_inf_probunits = 0;       ///< No. of -inf contributions to the success probunits (if > 0, success is impossible)
     rate effective_rate = 0;           ///< Current effective rate of this event
-    timepoint t = -INFINITY;           ///< When this event would next happen if the system state does not chance in between
-    schedule_class sc = SC_LATER;      ///< Schedule class of the event
+    timepoint t = -INFINITY;           ///< -inf if the event is not scheduled, otherwise inf (simulation and replay) or the time of the event while it is performed
+    int slot = -1;                     ///< Leaf slot of the event in the rate tree (see schedule.h), or -1
+    int imm = -1;                      ///< Index of the event in immediate_events (if its rate is infinite), or -1
 };
 
 /** An inleg represents a leg "incoming" to a target entity.

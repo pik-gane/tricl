@@ -10,6 +10,7 @@
  */
 
 #include "data_model.h"
+#include "schedule.h"
 
 // CONSTANT DATA:
 
@@ -41,7 +42,6 @@ extern double stats_every;          ///< Model time interval between rows of the
 extern string links_out_filename;   ///< Name of (or path to) csv file to write the time intervals of all links to (if "", none is written)
 extern string entities_out_filename; ///< Name of (or path to) csv file to write all entities with their types to (if "", none is written)
 extern timepoint max_t;             ///< Maximal model time to simulate until (may be infinite if max_n_events is finite)
-extern timepoint never_t;           ///< Finite time point at or after which "never" happening events are formally scheduled (= max_t if finite)
 extern long int max_n_events;       ///< Max. no. events to simulate before stopping
 extern double max_wall_seconds;     ///< Max. wall-clock time of the simulation loop in seconds (infinite if not limited)
 extern bool wall_time_exceeded;     ///< Whether the simulation was stopped because of the wall-clock time limit
@@ -189,7 +189,8 @@ extern timepoint last_dt;         ///< Time between last and current event
 extern long int n_events;         ///< No. of events that occurred so far
 extern event current_ev;          ///< Current event
 extern event_data* current_evd_;  ///< Pointer to event data of current event
-extern map<timepoint, event> t2ev;                ///< Current schedule of events, inverse of ev2data[ev].t. CAUTION: this needs to be an ordered container type
+extern rate_tree schedule;                        ///< The rates of all scheduled events with finite rate (see schedule.h)
+extern vector<event> immediate_events;            ///< The scheduled events with infinite rate, which happen next in random order
 extern unordered_map<event, event_data> ev2data;  ///< Data of all currently scheduled events
 
 // log-likelihood computation:

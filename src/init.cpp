@@ -63,7 +63,8 @@ long int n_links = 0, n_angles = 0;
 
 // event data:
 unordered_map<event, event_data> ev2data = {};
-map<timepoint, event> t2ev = {};  // kept to equal inverse of ev2data.t
+rate_tree schedule;
+vector<event> immediate_events = {};
 
 // log-likelihood:
 double cumulative_logl = 0;

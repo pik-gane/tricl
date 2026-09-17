@@ -138,10 +138,10 @@ void remove_event (
         register_event_rate_gradient(evd_, evt_id_of(ev.ec, e2et[ev.e1], ev.rat13, e2et[ev.e3]), -1);
     }
 
-    if (debug) cout << "        removed event: " << ev << " scheduled at " << evd_->t << endl;
+    if (debug) cout << "        removed event: " << ev << endl;
 
-    // keep t2ev and ev2data consistent (evd_ is invalid afterwards!):
-    if (scheduling_enabled) t2ev.erase(evd_->t);
+    // keep the schedule and ev2data consistent (evd_ is invalid afterwards!):
+    _remove_from_schedule(ev, evd_);
     ev2data.erase(ev);
 }
 
@@ -352,9 +352,11 @@ void finish_time ()
     if (max_t < INFINITY) advance_time(max_t);
 }
 
-/** Find the next occurring event.
+/** Find the next occurring event by the direct method.
  *
- *  Basically, find the minimum-time entry in the ordered map of scheduled events.
+ *  If immediate events are pending, one of them is chosen uniformly at random and happens right now.
+ *  Otherwise the waiting time until the next event is drawn from the exponential distribution with the total
+ *  rate of the schedule, and the event is chosen with probability proportional to its rate.
  *  (If that is a summary event, draw entities for it at random and check whether it succeeds;
  *  if it doesn't succeed, repeat.)
  *
@@ -366,40 +368,34 @@ bool pop_next_event ()
     bool found = false;
     while ((!found) && (current_t < max_t))  // we may need several attempts to find an event that actually occurs...
     {
-
-        // get handle of earliest next scheduled event:
-        auto tev_handle = t2ev.begin();
-        if (tev_handle == t2ev.end())  // no events are scheduled --> model has converged
+        event ev;
+        if (!immediate_events.empty())  // some event is happening "right now"; all such events occur in random order
         {
-            log_state();
-            finish_time();
-            return false;
-        }
-
-        // get corresponding timepoint:
-        timepoint t = tev_handle->first;
-        if (t >= never_t)  // no events before max_t are scheduled (events that never happen are formally scheduled at t >= never_t)
-        {
-            if (!quiet)
-            {
-                if (t < never_t * 0.999) cout << "next event would happen after time limit at t=" << t << endl;
-                else cout << "no further events are scheduled." << endl;
-            }
-            finish_time();
-            return false;
-        }
-
-        // get the corresponding event:
-        event ev = tev_handle->second;
-        if (t > current_t)  // event is not happening "right now"
-        {
-            // advance model time to time of event:
-            last_dt = t - current_t;
-            advance_time(t);
-        }
-        else  // event is happening "right now" and was scheduled formally for a past time to ensure a random order of those events
-        {
+            size_t i = (size_t) (uniform(random_variable) * immediate_events.size());
+            ev = immediate_events[min(i, immediate_events.size() - 1)];
             last_dt = 0;
+        }
+        else
+        {
+            rate total = schedule.total();
+            if (!(total > 0))  // no events can happen any more --> model has converged
+            {
+                if (!quiet) cout << "no further events can happen." << endl;
+                log_state();
+                finish_time();
+                return false;
+            }
+            timepoint dt = exponential(random_variable) / total;
+            if (!(current_t + dt < max_t))
+            {
+                if (!quiet) cout << "next event would happen after time limit at t=" << current_t + dt << endl;
+                finish_time();
+                return false;
+            }
+            // advance model time to the time of the event and choose it:
+            last_dt = dt;
+            advance_time(current_t + dt);
+            ev = schedule.pick(uniform(random_variable) * total);
         }
 
         if (event_is_summary(ev))  // event is a summary event, so has only types specified and needs to be tested for success
@@ -434,7 +430,7 @@ bool pop_next_event ()
                 if (ev2data.count(actual_ev) > 0)  // the event was scheduled separately since it is influenced by at least one angle
                 {
                     // --> don't perform it now.
-                    if (verbose) cout << "at t=" << current_t << " " << actual_ev << " is scheduled separately at t=" << ev2data.at(actual_ev).t << ", so not performed now." << endl;
+                    if (verbose) cout << "at t=" << current_t << " " << actual_ev << " is scheduled separately, so not performed now." << endl;
                 }
                 else  // event not scheduled separately (but may still be influenced by legs!)
                 {

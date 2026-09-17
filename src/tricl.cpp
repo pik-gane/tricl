@@ -34,7 +34,6 @@
  * - add actions
  *
  * simulation options:
- * - as an alternative to tmax and max_n_events, add max_wall
  * - add a particle filtering mode
  *
  * network theory stuff:
@@ -48,7 +47,6 @@
  * - add auxiliaries: identifier: expression
  *
  * optimization:
- * - replace the ordered map t2ev by a sum tree of rates (Gillespie's direct method), which would also give an exact total rate
  * - bulk initialisation of the initial links (currently each initial link is performed as an event)
  * - special-case the sigmoid for tail index 1 (its default) to avoid pow()
  * - ensembles of runs are embarrassingly parallel; a single trajectory is not worth parallelising
@@ -64,7 +62,6 @@
  * - support entity type detection from columns in csv file
  *
  * model estimation (see replay.cpp and python/tricl_fit.py for what exists):
- * - replay mode without scheduling (currently the replay reuses the simulation's scheduling, which is not needed)
  * - estimation from partially observed data (snapshots) via simulated method of moments or data augmentation
  * - allow estimating influence parameters starting from zero (angles without effect are currently not tracked)
  *

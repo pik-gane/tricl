@@ -29,7 +29,7 @@ bool step ()
         ++n_events;
         write_stats_until(current_t);  // (the state before the event holds until current_t)
         perform_event(current_ev, current_evd_);
-        if (debug) cout << " " << t2ev.size() << " events on stack" << endl << endl;
+        if (debug) cout << " " << ev2data.size() << " events scheduled" << endl << endl;
         if (n_events % RECOMPUTE_TOTAL_ER_EVERY == 0) {
             // remove floating point drift from the incrementally maintained total effective rate:
             rate exact = compute_total_finite_er();

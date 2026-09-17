@@ -526,8 +526,7 @@ void dump_links () {
 void dump_data ()
 {
     dump_links();
-    cout << "t2be:" << endl;
-    for (auto& [t, ev] : t2ev) cout << " " << t << ": " << ev << endl;
+    cout << "schedule: total rate " << schedule.total() << ", " << schedule.size() << " events in the rate tree, " << immediate_events.size() << " immediate" << endl;
     cout << "ev2data:" << endl;
     for (auto& [ev2, evd2] : ev2data) cout << " " << ev2 << ": " << evd2 << endl;
 }

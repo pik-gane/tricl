@@ -1,253 +1,154 @@
-/** An efficient data structure for storing the schedule.
+/** The schedule of the simulation: a sum tree over the rates of all scheduled events.
  *
  *  \file
+ *
+ *  The simulation uses the "direct" method: the waiting time until the next event is drawn from the total
+ *  rate, and the event is then chosen with probability proportional to its rate. For this, the rates of all
+ *  scheduled events (the effective rate of an individually scheduled event, the upper bound
+ *  attempt rate * max. success probability of a summary event) are the leaves of a complete binary tree whose
+ *  inner nodes hold the sums of their children, so that the total is always available exactly (up to the
+ *  rounding of the current sums, without drift), an update costs O(log n), and choosing a leaf with
+ *  probability proportional to its weight is a descent from the root.
+ *
+ *  Events with infinite rate ("immediate" events) are not in the tree but in a separate list (see
+ *  immediate_events in global_variables.h), from which the next one is drawn uniformly at random.
  */
 
+// make sure this file is only included once:
+#ifndef INC_SCHEDULE_H
+#define INC_SCHEDULE_H
 
-#include "global_variables.h"
+#include <cmath>
+#include <vector>
 
+#include "data_model.h"
 
-/** An efficient container for pairs of (event, event_data) that supports efficient
- * - lookup, deletion, insertion, and update of event_data by event
- * - lookup of item with minimal event_data.t
+/** A complete binary tree of sums with events as leaves.
  */
-class schedule_t
+class rate_tree
 {
-    vector<pair<event, timepoint>> ev_t_now = {};  ///< the small linear container for schedule class SC_NOW
-    int n_ev_now = 0;
+    std::vector<double> tree;   ///< tree[1] = total, leaves at indices cap ... 2 cap - 1, tree[i] = tree[2 i] + tree[2 i + 1]
+    std::vector<event> slot2ev; ///< the event stored in each leaf slot
+    std::vector<char> used;     ///< whether a leaf slot is in use
+    std::vector<int> free_slots;  ///< the unused leaf slots
+    int cap = 0;                ///< no. of leaf slots (a power of two, or 0)
+    int n = 0;                  ///< no. of used leaf slots
 
-    map<timepoint, event> t2ev_sooner = {};  ///< the tree-type container for schedule class SC_TREE
+    /** Recompute the sums on the path from leaf index i to the root. */
+    inline void update_path (int i)
+    {
+        for (i /= 2; i >= 1; i /= 2) tree[i] = tree[2 * i] + tree[2 * i + 1];
+    }
 
-    unordered_map<event, timepoint> ev2t_later = {};  ///< the hash table for schedule class SC_HASH
-    timepoint min_t_later = INFINITY;                 ///< the smallest t of schedule class S_LIST
+    /** Double the capacity, keeping all leaves. */
+    void grow ()
+    {
+        int new_cap = (cap == 0) ? 64 : 2 * cap;
+        std::vector<double> new_tree(2 * new_cap, 0.0);
+        for (int s = 0; s < cap; s++) new_tree[new_cap + s] = tree[cap + s];
+        for (int i = new_cap - 1; i >= 1; i--) new_tree[i] = new_tree[2 * i] + new_tree[2 * i + 1];
+        tree.swap(new_tree);
+        slot2ev.resize(new_cap);
+        used.resize(new_cap, 0);
+        for (int s = new_cap - 1; s >= cap; s--) free_slots.push_back(s);  // (lower slots are handed out first)
+        cap = new_cap;
+    }
 
-    unordered_map<event, event_data> ev2data = {};  ///< the hash table for all events' data
+public:
 
-    inline auto _find_now (const event& ev)
+    /** \returns the total weight (sum of all rates in the tree). */
+    inline double total () const { return (cap > 0) ? tree[1] : 0.0; }
+
+    /** \returns the no. of events in the tree. */
+    inline int size () const { return n; }
+
+    /** \returns the weight of a leaf slot. */
+    inline double weight (int slot) const { return tree[cap + slot]; }
+
+    /** \returns the event in a leaf slot. */
+    inline const event& at (int slot) const { return slot2ev[slot]; }
+
+    /** \returns whether a leaf slot is in use. */
+    inline bool is_used (int slot) const { return (slot >= 0) && (slot < cap) && used[slot]; }
+
+    /** Insert an event with the given weight.
+     *  \returns its leaf slot
+     */
+    inline int add (const event& ev, double w)
     {
-        auto it = ev_t_now.begin();
-        for (; it != ev_t_now.end(); it++)
-        {
-            if (it->first == ev) return it;
-        }
-        return it;
+        assert (w >= 0 && w < INFINITY);
+        if (free_slots.empty()) grow();
+        int s = free_slots.back();
+        free_slots.pop_back();
+        slot2ev[s] = ev;
+        used[s] = 1;
+        n++;
+        tree[cap + s] = w;
+        update_path(cap + s);
+        return s;
     }
-    inline event_data at (const event& ev)
+
+    /** Change the weight of a leaf slot. */
+    inline void set (int slot, double w)
     {
-        return ev2data.at(ev);
+        assert (is_used(slot) && (w >= 0) && (w < INFINITY));
+        tree[cap + slot] = w;
+        update_path(cap + slot);
     }
-    inline void _update_min_t_later(timepoint removed_t)
+
+    /** Remove the event in a leaf slot. */
+    inline void remove (int slot)
     {
-        if (removed_t == min_t_later) {
-            min_t_later = INFINITY;
-            for (const auto& [ev, t] : ev2t_later) if (t < min_t_later) min_t_later = t;
-        }
+        assert (is_used(slot));
+        tree[cap + slot] = 0.0;
+        update_path(cap + slot);
+        used[slot] = 0;
+        free_slots.push_back(slot);
+        n--;
     }
-    inline event_data pop (const event& ev)
+
+    /** Choose the leaf in whose weight interval the number u falls, i.e. with probability proportional to its
+     *  weight if u is uniformly distributed in [0, total).
+     *  \returns the event in that leaf
+     */
+    inline const event& pick (double u) const
     {
-        const auto it = ev2data.find(ev);
-        const auto evd = it->second;
-        ev2data.erase(it);
-        switch (evd.sc) {
-        case SC_LATER:
-            ev2t_later.erase(ev);
-            _update_min_t_later(evd.t);
-            break;
-        case SC_SOONER:
-            t2ev_sooner.erase(evd.t);
-            break;
-        case SC_NOW:
-            ev_t_now.erase(_find_now(ev));
-            n_ev_now--;
-            break;
-        case SC_NEVER:
-            break;
+        assert (n > 0 && total() > 0);
+        int i = 1;
+        while (i < cap) {
+            i *= 2;
+            if (u >= tree[i]) {
+                u -= tree[i];
+                i++;
+            }
         }
-        return evd;
+        // guard against rounding: make sure we return a used leaf with positive weight
+        if ((!used[i - cap]) || !(tree[i] > 0)) {
+            int j = i;
+            while ((j > cap) && ((!used[j - cap]) || !(tree[j] > 0))) j--;
+            if ((!used[j - cap]) || !(tree[j] > 0)) {
+                j = i;
+                while ((j < 2 * cap - 1) && ((!used[j - cap]) || !(tree[j] > 0))) j++;
+            }
+            i = j;
+        }
+        return slot2ev[i - cap];
     }
-    inline void erase (const event& ev)
+
+    /** \returns the total recomputed from the leaves (for consistency checks). */
+    double exact_total () const
     {
-        // pop it without returning the data:
-        pop(ev);
+        double s = 0.0;
+        for (int i = 0; i < cap; i++) if (used[i]) s += tree[cap + i];
+        return s;
     }
-    inline pair<event, event_data> pop_min_t ()
+
+    /** Remove all events. */
+    void clear ()
     {
-        event ev;
-        if (n_ev_now > 0)
-        {
-            // find minimal time by linear search
-            // (this should be fastest here since ev_t_now is a very small set)
-            timepoint min_t_now = INFINITY;
-            event* ev_;
-            auto it = ev_t_now.begin(), it_min = it;
-            for (; it != ev_t_now.end(); it++)
-            {
-                auto t = it->second;
-                if (t < min_t_now)
-                {
-                    it_min = it;
-                    min_t_now = t;
-                    ev_ = &(it->first);
-                }
-            }
-            ev = *ev_;
-            // erase it:
-            ev_t_now.erase(it_min);
-            n_ev_now--;
-        }
-        else
-        {
-            if (min_t_later < t2ev_sooner.begin()->first)
-            {
-                // copy all events from ev2t_later to t2ev_sooner:
-                // TODO: is there a more efficient bulk insertion method?
-                for (const auto& [ev2, t2] : ev2t_later) {
-                    t2ev_sooner[t2] = ev2;
-                    ev2data[ev2].sc = SC_SOONER;
-                }
-                // clear ev2t_later:
-                ev2t_later.clear();
-                min_t_later = INFINITY;
-            }
-            // pop first element from t2ev_sooner:
-            const auto it = t2ev_sooner.begin();
-            ev = it->second;
-            t2ev_sooner.erase(it);
-        }
-        // finally pop corresponding data and return both:
-        auto evd = ev2data.at(ev);
-        ev2data.erase(ev);
-        return pair<event, event_data>(ev, evd);
-    }
-    inline void insert (
-            const event& ev,
-            event_data evd      ///< [in] a copy (!) of the data to store
-            )
-    {
-        assert(ev2data.count(ev) == 0);
-        const auto t = evd.t;
-        // depending on t, store in appropriate container:
-        if (t > max_t)
-        {
-            evd.sc = SC_NEVER;
-        }
-        else if (t > current_t)
-        {
-            evd.sc = SC_LATER;
-            ev2t_later[ev] = t;
-            if (t < min_t_later) min_t_later = t;
-        }
-        else
-        {
-            evd.sc = SC_NOW;
-            ev_t_now.push_back(pair<event, timepoint>(ev, t));
-            n_ev_now++;
-        }
-        // store data:
-        ev2data[ev] = evd;
-    }
-    inline void update (const event& ev, event_data& new_evd)
-    {
-        // (basically a combination of erase and insert)
-        const auto old_evd = ev2data.at(ev);
-        timepoint old_t = old_evd.t, new_t = new_evd.t;
-        switch (old_evd.sc) {
-        case SC_LATER:
-            if (new_t > max_t)
-            {
-                // move to never:
-                ev2t_later.erase(ev);
-                _update_min_t_later(old_t);
-                new_evd.sc = SC_NEVER;
-            }
-            else if (new_t > current_t)
-            {
-                // stay in later, just update t:
-                new_evd.sc = SC_LATER;
-                ev2t_later[ev] = new_t;
-                if (new_t < min_t_later) min_t_later = new_t;
-            }
-            else
-            {
-                // move to now:
-                ev2t_later.erase(ev);
-                _update_min_t_later(old_evd.t);
-                new_evd.sc = SC_NOW;
-                ev_t_now.push_back(pair<event, timepoint>(ev, new_t));
-                n_ev_now++;
-            }
-            break;
-        case SC_SOONER:
-            if (new_t > max_t)
-            {
-                // move to never:
-                t2ev_sooner.erase(old_t);
-                new_evd.sc = SC_NEVER;
-            }
-            else if (new_t > current_t)
-            {
-                // move to later:
-                t2ev_sooner.erase(old_t);
-                new_evd.sc = SC_LATER;
-                ev2t_later[ev] = new_t;
-                if (new_t < min_t_later) min_t_later = new_t;
-            }
-            else
-            {
-                // move to now:
-                t2ev_sooner.erase(old_t);
-                new_evd.sc = SC_NOW;
-                ev_t_now.push_back(pair<event, timepoint>(ev, new_t));
-                n_ev_now++;
-            }
-            break;
-        case SC_NEVER:
-            if (new_t > max_t)
-            {
-                // stay in never:
-                new_evd.sc = SC_NEVER;
-            }
-            else if (new_t > current_t)
-            {
-                // move to later:
-                new_evd.sc = SC_LATER;
-                ev2t_later[ev] = new_t;
-                if (new_t < min_t_later) min_t_later = new_t;
-            }
-            else
-            {
-                // move to now:
-                new_evd.sc = SC_NOW;
-                ev_t_now.push_back(pair<event, timepoint>(ev, new_t));
-                n_ev_now++;
-            }
-            break;
-        case SC_NOW:
-            if (new_t > max_t)
-            {
-                // move to never:
-                ev_t_now.erase(_find_now(ev));
-                n_ev_now--;
-                new_evd.sc = SC_NEVER;
-            }
-            else if (new_t > current_t)
-            {
-                // move to later:
-                ev_t_now.erase(_find_now(ev));
-                n_ev_now--;
-                new_evd.sc = SC_LATER;
-                ev2t_later[ev] = new_t;
-                if (new_t < min_t_later) min_t_later = new_t;
-            }
-            else
-            {
-                // stay in now, update t:
-                new_evd.sc = SC_NOW;
-                _find_now(ev)->second = new_t;
-            }
-            break;
-        }
-        // store new data:
-        ev2data[ev] = new_evd;
+        tree.clear(); slot2ev.clear(); used.clear(); free_slots.clear();
+        cap = n = 0;
     }
 };
+
+#endif

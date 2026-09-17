@@ -121,20 +121,27 @@ void verify_data_consistency () {
         if (!(evd.t > -INFINITY)) dump_data();
         CHECK(evd.t > -INFINITY);
         if (scheduling_enabled) {
-            if (!((evd.t < INFINITY) && (t2ev.count(evd.t) == 1)))
-                cout << ev << evd << " " << (evd.t == INFINITY) << " " << t2ev.count(evd.t) << endl;
-            CHECK((evd.t < INFINITY) && (t2ev.count(evd.t) == 1));
+            // the event is either in the rate tree (finite rate) or in the list of immediate events (infinite rate):
+            CHECK((evd.slot >= 0) != (evd.imm >= 0));
+            if (evd.slot >= 0) {
+                CHECK(schedule.is_used(evd.slot) && (schedule.at(evd.slot) == ev));
+                CHECK(evd.effective_rate < INFINITY);
+                if (!event_is_summary(ev)) CHECK(schedule.weight(evd.slot) == evd.effective_rate);
+            } else {
+                CHECK((evd.imm < (int) immediate_events.size()) && (immediate_events[evd.imm] == ev));
+                CHECK(evd.effective_rate == INFINITY);
+            }
         } else {
-            CHECK(evd.t == INFINITY);
+            CHECK((evd.slot < 0) && (evd.imm < 0));
         }
     }
-    // t2be:
+    // the schedule:
     if (scheduling_enabled) {
-        for (auto& [t, ev] : t2ev) {
-            CHECK(t > -INFINITY);
-            CHECK(ev2data.count(ev) == 1);
-        }
+        CHECK(schedule.size() + (int) immediate_events.size() == (int) ev2data.size());
+        double exact = schedule.exact_total();
+        CHECK(fabs(schedule.total() - exact) <= 1e-9 * max(1.0, exact));
+        for (auto& ev : immediate_events) CHECK(ev2data.count(ev) == 1);
     } else {
-        CHECK(t2ev.empty());
+        CHECK((schedule.size() == 0) && immediate_events.empty());
     }
 }

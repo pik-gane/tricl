@@ -248,52 +248,53 @@ inline void _schedule_event (
         add_effective_rate(er);
     }
 
-    if (!scheduling_enabled)
-    {
-        // replay mode: the event is registered but no tentative time is drawn:
-        evd_->t = INFINITY;
-        return;
-    }
+    // mark the event as scheduled (in replay mode, that is all):
+    evd_->t = INFINITY;
+    if (!scheduling_enabled) return;
 
-    // draw the tentative time at which the event would happen if nothing changes in between:
-    timepoint t;
-    if (is_summary)
+    // put it into the schedule (no random numbers are drawn here; the direct method draws them in pop_next_event):
+    if (er == INFINITY)
     {
-        // use a common upper bound to the actual effective rate for scheduling:
-        t = current_t + exponential(random_variable) / (ar * evtid2summary_max_success_probability[evt_id]);
-        if (verbose) cout << "         (re)scheduling " << ev << ": summary event, attempt rate " << ar << " → attempt at t=" << t << ", test success then" << endl;
-    }
-    else if (spu == -INFINITY)
-    {
-        t = INFINITY;
-        if (debug) cout << "         (re)scheduling " << ev << ": zero success probability → t=" << t << endl;
-    }
-    else if (ar < INFINITY)
-    {
-        // draw time interval after which it would happen if nothing changes in between, and add it to the current time:
-        t = current_t + exponential(random_variable) / er;
-        if (verbose) {
-            if (t == INFINITY) {
-                if (debug) cout << "         (re)scheduling " << ev << ": zero effective rate → t=" << t << endl;
-            }
-            else cout << "         (re)scheduling " << ev << ": ar " << ar << ", spu " << spu << " → eff. rate " << er << " → next at t=" << t << endl;
-        }
+        // "immediate" events are kept in a list from which the next one is drawn at random:
+        evd_->imm = (int) immediate_events.size();
+        immediate_events.push_back(ev);
+        if (verbose) cout << "         (re)scheduling " << ev << ": ar inf, spu > 0 → eff. rate inf → happens \"immediately\"" << endl;
     }
     else
     {
-        // to make sure that all "immediate" events occur in random order,
-        // they are formally scheduled at some random "past" time:
-        t = current_t - abs(1 + current_t) * uniform(random_variable);
-        if (verbose) cout << "         (re)scheduling " << ev << ": ar inf, spu > 0 → eff. rate inf → next \"immediately\" at t=" << t << endl;
+        // the weight in the rate tree is the rate at which the event is drawn: for a summary event, a common
+        // upper bound to the actual effective rates of the covered pairs (the success is tested in pop_next_event):
+        double w = is_summary ? ar * evtid2summary_max_success_probability[evt_id] : er;
+        evd_->slot = schedule.add(ev, w);
+        if (verbose) {
+            if (is_summary) cout << "         (re)scheduling " << ev << ": summary event, attempt rate " << ar << " → attempts at rate " << w << ", success tested then" << endl;
+            else if (w == 0) { if (debug) cout << "         (re)scheduling " << ev << ": zero effective rate" << endl; }
+            else cout << "         (re)scheduling " << ev << ": ar " << ar << ", spu " << spu << " → eff. rate " << er << endl;
+        }
     }
-    if (t == INFINITY)
+}
+
+/** Remove an event from the rate tree or the list of immediate events (but not from ev2data).
+ */
+inline void _remove_from_schedule (event& ev, event_data* evd_)
+{
+    if (evd_->slot >= 0)
     {
-        // replace INFINITY by some unique finite but non-reached time point:
-        t = never_t * (1 + uniform(random_variable));
+        schedule.remove(evd_->slot);
+        evd_->slot = -1;
     }
-    // store time:
-    evd_->t = t;
-    t2ev[t] = ev;
+    else if (evd_->imm >= 0)
+    {
+        int i = evd_->imm, last = (int) immediate_events.size() - 1;
+        assert (immediate_events[i] == ev);
+        if (i != last)
+        {
+            immediate_events[i] = immediate_events[last];
+            ev2data.at(immediate_events[i]).imm = i;
+        }
+        immediate_events.pop_back();
+        evd_->imm = -1;
+    }
 }
 
 inline void schedule_event (event& ev, event_data* evd_, int evt_id)
@@ -315,7 +316,7 @@ inline void unschedule_event (event& ev, event_data* evd_, int evt_id)
 {
     assert(evd_ == &ev2data.at(ev));
     assert(event_is_scheduled(ev, evd_));
-    if (scheduling_enabled) t2ev.erase(evd_->t);
+    _remove_from_schedule(ev, evd_);
     bool is_summary = event_is_summary(ev);
     subtract_effective_rate(evd_->effective_rate, !is_summary);
     // (the gradient contributions of a summary event never change, so they are only registered once in init_events)

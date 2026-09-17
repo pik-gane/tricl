@@ -23,9 +23,10 @@ void finish ()
     }
 
     if (verbose) {
-        cout << "\nat t=" << current_t << ", " << t2ev.size() << " events on stack: " << endl;
-        for (auto& [t, ev] : t2ev) {
-            cout << " " << ev << " at " << t << endl;
+        cout << "\nat t=" << current_t << ", " << ev2data.size() << " events scheduled (total rate " << schedule.total()
+             << ", " << immediate_events.size() << " immediate): " << endl;
+        for (auto& [ev, evd] : ev2data) {
+            cout << " " << ev << " at rate " << evd.effective_rate << endl;
         }
     }
     log_state(true);

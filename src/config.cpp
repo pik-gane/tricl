@@ -28,7 +28,7 @@ bool silent = false, verbose = false, quiet = false, debug = false, only_output_
 string events_in_filename = "", stats_out_filename = "", links_out_filename = "", entities_out_filename = "";
 unordered_set<relationship_or_action_type> inverse_only_rats = {};
 double stats_every = 1.0;
-timepoint max_t = INFINITY, never_t = 1e300;
+timepoint max_t = INFINITY;
 long int max_n_events = LONG_MAX;
 double max_wall_seconds = INFINITY;
 bool wall_time_exceeded = false;
@@ -371,8 +371,6 @@ void read_config (
     }
     if ((max_t==INFINITY) && (max_n_events==LONG_MAX)) throw
             "must specify at least one of limits:t, limits:events";
-    // events that never happen are formally scheduled at time points >= never_t, which must be finite:
-    never_t = (max_t < INFINITY) ? max_t : 1e300;
 
     // entities:
     entity_type et = 1;
