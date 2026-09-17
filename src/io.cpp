@@ -286,6 +286,61 @@ void close_events_out ()
     if (events_out.is_open()) events_out.close();
 }
 
+// output of the time intervals of all links to a csv file (the "temporal network"):
+
+ofstream links_out;  ///< stream for the optional csv output of link intervals
+
+/** Open the csv file for link intervals (if requested) and write its header.
+ *
+ *  Columns: source entity label, relationship type label, target entity label,
+ *  start and end of the time interval during which the link existed.
+ *  A row is written whenever a link is terminated, and at the end of the run for all links still existing
+ *  (with the final model time as end). Every directed link is written, so symmetric relationship types give
+ *  two rows per pair of entities (one per direction), except links of relationship types that were only declared
+ *  as the inverse of another type (they are implied by the rows of that type).
+ */
+void open_links_out ()
+{
+    if (links_out_filename == "") return;
+    links_out.open(links_out_filename);
+    if (!links_out.good()) throw "cannot open links output file \"" + links_out_filename + "\"";
+    links_out << std::setprecision(17) << "source,relationship,target,start,end" << endl;
+}
+
+/** Write the time interval of a link to the csv file (if open).
+ */
+void write_link_out (const tricllink& l, timepoint start, timepoint end)
+{
+    if (!links_out.is_open()) return;
+    if (inverse_only_rats.count(l.rat13) > 0) return;
+    links_out << csv_quote(e2label[l.e1]) << "," << csv_quote(rat2label[l.rat13]) << "," << csv_quote(e2label[l.e3])
+              << "," << start << "," << end << "\n";
+}
+
+/** Close the csv file for link intervals (if open).
+ */
+void close_links_out ()
+{
+    if (links_out.is_open()) links_out.close();
+}
+
+/** Write all entities with their labels and types to a csv file (if requested).
+ *
+ *  Columns: entity id (the node id used in gexf output), label, entity type label.
+ */
+void write_entities_out ()
+{
+    if (entities_out_filename == "") return;
+    ofstream entities_out(entities_out_filename);
+    if (!entities_out.good()) throw "cannot open entities output file \"" + entities_out_filename + "\"";
+    entities_out << "id,label,type" << endl;
+    for (entity e = 1; e <= max_e; e++) {
+        if (es.count(e) == 0) continue;
+        entities_out << e << "," << csv_quote(e2label[e]) << "," << csv_quote(et2label[e2et[e]]) << "\n";
+    }
+    entities_out.close();
+}
+
 /** Format a number for JSON output (infinities as in Python's json module).
  */
 static string json_number (double x)

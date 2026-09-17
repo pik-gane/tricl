@@ -25,7 +25,8 @@ unordered_map<relationship_or_action_type, string> gexf_filename = {};
 string diagram_fileprefix = "", gexf_default_filename = "", events_out_filename = "";
 bool silent = false, verbose = false, quiet = false, debug = false, only_output_logl = false, output_summary = false,
      compute_gradient = false, dump_parameters = false, dump_model = false, scheduling_enabled = true;
-string events_in_filename = "", stats_out_filename = "";
+string events_in_filename = "", stats_out_filename = "", links_out_filename = "", entities_out_filename = "";
+unordered_set<relationship_or_action_type> inverse_only_rats = {};
 double stats_every = 1.0;
 timepoint max_t = INFINITY, never_t = 1e300;
 long int max_n_events = LONG_MAX;
@@ -205,6 +206,8 @@ void read_config (
             ("dump-model", "only output the model structure (types, event types with influences, initial link counts) as JSON after initialization and exit", cxxopts::value<bool>())
             ("stats-out", "csv file to write the numbers of links by link type to at regular model time intervals", cxxopts::value<string>()->default_value(""))
             ("stats-every", "model time interval between rows of the stats file", cxxopts::value<double>()->default_value("1.0"))
+            ("links-out", "csv file to write the time interval of every link to (columns source,relationship,target,start,end; overrides files:links)", cxxopts::value<string>()->default_value(""))
+            ("entities-out", "csv file to write all entities with their labels and types to (columns id,label,type; overrides files:entities)", cxxopts::value<string>()->default_value(""))
             ;
 
     // register command line options for all metaparameters in config file:
@@ -266,6 +269,8 @@ void read_config (
     scheduling_enabled = (events_in_filename == "");  // replaying needs no schedule and no random numbers
     stats_out_filename = cmdlineopts["stats-out"].as<string>();
     stats_every = cmdlineopts["stats-every"].as<double>();
+    links_out_filename = cmdlineopts["links-out"].as<string>();
+    entities_out_filename = cmdlineopts["entities-out"].as<string>();
     if (!(stats_every > 0)) throw "--stats-every must be positive";
 
     // read config file:
@@ -316,6 +321,8 @@ void read_config (
         if (n["diagram prefix"] && !n["diagram prefix"].IsNull()) diagram_fileprefix = n["diagram prefix"].as<string>();
         if (n["events"] && !n["events"].IsNull() && (events_out_filename == "")) events_out_filename = n["events"].as<string>();
         if (n["stats"] && !n["stats"].IsNull() && (stats_out_filename == "")) stats_out_filename = n["stats"].as<string>();
+        if (n["links"] && !n["links"].IsNull() && (links_out_filename == "")) links_out_filename = n["links"].as<string>();
+        if (n["entities"] && !n["entities"].IsNull() && (entities_out_filename == "")) entities_out_filename = n["entities"].as<string>();
     }
     if (dump_model || dump_parameters) {
         // no output files when only dumping the model:
@@ -323,6 +330,8 @@ void read_config (
         diagram_fileprefix = "";
         events_out_filename = "";
         stats_out_filename = "";
+        links_out_filename = "";
+        entities_out_filename = "";
     }
 
     // limits (at least one):
@@ -415,6 +424,7 @@ void read_config (
                     label2rat[ratlabel2] = rat2;
                     rat2label[rat2] = ratlabel2;
                     gexf_filename[rat2] = ""; // don't output rats that are only inverses
+                    inverse_only_rats.insert(rat2);
                     r_is_action_type[nextrat] = false;
                     nextrat++;
                     if (verbose) cout << " relationship type " << rat2 << ": " << ratlabel2 << " (inverse: " << ratlabel << ")" << endl;

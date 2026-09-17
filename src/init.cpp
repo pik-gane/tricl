@@ -370,7 +370,8 @@ void init_links ()
             auto et1 = lt.et1, et3 = lt.et3; auto rat13 = lt.rat13;
             for (auto& e1 : et2es[et1]) {
                 for (auto& e3 : et2es[et3]) {
-                    if ((e3 != e1) && ((e3 > e1) || (rat2inv[rat13] != rat13))) {
+                    // (for symmetric relationship types between entities of the same type, each pair is considered once)
+                    if ((e3 != e1) && ((et1 != et3) || (e3 > e1) || (rat2inv[rat13] != rat13))) {
                         float p = (e2block[e1] == e2block[e3]) ? lt2initial_prob_within[lt] : lt2initial_prob_between[lt];
                         do_random_link(p, e1, rat13, e3);
                     }
@@ -398,7 +399,7 @@ void init_links ()
         auto es3 = et2es.at(et3);
         for (auto& e1 : et2es.at(et1)) {
             for (auto& e3 : es3) {
-                if ((e3 != e1) && ((e3 > e1) || (rat2inv.at(rat13) != rat13))) {
+                if ((e3 != e1) && ((et1 != et3) || (e3 > e1) || (rat2inv.at(rat13) != rat13))) {
                     double dist2 = 0.0;
                     for (int d=0; d<dim; d++) {
                         dist2 += pow(e2coords.at(e1)[d] - e2coords.at(e3)[d], 2.0);
@@ -439,6 +440,8 @@ void init ()
     init_links();
     open_events_out();  // only after initial links, so that only simulated events are written
     open_stats_out();
+    open_links_out();
+    write_entities_out();
     init_gexf();
     do_graphviz_diagrams();
     if (debug) {

@@ -24,7 +24,8 @@ Usage
 -----
 * write some config file ``someconfigfile.yaml`` (see below)
 * run model with ``tricl someconfigfile.yaml [options]`` (or first list options with ``tricl someconfigfile.yaml --help``)
-* visualize or analyse output gexf-file, e.g. with gephi <https://gephi.org/>
+* make a movie of the resulting temporal network with ``python/tricl_movie.py`` (see below), or visualize or analyse
+  the output gexf-file, e.g. with gephi <https://gephi.org/>
 
 Command line options:
 * ``--seed N``: random seed (0 = choose randomly), overrides ``options:seed``
@@ -37,9 +38,43 @@ Command line options:
 * ``--dump-parameters``: only output the model parameters and their current values as JSON and exit
 * ``--dump-model``: only output the model structure (entity types with counts, relationship types, link types with initial link counts, event types with influences) as JSON after initialization and exit
 * ``--stats-out FILE`` and ``--stats-every DT``: write the numbers of links by link type (and the total numbers of links and angles) to a csv file every ``DT`` model time units (also ``files:stats`` in the config file)
+* ``--links-out FILE``: write the time interval of every link to a csv file with columns ``source,relationship,target,start,end`` (the temporal network, see below; also ``files:links``)
+* ``--entities-out FILE``: write all entities to a csv file with columns ``id,label,type`` (also ``files:entities``)
 * ``--NAME VALUE`` (or ``-X VALUE`` for one-letter names): override the metaparameter ``NAME`` defined in the config file by a value or expression
 
 Caution: output files might get large! Try with small ``limits:events`` first and use gexf.gz file format!
+
+Temporal network output and movies
+----------------------------------
+``tricl config.yaml --links-out links.csv --entities-out entities.csv`` writes the simulated temporal network as an
+*interval list*: one row ``source,relationship,target,start,end`` per directed link and time interval during which it
+existed (rows are written when a link is terminated, and at the end of the run for all links still existing, with
+the final model time as ``end``), plus one row ``id,label,type`` per entity. Symmetric relationship types give two
+rows per pair of entities, one per direction (filter ``source < target`` for an undirected representation);
+relationship types that were only declared as the inverse of another type are not written since they are implied.
+This plain table is the usual input form of temporal network libraries that read edge lists with times (e.g.
+pathpy, teneto, DyNetx, Raphtory, typically via pandas). It is also written in replay mode, so a movie can be made of
+an observed event sequence.
+
+``python/tricl_movie.py entities.csv links.csv --out movie.mp4`` renders the temporal network as a movie
+(mp4/webm/mkv via ``ffmpeg``, animated gif via Pillow, or a directory of png frames; needs numpy and matplotlib).
+Node positions come from a force-directed layout of the *time-aggregated* network (pairs are attracted in proportion
+to the total time they were linked), so that the picture stays still and only the links and states move;
+``--layout dynamic`` recomputes the layout for every frame instead. Two links in opposite directions are drawn as
+one line, a single directed link as an arrow. Nodes are coloured by entity type, or with ``--state R [R ...]`` by
+the entity's current link of relationship type R, which is how tricl models usually encode an entity's state
+(a link to a "hub" entity such as ``active`` or ``covid-19``); the hub entities are then not drawn. ``--draw``
+selects the relationship types to draw, ``--hide`` the entity types not to draw, ``--t0``/``--t1``/``--frames``/``--dt``
+the time window and resolution; see ``--help``. Examples:
+
+    tricl config_files/granovetter_helfmann.yaml --seed 1 --E 5000 --entities-out entities.csv --links-out links.csv
+    python3 python/tricl_movie.py entities.csv links.csv --state is "is not" --out granovetter.mp4
+
+    tricl config_files/sir_sd.yaml --seed 1 --entities-out entities.csv --links-out links.csv
+    python3 python/tricl_movie.py entities.csv links.csv --draw "regularly meets" \
+        --state "is susceptible to" "is infectious for" "has recovered from" "has died of" --out sir.gif
+
+The gexf output and the Gephi-based movie workflow in ``gephi/`` remain available.
 
 Log-likelihood, replay mode and parameter estimation
 ----------------------------------------------------
@@ -175,6 +210,9 @@ files:
         # must end in either .gexf or .gexf.gz (recommended) 
     diagram prefix: <filename prefix for structural diagram output>
     events: <csv file to write all performed events to>  # columns: t, event, source, relationship, target
+    stats: <csv file to write the numbers of links by link type to at regular model time intervals>
+    links: <csv file to write the time interval of every link to>  # columns: source, relationship, target, start, end
+    entities: <csv file to write all entities to>  # columns: id, label, type
     # files not listed are not generated
 
 options:
@@ -338,6 +376,13 @@ Change log
   and use finite success probability units change behaviour; multiply their probability units by 4 to restore it
   (done for ``parameters_3blocks.yaml``, whose clusters otherwise dissolve instead of merging). Unit tests in
   ``tests/test_sigmoid.cpp``.
+- fixed: random initial links of a symmetric relationship type between entities of *different* types were never
+  generated when the entity ids of the source type happened to be larger than those of the target type (which
+  depended on the internal ordering of the entity types). In ``granovetter_helfmann.yaml`` this meant that there were
+  no ``knows`` links between always active, contingent and never active agents at all; results of that config change.
+- new options ``--links-out`` and ``--entities-out`` (also ``files:links``, ``files:entities``) writing the temporal
+  network as a plain interval list, and ``python/tricl_movie.py`` rendering it as a movie (see above); the Gephi
+  workflow in ``gephi/`` is now legacy
 - ``python/tricl_macro.py`` generates and integrates a mean-field approximation of a model and compares it with
   simulations; new options ``--dump-model``, ``--stats-out``, ``--stats-every``
 - ``python/tricl_rdf.py`` converts RDF data into config skeletons and gexf output into RDF-star

@@ -38,6 +38,8 @@ extern bool dump_model;             ///< Whether to only output the model struct
 extern bool scheduling_enabled;     ///< Whether tentative event times are drawn and kept in the schedule (true when simulating, false when replaying)
 extern string stats_out_filename;   ///< Name of (or path to) csv file to write link counts by link type to at regular model time intervals (if "", none is written)
 extern double stats_every;          ///< Model time interval between rows of the stats file
+extern string links_out_filename;   ///< Name of (or path to) csv file to write the time intervals of all links to (if "", none is written)
+extern string entities_out_filename; ///< Name of (or path to) csv file to write all entities with their types to (if "", none is written)
 extern timepoint max_t;             ///< Maximal model time to simulate until (may be infinite if max_n_events is finite)
 extern timepoint never_t;           ///< Finite time point at or after which "never" happening events are formally scheduled (= max_t if finite)
 extern long int max_n_events;       ///< Max. no. events to simulate before stopping
@@ -53,6 +55,7 @@ extern int n_rats;                                                    ///< No. o
 extern unordered_map<relationship_or_action_type, label> rat2label;   ///< Relationship or action type labels (typically verbs in the 3rd person singular, or math symbols)
 extern unordered_map<string, relationship_or_action_type> label2rat;  ///< Inverse map of \ref label2rat
 extern unordered_map<relationship_or_action_type, bool> r_is_action_type; ///< Whether relationship or action type is an action type (not implemented yet)
+extern unordered_set<relationship_or_action_type> inverse_only_rats; ///< Relationship types that were only declared as the inverse of another type (their links are implied by those of the other type and hence not output)
 extern unordered_map<relationship_or_action_type, relationship_or_action_type> rat2inv; ///< Inverse type of a relationship or action type (e.g. the inverse of "follows" would be "is followed by", the inverse of "meets" would be "meets"). If NO_RAT, inverse has no individual label
 // any preregistered initial links:
 extern set<tricllink> initial_links;                                       ///< Set of named initial links

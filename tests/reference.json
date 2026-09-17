@@ -1,9 +1,9 @@
 {
  "config_files/granovetter_helfmann.yaml|20000|1": {
-  "angles": 2637,
+  "angles": 10788,
   "events": 20000,
-  "links": 530,
-  "logl": -21103.78267815012,
+  "links": 1098,
+  "logl": -21175.654965120222,
   "parameters": {
    "establish that c-agent explores getting active | attempt via = c-agent is not": 0.3333333333333333,
    "establish that c-agent explores getting active | base probunits": Infinity,
@@ -39,8 +39,8 @@
    "terminate that c-agent is not active | probunits via = c-agent is": 0
   },
   "seed": 1,
-  "t": 220.99553871717202,
-  "total_rate": 46.333560320615916
+  "t": 222.25493085714064,
+  "total_rate": 44.33333334570031
  },
  "config_files/granovetter_simple.yaml|15001|1": {
   "angles": 17534,

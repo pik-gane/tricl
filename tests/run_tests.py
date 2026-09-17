@@ -465,6 +465,74 @@ def error_handling_tests(binary, workdir):
     return "ok (" + ", ".join(results) + ")"
 
 
+def temporal_network_test(binary, workdir):
+    """--links-out/--entities-out write a consistent interval list; python/tricl_movie.py renders it."""
+    cwd = tempfile.mkdtemp(prefix="tricl_", dir=workdir)
+    config = os.path.join(ROOT, "config_files", "granovetter_helfmann.yaml")
+    code, out, err, secs = run_tricl(binary, config, ["--summary", "--seed", "1", "--E", "300", "--links-out", "links.csv",
+                                                      "--entities-out", "entities.csv", "--events-out", "events.csv"], cwd)
+    if code != 0:
+        raise Failure("exit code %d\n%s" % (code, err[-1000:]))
+    with open(os.path.join(cwd, "entities.csv"), newline="") as f:
+        entities = list(csv.DictReader(f))
+    if len(entities) != 101 or {e["type"] for e in entities} != {"a-agent", "c-agent", "n-agent", "active"}:
+        raise Failure("entities.csv: expected 101 entities of 4 types, got %d" % len(entities))
+    if len({e["label"] for e in entities}) != 101 or len({e["id"] for e in entities}) != 101:
+        raise Failure("entities.csv: labels or ids are not unique")
+    with open(os.path.join(cwd, "links.csv"), newline="") as f:
+        reader = csv.DictReader(f)
+        if reader.fieldnames != ["source", "relationship", "target", "start", "end"]:
+            raise Failure("links.csv: unexpected columns %r" % reader.fieldnames)
+        links = [(r["source"], r["relationship"], r["target"], float(r["start"]), float(r["end"])) for r in reader]
+    with open(os.path.join(cwd, "events.csv"), newline="") as f:
+        events = [(float(r["t"]), r["event"], r["relationship"]) for r in csv.DictReader(f)]
+    labels = {e["label"] for e in entities}
+    t_final = max(l[4] for l in links)
+    if any(l[3] > l[4] for l in links):
+        raise Failure("links.csv: an interval ends before it starts")
+    if any(l[0] not in labels or l[2] not in labels for l in links):
+        raise Failure("links.csv: unknown entity label")
+    knows = {(l[0], l[2], l[3], l[4]) for l in links if l[1] == "knows"}
+    if any((b, a, s, e) not in knows for (a, b, s, e) in knows):
+        raise Failure("links.csv: symmetric links are not written in both directions with equal intervals")
+    # every establishment after t=0 starts an interval, every termination before the end ends one
+    # (twice for the symmetric relationship type "knows", which has no dynamics in this model):
+    multiplicity = {"knows": 2}
+    for rel in sorted({l[1] for l in links} | {e[2] for e in events}):
+        m = multiplicity.get(rel, 1)
+        n_est = sum(1 for e in events if e[1] == "establish" and e[2] == rel and e[0] > 0)
+        n_term = sum(1 for e in events if e[1] == "terminate" and e[2] == rel and e[0] < t_final)
+        n_started = sum(1 for l in links if l[1] == rel and l[3] > 0)
+        n_ended = sum(1 for l in links if l[1] == rel and l[4] < t_final)
+        if n_started != m * n_est or n_ended != m * n_term:
+            raise Failure("links.csv: relationship %s: %d intervals started / %d ended, but %d establishments / %d terminations"
+                          % (rel, n_started, n_ended, n_est, n_term))
+    # the initial network now has links between agents of different types:
+    n_cross = sum(1 for l in links if l[1] == "knows" and l[3] == 0 and l[0].split(" ")[0] != l[2].split(" ")[0])
+    if n_cross == 0:
+        raise Failure("links.csv: no initial 'knows' links between agents of different types")
+    result = "%d entities, %d link intervals, %d between agent types" % (len(entities), len(links), n_cross // 2)
+    # rendering:
+    try:
+        import numpy, matplotlib  # noqa: F401
+    except ImportError:
+        return "ok (%s; rendering skipped: numpy/matplotlib not installed)" % result
+    script = os.path.join(ROOT, "python", "tricl_movie.py")
+    frames_dir = os.path.join(cwd, "frames")
+    p = subprocess.run([sys.executable, script, "entities.csv", "links.csv", "--state", "is", "is not", "--frames", "3",
+                        "--out", frames_dir, "--size", "4", "3"], cwd=cwd, capture_output=True, text=True, timeout=600)
+    if p.returncode != 0:
+        raise Failure("tricl_movie.py (frames): exit code %d\n%s" % (p.returncode, (p.stdout + p.stderr)[-1500:]))
+    frames = sorted(os.listdir(frames_dir))
+    if frames != ["frame_%05d.png" % i for i in range(3)] or any(os.path.getsize(os.path.join(frames_dir, f)) < 1000 for f in frames):
+        raise Failure("tricl_movie.py: expected 3 png frames, got %r" % frames)
+    p = subprocess.run([sys.executable, script, "entities.csv", "links.csv", "--frames", "2", "--layout", "dynamic",
+                        "--out", "movie.gif", "--size", "4", "3"], cwd=cwd, capture_output=True, text=True, timeout=600)
+    if p.returncode != 0 or os.path.getsize(os.path.join(cwd, "movie.gif")) < 1000:
+        raise Failure("tricl_movie.py (gif): exit code %d\n%s" % (p.returncode, (p.stdout + p.stderr)[-1500:]))
+    return "ok (%s; 3 frames and a gif rendered)" % result
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--bin", default=os.path.join(ROOT, "build", "src", "tricl"))
@@ -492,6 +560,7 @@ def main():
     tests.append(("maximum-likelihood fit", lambda: fit_test(binary, workdir)))
     tests.append(("rdf import and export", lambda: rdf_test(binary, workdir)))
     tests.append(("macroscopic approximation", lambda: macro_test(binary, workdir)))
+    tests.append(("temporal network export and movie", lambda: temporal_network_test(binary, workdir)))
     tests.append(("error handling", lambda: error_handling_tests(binary, workdir)))
 
     n_failed = 0

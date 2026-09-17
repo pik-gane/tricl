@@ -19,9 +19,13 @@
  *  but via the config file, individual types can also be suppressed or
  *  redirected to other files.
  *  (Note that gephi allows uniting several files into one workspace.)
+ *
+ *  The same hook (gexf_output_edge, called when a link is terminated and for all surviving links at the end)
+ *  also feeds the plain csv interval list written by --links-out (see io.cpp).
  */
 
 #include "global_variables.h"
+#include "io.h"
 #include "gexf.h"
 
 // tell boost header files to use gzip and zlib instead of their own libs:
@@ -164,11 +168,12 @@ void gexf_output_edge (tricl::tricllink& l) {
     auto e1 = l.e1, e3 = l.e3;
     auto rat13 = l.rat13;
     if (rat13 != RT_ID) {
+        double start = gexf_edge2start.at(l), end = current_t;
+        write_link_out(l, start, end);  // (csv output of the interval, if requested)
         string fn = gexf_filename[rat13];
         if (fn != "") {
             if (verbose) cout << "    writing link to " << fn << endl;
             gexf = get_stream(fn, gexf_is_gz[fn]);
-            double start = gexf_edge2start.at(l), end = current_t;
             *gexf << "<!--"  << e1 << "_" << rat13 << "_" << e3 << "_" << n_events
                   << "--> <edge id=\"" << e1 << "_" << rat13 << "_" << e3 << "_" << n_events
                   << "\" source=\"" << e1

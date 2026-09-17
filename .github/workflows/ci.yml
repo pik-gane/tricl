@@ -18,7 +18,7 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y --no-install-recommends cmake g++ libyaml-cpp-dev libboost-dev zlib1g-dev graphviz
+          sudo apt-get install -y --no-install-recommends cmake g++ libyaml-cpp-dev libboost-dev zlib1g-dev graphviz python3-numpy python3-matplotlib
 
       - name: Configure
         run: cmake -S . -B build -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
