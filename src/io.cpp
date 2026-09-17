@@ -171,6 +171,20 @@ void read_links_csv (
     if (et1_col > -1) et1labels = doc.GetColumn<string>(et1_col);
     if (rat13_col > -1) rat13labels = doc.GetColumn<string>(rat13_col);
     if (et3_col > -1) et3labels = doc.GetColumn<string>(et3_col);
+    // remove csv quoting ("..." with "" for a literal quote), which rapidcsv keeps in the values:
+    auto unquote = [](string& s) {
+        if ((s.size() >= 2) && (s.front() == '"') && (s.back() == '"')) {
+            string res;
+            for (size_t i = 1; i + 1 < s.size(); i++) {
+                if ((s[i] == '"') && (i + 2 < s.size()) && (s[i+1] == '"')) i++;
+                res += s[i];
+            }
+            s = res;
+        }
+    };
+    for (auto* col : { &e1labels, &e3labels, &et1labels, &rat13labels, &et3labels }) {
+        for (auto& s : *col) unquote(s);
+    }
     for (int row = skip_rows; row < min(nrows, skip_rows+max_rows); row++) {
         if (debug) cout << "row " << row << " " << e1labels[row] << " " << e3labels[row] << endl;
         auto e1label = e1_prefix + e1labels[row], e3label = e3_prefix + e3labels[row];

@@ -1,0 +1,22 @@
+# A small RDF graph in N-Triples format, used by tests/run_tests.py to test python/tricl_rdf.py.
+<http://example.org/knows> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#SymmetricProperty> .
+<http://example.org/worksFor> <http://www.w3.org/2002/07/owl#inverseOf> <http://example.org/employs> .
+<http://example.org/alice> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://example.org/Person> .
+<http://example.org/alice> <http://www.w3.org/2000/01/rdf-schema#label> "Alice"@en .
+<http://example.org/bob> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://example.org/Person> .
+<http://example.org/bob> <http://www.w3.org/2000/01/rdf-schema#label> "Bob"@en .
+<http://example.org/carol> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://example.org/Person> .
+<http://example.org/carol> <http://www.w3.org/2000/01/rdf-schema#label> "Carol, the third"@en .
+<http://example.org/dave> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://example.org/Person> .
+<http://example.org/acme> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://example.org/Organisation> .
+<http://example.org/acme> <http://www.w3.org/2000/01/rdf-schema#label> "ACME"@en .
+<http://example.org/globex> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://example.org/Organisation> .
+<http://example.org/alice> <http://example.org/knows> <http://example.org/bob> .
+<http://example.org/bob> <http://example.org/knows> <http://example.org/alice> .
+<http://example.org/bob> <http://example.org/knows> <http://example.org/carol> .
+<http://example.org/carol> <http://example.org/knows> <http://example.org/dave> .
+<http://example.org/alice> <http://example.org/worksFor> <http://example.org/acme> .
+<http://example.org/bob> <http://example.org/worksFor> <http://example.org/acme> .
+<http://example.org/globex> <http://example.org/employs> <http://example.org/carol> .
+<http://example.org/alice> <http://example.org/age> "42"^^<http://www.w3.org/2001/XMLSchema#integer> .
+<http://example.org/dave> <http://example.org/knows> <http://example.org/dave> .

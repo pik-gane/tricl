@@ -20,6 +20,7 @@ regression tests may fail there although the simulator is correct.
 """
 
 import argparse
+import csv
 import json
 import math
 import os
@@ -304,6 +305,68 @@ def fit_test(binary, workdir):
     return "ok (logl %.3f -> %.3f, %s)" % (logl0, logl, ", ".join("%s=%.3f+-%.3f" % (n, estimates[n], se[n]) for n in names))
 
 
+def rdf_test(binary, workdir):
+    """Round trip: N-Triples -> tricl config skeleton -> simulation -> Turtle-star."""
+    cwd = tempfile.mkdtemp(prefix="tricl_", dir=workdir)
+    script = os.path.join(ROOT, "python", "tricl_rdf.py")
+    data = os.path.join(ROOT, "tests", "data", "people.nt")
+    p = subprocess.run([sys.executable, script, "rdf2tricl", data, "--out", cwd, "--name", "people"], capture_output=True, text=True)
+    if p.returncode != 0:
+        raise Failure("rdf2tricl failed:\n%s" % p.stderr[-1000:])
+    with open(os.path.join(cwd, "model.yaml")) as f:
+        model = f.read()
+    for expected in ['"Person":', '"Organisation":', '- "Alice"', '- "Carol, the third"', '- "dave"', '- "globex"',
+                     '"knows": symmetric', '"worksFor": "employs"', 'type: ["Person", "knows", "Person"]',
+                     'type: ["Person", "worksFor", "Organisation"]']:
+        if expected not in model:
+            raise Failure("rdf2tricl: %r missing from model.yaml:\n%s" % (expected, model))
+    with open(os.path.join(cwd, "links_Person_knows_Person.csv")) as f:
+        rows = [r for r in csv.reader(f)][1:]
+    if sorted(rows) != [["Alice", "Bob"], ["Bob", "Carol, the third"], ["Carol, the third", "dave"]]:
+        raise Failure("rdf2tricl: unexpected knows links %r (symmetric duplicates and self-links must be dropped)" % rows)
+    with open(os.path.join(cwd, "links_Person_worksFor_Organisation.csv")) as f:
+        rows = [r for r in csv.reader(f)][1:]
+    if sorted(rows) != [["Alice", "ACME"], ["Bob", "ACME"], ["Carol, the third", "globex"]]:
+        raise Failure("rdf2tricl: unexpected worksFor links %r (inverse 'employs' must be folded in)" % rows)
+    # add dynamics and run tricl on the generated config:
+    model = model.replace("    t: 1  # TODO: simulation time", "    t: 5").replace("dynamics: {}", "").rstrip()
+    model += """
+files:
+    gexf: people.gexf.gz
+dynamics:
+    ["Person", "knows", "Person"]:
+        establish:
+            attempt:
+                base: 0.2
+                [~, "knows", "Person", "knows", ~]: 1.0
+            success: inf
+        terminate:
+            attempt: 0.3
+            success: inf
+    ["Person", "worksFor", "Organisation"]:
+        terminate:
+            attempt: 0.1
+            success: inf
+"""
+    config = os.path.join(cwd, "model_with_dynamics.yaml")
+    with open(config, "w") as f:
+        f.write(model)
+    code, out, err, secs = run_tricl(binary, config, ["--summary", "--seed", "1"], cwd)
+    if code != 0:
+        raise Failure("tricl on generated config: exit code %d\n%s" % (code, err[-1000:]))
+    summary = parse_summary(out)
+    ttl = os.path.join(cwd, "people.ttl")
+    p = subprocess.run([sys.executable, script, "tricl2rdf", os.path.join(cwd, "people.gexf.gz"), "--out", ttl], capture_output=True, text=True)
+    if p.returncode != 0:
+        raise Failure("tricl2rdf failed:\n%s" % p.stderr[-1000:])
+    with open(ttl) as f:
+        turtle = f.read()
+    n_intervals = turtle.count("tricl:from")
+    if ":Alice a :Person" not in turtle or "<< :Alice :worksFor :ACME >>" not in turtle or n_intervals < 6:
+        raise Failure("tricl2rdf: unexpected output:\n%s" % turtle[:1500])
+    return "ok (%d events simulated, %d link intervals exported)" % (summary["events"], n_intervals)
+
+
 def error_handling_tests(binary, workdir):
     cwd = tempfile.mkdtemp(prefix="tricl_", dir=workdir)
     results = []
@@ -368,6 +431,7 @@ def main():
     tests.append(("replay and gradient", lambda: gradient_test(binary, workdir)))
     tests.append(("replay of example configs", lambda: replay_consistency_test(binary, workdir)))
     tests.append(("maximum-likelihood fit", lambda: fit_test(binary, workdir)))
+    tests.append(("rdf import and export", lambda: rdf_test(binary, workdir)))
     tests.append(("error handling", lambda: error_handling_tests(binary, workdir)))
 
     n_failed = 0

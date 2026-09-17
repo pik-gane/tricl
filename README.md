@@ -71,6 +71,22 @@ using these facilities (scipy is used if available), optionally with standard er
 and ``python/tricl_recovery.py`` runs a parameter-recovery study (simulate with known values, re-estimate).
 See ``tests/configs/three_entities.yaml`` for a config in which every rate is a metaparameter.
 
+RDF and knowledge graphs
+------------------------
+The tricl data model maps almost one-to-one onto RDF: entities are resources, entity types are classes, relationship
+types are object properties (symmetric ones ``owl:SymmetricProperty``, named inverses ``owl:inverseOf``), links are
+triples, and angles are property paths of length two. ``python/tricl_rdf.py`` converts in both directions:
+
+* ``python3 python/tricl_rdf.py rdf2tricl DATA.nt --out DIR`` reads RDF data (N-Triples natively, other formats via
+  the optional ``rdflib`` package, or a SPARQL endpoint URL with ``--query``) and writes ``DIR/model.yaml``, a config
+  skeleton with all entity types, entities, relationship types and ``initial links`` entries, plus one csv file per
+  link type. Literal-valued properties are ignored, self-links dropped, symmetric duplicates and inverse pairs folded.
+  Add a ``dynamics`` section and run tricl from within ``DIR``. See ``tricl_rdf.py --help`` for options mapping
+  classes and properties to labels.
+* ``python3 python/tricl_rdf.py tricl2rdf OUTPUT.gexf.gz --out FILE.ttl`` converts the temporal network written by
+  tricl into RDF-star (Turtle-star): every interval during which a link existed becomes
+  ``<< :source :relationship :target >> tricl:from T1 ; tricl:until T2 .``
+
 Legend to output
 ----------------
 - logl: log-likelihood of this realization so far (log of the probability density of the simulated trajectory given the initial state, including the probability that no other event happened in between; events that happen "immediately" contribute the log-probability of their random order)
@@ -283,6 +299,9 @@ Change log
 ----------
 
 2026-09-17
+- ``python/tricl_rdf.py`` converts RDF data into config skeletons and gexf output into RDF-star
+- fixed: csv quoting of entity labels was kept in the labels; labels were not escaped in gexf output;
+  gzipped gexf output was written through a dangling stream pointer (worked by accident) and is now flushed properly
 - random initial links now use a separate random number generator (seeded from the seed), so the initial state does
   not depend on the dynamics; trajectories for a given seed therefore differ from earlier versions
 - replay mode (``--events-in``) computing the log-likelihood of a given event sequence, analytic gradients of the
