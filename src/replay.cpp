@@ -22,6 +22,7 @@
 #include "link.h"
 #include "event.h"
 #include "legs.h"
+#include "actions.h"
 #include "io.h"
 #include "debugging.h"
 #include "replay.h"
@@ -72,7 +73,8 @@ void replay ()
         event_class ec;
         if (ec_col[i] == "establish") ec = EC_EST;
         else if (ec_col[i] == "terminate") ec = EC_TERM;
-        else throw "unknown event class \"" + ec_col[i] + "\" in line " + to_string(line) + " of " + events_in_filename + " (must be establish or terminate)";
+        else if (ec_col[i] == "act") ec = EC_ACT;
+        else throw "unknown event class \"" + ec_col[i] + "\" in line " + to_string(line) + " of " + events_in_filename + " (must be establish, terminate or act)";
         auto e1_it = label2e.find(e1_col[i]);
         if (e1_it == label2e.end()) throw "unknown entity \"" + e1_col[i] + "\" in line " + to_string(line) + " of " + events_in_filename;
         auto e3_it = label2e.find(e3_col[i]);
@@ -83,6 +85,7 @@ void replay ()
         relationship_or_action_type rat13 = rat_it->second;
         if (rat13 == RT_ID) throw impossible("the identity relationship cannot change", line);
         if (e1 == e3) throw impossible("self-links are not allowed", line);
+        if ((ec == EC_ACT) != (bool) r_is_action_type[rat13]) throw impossible("acts are the events of action types, establishment and termination those of relationship types", line);
         event ev = { .ec = ec, .e1 = e1, .rat13 = rat13, .e3 = e3 };
 
         // advance time:
@@ -94,6 +97,7 @@ void replay ()
         }
         else
         {
+            if (any_actions) process_expiries_until(t);  // actions that expire before the event (at deterministic times)
             advance_time(t);  // accumulates the log-probability that nothing happened in between
         }
 
@@ -103,15 +107,22 @@ void replay ()
         if (it != ev2data.end())  // event is scheduled individually
         {
             evd = it->second;
+            if (evd.tv) {
+                // time-varying rate (see actions.h): the stored rate is an upper bound, use the current rate:
+                rate A; probunits B;
+                evd.effective_rate = tv_rate(ev, &it->second, evt_id, A, B, nullptr);
+                add_tv_event_log_gradient(ev, &it->second, evt_id);
+            } else {
+                add_event_log_gradient(&evd, evt_id);
+            }
             if (!(evd.effective_rate > 0)) throw impossible("its current rate is zero", line);
             if ((n_infinite_effective_rates > 0) && (evd.effective_rate < INFINITY)) throw impossible("an immediate event is pending", line);
-            add_event_log_gradient(&evd, evt_id);
             remove_event(ev, &it->second);
         }
-        else if (ec == EC_EST)  // event may be covered by a summary event
+        else if (ec != EC_TERM)  // event may be covered by a summary event
         {
             tricllink l = { e1, rat13, e3 };
-            if (link_exists(l)) throw impossible("the link exists already", line);
+            if ((ec == EC_EST) && link_exists(l)) throw impossible("the link exists already", line);
             if ((evt_id < 0) || !evtid2summary[evt_id]) throw impossible("this type of link cannot be established spontaneously", line);
             if (n_infinite_effective_rates > 0) throw impossible("an immediate event is pending", line);
             evd = {};

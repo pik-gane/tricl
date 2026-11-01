@@ -19,6 +19,7 @@
 
 #include "event.h"
 #include "legs.h"
+#include "actions.h"
 
 /** Add the contributions of all influencing legs of an event (not counting the link the event is about) to its data.
  */
@@ -59,9 +60,12 @@ int compute_event_data (
         entity e1,                           ///< [in] source entity
         relationship_or_action_type rat13,   ///< [in] relationship or action type
         entity e3,                           ///< [in] target entity
-        event_data& evd_ref                  ///< [out] the event data to fill (must be zero-initialised)
+        event_data& evd_ref,                 ///< [out] the event data to fill (must be zero-initialised)
+        tv_data* tvd,                        ///< [out] if not null, the weights of decaying influences (angles involving actions) at the current time (must be zero-initialised)
+        bool* has_decaying                   ///< [out] if not null, whether any decaying influence is present
         )
 {
+    if (has_decaying) *has_decaying = false;
     // accumulate attempt rate and success probunits in a fresh event data object
     // (infinite contributions are counted separately, see event_data):
 
@@ -94,6 +98,13 @@ int compute_event_data (
             // count this angle:
             na++;
             evd_ref.n_infl[j]++;
+            if (any_actions && (evtid2infl_decay[evt_id][j] > 0)) {
+                // an angle involving actions: its weight is the product of the impacts of its legs, and it does not
+                // contribute to the static attempt rate and probunits (see actions.h):
+                if (tvd) tvd->W[j] += link_weight(e1, a_it->rat12, a_it->e2) * link_weight(a_it->e2, a_it->rat23, e3);
+                if (has_decaying) *has_decaying = true;
+                continue;
+            }
             if (debug) {
                 if (dar != 0.0) cout << "       on attempt rate:" << dar << endl;
                 if (dspu != 0.0) cout << "       on success probunit:" << dspu << endl;
@@ -133,7 +144,9 @@ void add_event (
         // accumulate attempt rate and success probunits in a fresh event data object
         // (infinite contributions are counted separately, see event_data):
         event_data evd = {};
-        int na = compute_event_data(evt_id, e1, rat13, e3, evd);
+        tv_data tvd = {};
+        bool has_decaying = false;
+        int na = compute_event_data(evt_id, e1, rat13, e3, evd, &tvd, &has_decaying);
 
         // add and schedule:
         // (a non-termination event is only added and scheduled individually if at least one angle influences it
@@ -145,6 +158,10 @@ void add_event (
             evd.n_angles = na;
             evd.t = -INFINITY;
             ev2data[ev] = evd;
+            if (has_decaying) {
+                tvd.t_ref = current_t;
+                ev2tv[ev] = tvd;
+            }
             index_event(ev);
             if (debug) cout << "      attempt rate " << total_attempt_rate(&evd) << ", success prob. "
                     << probunits2probability(total_success_probunits(&evd), evtid2left_tail[evt_id], evtid2right_tail[evt_id], evtid2scale[evt_id]) << endl;
@@ -171,10 +188,16 @@ void remove_event (
 {
     assert (event_is_scheduled(ev, evd_));
 
-    subtract_effective_rate(evd_->effective_rate);
-    if (compute_gradient && !event_is_summary(ev)) {
-        register_event_rate_gradient(evd_, evt_id_of(ev.ec, e2et[ev.e1], ev.rat13, e2et[ev.e3]), -1);
+    if (evd_->tv || (any_actions && ev2tv.count(ev))) {
+        settle(ev, evd_, evt_id_of(ev.ec, e2et[ev.e1], ev.rat13, e2et[ev.e3]));  // (accumulates the integral of the time-varying rate)
     }
+    if (!evd_->tv) {
+        subtract_effective_rate(evd_->effective_rate);
+        if (compute_gradient && !event_is_summary(ev)) {
+            register_event_rate_gradient(evd_, evt_id_of(ev.ec, e2et[ev.e1], ev.rat13, e2et[ev.e3]), -1);
+        }
+    }
+    if (any_actions) ev2tv.erase(ev);
 
     if (debug) cout << "        removed event: " << ev << endl;
 
@@ -203,6 +226,46 @@ void conditionally_remove_event(
     }
 }
 
+/** Update all events which are adjacent to a link (ea, rab, eb)
+ *  because a change of the link changes angles that might influence them.
+ *
+ *  \param dcount change of the number of such angles (+1 if the link was added, -1 if it was removed, 0 if only its weight changed)
+ *  \param dw change of the weight of the link (+-1 for relationship links, the change of the impact for actions);
+ *            the weight of an angle changes by dw times the current weight of its other leg.
+ */
+void update_adjacent_angles (entity ea, relationship_or_action_type rab, entity eb, int dcount, double dw)
+{
+    entity e1, e2, e3; entity_type et1, et2, et3; relationship_or_action_type rat12, rat23;
+
+    // loop through all adjacent events e1->e3
+    // by finding angles that have the link as one of their legs:
+
+    if (debug) cout << "   angles with this as 1st leg:" << endl;
+    // source and target entity of the link are e1 and e2 for these angles:
+    e1 = ea; rat12 = rab; e2 = eb;
+    et1 = e2et[e1]; et2 = e2et[e2];
+    // (references are safe here since add_or_delete_angle does not modify the leg sets)
+    const auto& outlegs = e2outs[eb]; // these legs then provide rat23 and e3 of the angles
+    for (auto& l : outlegs) {
+        rat23 = l.rat_out; e3 = l.e_target; et3 = e2et[e3];
+        if (e1 != e3) { // since we allow no self-links except identity
+            add_or_delete_angle(dcount, any_actions ? dw * link_weight(e2, rat23, e3) : dw, e1, et1, rat12, e2, et2, rat23, e3, et3);
+        }
+    }
+
+    if (debug) cout << "   angles with this as 2nd leg:" << endl;
+    // source and target entity of the link are e2 and e3 for these angles:
+    e2 = ea; rat23 = rab; e3 = eb;
+    et2 = e2et[e2]; et3 = e2et[e3];
+    const auto& inlegs = e2ins[ea]; // these legs then provide e1 and rat12 of the angles
+    for (auto& l : inlegs) {
+        e1 = l.e_source; rat12 = l.rat_in; et1 = e2et[e1];
+        if (e1 != e3) { // since we allow no self-links except identity
+            add_or_delete_angle(dcount, any_actions ? dw * link_weight(e1, rat12, e2) : dw, e1, et1, rat12, e2, et2, rat23, e3, et3);
+        }
+    }
+}
+
 /** Update all events which are adjacent to a given event
  *  because the event affects angles that might influence them.
  */
@@ -211,44 +274,8 @@ void update_adjacent_events (
         )
 {
     if (debug) cout << "  updating adjacent events of " << ev << endl;
-
-    auto ec_ab = ev.ec;
-
-    // as the event's source and target links play several roles in this function,
-    // we call them a and b here:
-    auto ea = ev.e1, eb = ev.e3; auto rab = ev.rat13;
-
-    entity e1, e2, e3; entity_type et1, et2, et3; relationship_or_action_type rat12, rat23;
-
-    // loop through all adjacent events e1->e3
-    // by finding angles that have the event's link as one of their legs:
-
-    if (debug) cout << "   angles with this as 1st leg:" << endl;
-    // source and target entity of the event are e1 and e2 for these angles:
-    e1 = ea; rat12 = rab; e2 = eb;
-    et1 = e2et[e1]; et2 = e2et[e2];
-    // (references are safe here since add_or_delete_angle does not modify the leg sets)
-    const auto& outlegs = e2outs[eb]; // these legs then provide rat23 and e3 of the angles
-    for (auto& l : outlegs) {
-        rat23 = l.rat_out; e3 = l.e_target; et3 = e2et[e3];
-        if (e1 != e3) { // since we allow no self-links except identity
-            add_or_delete_angle(ec_ab, e1, et1, rat12, e2, et2, rat23, e3, et3);
-        }
-    }
-    // TODO: also care about where ea->eb is an outleg of e1
-
-    if (debug) cout << "   angles with this as 2nd leg:" << endl;
-    // source and target entity of the event are e2 and e3 for these angles:
-    e2 = ea; rat23 = rab; e3 = eb;
-    et2 = e2et[e2]; et3 = e2et[e3];
-    const auto& inlegs = e2ins[ea]; // these legs then provide e1 and rat12 of the angles
-    for (auto& l : inlegs) {
-        e1 = l.e_source; rat12 = l.rat_in; et1 = e2et[e1];
-        if (e1 != e3) { // since we allow no self-links except identity
-            add_or_delete_angle(ec_ab, e1, et1, rat12, e2, et2, rat23, e3, et3);
-        }
-    }
-    // TODO: also care about where ea->eb is an inleg of e3
+    int d = (ev.ec == EC_EST) ? 1 : -1;
+    update_adjacent_angles(ev.e1, ev.rat13, ev.e3, d, d);
 }
 
 /** Add the reverse event of a just performed event.
@@ -306,6 +333,16 @@ void perform_event (
 
     // output event if requested:
     write_event_out(ev);
+
+    if (ec == EC_ACT)
+    {
+        // an act: it can happen again, so add the event anew (with the data before the impact changes),
+        // then increase the impact of the action and of its mirrored action (see actions.h):
+        add_event(ev);
+        act_on_link(l, 1.0);
+        if (debug) verify_angle_consistency(true);
+        return;
+    }
 
     // FIRST add the reverse event, so that its n_angles will reflect the situation before the change:
     add_reverse_event(ev);
@@ -388,7 +425,11 @@ void advance_time (timepoint t)
  */
 void finish_time ()
 {
-    if (max_t < INFINITY) advance_time(max_t);
+    if (max_t < INFINITY) {
+        if (any_actions) process_expiries_until(max_t);
+        advance_time(max_t);
+    }
+    if (any_actions) settle_all();
 }
 
 /** Find the next occurring event by the direct method.
@@ -417,6 +458,13 @@ bool pop_next_event ()
         else
         {
             rate total = schedule.total();
+            // actions may expire before the next event (at deterministic times, see actions.h):
+            timepoint tx = any_actions ? next_expiry() : INFINITY;
+            if (!(total > 0) && (tx < max_t))
+            {
+                process_expiries_until(tx);
+                continue;
+            }
             if (!(total > 0))  // no events can happen any more --> model has converged
             {
                 if (!quiet) cout << "no further events can happen." << endl;
@@ -425,6 +473,12 @@ bool pop_next_event ()
                 return false;
             }
             timepoint dt = exponential(random_variable) / total;
+            if ((tx <= current_t + dt) && (tx < max_t))
+            {
+                // the action expires first; the waiting time is memoryless, so draw it anew afterwards:
+                process_expiries_until(tx);
+                continue;
+            }
             if (!(current_t + dt < max_t))
             {
                 if (!quiet) cout << "next event would happen after time limit at t=" << current_t + dt << endl;
@@ -439,7 +493,7 @@ bool pop_next_event ()
 
         if (event_is_summary(ev))  // event is a summary event, so has only types specified and needs to be tested for success
         {
-            assert (ev.ec == EC_EST);
+            assert (ev.ec != EC_TERM);
 
             // rename ev to summary_ev to avoid confusion with actual_ev below:
             event summary_ev = ev;
@@ -448,7 +502,7 @@ bool pop_next_event ()
             entity_type et1 = summary_et1(summary_ev), et3 = summary_et3(summary_ev);
 
             auto rat13 = summary_ev.rat13;
-            int evt_id = evt_id_of(EC_EST, et1, rat13, et3);
+            int evt_id = evt_id_of(summary_ev.ec, et1, rat13, et3);
             assert (evt_id >= 0);
 
             // draw actual entities at random from given types
@@ -458,7 +512,7 @@ bool pop_next_event ()
             else { e1 = random_entity(et1); e3 = random_entity(et3); }
             tricllink l = { e1, rat13, e3 };
 
-            if (link_exists(l))
+            if ((summary_ev.ec == EC_EST) && link_exists(l))
             {
                 if (verbose) cout << "at t=" << current_t << ", link to establish \"" << e2label[e1] << " " << rat2label[rat13] << " " << e2label[e3] << "\" existed already" << endl;
             }
@@ -468,7 +522,7 @@ bool pop_next_event ()
             }
             else  // link can be established
             {
-                event actual_ev = { .ec = EC_EST, e1, rat13, e3 };
+                event actual_ev = { .ec = summary_ev.ec, e1, rat13, e3 };
                 if (ev2data.count(actual_ev) > 0)  // the event was scheduled separately since it is influenced by at least one angle
                 {
                     // --> don't perform it now.
@@ -524,11 +578,35 @@ bool pop_next_event ()
             // register event as current event:
             current_ev = ev;
             log_state();
+            int evt_id = evt_id_of(ev.ec, e2et[ev.e1], ev.rat13, e2et[ev.e3]);
+            auto evd_ = &ev2data.at(ev);
+            if (evd_->tv)
+            {
+                // time-varying rate: the tree holds an upper bound, so the event happens with probability rate / bound
+                // (thinning); otherwise its bound is refreshed and the search continues:
+                rate A; probunits B;
+                rate actual = tv_rate(ev, evd_, evt_id, A, B, nullptr);
+                if (!(uniform(random_variable) * evd_->effective_rate < actual))
+                {
+                    if (verbose) cout << "at t=" << current_t << " " << ev << " was rejected (rate " << actual << " below bound " << evd_->effective_rate << ")" << endl;
+                    unschedule_event(ev, evd_, evt_id);
+                    _schedule_event(ev, evd_, evt_id);
+                    continue;
+                }
+                add_tv_event_log_gradient(ev, evd_, evt_id);
+                static event_data popped_tv_evd;
+                popped_tv_evd = *evd_;
+                popped_tv_evd.effective_rate = actual;
+                current_evd_ = &popped_tv_evd;
+                remove_event(ev, evd_);
+                found = true;
+                continue;
+            }
             // copy its data, since remove_event invalidates the stored data:
             static event_data popped_evd;
             popped_evd = ev2data.at(ev);
             current_evd_ = &popped_evd;
-            add_event_log_gradient(&popped_evd, evt_id_of(ev.ec, e2et[ev.e1], ev.rat13, e2et[ev.e3]));
+            add_event_log_gradient(&popped_evd, evt_id);
             // remove it from all relevant data:
             remove_event(ev, &ev2data.at(ev));
             found = true;

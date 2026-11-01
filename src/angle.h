@@ -15,19 +15,21 @@
 #include "event.h"
 #include "io.h"
 #include "legs.h"
+#include "actions.h"
 
 /** Perform all necessary changes in state and event data
- *  due to the addition or deletion of an angle.
+ *  due to the addition or deletion of an angle, or a change of its weight.
  *
  *  Iterate through all events that might be influenced by this angle,
- *  update their attempt rates and success probability units,
- *  and (re)schedule them based on the new rates.
+ *  update their attempt rates and success probability units (or, for angles involving actions,
+ *  their decaying influence weights, see actions.h), and (re)schedule them based on the new rates.
  *
  *  This is one of the performance bottleneck functions
- *  since it is called many times by \ref update_adjacent_events().
+ *  since it is called many times by \ref update_adjacent_angles().
  */
 inline void add_or_delete_angle (
-        event_class ec_angle,               ///< [in] class of the event that caused the change: EC_EST adds an angle, EC_TERM deletes one
+        int dcount,                         ///< [in] +1 if the angle is added, -1 if it is deleted, 0 if only its weight changes
+        double dw,                          ///< [in] change of the weight of the angle (only used for angles involving actions)
         entity e1,                          ///< [in] source entity
         entity_type et1,                    ///< [in] its type
         relationship_or_action_type rat12,  ///< [in] source-to-middle relationship or action type
@@ -38,106 +40,114 @@ inline void add_or_delete_angle (
         entity_type et3                     ///< [in] its type
         )
 {
-    if (debug) cout << "    " << ec2label[ec_angle] << " \"" << e2label[e1] << " " << rat2label[rat12] << " "
+    if (debug) cout << "    angle change " << dcount << " (weight " << dw << ") \"" << e2label[e1] << " " << rat2label[rat12] << " "
             << e2label[e2] << " " << rat2label[rat23] << " " << e2label[e3] << "\"" << endl;
 
     // update total no. of angles (if non-id.):
-    n_angles += ((e1 == e2) || (e2 == e3) || (e3 == e1)) ? 0 : (ec_angle == EC_EST) ? 1 : -1;
+    if (!((e1 == e2) || (e2 == e3) || (e3 == e1))) n_angles += dcount;
 
     // iterate through all possible source-target relationship or action types:
     for (auto& rat13 : ets2rats[(int) et1 * n_et_slots + (int) et3])
     {
-        bool link13_exists = (e2outs[e1].count({ .rat_out = rat13, .e_target = e3 }) > 0);
-
         // construct the type of the corresponding event whose data might need an update:
-        event_class ec13 = link13_exists ? EC_TERM : EC_EST;
+        event_class ec13;
+        if (any_actions && rat_is_action[rat13]) ec13 = EC_ACT;
+        else ec13 = (e2outs[e1].count({ .rat_out = rat13, .e_target = e3 }) > 0) ? EC_TERM : EC_EST;
         if (debug) cout << "     possibly updating event: " << ec2label[ec13] <<  " \"" << e2label[e1] << " " << rat2label[rat13] << " " << e2label[e3] << "\"" << endl;
 
         // only continue if the event type can happen at all:
         int evt_id = evt_id_of(ec13, et1, rat13, et3);
-        if (evt_id >= 0)
+        if (evt_id < 0) continue;
+        event ev = { .ec=ec13, e1, rat13, e3 };
+
+        // get influence of angle on event, and only continue if influence is nonzero:
+        int idx = inflt_index(evt_id, rat12, et2, rat23);
+        int j = evtid_at2infl[idx];
+        if (j < 0) {
+            if (debug) cout << "       but angle may not influence attempt or success" << endl;
+            continue;
+        }
+        bool decaying = any_actions && (evtid2infl_decay[evt_id][j] > 0);
+        if (!decaying && (dcount == 0)) continue;
+        auto dar = inflt_attempt_rate[idx];
+        auto dspu = inflt_delta_probunits[idx];
+        if (debug) cout << "       angle may influence attempt or success" << endl;
+
+        auto it = ev2data.find(ev);
+        if (it == ev2data.end())  // event is not scheduled individually
         {
-            event ev = { .ec=ec13, e1, rat13, e3 };
-            if (debug) cout << "      event type " << evtid2evt[evt_id] << " has a base success prob. of "
-                    << probunits2probability(evtid2base_probunits[evt_id], evtid2left_tail[evt_id], evtid2right_tail[evt_id], evtid2scale[evt_id]) << endl;
-
-            // get influence of angle on event:
-            int idx = inflt_index(evt_id, rat12, et2, rat23);
-            int j = evtid_at2infl[idx];
-
-            // only continue if influence is nonzero:
-            if (j >= 0)
+            if (dcount <= 0) continue;  // (an angle of a pair covered by a summary event cannot be removed or reweighted)
+            if (debug) cout << "        event will be scheduled newly" << endl;
+            if (ec13 != EC_TERM)  // event is ALSO covered by a summary event
             {
-                auto dar = inflt_attempt_rate[idx];
-                auto dspu = inflt_delta_probunits[idx];
-                if (debug) cout << "       angle may influence attempt or success" << endl;
-                if (ec_angle == EC_EST)  // angle is added:
-                {
-                    if (ev2data.count(ev) == 0)  // event is not already scheduled
-                    {
-                        if (debug) cout << "        event will be scheduled newly" << endl;
-                        if (ec13 != EC_TERM)  // event is ALSO covered by a summary event
-                        {
-                            // subtract that part covered by the summary event from the total effective rate:
-                            if (evtid2summary[evt_id]) subtract_pair_share(evt_id, e1, e3);
-                        }
-                        auto evd_ = &ev2data[ev];  // generates a new (zero-initialised) event_data object
-                        index_event(ev);
-                        evd_->n_angles = 1;
-                        evd_->n_infl[j] = 1;
-                        add_attempt_contribution(evd_, evtid2base_attempt_rate[evt_id]);
-                        add_attempt_contribution(evd_, dar);
-                        add_probunits_contribution(evd_, evtid2base_probunits[evt_id]);
-                        add_probunits_contribution(evd_, dspu);
-                        if (any_leg_influences) add_leg_contributions(evt_id, e1, rat13, e3, *evd_);
-                        schedule_event(ev, evd_, evt_id);
-                    }
-                    else  // event is already scheduled
-                    {
-                        if (debug) cout << "        event will be rescheduled" << endl;
-                        auto evd_ = &(ev2data.at(ev));
-                        // unregister the event's rate and gradient contributions BEFORE modifying its data:
-                        unschedule_event(ev, evd_, evt_id);
-                        evd_->n_angles += 1;
-                        evd_->n_infl[j] += 1;
-                        add_attempt_contribution(evd_, dar);
-                        add_probunits_contribution(evd_, dspu);
-                        _schedule_event(ev, evd_, evt_id);
-                        if (debug) verify_data_consistency();
-                    }
-                }
-                else  // angle is removed
-                {
-                    auto evd_ = &(ev2data.at(ev));
-                    assert (evd_->n_angles > 0);  // since angle must have been added earlier to be removed now
-                    assert (evd_->n_infl[j] > 0);
-                    // unregister the event's rate and gradient contributions BEFORE modifying its data:
-                    unschedule_event(ev, evd_, evt_id);  // event must have been scheduled earlier when angle was added
-                    evd_->n_angles -= 1;
-                    evd_->n_infl[j] -= 1;
-                    remove_attempt_contribution(evd_, dar);
-                    remove_probunits_contribution(evd_, dspu);
-                    if ((ec13 != EC_TERM) && (evd_->n_angles == 0))  // only spontaneous non-termination event is left:
-                    {
-                        if (debug) cout << "        last angle was removed, so event will be removed because it is covered by a summary event" << endl;
-                        // remove specific event:
-                        unindex_event(ev);
-                        ev2data.erase(ev);
-                        // add that part covered by the summary event to the total effective rate:
-                        if (evtid2summary[evt_id]) add_pair_share(evt_id, e1, e3);
-                    }
-                    else
-                    {
-                        if (debug) cout << "        event will be rescheduled" << endl;
-                        _schedule_event(ev, evd_, evt_id);
-                        if (debug) verify_data_consistency();
-                    }
-                }
+                // subtract that part covered by the summary event from the total effective rate:
+                if (evtid2summary[evt_id]) subtract_pair_share(evt_id, e1, e3);
             }
-            else
-            {
-                if (debug) cout << "       but angle may not influence attempt or success" << endl;
+            auto evd_ = &ev2data[ev];  // generates a new (zero-initialised) event_data object
+            index_event(ev);
+            evd_->n_angles = 1;
+            evd_->n_infl[j] = 1;
+            add_attempt_contribution(evd_, evtid2base_attempt_rate[evt_id]);
+            add_probunits_contribution(evd_, evtid2base_probunits[evt_id]);
+            if (decaying) {
+                auto& tv = ev2tv[ev];
+                tv = {};
+                tv.t_ref = current_t;
+                tv.W[j] = max(0.0, dw);
+            } else {
+                add_attempt_contribution(evd_, dar);
+                add_probunits_contribution(evd_, dspu);
             }
+            if (any_leg_influences) add_leg_contributions(evt_id, e1, rat13, e3, *evd_);
+            schedule_event(ev, evd_, evt_id);
+            continue;
+        }
+
+        if (debug) cout << "        event will be rescheduled" << endl;
+        auto evd_ = &(it->second);
+        // unregister the event's rate and gradient contributions BEFORE modifying its data
+        // (for time-varying events, this also accumulates the integral of the rate up to now):
+        unschedule_event(ev, evd_, evt_id);
+        if (dcount < 0) {
+            assert (evd_->n_angles > 0);  // since angle must have been added earlier to be removed now
+            assert (evd_->n_infl[j] > 0);
+        }
+        evd_->n_angles += dcount;
+        evd_->n_infl[j] += dcount;
+        if (decaying) {
+            auto tit = ev2tv.find(ev);
+            if (tit == ev2tv.end()) {
+                tit = ev2tv.emplace(ev, tv_data{}).first;
+                tit->second.t_ref = current_t;
+            }
+            auto& tv = tit->second;
+            tv.W[j] = (evd_->n_infl[j] == 0) ? 0.0 : max(0.0, tv.W[j] + dw);
+            // drop the time-varying data if no decaying influence is left:
+            bool any_left = false;
+            const auto& dec = evtid2infl_decay[evt_id];
+            for (size_t k = 0; k < dec.size(); k++) if ((dec[k] > 0) && (evd_->n_infl[k] > 0)) any_left = true;
+            if (!any_left) ev2tv.erase(tit);
+        } else if (dcount > 0) {
+            add_attempt_contribution(evd_, dar);
+            add_probunits_contribution(evd_, dspu);
+        } else {
+            remove_attempt_contribution(evd_, dar);
+            remove_probunits_contribution(evd_, dspu);
+        }
+        if ((ec13 != EC_TERM) && (evd_->n_angles == 0))  // only spontaneous non-termination event is left:
+        {
+            if (debug) cout << "        last angle was removed, so event will be removed because it is covered by a summary event" << endl;
+            // remove specific event:
+            unindex_event(ev);
+            if (any_actions) ev2tv.erase(ev);
+            ev2data.erase(it);
+            // add that part covered by the summary event to the total effective rate:
+            if (evtid2summary[evt_id]) add_pair_share(evt_id, e1, e3);
+        }
+        else
+        {
+            _schedule_event(ev, evd_, evt_id);
+            if (debug) verify_data_consistency();
         }
     }
 }

@@ -208,7 +208,7 @@ void finish_gexf () {
     for (entity e1 = 1; e1 <= max_e; e1++) {
         for (auto& [rat13, e3] : e2outs[e1]) {
             tricl::tricllink l = { .e1 = e1, .rat13 = rat13, .e3 = e3 };
-            if (rat13 != RT_ID) gexf_output_edge(l);
+            if ((rat13 != RT_ID) && !r_is_action_type[rat13]) gexf_output_edge(l);  // (actions are not written)
         }
     }
     verbose = old_verbose;

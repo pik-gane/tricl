@@ -15,6 +15,7 @@
 #include "probability.h"
 #include "io.h"
 #include "debugging.h"
+#include "actions.h"
 
 inline bool event_is_summary(const event& ev) {
     // summary events are encoded by using the negative entity type id as "entity id":
@@ -22,7 +23,7 @@ inline bool event_is_summary(const event& ev) {
     if (res) {
         assert (ev.e1 < 0);
         assert (ev.e3 < 0);
-        assert (ev.ec == EC_EST);
+        assert (ev.ec != EC_TERM);
     }
     return res;
 }
@@ -221,7 +222,15 @@ inline void _schedule_event (
 
     // compute the effective rate and register it in the total (and in the gradient of the total):
     rate er;
-    if (is_summary)
+    evd_->tv = (any_actions && !is_summary && (ar < INFINITY) && (spu > -INFINITY) && (ev2tv.count(ev) > 0));
+    if (evd_->tv)
+    {
+        // time-varying rate (see actions.h): the rate tree holds an upper bound until the next update,
+        // and the integral of the actual rate is accumulated in settle():
+        rate A_bound; probunits B_bound;
+        er = evd_->effective_rate = tv_bound(ev, evd_, evt_id, A_bound, B_bound);
+    }
+    else if (is_summary)
     {
         // the summary event's effective rate uses the base success probability units
         // (the actual success of an attempt is tested later in pop_next_event):
@@ -318,9 +327,13 @@ inline void unschedule_event (event& ev, event_data* evd_, int evt_id)
     assert(event_is_scheduled(ev, evd_));
     _remove_from_schedule(ev, evd_);
     bool is_summary = event_is_summary(ev);
-    subtract_effective_rate(evd_->effective_rate, !is_summary);
-    // (the gradient contributions of a summary event never change, so they are only registered once in init_events)
-    if (!is_summary) register_event_rate_gradient(evd_, evt_id, -1);
+    if (any_actions && !is_summary) settle(ev, evd_, evt_id);  // (accumulates the integral of a time-varying rate)
+    if (!evd_->tv) {
+        subtract_effective_rate(evd_->effective_rate, !is_summary);
+        // (the gradient contributions of a summary event never change, so they are only registered once in init_events)
+        if (!is_summary) register_event_rate_gradient(evd_, evt_id, -1);
+    }
+    evd_->tv = false;
     evd_->t = -INFINITY;
 }
 
@@ -335,13 +348,15 @@ inline void reschedule_event (event& ev, event_data* evd_, int evt_id)
 
 void add_leg_contributions (int evt_id, entity e1, relationship_or_action_type rat13, entity e3, event_data& evd_ref);
 
-int compute_event_data (int evt_id, entity e1, relationship_or_action_type rat13, entity e3, event_data& evd_ref);
+int compute_event_data (int evt_id, entity e1, relationship_or_action_type rat13, entity e3, event_data& evd_ref, tv_data* tvd = nullptr, bool* has_decaying = nullptr);
 
 void add_event (event& ev);
 
 void remove_event (event& ev, event_data* evd_);
 
 void conditionally_remove_event(event& ev);
+
+void update_adjacent_angles (entity ea, relationship_or_action_type rab, entity eb, int dcount, double dw);
 
 void update_adjacent_events (event& ev);
 

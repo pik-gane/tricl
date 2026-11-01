@@ -62,7 +62,7 @@ jobs:
           ASAN_OPTIONS: detect_leaks=0
         run: |
           cd "$(mktemp -d)"
-          for c in tests/configs/two_entities.yaml tests/configs/three_entities.yaml config_files/granovetter_helfmann.yaml config_files/sir_sd.yaml; do
+          for c in tests/configs/two_entities.yaml tests/configs/three_entities.yaml tests/configs/legs_large.yaml tests/configs/hawkes.yaml tests/configs/actions_large.yaml config_files/granovetter_helfmann.yaml config_files/sir_sd.yaml; do
             "$GITHUB_WORKSPACE/build/src/tricl" "$GITHUB_WORKSPACE/$c" --summary --seed 1 --max-events 3000 --events-out events.csv --links-out links.csv --entities-out entities.csv
             "$GITHUB_WORKSPACE/build/src/tricl" "$GITHUB_WORKSPACE/$c" --summary --seed 1 --max-events 3000 --events-in events.csv --grad
           done

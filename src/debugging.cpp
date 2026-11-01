@@ -13,6 +13,7 @@
 #include "angle.h"
 #include "io.h"
 #include "legs.h"
+#include "actions.h"
 
 /** Compute total finite event rate from scratch
  *  in order to compare it with the stored one
@@ -25,7 +26,7 @@ rate compute_total_finite_er ()
     for (auto& [ev, evd] : ev2data)
     {
         auto er = evd.effective_rate;
-        if (er < INFINITY) ter += er;
+        if ((er < INFINITY) && !evd.tv) ter += er;  // (time-varying rates are integrated separately, see actions.h)
         if ((ev.ec != EC_TERM) && !event_is_summary(ev))  // event is also covered by summary event
         {
             // subtract the share of this pair that was added when processing the summary event:
@@ -64,7 +65,20 @@ void verify_rates (bool check_total)
         if (event_is_summary(ev)) continue;
         int evt_id = evt_id_of(ev.ec, e2et[ev.e1], ev.rat13, e2et[ev.e3]);
         event_data tmp = {};
-        compute_event_data(evt_id, ev.e1, ev.rat13, ev.e3, tmp);
+        tv_data tvd = {};
+        bool has_decaying = false;
+        compute_event_data(evt_id, ev.e1, ev.rat13, ev.e3, tmp, &tvd, &has_decaying);
+        CHECK(has_decaying == (ev2tv.count(ev) > 0));
+        if (has_decaying) {
+            // the stored weights of decaying influences, decayed to the current time, must equal the recomputed ones:
+            const auto& tv = ev2tv.at(ev);
+            const auto& dec = evtid2infl_decay[evt_id];
+            for (size_t j = 0; j < dec.size(); j++) if (dec[j] > 0) {
+                double w = tv.W[j] * exp(- dec[j] * (current_t - tv.t_ref));
+                if (!(fabs(w - tvd.W[j]) <= 1e-9 * max(1.0, tvd.W[j]))) cerr << "event " << ev << ": weight of influence " << j << " is " << w << ", recomputed " << tvd.W[j] << endl;
+                CHECK(fabs(w - tvd.W[j]) <= 1e-9 * max(1.0, tvd.W[j]));
+            }
+        }
         for (size_t j = 0; j < MAX_INFL_PER_EVT; j++) if (tmp.n_infl[j] != evd.n_infl[j]) {
             cerr << "event " << ev << ": influence " << j << " counted " << evd.n_infl[j] << " times, recomputed " << tmp.n_infl[j] << endl;
             CHECK(tmp.n_infl[j] == evd.n_infl[j]);

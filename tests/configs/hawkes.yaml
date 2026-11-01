@@ -1,0 +1,36 @@
+metadata:
+    name: two entities whose acts excite themselves (exponential Hawkes processes)
+    description: >
+        Used by tests/run_tests.py: each of the two directed act events (a messages b, b messages a) is a Hawkes
+        process with base rate MU and kernel ALPHA exp(-DELTA t), as long as the impact stays above the threshold.
+        The log-likelihood is checked against an independent computation, the mean act rate against
+        MU / (1 - ALPHA / DELTA), and the gradient against finite differences.
+    author: tricl test suite
+
+metaparameters:
+    MU: 0.5      # base act rate
+    ALPHA: 0.6   # additional act rate per unit of the action's own impact
+    DELTA: 1.5   # decay rate of the impact
+
+limits:
+    t: 60
+
+options:
+    seed: 1
+
+entities:
+    thing:
+        - a
+        - b
+
+action types:
+    messages:
+        decay: DELTA
+        threshold: 0.0001
+
+dynamics:
+    [thing, messages, thing]:
+        attempt:
+            base: MU
+            [~, messages, thing, =, ~]: ALPHA
+        success: inf

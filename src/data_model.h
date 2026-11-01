@@ -255,6 +255,15 @@ struct event_data
     timepoint t = -INFINITY;           ///< -inf if the event is not scheduled, otherwise inf (simulation and replay) or the time of the event while it is performed
     int slot = -1;                     ///< Leaf slot of the event in the rate tree (see schedule.h), or -1
     int imm = -1;                      ///< Index of the event in immediate_events (if its rate is infinite), or -1
+    bool tv = false;                   ///< Whether the event is scheduled with a time-varying rate (see actions.h); then effective_rate is an upper bound
+};
+
+/** Time-varying data of an event with decaying influences (angles involving actions, see actions.h).
+ */
+struct tv_data
+{
+    timepoint t_ref = 0;                       ///< Reference time of the weights
+    double W[MAX_INFL_PER_EVT] = {};           ///< Sum of the weights of the adjacent angles by influence index at t_ref (only for decaying influences)
 };
 
 /** An inleg represents a leg "incoming" to a target entity.

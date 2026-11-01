@@ -369,8 +369,8 @@ def generic_gradient_test(binary, workdir, config_name, values, max_t=None):
     config = os.path.join(ROOT, "tests", "configs", config_name)
     cwd = tempfile.mkdtemp(prefix="tricl_", dir=workdir)
     events_file = os.path.join(cwd, "events.csv")
-    extra = ["--max-t", str(max_t)] if max_t else []
-    code, out, err, secs = run_tricl(binary, config, ["--summary", "--grad", "--seed", "2", "--events-out", events_file] + extra, cwd)
+    extra = (["--max-t", str(max_t)] if max_t else []) + ["--seed", "2"]  # (the seed also fixes random initial links)
+    code, out, err, secs = run_tricl(binary, config, ["--summary", "--grad", "--events-out", events_file] + extra, cwd)
     if code != 0:
         raise Failure("%s: simulation exit code %d\n%s" % (config_name, code, err[-1000:]))
     sim = parse_summary(out)
@@ -386,7 +386,7 @@ def generic_gradient_test(binary, workdir, config_name, values, max_t=None):
             raise Failure("%s: replay gradient %r = %r differs from simulation %r" % (config_name, label, rep["gradient"][label], g))
     worst = 0.0
     for m, v in values.items():
-        h = 1e-4 * max(1.0, abs(v))
+        h = 1e-4 * max(0.01, abs(v))  # (relative to the value, since rates near zero make the log-likelihood strongly curved)
         logls, coefs = [], []
         for x in (v + h, v - h):
             code, out, err, secs = run_tricl(binary, config, ["--summary", "--events-in", events_file, "--" + m, repr(x)] + extra, cwd)
@@ -394,9 +394,12 @@ def generic_gradient_test(binary, workdir, config_name, values, max_t=None):
                 raise Failure("%s: replay with --%s %r: exit code %d\n%s" % (config_name, m, x, code, err[-1000:]))
             logls.append(parse_summary(out)["logl"])
             code, out, err, secs = run_tricl(binary, config, ["--dump-parameters", "--" + m, repr(x)], cwd)
+            if code != 0:
+                raise Failure("%s: --dump-parameters: exit code %d\n%s" % (config_name, code, err[-1000:]))
             coefs.append(parse_summary(out)["parameters"])
         fd = (logls[0] - logls[1]) / (2 * h)
-        an = sum(rep["gradient"][label] * (coefs[0][label] - coefs[1][label]) / (2 * h) for label in rep["gradient"])
+        an = sum(rep["gradient"][label] * (coefs[0][label] - coefs[1][label]) / (2 * h) for label in rep["gradient"]
+                 if math.isfinite(coefs[0][label]) and math.isfinite(coefs[1][label]))
         if not abs(fd - an) <= 1e-5 * max(1.0, abs(an)):
             raise Failure("%s: d logl / d %s: analytic %.10f, finite difference %.10f" % (config_name, m, an, fd))
         worst = max(worst, abs(fd - an))
@@ -427,6 +430,65 @@ def legs_gradient_test(binary, workdir):
         raise Failure("legs_large.yaml: replay (%d events, logl %.12f) differs from simulation (%d events, logl %.12f)"
                       % (rep["events"], rep["logl"], sim["events"], sim["logl"]))
     return "ok (%s; %s; legs_large: %d events checked in debug mode and replayed)" % (r1, r2, sim["events"])
+
+
+def actions_test(binary, workdir):
+    """Acts with decaying impacts: the log-likelihood of a Hawkes process against an independent computation, its mean
+    act rate against the stationary value, a mixed model in --debug mode, and replay and gradient checks."""
+    import numpy as np
+    config = os.path.join(ROOT, "tests", "configs", "hawkes.yaml")
+    mu, alpha, delta, theta = 0.5, 0.6, 1.5, 0.0001
+    cwd = tempfile.mkdtemp(prefix="tricl_", dir=workdir)
+    events_file = os.path.join(cwd, "events.csv")
+    T = 400.0
+    code, out, err, secs = run_tricl(binary, config, ["--summary", "--seed", "3", "--max-t", str(T), "--events-out", events_file], cwd)
+    if code != 0:
+        raise Failure("hawkes.yaml: exit code %d\n%s" % (code, err[-1000:]))
+    sim = parse_summary(out)
+    with open(events_file) as fh:
+        rows = list(csv.DictReader(fh))
+    # independent log-likelihood: per directed pair, intensity mu + alpha I(t) with the impact I jumping by 1 at each act,
+    # decaying at rate delta and set to zero when it falls below the threshold:
+    logl = 0.0
+    for pair in (("a", "b"), ("b", "a")):
+        times = [float(r["t"]) for r in rows if (r["source"], r["target"]) == pair]
+        I, t_last = 0.0, 0.0
+        def integral(I, t0, t1):  # integral of mu + alpha I(t) over [t0, t1], with expiry
+            if I <= 0:
+                return mu * (t1 - t0), 0.0
+            t_exp = t0 + math.log(I / theta) / delta
+            te = min(t1, t_exp)
+            val = mu * (t1 - t0) + alpha * I * (1 - math.exp(-delta * (te - t0))) / delta
+            I1 = I * math.exp(-delta * (t1 - t0)) if t1 < t_exp else 0.0
+            return val, I1
+        for t in times:
+            val, I = integral(I, t_last, t)
+            logl += math.log(mu + alpha * I) - val
+            I, t_last = I + 1.0, t
+        val, I = integral(I, t_last, T)
+        logl -= val
+    if not abs(logl - sim["logl"]) <= 1e-8 * max(1.0, abs(logl)):
+        raise Failure("hawkes.yaml: log-likelihood %.12f differs from the independent computation %.12f" % (sim["logl"], logl))
+    # mean act rate over several long runs against the stationary value 2 mu / (1 - alpha / delta):
+    n = alpha / delta
+    counts = []
+    for seed in range(10, 18):
+        code, out, err, secs = run_tricl(binary, config, ["--summary", "--seed", str(seed), "--max-t", "2000"], cwd)
+        counts.append(parse_summary(out)["events"])
+    expected = 2 * mu / (1 - n) * 2000
+    sd = math.sqrt(2 * mu * 2000 / (1 - n) ** 3)  # asymptotic standard deviation of the count of a Hawkes process
+    z = (np.mean(counts) - expected) / (sd / math.sqrt(len(counts)))
+    if abs(z) > 4:
+        raise Failure("hawkes.yaml: mean number of acts %.1f differs from the stationary value %.1f (z = %.2f)" % (np.mean(counts), expected, z))
+    r1 = generic_gradient_test(binary, workdir, "hawkes.yaml", {"MU": mu, "ALPHA": alpha}, max_t=200)
+    # a mixed model in --debug mode (every rate, the decaying weights and the total rate are recomputed after every event):
+    config = os.path.join(ROOT, "tests", "configs", "actions_large.yaml")
+    code, out, err, secs = run_tricl(binary, config, ["--debug", "--max-t", "30"], cwd)
+    if code != 0:
+        raise Failure("actions_large.yaml in --debug mode: exit code %d\n%s" % (code, (out + err)[-2000:]))
+    r2 = generic_gradient_test(binary, workdir, "actions_large.yaml",
+                               {"M0": 0.01, "MK": 0.03, "MS": 0.2, "ML": 0.01, "KE": 0.03, "KT": 0.05, "KD": 0.5, "KB": -0.3})
+    return "ok (Hawkes: %d acts, logl %.6f as computed independently, mean act count z = %.2f; %s; %s)" % (sim["events"], logl, z, r1, r2)
 
 def fit_test(binary, workdir):
     """Run the Python maximum-likelihood driver on simulated data of the three-entity model."""
@@ -743,6 +805,7 @@ def main():
     tests.append(("replay of example configs", lambda: replay_consistency_test(binary, workdir)))
     tests.append(("leg influences: exact stationary distributions", lambda: legs_exact_test(binary, workdir)))
     tests.append(("leg influences: replay and gradient", lambda: legs_gradient_test(binary, workdir)))
+    tests.append(("actions with decaying impacts", lambda: actions_test(binary, workdir)))
     tests.append(("maximum-likelihood fit", lambda: fit_test(binary, workdir)))
     tests.append(("rdf import and export", lambda: rdf_test(binary, workdir)))
     tests.append(("macroscopic approximation", lambda: macro_test(binary, workdir)))

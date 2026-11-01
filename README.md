@@ -305,6 +305,16 @@ relationship types:
     <relationship label>: 
         inverse: <~ or inverse relationship label>
         gexf: <~ or filename>  # suppress or redirect output of this type to separate file
+
+action types:
+    # map of action type specifications (optional). A link of an action type (an "action") has an impact that
+    # jumps by 1 at every act and decays exponentially; the action ceases to exist when its impact falls below
+    # the threshold (which is part of the model, so that simulation and log-likelihood stay exact).
+    <action label>: ~  # directed, decay rate 1, threshold 0.01
+    <action label>:
+        inverse: <~, symmetric, or inverse action label>
+        decay: <decay rate of the impact>  # default: 1.0
+        threshold: <impact below which the action ceases to exist, between 0 and 1>  # default: 0.01
 ```
 ```yaml
 initial links: 
@@ -312,6 +322,7 @@ initial links:
     named:  # list of names initial links
         - [<entity label>, <relationship label>, <entity label>]
         - [<entity label>, <relationship label>, <entity label>]
+        - [<entity label>, <action label>, <entity label>, <initial impact>]  # an initial action (default impact 1)
 
     random:  
         # map of random link specifications, keyed by link type
@@ -364,7 +375,29 @@ dynamics:
                 [~, <relationship label>, <entity type label>, <relationship label>, ~]: <additional success probability unist due to this type of angle>  # may be negative
         terminate:  # specify how this type of link is terminated (if at all)
             # specify attempt, success as above
+
+    [<entity type label>, <action label>, <entity type label>]:
+        # acts of an action type have attempt and success directly (or under the key "act"):
+        attempt: ...
+        success: ...
 ```
+Besides angles, the keys in ``attempt`` and ``success`` can be **legs**: ``[~, <relationship label>, <entity type label>]``
+counts the links of this type from the source entity to entities of the given type (an outgoing leg), and
+``[<entity type label>, <relationship label>, ~]`` the links of this type from such entities to the target entity
+(an incoming leg); the link the event is about is not counted. Legs make rates depend on degrees, e.g.
+preferential attachment (``[user, follows, ~]`` in the attempt rate of establishing ``follows``) or limited capacity
+(a negative ``[~, knows, user]`` in the success units of establishing ``knows``). Legs must be links of relationship
+types.
+
+An angle (or the identity angle ``[~, <action label>, <entity type label>, =, ~]`` of the action itself) whose legs
+include actions counts with the product of their current impacts instead of 1. Rates then decay between events:
+e.g. ``[~, messages, user, =, ~]`` in the attempt rate of the act ``messages`` makes messaging self-exciting (a
+Hawkes process with exponential kernel), and ``[~, knows, user, messages, ~]`` makes a message excite messages of
+the receiver's acquaintances. Such events are simulated by thinning (the rate tree holds upper bounds that are valid
+until the next update, and a drawn event happens with probability rate / bound), and the integral of their rates
+in the log-likelihood is computed by Gauss-Legendre quadrature whenever they change. Coefficients of angles that
+involve actions must be finite. Acts appear as ``act`` in the event files written by ``--events-out`` and read by
+``--events-in``; actions are not written to gexf files or the link interval file.
 Success probability units ``pu`` are converted into a success probability by a sigmoidal function with two tail indices
 ``σ0`` (left tail) and ``σ1`` (right tail):
 ```
@@ -403,6 +436,16 @@ GNU General Public License v3.0, see file ``LICENSE``.
 
 Change log
 ----------
+
+2026-11-01
+- leg influences (rates depending on the degrees of the endpoints) for all event types, exact also for the pairs
+  covered by summary events (histograms of degree vectors and proposal channels per leg type)
+- action types and acts: actions have impacts that jump by 1 at every act and decay exponentially; angles involving
+  actions count with their impacts, which gives self-exciting (Hawkes-type) dynamics coupled to the network;
+  simulated exactly by thinning, with the log-likelihood and its gradient integrated by quadrature
+- debug mode recomputes every scheduled rate, the total rate, the leg data and the decaying weights after every event
+- tests: exact stationary distributions of small leg models, the log-likelihood of a Hawkes process against an
+  independent computation and its stationary act rate, replay and gradient checks for models with legs and actions
 
 2026-09-17
 - new form of the sigmoidal function converting probability units to probabilities (q-exponential tails, see above):

@@ -8,6 +8,7 @@
 #include "io.h"
 #include "gexf.h"
 #include "finish.h"
+#include "actions.h"
 
 /** Do stuff at end of the simulation.
  */
@@ -21,6 +22,7 @@ void finish ()
     } else {
         current_t = max_t;
     }
+    if (any_actions) settle_all();  // (integrals of time-varying rates up to the end)
 
     if (verbose) {
         cout << "\nat t=" << current_t << ", " << ev2data.size() << " events scheduled (total rate " << schedule.total()

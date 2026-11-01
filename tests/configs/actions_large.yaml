@@ -1,0 +1,59 @@
+metadata:
+    name: actions and relationships influencing each other
+    description: >
+        Used by tests/run_tests.py in --debug mode and for replay and gradient checks: messages (a symmetric action
+        type) excite further messages along acquaintances, and acquaintances form and persist depending on recent
+        messages, so that establishment, termination and act events all have time-varying rates.
+    author: tricl test suite
+
+metaparameters:
+    M0: 0.01    # base message rate per pair
+    MK: 0.03    # additional message rate per acquaintance of the sender who recently messaged the receiver
+    MS: 0.2     # additional message rate per unit of the pair's own message impact
+    ML: 0.01    # additional message rate per acquaintance of the sender (leg)
+    KE: 0.03    # acquaintance formation rate per unit of message impact
+    KT: 0.05    # acquaintance formation rate per common acquaintance
+    KD: 0.5     # acquaintance dissolution attempt rate
+    KB: -0.3    # dissolution success probunits per unit of message impact
+
+limits:
+    t: 60
+
+options:
+    seed: 4
+
+entities:
+    user: 15
+
+relationship types:
+    knows: symmetric
+
+action types:
+    messages:
+        inverse: symmetric
+        decay: 1.0
+        threshold: 0.05
+
+initial links:
+    random:
+        [user, knows, user]:
+            probability: 0.2
+
+dynamics:
+    [user, messages, user]:
+        attempt:
+            base: M0
+            [~, knows, user, messages, ~]: MK
+            [~, messages, user, =, ~]: MS
+            [~, knows, user]: ML
+        success: 0.5
+    [user, knows, user]:
+        establish:
+            attempt:
+                [~, messages, user, =, ~]: KE
+                [~, knows, user, knows, ~]: KT
+            success: inf
+        terminate:
+            attempt: KD
+            success:
+                [~, messages, user, =, ~]: KB

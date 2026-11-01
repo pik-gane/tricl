@@ -11,6 +11,7 @@
 #include "link.h"
 #include "event.h"
 #include "legs.h"
+#include "actions.h"
 #include "graphviz.h"
 #include "gexf.h"
 #include "init.h"
@@ -305,11 +306,12 @@ void init_events ()
     for (auto& [ets, relations] : ets2relations) {
         auto et1 = ets.et1, et3 = ets.et3;
         for (auto& rat13 : relations) {
-            int evt_id = evt_id_of(EC_EST, et1, rat13, et3);
+            event_class ec = r_is_action_type[rat13] ? EC_ACT : EC_EST;
+            int evt_id = evt_id_of(ec, et1, rat13, et3);
             if (evt_id < 0) continue;
             auto ar1 = evtid2base_attempt_rate[evt_id];
             if (evtid2summary[evt_id]) {
-                event summary_ev = { .ec = EC_EST,
+                event summary_ev = { .ec = ec,
                         .e1 = (entity)-et1, // in spontaneous events, fields e1 and e3 are used to store entity types with negative sign
                         .rat13 = rat13,
                         .e3 = (entity)-et3 };
@@ -413,6 +415,9 @@ void init_links ()
             }
         }
     }
+    // initial actions with their impacts:
+    add_initial_actions();
+
     // reset cumulative loglikelihood (and its gradient) to count only what happens after initial state:
     cumulative_logl = 0;
     std::fill(grad_event_terms.begin(), grad_event_terms.end(), 0.0);
@@ -440,6 +445,7 @@ void init ()
     init_relationship_or_action_types();
     init_types();
     init_legs();
+    init_actions();
     init_events();
     init_links();
     open_events_out();  // only after initial links, so that only simulated events are written
