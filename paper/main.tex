@@ -1,49 +1,45 @@
-% tricl methods paper.  Build: see README.md in this directory.
-\documentclass[11pt,a4paper]{article}
+%% tricl methods paper, formatted for Physical Review E with REVTeX 4.2, starting from the official APS
+%% template (apstemplate.tex of the REVTeX 4.2 distribution). Build: see README.md in this directory.
+%% For a single-column manuscript, replace "reprint" by "preprint".
+\documentclass[aps,pre,reprint,groupedaddress,amsmath,amssymb,floatfix]{revtex4-2}
 
-\usepackage[utf8]{inputenc}
-\usepackage[T1]{fontenc}
-\usepackage{lmodern}
-\usepackage[margin=2.5cm]{geometry}
-\usepackage{amsmath,amssymb}
 \usepackage{graphicx}
-\usepackage{booktabs}
 \usepackage{xcolor}
 \usepackage{listings}
-\usepackage{tikz}
-\usetikzlibrary{arrows.meta,positioning,calc}
-\usepackage[numbers,sort&compress]{natbib}
 \usepackage[hidelinks]{hyperref}
-\usepackage{microtype}
 
 \input{macros}
 \input{generated/numbers}
 
-\title{tricl: likelihood-based simulation and inference for\\ typed multi-relational network dynamics}
-\author{Jobst Heitzig\\[2pt] \small Potsdam Institute for Climate Impact Research, Potsdam, Germany}
-\date{Draft, \today}
-
 \begin{document}
-\maketitle
+
+\title{Likelihood-based simulation and inference for typed multi-relational network dynamics}
+
+\author{Jobst Heitzig}
+\email[]{heitzig@pik-potsdam.de}
+\affiliation{Potsdam Institute for Climate Impact Research, Member of the Leibniz Association, 14473 Potsdam, Germany}
+
+\date{\today}
 
 \begin{abstract}
 Many social, economic and political systems are networks of several kinds of entities linked by
-several kinds of relationships that form and dissolve over time, at rates that depend on the
-surrounding network: friends of friends become friends, states ally with their allies' allies,
-agents adopt a behaviour when enough contacts have adopted it. We present \tricl, an open-source
-simulator and inference engine for such dynamics. A model is a short configuration file that
-declares entity types, relationship types and rules saying how the attempt rate and the success
-probability of establishing or terminating a link depend on the numbers of adjacent two-paths of
-each type. States of entities and well-mixed interactions are expressed with the same rule language
-by links to auxiliary entities. The resulting continuous-time Markov chain is simulated exactly with
-Gillespie's direct method over a sum tree of event rates. Because every rule enters the rates
-explicitly, \tricl\ also computes the exact log-likelihood of an observed event sequence and its
-gradient with respect to all model parameters, which turns the simulator into a maximum-likelihood
-estimator; it further generates mean-field equations from the same file. We describe the model
-class, the algorithms and their tests, and show parameter recovery, the mean-field approximation
-and a first application: the formation and dissolution of defense pacts between states from 1816 to
-2018, where a common ally raises the rate of pact formation about \AtopFormationRatio-fold.
+several kinds of relationships that form and dissolve at rates depending on the surrounding network:
+friends of friends become friends, states ally with their allies' allies, agents adopt a behavior when
+enough contacts have adopted it. We present \tricl, an open-source simulator and inference engine for
+such dynamics. A model is a short configuration file that declares entity types, relationship types and
+rules saying how the attempt rate and the success probability of establishing or terminating a link
+depend on the numbers of adjacent two-paths of each type. States of entities and well-mixed
+interactions are expressed with the same rules through links to auxiliary entities. The resulting
+continuous-time Markov chain is simulated exactly with the direct method over a sum tree of event rates.
+Because every rule enters the rates explicitly, \tricl\ also computes the exact log-likelihood of an
+observed event sequence and its gradient with respect to all model parameters, which turns the simulator
+into a maximum-likelihood estimator, and it generates mean-field equations from the same file. We
+describe the model class and the algorithms, demonstrate parameter recovery and the mean-field
+approximation, and apply the method to the formation and dissolution of defense pacts between states
+from 1816 to 2018, where a common ally raises the rate of pact formation about \AtopFormationRatio-fold.
 \end{abstract}
+
+\maketitle
 
 \input{sec-intro}
 \input{sec-model}
@@ -53,14 +49,8 @@ and a first application: the formation and dissolution of defense pacts between 
 \input{sec-application}
 \input{sec-discussion}
 
-\section*{Code and data availability}
-\tricl\ is free software under the GNU General Public License v3 at
-\url{https://github.com/pik-gane/tricl}. The scripts in its directory \texttt{paper/} regenerate
-every figure, table and number of this paper from the code and from public data.
-
 \input{endmatter}
 
-\bibliographystyle{unsrtnat}
 \bibliography{refs}
 
 \end{document}

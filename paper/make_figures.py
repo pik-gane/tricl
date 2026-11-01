@@ -117,8 +117,8 @@ def table_recovery():
     res = d["results"]
     names = list(true)
     labels = {"A": "$A$", "K": "$K$", "D": "$D$", "BK": "$B_K$"}
-    lines = [r"\begin{tabular}{lrrrrr}", r"\toprule",
-             r"parameter & true & mean est. & s.d.\ est. & mean s.e. & coverage \\", r"\midrule"]
+    lines = [r"\begin{ruledtabular}", r"\begin{tabular}{lrrrrr}",
+             r"parameter & true & mean est. & s.d.\ est. & mean s.e. & coverage \\", r"\colrule"]
     covs = []
     for n in names:
         est = [r["estimates"][n] for r in res]
@@ -127,7 +127,7 @@ def table_recovery():
         covs.append(cov)
         lines.append(r"%s & %.3g & %.3f & %.3f & %.3f & %.2f \\" % (labels.get(n, n), true[n], statistics.mean(est),
                                                                  statistics.stdev(est), statistics.mean(se), cov))
-    lines += [r"\bottomrule", r"\end{tabular}"]
+    lines += [r"\end{tabular}", r"\end{ruledtabular}"]
     open(os.path.join(GEN, "table-recovery.tex"), "w").write("\n".join(lines) + "\n")
     num("RecoverySeeds", str(len(res)))
     num("RecoveryT", "400")
@@ -145,14 +145,14 @@ def table_benchmark():
     names = {"helfmann N=100": ("Helfmann", "100"), "helfmann N=1000": ("Helfmann", "1\\,000"),
              "helfmann N=10000": ("Helfmann", "10\\,000"), "3blocks N=300 (dense)": ("3-blocks (dense)", "300"),
              "sir_sd N=1000": ("SIR with distancing", "1\\,000")}
-    lines = [r"\begin{tabular}{llrrr}", r"\toprule",
-             r"model & agents & events & initialisation [s] & events per second \\", r"\midrule"]
+    lines = [r"\begin{ruledtabular}", r"\begin{tabular}{llrrr}",
+             r"model & agents & events & init. [s] & events/s \\", r"\colrule"]
     for r in rows:
         m, n = names.get(r["case"], (r["case"], ""))
         rate = float(r["events_per_second"])
         lines.append(r"%s & %s & %s & %.2f & %s \\" % (m, n, "{:,}".format(int(r["events"])).replace(",", "\\,"),
                                                       float(r["init_seconds"]), "{:,}".format(int(round(rate, -2))).replace(",", "\\,")))
-    lines += [r"\bottomrule", r"\end{tabular}"]
+    lines += [r"\end{tabular}", r"\end{ruledtabular}"]
     open(os.path.join(GEN, "table-benchmark.tex"), "w").write("\n".join(lines) + "\n")
 
 
@@ -187,11 +187,11 @@ def table_and_fig_atop():
               ("d0_defense", "$d_0$", "dissolution attempt rate"),
               ("b1_defense", "$b_1$", "probability units per common ally (dissolution)"),
               ("entry", "entry", "entry rate of states"), ("exit", "exit", "exit rate of states")]
-    lines = [r"\begin{tabular}{llrr}", r"\toprule", r"parameter & meaning & estimate & s.e. \\", r"\midrule"]
+    lines = [r"\begin{ruledtabular}", r"\begin{tabular}{llrr}", r"parameter & meaning & estimate & s.e. \\", r"\colrule"]
     for k, sym, meaning in labels:
         lines.append(r"%s & %s & $%s$ & $%s$ \\" % (sym, meaning, fmt_sig(est[k], 3), fmt_sig(se[k], 2)))
-    lines += [r"\midrule", r"\multicolumn{2}{l}{log-likelihood} & \multicolumn{2}{r}{$%s$} \\" % ("{:,.1f}".format(logl).replace(",", "\\,")),
-              r"\bottomrule", r"\end{tabular}"]
+    lines += [r"\colrule", r"\multicolumn{2}{l}{log-likelihood} & \multicolumn{2}{r}{$%s$} \\" % ("{:,.1f}".format(logl).replace(",", "\\,")),
+              r"\end{tabular}", r"\end{ruledtabular}"]
     open(os.path.join(GEN, "table-atop.tex"), "w").write("\n".join(lines) + "\n")
 
     # profile

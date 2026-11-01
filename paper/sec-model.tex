@@ -23,13 +23,15 @@ and for any angle type $k$ an additional attempt rate $a_{\tau k}$ and additiona
 $b_{\tau k}$ contributed by each adjacent angle of that type. With $n_k(\ell, t)$ the number of
 angles of type $k$ adjacent to $\ell$ at time $t$, the event happens at rate
 \begin{equation}\label{eq:rate}
-  \lambda_\tau(\ell, t) = A \cdot f(B), \qquad
-  A = a^0_\tau + \sum_k a_{\tau k}\, n_k(\ell,t), \qquad
-  B = b^0_\tau + \sum_k b_{\tau k}\, n_k(\ell,t),
+\begin{aligned}
+  \lambda_\tau(\ell, t) &= A \cdot f(B), \\
+  A &= a^0_\tau + \textstyle\sum_k a_{\tau k}\, n_k(\ell,t), \\
+  B &= b^0_\tau + \textstyle\sum_k b_{\tau k}\, n_k(\ell,t),
+\end{aligned}
 \end{equation}
 i.e.\ attempts occur at the rate $A$ and succeed with probability $f(B)$. Coefficients may be
 expressions of named \emph{metaparameters}, which can be overridden on the command line and are the
-parameters estimated in Section~\ref{sec:inference}. Infinite coefficients encode logic: a
+parameters estimated in Sec.~\ref{sec:inference}. Infinite coefficients encode logic: a
 contribution $-\infty$ to $B$ makes the event impossible, and an infinite attempt rate with positive
 success probability makes it \emph{immediate}; all pending immediate events are performed, in a
 uniformly random order, before time advances. Immediate events implement state machines: if an
@@ -40,12 +42,14 @@ removes its previous state.
 \subsection{The sigmoid}
 The success probability is a sigmoid $f$ of the probability units with two \emph{tail indices}
 $\sigma_0, \sigma_1 \ge 0$ that set how fast it approaches $0$ and $1$:
-\begin{gather}
-  f(B) = \tfrac12 T_{\sigma_0}(-v) + \tfrac12 - \tfrac12 T_{\sigma_1}(v), \qquad
-  v = \frac{4B}{k(\sigma_0) + k(\sigma_1)}, \label{eq:sigmoid}\\
-  T_\sigma(x) = \bigl(1 + \sigma \ln(1 + e^{x})\bigr)^{-1/\sigma}, \quad T_0(x) = \frac{1}{1+e^{x}},
-  \qquad k(\sigma) = (1 + \sigma\ln 2)^{-1-1/\sigma}, \quad k(0) = \tfrac12. \nonumber
-\end{gather}
+\begin{equation}\label{eq:sigmoid}
+\begin{aligned}
+  f(B) &= \tfrac12 T_{\sigma_0}(-v) + \tfrac12 - \tfrac12 T_{\sigma_1}(v), \quad
+  v = \frac{4B}{k(\sigma_0) + k(\sigma_1)}, \\
+  T_\sigma(x) &= \bigl(1 + \sigma \ln(1 + e^{x})\bigr)^{-1/\sigma}, \quad T_0(x) = \frac{1}{1+e^{x}}, \\
+  k(\sigma) &= (1 + \sigma\ln 2)^{-1-1/\sigma}, \quad k(0) = \tfrac12.
+\end{aligned}
+\end{equation}
 $T_\sigma$ replaces the exponential tail of the logistic function by the $q$-exponential
 $(1 + \sigma y)^{-1/\sigma}$ of $y = \ln(1+e^{x})$ \citep{tsallis1988}. For $\sigma > 0$ the tail
 decays like $|B|^{-1/\sigma}$, for $\sigma = 0$ exponentially. Since $k(\sigma) = -2T'_\sigma(0)$, $f$ has
@@ -55,7 +59,7 @@ $\expit(4B)$ for $\sigma_0 = \sigma_1 = 0$. Heavy tails (the default is $\sigma_
 rare events possible when many angles push the probability units far from zero.
 
 \subsection{A model file}
-The following excerpt is the dynamics of a model of triadic closure with triangle stabilisation in
+The following excerpt is the dynamics of a model of triadic closure with triangle stabilization in
 three blocks of 100 entities (the \ttt{parameters\_3blocks} example):
 \begin{lstlisting}[language=yaml]
 relationship types:
@@ -64,15 +68,15 @@ dynamics:
   [user, knows, user]:
     establish:
       attempt:
-        basic: 0.001                       # spontaneous linking
-        [~, knows, user, knows, ~]: 0.01   # per common acquaintance
-      success:
-        basic: .inf                        # attempts always succeed
+        basic: 0.001                     # spontaneous
+        [~, knows, user, knows, ~]: 0.01 # per common
+      success:                           # acquaintance
+        basic: .inf                      # always succeed
     terminate:
       attempt:
-        basic: 10.0                        # fast decay attempts ...
-      success:
-        [~, knows, user, knows, ~]: -0.3   # ... less successful in triangles
+        basic: 10.0                      # fast decay ...
+      success:                           # ... hampered
+        [~, knows, user, knows, ~]: -0.3 # by triangles
 \end{lstlisting}
 \noindent The angle type \ttt{[\~{}, knows, user, knows, \~{}]} counts common acquaintances. Further
 sections of the file declare entity types and numbers, named entities, and initial links, which can
@@ -82,8 +86,8 @@ random geometric graphs).
 \subsection{Expressiveness}
 Entity states are links to auxiliary ``hub'' entities: an agent is active if it has the link
 \ttt{is}~\ttt{active}. A rule on the angle (agent, \ttt{knows}, agent, \ttt{is}, \ttt{active}) then
-depends on the number of active neighbours, which yields threshold models
-\citep{granovetter1978,wiedermann2020} (Figure~\ref{fig:frames}) and contact processes; angles through
+depends on the number of active neighbors, which yields threshold models
+\citep{granovetter1978,wiedermann2020} (Fig.~\ref{fig:frames}) and contact processes; angles through
 ``='' make rates depend on an entity's own state, which yields compartmental epidemic models on
 adaptive networks \citep{gross2006}, including social distancing as termination of contacts with
 infectious agents. Structural balance dynamics \citep{heider1946,antal2005} needs two

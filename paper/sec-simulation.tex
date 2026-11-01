@@ -35,10 +35,10 @@ times the logarithm of the larger one; a hub entity linked to all others (the us
 states) therefore does not make every event cost time linear in the number of entities. An earlier version scheduled events by
 tentative times in an ordered map \citep{gibson2000}; the direct method needs two random numbers per
 event instead of one per rate change and gives the exact total rate at all times, which the
-likelihood (Section~\ref{sec:inference}) needs.
+likelihood (Sec.~\ref{sec:inference}) needs.
 
 \subsection{Tests}
-The test suite runs in continuous integration in optimised, debug and sanitizer builds. It checks
+The test suite runs in continuous integration in optimized, debug and sanitizer builds. It checks
 the sigmoid (\TestSigmoidChecks\ unit checks of values, limits, monotonicity and derivatives), the
 exact log-likelihood against a closed form for a two-entity model, analytic gradients against finite
 differences, that replaying a simulated event sequence reproduces the simulation's log-likelihood,
@@ -54,11 +54,10 @@ hundreds of others, so the throughput is limited by the number of rate updates. 
 tens of megabytes for these models.
 
 \begin{table}[t]
-\centering
 \caption{Throughput of \tricl\ on one core of a cloud virtual machine (best of three runs of
-$2\times 10^4$ events, initialisation excluded). Helfmann: threshold model of
-Figure~\ref{fig:frames} with mean degree 10; 3-blocks: the triadic-closure model of
-Section~\ref{sec:model}, mean degree about 100; SIR: epidemic with social distancing on a random
+$2\times 10^4$ events, initialization excluded). Helfmann: threshold model of
+Fig.~\ref{fig:frames} with mean degree 10; 3-blocks: the triadic-closure model of
+Sec.~\ref{sec:model}, mean degree about 100; SIR: epidemic with social distancing on a random
 geometric graph.}
 \label{tab:benchmark}
 \input{generated/table-benchmark}

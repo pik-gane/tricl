@@ -9,22 +9,22 @@ a pair has a defense pledge becomes one interval of a symmetric link \ttt{defens
 the start of its first year and terminated at the start of the year after its last one. Membership
 of a state in the international system is a link \ttt{[state, is in, system]} to a single hub
 entity. This gives \AtopStates\ states, \AtopIntervals\ pact intervals (\AtopCensored\ still in effect
-in 2018) and \AtopEvents\ events (Figure~\ref{fig:atop}, left). The model has six metaparameters:
+in 2018) and \AtopEvents\ events (Fig.~\ref{fig:atop}, left). The model has six metaparameters:
 \par\noindent\begin{minipage}{\linewidth}
 \begin{lstlisting}[language=yaml]
 [state, defense, state]:
   establish:
     attempt:
-      [~, is in, system, contains, ~]: a0   # per pair of member states
-      [~, defense, state, defense, ~]: a1   # per common ally
+      [~, is in, system, contains, ~]: a0  # per pair
+      [~, defense, state, defense, ~]: a1  # per ally
     success: inf
   terminate:
     attempt:
       base: d0
     success:
       tails: 0
-      [~, defense, state, defense, ~]: -b1  # per common ally
-[state, is in, system]: entry at rate "entry", exit at rate "exit"
+      [~, defense, state, defense, ~]: -b1 # per ally
+[state, is in, system]: rates "entry", "exit"
 \end{lstlisting}
 \end{minipage}
 \noindent Formation thus needs both states to be members (the angle through the hub), and its rate
@@ -43,35 +43,33 @@ common ally forms a pact at a rate of $\AtopAzero$ per year; each common ally ad
 that one common ally raises the formation rate about \AtopFormationRatio-fold. The dissolution hazard
 is $d_0\,\expit(-4 b_1 k)$: \AtopHazZero\ per year without common allies (a mean pact duration of
 \AtopLifeZero\ years), \AtopHazFive\ with five and \AtopHazTwentySix\ with 26, the size of NATO in 2004
-(Figure~\ref{fig:atop}, right). Both effects are strongly supported: removing the ally-of-ally term
+(Fig.~\ref{fig:atop}, right). Both effects are strongly supported: removing the ally-of-ally term
 from the formation rule lowers the maximal log-likelihood by \AtopDropAone, removing the
-stabilisation term by \AtopDropBone. With a random order of the simultaneous events, $a_0$ changes by
+stabilization term by \AtopDropBone. With a random order of the simultaneous events, $a_0$ changes by
 \AtopShuffleAzero\%, $a_1$ by \AtopShuffleAone\% and $b_1$ by \AtopShuffleBone\%, so the formation
 effect partly reflects treaty-level events, which a model with an explicit treaty entity type could
 separate.
 
-The profile log-likelihood of $b_1$ (Figure~\ref{fig:atop}, middle) is not unimodal. Below a local
+The profile log-likelihood of $b_1$ (Fig.~\ref{fig:atop}, middle) is not unimodal. Below a local
 minimum at small negative values it rises again towards a plateau as $b_1 \to -\infty$, where any
 common ally makes every dissolution attempt succeed; the plateau lies about \AtopProfileGap\
 log-likelihood units below the maximum. An optimiser started at negative values drifts towards the
 plateau, which illustrates the non-concavity in the probability units noted in
-Section~\ref{sec:inference}; the generated model therefore starts the fit at a positive value. A likelihood evaluation of the \AtopEvents\ events takes about
+Sec.~\ref{sec:inference}; the generated model therefore starts the fit at a positive value. A likelihood evaluation of the \AtopEvents\ events takes about
 \AtopEvalSeconds\ seconds, a complete fit with standard errors about a minute.
 
-\begin{table}[t]
-\centering
+\begin{table*}[t]
 \caption{Maximum-likelihood estimates for the alliance model (standard errors from the observed
 information). Rates per year.}
 \label{tab:atop}
 \input{generated/table-atop}
-\end{table}
+\end{table*}
 
-\begin{figure}[t]
-\centering
+\begin{figure*}[t]
 \includegraphics[width=\textwidth]{generated/fig-atop}
 \caption{Defense pacts between states. Left: number of pairs of states with a defense pledge in
-effect, per year. Middle: profile log-likelihood of the stabilisation parameter $b_1$ (all other
+effect, per year. Middle: profile log-likelihood of the stabilization parameter $b_1$ (all other
 parameters re-estimated), relative to its maximum (symmetric-log horizontal axis).
 Right: estimated dissolution hazard as a function of the number of common allies.}
 \label{fig:atop}
-\end{figure}
+\end{figure*}
