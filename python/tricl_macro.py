@@ -447,7 +447,7 @@ def main():
         with open(args.out, "w") as f:
             f.write("t,link type,ode,sim_mean,sim_sd\n")
             for t, label, ode, mean, sd in rows:
-                f.write("%r,%s,%r,%r,%r\n" % (t, '"' + label.replace('"', '""') + '"', ode, mean, sd))
+                f.write("%r,%s,%r,%r,%r\n" % (float(t), '"' + label.replace('"', '""') + '"', float(ode), float(mean), float(sd)))
         print("wrote", args.out)
     return 0
 

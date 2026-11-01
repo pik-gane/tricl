@@ -1,0 +1,44 @@
+\section{Introduction}\label{sec:intro}
+
+Networks change. Friendships form and fade, states sign and abandon alliances, people adopt and
+drop behaviours, pathogens spread over contacts that are themselves avoided once someone is known
+to be infectious. In each of these examples the rate at which a tie forms or dissolves depends on
+the surrounding network, and the network usually has more than one kind of node and more than one
+kind of tie. Models of such \emph{adaptive} or \emph{coevolutionary} networks are a large field in
+statistical physics \citep{gross2008,gross2006,holme2006}, and stochastic models of network
+dynamics are a large field in statistics and the social sciences
+\citep{snijders2001,snijders2010,snijders2017,butts2008,stadtfeld2017,koskinen2007}. Typically,
+each model is implemented anew, for one kind of node and one kind of tie, and the simulation code
+and the statistical code are separate programs, if both exist.
+
+\tricl\ (``triadic closure'', after its first use case) takes a different route. A model is a
+configuration file in a small rule language, and a single program simulates it, computes the
+likelihood of observed data under it and derives a macroscopic approximation from it. The rule
+language has one construct: the rate of an event that establishes or terminates a link between two
+entities is a function of the numbers of \emph{angles}, i.e.\ two-paths of each type, that connect
+the two entities. Triadic closure, structural balance, homophily via shared attributes, threshold
+dynamics and compartmental epidemics are all of this form once states of entities are encoded as
+links to auxiliary entities (Section~\ref{sec:model}). The class is a continuous-time Markov chain
+on typed multi-relational graphs \citep{kivela2014}, so it can be simulated exactly
+\citep{gillespie1977,bortz1975}, and its likelihood for a fully observed event sequence is an
+explicit sum and integral of event rates.
+
+This paper describes the model class (Section~\ref{sec:model}), the simulation algorithm and its
+tests (Section~\ref{sec:simulation}), likelihood-based inference with analytic gradients
+(Section~\ref{sec:inference}), the automatically generated mean-field approximation
+(Section~\ref{sec:macro}), and an application to the formation and dissolution of military alliances
+between states (Section~\ref{sec:application}). Section~\ref{sec:discussion} discusses the
+relation to other model families and the limitations.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\textwidth]{generated/fig-frames}
+\caption{Three moments of a simulation of a threshold model of social tipping (the
+\ttt{granovetter\_helfmann} example of \tricl, seed 3). 100 agents on a random network; always
+active, contingent and never active agents; contingent agents become active or inactive depending on
+the fraction of their active neighbours. The state of an agent is a link to an auxiliary entity
+\ttt{active} (relationship types \ttt{is} and \ttt{is not}), so the threshold rule is a rule on
+two-paths agent--neighbour--\ttt{active}. Node positions come from a force-directed layout of the
+time-aggregated network and are the same in all panels.}
+\label{fig:frames}
+\end{figure}

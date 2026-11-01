@@ -1,0 +1,7 @@
+case                         events   init [s]      run [s]   events/s   RSS [MB]
+helfmann N=100                20000       0.06         0.15     245429         15
+helfmann N=1000               20000       0.14         0.26     164607         15
+helfmann N=10000              20000       2.25         2.57      62245         26
+3blocks N=300 (dense)         20000       1.08         9.42       2397         30
+sir_sd N=1000                  7155       0.25         0.47      32982         30
+appended to /home/user/tricl/paper/data/benchmark.csv

@@ -1,0 +1,42 @@
+log-likelihood at start: -25068.455548
+  logl -25068.455548 at entry=0.01, exit=0.002, a0_defense=0.003, a1_defense=0.01, d0_defense=0.1
+  logl -25068.455548 at entry=0.01, exit=0.002, a0_defense=0.003, a1_defense=0.01, d0_defense=0.1
+  logl -21954.850271 at entry=0.00989616, exit=0.00200743, a0_defense=0.0011049, a1_defense=0.00981538, d0_defense=0.10435
+  logl -21954.850271 at entry=0.00989616, exit=0.00200743, a0_defense=0.0011049, a1_defense=0.00981538, d0_defense=0.10435
+  logl -21331.142335 at entry=0.00970614, exit=0.0020221, a0_defense=0.000678087, a1_defense=0.0100653, d0_defense=0.111237
+  logl -21331.142335 at entry=0.00970614, exit=0.0020221, a0_defense=0.000678087, a1_defense=0.0100653, d0_defense=0.111237
+  logl -20975.255710 at entry=0.00925376, exit=0.00206341, a0_defense=0.000382171, a1_defense=0.0101396, d0_defense=0.120692
+  logl -20975.255710 at entry=0.00925376, exit=0.00206341, a0_defense=0.000382171, a1_defense=0.0101396, d0_defense=0.120692
+  logl -20874.412778 at entry=0.00872351, exit=0.00213175, a0_defense=0.00025589, a1_defense=0.0102773, d0_defense=0.118113
+  logl -20874.412778 at entry=0.00872351, exit=0.00213175, a0_defense=0.00025589, a1_defense=0.0102773, d0_defense=0.118113
+  logl -20854.181292 at entry=0.00825712, exit=0.00224015, a0_defense=0.000197141, a1_defense=0.00974149, d0_defense=0.124582
+  logl -20854.181292 at entry=0.00825712, exit=0.00224015, a0_defense=0.000197141, a1_defense=0.00974149, d0_defense=0.124582
+  logl -20853.698357 at entry=0.00797496, exit=0.00233753, a0_defense=0.000167231, a1_defense=0.0108673, d0_defense=0.121364
+  logl -20853.698357 at entry=0.00797496, exit=0.00233753, a0_defense=0.000167231, a1_defense=0.0108673, d0_defense=0.121364
+  logl -20848.799792 at entry=0.00811271, exit=0.00228905, a0_defense=0.000181349, a1_defense=0.0102974, d0_defense=0.122939
+  logl -20848.799792 at entry=0.00811271, exit=0.00228905, a0_defense=0.000181349, a1_defense=0.0102974, d0_defense=0.122939
+  logl -20848.229305 at entry=0.00807557, exit=0.00231455, a0_defense=0.000177643, a1_defense=0.0102436, d0_defense=0.121077
+  logl -20848.229305 at entry=0.00807557, exit=0.00231455, a0_defense=0.000177643, a1_defense=0.0102436, d0_defense=0.121077
+  logl -20847.964932 at entry=0.00805213, exit=0.00235951, a0_defense=0.000175681, a1_defense=0.0102152, d0_defense=0.119975
+  logl -20847.964932 at entry=0.00805213, exit=0.00235951, a0_defense=0.000175681, a1_defense=0.0102152, d0_defense=0.119975
+  logl -20847.583867 at entry=0.00802813, exit=0.00245867, a0_defense=0.000174162, a1_defense=0.0101914, d0_defense=0.119052
+  logl -20847.583867 at entry=0.00802813, exit=0.00245867, a0_defense=0.000174162, a1_defense=0.0101914, d0_defense=0.119052
+  logl -20846.801561 at entry=0.0079963, exit=0.00274388, a0_defense=0.000172963, a1_defense=0.0101676, d0_defense=0.118181
+  logl -20846.801561 at entry=0.0079963, exit=0.00274388, a0_defense=0.000172963, a1_defense=0.0101676, d0_defense=0.118181
+  logl -20846.150224 at entry=0.00801194, exit=0.00308399, a0_defense=0.000174391, a1_defense=0.0101805, d0_defense=0.11887
+  logl -20846.150224 at entry=0.00801194, exit=0.00308399, a0_defense=0.000174391, a1_defense=0.0101805, d0_defense=0.11887
+  logl -20845.970556 at entry=0.00805784, exit=0.00317252, a0_defense=0.000177656, a1_defense=0.0102136, d0_defense=0.119862
+  logl -20845.970556 at entry=0.00805784, exit=0.00317252, a0_defense=0.000177656, a1_defense=0.0102136, d0_defense=0.119862
+  logl -20845.961099 at entry=0.0080636, exit=0.00315284, a0_defense=0.000177987, a1_defense=0.0102204, d0_defense=0.120235
+  logl -20845.961099 at entry=0.0080636, exit=0.00315284, a0_defense=0.000177987, a1_defense=0.0102204, d0_defense=0.120235
+  logl -20845.961042 at entry=0.00806311, exit=0.00314931, a0_defense=0.000177975, a1_defense=0.0102208, d0_defense=0.120254
+  logl -20845.961042 at entry=0.00806311, exit=0.00314931, a0_defense=0.000177975, a1_defense=0.0102208, d0_defense=0.120254
+  logl -20845.961038 at entry=0.00806231, exit=0.00314918, a0_defense=0.000177976, a1_defense=0.0102208, d0_defense=0.120255
+  logl -20845.961038 at entry=0.00806231, exit=0.00314918, a0_defense=0.000177976, a1_defense=0.0102208, d0_defense=0.120255
+parameter             start       estimate                      gradient
+entry                  0.01     0.00806231                         -3.48
+exit                  0.002     0.00314918                         0.257
+a0_defense            0.003    0.000177976                          44.4
+a1_defense             0.01      0.0102208                         0.081
+d0_defense              0.1       0.120255                       -0.0137
+log-likelihood: -20845.961038 (start: -25068.455548), 15 iterations, 36 likelihood evaluations
