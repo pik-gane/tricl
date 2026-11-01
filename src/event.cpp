@@ -18,6 +18,94 @@
 #include "schedule.h"
 
 #include "event.h"
+#include "legs.h"
+
+/** Add the contributions of all influencing legs of an event (not counting the link the event is about) to its data.
+ */
+void add_leg_contributions (int evt_id, entity e1, relationship_or_action_type rat13, entity e3, event_data& evd_ref)
+{
+    const auto& outs1 = e2outs[e1];
+    const auto& ins3 = e2ins[e3];
+    // outlegs (not counting the link the event is about):
+    for (auto& l : outs1) {
+        if ((l.e_target == e3) && (l.rat_out == rat13)) continue;
+        int idx = inflt_index(evt_id, l.rat_out, e2et[l.e_target], NO_RAT);
+        int j = evtid_at2infl[idx];
+        if (j < 0) continue;
+        evd_ref.n_infl[j]++;
+        add_attempt_contribution(&evd_ref, inflt_attempt_rate[idx]);
+        add_probunits_contribution(&evd_ref, inflt_delta_probunits[idx]);
+    }
+
+    // inlegs (similarly):
+    for (auto& l : ins3) {
+        if ((l.e_source == e1) && (l.rat_in == rat13)) continue;
+        int idx = inflt_index(evt_id, NO_RAT, e2et[l.e_source], l.rat_in);
+        int j = evtid_at2infl[idx];
+        if (j < 0) continue;
+        evd_ref.n_infl[j]++;
+        add_attempt_contribution(&evd_ref, inflt_attempt_rate[idx]);
+        add_probunits_contribution(&evd_ref, inflt_delta_probunits[idx]);
+    }
+}
+
+/** Compute the attempt rate, success probunits and influence counts of an event from the current network
+ *  (from its base values, legs and angles), in a fresh event_data object.
+ *
+ *  \returns the number of influencing angles.
+ */
+int compute_event_data (
+        int evt_id,                          ///< [in] the event's type id
+        entity e1,                           ///< [in] source entity
+        relationship_or_action_type rat13,   ///< [in] relationship or action type
+        entity e3,                           ///< [in] target entity
+        event_data& evd_ref                  ///< [out] the event data to fill (must be zero-initialised)
+        )
+{
+    // accumulate attempt rate and success probunits in a fresh event data object
+    // (infinite contributions are counted separately, see event_data):
+
+    // base values:
+    add_attempt_contribution(&evd_ref, evtid2base_attempt_rate[evt_id]);
+    add_probunits_contribution(&evd_ref, evtid2base_probunits[evt_id]);
+
+    const auto& outs1 = e2outs[e1];
+    const auto& ins3 = e2ins[e3];
+
+    // legs (only if any leg influences are configured at all, since hub entities may have very many legs):
+    if (any_leg_influences)
+    {
+        add_leg_contributions(evt_id, e1, rat13, e3, evd_ref);
+    }
+
+    // angles:
+    int na = 0; // number of influencing angles
+    static angle_vec angles;  // reused buffer to avoid allocations
+    get_angles(e1, outs1, ins3, e3, angles);
+    for (auto a_it = angles.begin(); a_it != angles.end(); a_it++) {
+        if (debug) cout << "      influences of angle \"" << e2label[e1] << " " << rat2label[a_it->rat12] << " " << e2label[a_it->e2] << " " << rat2label[a_it->rat23] << " " << e2label[e3] << "\":" << endl;
+
+        // get influence of angle on event:
+        int idx = inflt_index(evt_id, a_it->rat12, e2et[a_it->e2], a_it->rat23);
+        int j = evtid_at2infl[idx];
+        if (j >= 0) { // angle can influence event
+            auto dar = inflt_attempt_rate[idx];
+            auto dspu = inflt_delta_probunits[idx];
+            // count this angle:
+            na++;
+            evd_ref.n_infl[j]++;
+            if (debug) {
+                if (dar != 0.0) cout << "       on attempt rate:" << dar << endl;
+                if (dspu != 0.0) cout << "       on success probunit:" << dspu << endl;
+            }
+            // add its influence:
+            add_attempt_contribution(&evd_ref, dar);
+            add_probunits_contribution(&evd_ref, dspu);
+        }
+        else if (debug) cout << "       none" << endl;
+    }
+    return na;
+}
 
 /** Add (and then schedule) an event.
  *
@@ -45,58 +133,7 @@ void add_event (
         // accumulate attempt rate and success probunits in a fresh event data object
         // (infinite contributions are counted separately, see event_data):
         event_data evd = {};
-
-        // base values:
-        add_attempt_contribution(&evd, evtid2base_attempt_rate[evt_id]);
-        add_probunits_contribution(&evd, evtid2base_probunits[evt_id]);
-
-        const auto& outs1 = e2outs[e1];
-        const auto& ins3 = e2ins[e3];
-
-        // legs (only if any leg influences are configured at all, since hub entities may have very many legs):
-        if (any_leg_influences)
-        {
-            // outlegs:
-            for (auto& l : outs1) {
-                int idx = inflt_index(evt_id, l.rat_out, e2et[l.e_target], NO_RAT);
-                add_attempt_contribution(&evd, inflt_attempt_rate[idx]);
-                add_probunits_contribution(&evd, inflt_delta_probunits[idx]);
-            }
-
-            // inlegs (similarly):
-            for (auto& l : ins3) {
-                int idx = inflt_index(evt_id, NO_RAT, e2et[l.e_source], l.rat_in);
-                add_attempt_contribution(&evd, inflt_attempt_rate[idx]);
-                add_probunits_contribution(&evd, inflt_delta_probunits[idx]);
-            }
-        }
-
-        // angles:
-        int na = 0; // number of influencing angles
-        static angle_vec angles;  // reused buffer to avoid allocations
-        get_angles(e1, outs1, ins3, e3, angles);
-        for (auto a_it = angles.begin(); a_it != angles.end(); a_it++) {
-            if (debug) cout << "      influences of angle \"" << e2label[e1] << " " << rat2label[a_it->rat12] << " " << e2label[a_it->e2] << " " << rat2label[a_it->rat23] << " " << e2label[e3] << "\":" << endl;
-
-            // get influence of angle on event:
-            int idx = inflt_index(evt_id, a_it->rat12, e2et[a_it->e2], a_it->rat23);
-            int j = evtid_at2infl[idx];
-            if (j >= 0) { // angle can influence event
-                auto dar = inflt_attempt_rate[idx];
-                auto dspu = inflt_delta_probunits[idx];
-                // count this angle:
-                na++;
-                evd.n_infl[j]++;
-                if (debug) {
-                    if (dar != 0.0) cout << "       on attempt rate:" << dar << endl;
-                    if (dspu != 0.0) cout << "       on success probunit:" << dspu << endl;
-                }
-                // add its influence:
-                add_attempt_contribution(&evd, dar);
-                add_probunits_contribution(&evd, dspu);
-            }
-            else if (debug) cout << "       none" << endl;
-        }
+        int na = compute_event_data(evt_id, e1, rat13, e3, evd);
 
         // add and schedule:
         // (a non-termination event is only added and scheduled individually if at least one angle influences it
@@ -108,6 +145,7 @@ void add_event (
             evd.n_angles = na;
             evd.t = -INFINITY;
             ev2data[ev] = evd;
+            index_event(ev);
             if (debug) cout << "      attempt rate " << total_attempt_rate(&evd) << ", success prob. "
                     << probunits2probability(total_success_probunits(&evd), evtid2left_tail[evt_id], evtid2right_tail[evt_id], evtid2scale[evt_id]) << endl;
             // now schedule it:
@@ -118,7 +156,7 @@ void add_event (
         else {
             if (debug) cout << "      covered by summary event, not scheduled separately" << endl;
             // only add effective rate of addition via summary event:
-            add_summary_shares(evt_id, 1);
+            add_pair_share(evt_id, e1, e3);
         }
     }
     else if (debug) cout << "     not adding impossible event: " << ev << endl;
@@ -142,6 +180,7 @@ void remove_event (
 
     // keep the schedule and ev2data consistent (evd_ is invalid afterwards!):
     _remove_from_schedule(ev, evd_);
+    unindex_event(ev);
     ev2data.erase(ev);
 }
 
@@ -160,7 +199,7 @@ void conditionally_remove_event(
     {
         // need to adjust effective rate:
         int evt_id = evt_id_of(ev.ec, e2et[ev.e1], ev.rat13, e2et[ev.e3]);
-        if (evt_id >= 0) subtract_summary_shares(evt_id, 1);
+        if ((evt_id >= 0) && evtid2summary[evt_id]) subtract_pair_share(evt_id, ev.e1, ev.e3);
     }
 }
 
@@ -316,7 +355,7 @@ void perform_event (
     if (debug)
     {
 //        dump_links();
-        verify_angle_consistency();
+        verify_angle_consistency(true);
     }
 }
 
@@ -408,13 +447,16 @@ bool pop_next_event ()
 
             entity_type et1 = summary_et1(summary_ev), et3 = summary_et3(summary_ev);
 
-            // draw actual entities at random from given types:
-            auto e1 = random_entity(et1), e3 = random_entity(et3);
-
             auto rat13 = summary_ev.rat13;
-            tricllink l = { e1, rat13, e3 };
             int evt_id = evt_id_of(EC_EST, et1, rat13, et3);
             assert (evt_id >= 0);
+
+            // draw actual entities at random from given types
+            // (with leg influences, through a channel chosen proportionally to its attempt rate, see legs.h):
+            entity e1, e3;
+            if (evtid_is_leg_summary[evt_id]) draw_leg_summary_pair(evt_id, e1, e3);
+            else { e1 = random_entity(et1); e3 = random_entity(et3); }
+            tricllink l = { e1, rat13, e3 };
 
             if (link_exists(l))
             {
@@ -434,23 +476,10 @@ bool pop_next_event ()
                 }
                 else  // event not scheduled separately (but may still be influenced by legs!)
                 {
-                    // compile success units:
-                    event_data tmp_evd = {};
-                    add_probunits_contribution(&tmp_evd, evtid2base_probunits[evt_id]);
-                    if (any_leg_influences)  // (hub entities may have very many legs, so only loop if necessary)
-                    {
-                        // outlegs:
-                        for (auto& l : e2outs[e1])
-                        {
-                            add_probunits_contribution(&tmp_evd, inflt_delta_probunits[inflt_index(evt_id, l.rat_out, e2et[l.e_target], NO_RAT)]);
-                        }
-                        // inlegs:
-                        for (auto& l : e2ins[e3])
-                        {
-                            add_probunits_contribution(&tmp_evd, inflt_delta_probunits[inflt_index(evt_id, NO_RAT, e2et[l.e_source], l.rat_in)]);
-                        }
-                    }
-                    auto spu = total_success_probunits(&tmp_evd);
+                    // compile attempt rate and success units (including legs):
+                    rate pair_ar;
+                    probunits spu;
+                    covered_pair_rate(evt_id, e1, e3, pair_ar, spu);
                     // since the scheduling rate already contained the factor evtid2summary_max_success_probability,
                     // we need to divide the success probability by it here:
                     probability
@@ -463,8 +492,8 @@ bool pop_next_event ()
                     {
                         auto summary_evd = ev2data.at(summary_ev);
                         // compute actual effective rate of this particular event:
-                        rate actual_er = summary_evd.attempt_rate / et2n[et1] / et2n[et3]
-                                         * success_probability;
+                        rate actual_er = evtid_is_leg_summary[evt_id] ? pair_ar * success_probability
+                                         : summary_evd.attempt_rate / et2n[et1] / et2n[et3] * success_probability;
                         // construct event data with proper effective rate for actual event
                         // (the effective rate is the only entry used by perform_event):
                         static event_data actual_evd;
@@ -476,9 +505,9 @@ bool pop_next_event ()
                         current_evd_ = &actual_evd;
                         log_state();
                         found = true;
-                        add_summary_event_log_gradient(evt_id);
+                        add_covered_event_log_gradient(evt_id, e1, e3);
                         // adjust effective rate because summary addition event does no longer cover this pair:
-                        subtract_summary_shares(evt_id, 1);
+                        subtract_pair_share(evt_id, e1, e3);
                         // but don't remove the summary event
                     }
                     else

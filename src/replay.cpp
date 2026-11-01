@@ -21,6 +21,7 @@
 #include "entity.h"
 #include "link.h"
 #include "event.h"
+#include "legs.h"
 #include "io.h"
 #include "debugging.h"
 #include "replay.h"
@@ -111,13 +112,15 @@ void replay ()
         {
             tricllink l = { e1, rat13, e3 };
             if (link_exists(l)) throw impossible("the link exists already", line);
-            if ((evt_id < 0) || !(evtid2summary_single_er[evt_id] > 0)) throw impossible("this type of link cannot be established spontaneously", line);
+            if ((evt_id < 0) || !evtid2summary[evt_id]) throw impossible("this type of link cannot be established spontaneously", line);
             if (n_infinite_effective_rates > 0) throw impossible("an immediate event is pending", line);
             evd = {};
-            evd.effective_rate = evtid2summary_single_er[evt_id];  // (legs cannot influence establishment yet)
+            rate A; probunits B;
+            evd.effective_rate = covered_pair_rate(evt_id, e1, e3, A, B);
+            if (!(evd.effective_rate > 0)) throw impossible("its current rate is zero", line);
             evd.t = current_t;
-            add_summary_event_log_gradient(evt_id);
-            subtract_summary_shares(evt_id, 1);
+            add_covered_event_log_gradient(evt_id, e1, e3);
+            subtract_pair_share(evt_id, e1, e3);
         }
         else
         {

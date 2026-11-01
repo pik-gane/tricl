@@ -14,6 +14,7 @@
 #include "debugging.h"
 #include "event.h"
 #include "io.h"
+#include "legs.h"
 
 /** Perform all necessary changes in state and event data
  *  due to the addition or deletion of an angle.
@@ -78,15 +79,17 @@ inline void add_or_delete_angle (
                         if (ec13 != EC_TERM)  // event is ALSO covered by a summary event
                         {
                             // subtract that part covered by the summary event from the total effective rate:
-                            subtract_summary_shares(evt_id, 1);
+                            if (evtid2summary[evt_id]) subtract_pair_share(evt_id, e1, e3);
                         }
                         auto evd_ = &ev2data[ev];  // generates a new (zero-initialised) event_data object
+                        index_event(ev);
                         evd_->n_angles = 1;
                         evd_->n_infl[j] = 1;
                         add_attempt_contribution(evd_, evtid2base_attempt_rate[evt_id]);
                         add_attempt_contribution(evd_, dar);
                         add_probunits_contribution(evd_, evtid2base_probunits[evt_id]);
                         add_probunits_contribution(evd_, dspu);
+                        if (any_leg_influences) add_leg_contributions(evt_id, e1, rat13, e3, *evd_);
                         schedule_event(ev, evd_, evt_id);
                     }
                     else  // event is already scheduled
@@ -118,9 +121,10 @@ inline void add_or_delete_angle (
                     {
                         if (debug) cout << "        last angle was removed, so event will be removed because it is covered by a summary event" << endl;
                         // remove specific event:
+                        unindex_event(ev);
                         ev2data.erase(ev);
                         // add that part covered by the summary event to the total effective rate:
-                        add_summary_shares(evt_id, 1);
+                        if (evtid2summary[evt_id]) add_pair_share(evt_id, e1, e3);
                     }
                     else
                     {

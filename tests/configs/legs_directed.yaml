@@ -1,0 +1,43 @@
+metadata:
+    name: three entities with a directed relationship, leg and angle influences
+    description: >
+        Used by tests/run_tests.py like legs_symmetric.yaml, here with preferential attachment through an
+        incoming leg (which uses the leg channel of the summary event) and an inverse relationship type.
+    author: tricl test suite
+
+metaparameters:
+    A0: 0.2     # base establishment attempt rate
+    AL: 0.5     # additional establishment attempt rate per follower of the target (incoming leg)
+    K: 0.3      # additional establishment attempt rate per two-path (angle)
+    BL: -0.4    # establishment success probunits per followee of the source (outgoing leg)
+    D: 0.5      # base termination attempt rate
+    DL: 0.3     # additional termination attempt rate per other follower of the target (incoming leg)
+    BT: 0.3     # termination success probunits per other followee of the source (outgoing leg)
+
+limits:
+    t: 40
+
+options:
+    seed: 1
+
+entities:
+    user: 3
+
+relationship types:
+    follows: is followed by
+
+dynamics:
+    [user, follows, user]:
+        establish:
+            attempt:
+                base: A0
+                [user, follows, ~]: AL
+                [~, follows, user, follows, ~]: K
+            success:
+                [~, follows, user]: BL
+        terminate:
+            attempt:
+                base: D
+                [user, follows, ~]: DL
+            success:
+                [~, follows, user]: BT

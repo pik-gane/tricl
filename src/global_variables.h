@@ -57,6 +57,9 @@ extern int n_rats;                                                    ///< No. o
 extern unordered_map<relationship_or_action_type, label> rat2label;   ///< Relationship or action type labels (typically verbs in the 3rd person singular, or math symbols)
 extern unordered_map<string, relationship_or_action_type> label2rat;  ///< Inverse map of \ref label2rat
 extern unordered_map<relationship_or_action_type, bool> r_is_action_type; ///< Whether relationship or action type is an action type (not implemented yet)
+extern unordered_map<relationship_or_action_type, double> rat2decay;     ///< Decay rate of the impact of actions by action type
+extern unordered_map<relationship_or_action_type, double> rat2threshold; ///< Impact below which an action ceases to exist, by action type
+extern unordered_map<tricllink, double> initial_impacts;                 ///< Impacts of the named initial actions
 extern unordered_set<relationship_or_action_type> inverse_only_rats; ///< Relationship types that were only declared as the inverse of another type (their links are implied by those of the other type and hence not output)
 extern unordered_map<relationship_or_action_type, relationship_or_action_type> rat2inv; ///< Inverse type of a relationship or action type (e.g. the inverse of "follows" would be "is followed by", the inverse of "meets" would be "meets"). If NO_RAT, inverse has no individual label
 // any preregistered initial links:
@@ -197,7 +200,9 @@ extern unordered_map<event, event_data> ev2data;  ///< Data of all currently sch
 extern double cumulative_logl;    ///< Cumulative log-likelihood of evolution from initial state to current_t
 extern rate summary_ev2effective_rate;  ///< Current effective rates of summary events
 extern rate total_finite_effective_rate; ///< Current total effective rate of all events (without infinite rates)
-extern int n_infinite_effective_rates; ///< No. of currently scheduled events with infinite effective rate
+extern int n_infinite_effective_rates;
+extern vector<char> evtid_is_leg_summary;  ///< Whether the summary event of an event type has leg influences (see legs.h)
+double leg_summary_T (int evt_id);          ///< Total rate of all pairs of a summary event type with leg influences, before subtracting the pairs not covered (see legs.h) ///< No. of currently scheduled events with infinite effective rate
 extern event_data sure_evd;
 
 // network state:

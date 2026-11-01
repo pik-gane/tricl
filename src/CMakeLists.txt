@@ -8,6 +8,7 @@ add_library(tricl_core STATIC
     probability.cpp
     entity.cpp
     link.cpp
+    legs.cpp
 #    angle.cpp  # currently empty
     event.cpp
     config.cpp

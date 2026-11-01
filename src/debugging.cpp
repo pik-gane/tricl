@@ -12,6 +12,7 @@
 #include "global_variables.h"
 #include "angle.h"
 #include "io.h"
+#include "legs.h"
 
 /** Compute total finite event rate from scratch
  *  in order to compare it with the stored one
@@ -19,38 +20,93 @@
 rate compute_total_finite_er ()
 {
     rate ter = 0;
-    // go through all scheduled events:
+    rate A; probunits B;
+    // go through all scheduled events (summary events contribute the rate of all pairs of their types):
     for (auto& [ev, evd] : ev2data)
     {
-        auto ec = ev.ec;
         auto er = evd.effective_rate;
         if (er < INFINITY) ter += er;
-        if ((ec != EC_TERM) && !event_is_summary(ev))  // event is also covered by summary event
+        if ((ev.ec != EC_TERM) && !event_is_summary(ev))  // event is also covered by summary event
         {
-            // subtract single er that will be added when processing summary event:
-            ter -= summary_single_er_of(ec, e2et[ev.e1], ev.rat13, e2et[ev.e3]);
+            // subtract the share of this pair that was added when processing the summary event:
+            int evt_id = evt_id_of(ev.ec, e2et[ev.e1], ev.rat13, e2et[ev.e3]);
+            if ((evt_id >= 0) && evtid2summary[evt_id]) ter -= covered_pair_rate(evt_id, ev.e1, ev.e3, A, B);
         }
     }
-    // go through all existing links:
+    // go through all existing links (their pairs cannot be established):
     for (entity e1 = 1; e1 <= max_e; e1++)
     {
         for (auto& l : e2outs[e1])
         {
-            // subtract single er that was added when processing summary event:
-            ter -= summary_single_er_of(EC_EST, e2et[e1], l.rat_out, e2et[l.e_target]);
+            if (l.rat_out == RT_ID) continue;
+            int evt_id = evt_id_of(EC_EST, e2et[e1], l.rat_out, e2et[l.e_target]);
+            if ((evt_id >= 0) && evtid2summary[evt_id]) ter -= covered_pair_rate(evt_id, e1, l.e_target, A, B);
         }
     }
-    // go through all entity types:
-    for (auto& [et, n] : et2n)
+    // equal entities are not linked:
+    for (int evt_id = 0; evt_id < n_evt_ids; evt_id++)
     {
-        for (auto& rat13 : ets2relations[{et, et}])
-        {
-            // subtract n times single er since equal entities will not be linked:
-            ter -= n * summary_single_er_of(EC_EST, et, rat13, et);
-        }
+        auto& evt = evtid2evt[evt_id];
+        if (!evtid2summary[evt_id] || (evt.et1 != evt.et3)) continue;
+        if (!evtid_is_leg_summary[evt_id]) ter -= et2n[evt.et1] * evtid2summary_single_er[evt_id];
+        else for (auto& e : et2es[evt.et1]) ter -= covered_pair_rate(evt_id, e, e, A, B);
     }
-
     return ter;
+}
+
+/** Verify that the stored data of every individually scheduled event equals a recomputation from the network,
+ *  and that the leg data is consistent.
+ */
+void verify_rates (bool check_total)
+{
+    for (auto& [ev, evd] : ev2data)
+    {
+        if (event_is_summary(ev)) continue;
+        int evt_id = evt_id_of(ev.ec, e2et[ev.e1], ev.rat13, e2et[ev.e3]);
+        event_data tmp = {};
+        compute_event_data(evt_id, ev.e1, ev.rat13, ev.e3, tmp);
+        for (size_t j = 0; j < MAX_INFL_PER_EVT; j++) if (tmp.n_infl[j] != evd.n_infl[j]) {
+            cerr << "event " << ev << ": influence " << j << " counted " << evd.n_infl[j] << " times, recomputed " << tmp.n_infl[j] << endl;
+            CHECK(tmp.n_infl[j] == evd.n_infl[j]);
+        }
+        CHECK(fabs(tmp.attempt_rate - evd.attempt_rate) <= 1e-9 * max(1.0, fabs(tmp.attempt_rate)));
+        CHECK(fabs(tmp.success_probunits - evd.success_probunits) <= 1e-9 * max(1.0, fabs(tmp.success_probunits)));
+        CHECK((tmp.n_inf_attempt == evd.n_inf_attempt) && (tmp.n_pos_inf_probunits == evd.n_pos_inf_probunits) && (tmp.n_neg_inf_probunits == evd.n_neg_inf_probunits));
+        if (track_legs) CHECK((e2src_evs[ev.e1].count(ev) == 1) && (e2tgt_evs[ev.e3].count(ev) == 1));
+    }
+    if (check_total) {
+        // the incrementally maintained total rate (used by the log-likelihood):
+        rate exact = compute_total_finite_er();
+        if (!(fabs(exact - total_finite_effective_rate) <= 1e-8 * max(1.0, fabs(exact))))
+            cerr << "total rate " << total_finite_effective_rate << " differs from recomputed " << exact << endl;
+        CHECK(fabs(exact - total_finite_effective_rate) <= 1e-8 * max(1.0, fabs(exact)));
+    }
+    if (!track_legs) return;
+    // leg degrees:
+    for (entity e = 1; e <= max_e; e++)
+    {
+        vector<int> deg(legkeys.size(), 0);
+        for (auto& l : e2outs[e]) if (l.rat_out != RT_ID) { int k = slot2legkey[at_slot(l.rat_out, e2et[l.e_target], NO_RAT)]; if (k >= 0) deg[k]++; }
+        for (auto& l : e2ins[e]) if (l.rat_in != RT_ID) { int k = slot2legkey[at_slot(NO_RAT, e2et[l.e_source], l.rat_in)]; if (k >= 0) deg[k]++; }
+        for (size_t k = 0; k < legkeys.size(); k++) CHECK(deg[k] == legdeg(e, k));
+        size_t n = 0;
+        for (auto& ev : e2src_evs[e]) { CHECK(ev2data.count(ev) == 1); n++; }
+        for (auto& ev : e2tgt_evs[e]) CHECK(ev2data.count(ev) == 1);
+        (void) n;
+    }
+    // histograms and totals of summary events with legs:
+    for (int evt_id = 0; evt_id < n_evt_ids; evt_id++)
+    {
+        if (!evtid_is_leg_summary[evt_id]) continue;
+        auto& evt = evtid2evt[evt_id];
+        map<vector<int>, long> H1, H3;
+        for (auto& e : et2es[evt.et1]) H1[outdegs(evt_id, e)]++;
+        for (auto& e : et2es[evt.et3]) H3[indegs(evt_id, e)]++;
+        CHECK(H1 == evtid2lsd[evt_id].H1);
+        CHECK(H3 == evtid2lsd[evt_id].H3);
+        double T = recompute_leg_summary_T(evt_id);
+        CHECK(fabs(T - evtid2lsd[evt_id].T) <= 1e-9 * max(1.0, T));
+    }
 }
 
 /** Find the no. of angles influencing an event from scratch
@@ -76,9 +132,11 @@ int compute_n_angles (event_type evt, entity e1, entity e3, bool print) {
 
 /** Verify that data about angles is consistent.
  */
-void verify_angle_consistency () {
+void verify_angle_consistency (bool at_end_of_event) {
+    verify_rates(at_end_of_event);
     // ev2data -> n_angles:
     for (auto& [ev, evd] : ev2data) {
+        if (event_is_summary(ev)) continue;
         auto e1 = ev.e1, e3=ev.e3;
         auto et1 = e2et[e1], et3 = e2et[e3];
         auto n = compute_n_angles({ ev.ec, et1, ev.rat13, et3 }, e1, e3, false);

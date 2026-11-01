@@ -1,0 +1,55 @@
+metadata:
+    name: leg influences on a larger model
+    description: >
+        Used by tests/run_tests.py in --debug mode (every rate, the total rate and the leg data are recomputed
+        from the network after every event) and for replay; exercises the leg channels of summary events.
+    author: tricl test suite
+
+limits:
+    t: 30
+options:
+    seed: 3
+entities:
+    user: 25
+    group: 3
+relationship types:
+    knows: symmetric
+    follows: is followed by
+    member of: ~
+initial links:
+    random:
+        [user, knows, user]:
+            probability: 0.1
+        [user, member of, group]:
+            probability: 0.3
+dynamics:
+    [user, knows, user]:
+        establish:
+            attempt:
+                basic: 0.01
+                [~, knows, user]: 0.02           # outgoing leg: more contacts, more attempts
+                [~, knows, user, knows, ~]: 0.1
+            success:
+                [user, knows, ~]: -0.05          # incoming leg
+                [~, member of, group]: 0.2
+        terminate:
+            attempt:
+                basic: 0.2
+                [~, knows, user]: 0.03
+            success:
+                [user, knows, ~]: -0.1
+                [~, knows, user, knows, ~]: -0.2
+    [user, follows, user]:
+        establish:
+            attempt:
+                [user, follows, ~]: 0.05         # preferential attachment via an incoming leg only
+            success: 1
+        terminate:
+            attempt: 0.3
+    [user, member of, group]:
+        establish:
+            attempt:
+                basic: 0.05
+                [~, member of, group]: 0.1
+        terminate:
+            attempt: 0.2

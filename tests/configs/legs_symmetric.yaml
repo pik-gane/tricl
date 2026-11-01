@@ -1,0 +1,48 @@
+metadata:
+    name: four entities with a symmetric relationship, leg and angle influences
+    description: >
+        Used by tests/run_tests.py: the stationary distribution of this small Markov chain (64 states) is computed
+        exactly from the rules and compared with long simulations, and the gradient is checked against finite
+        differences. Legs count the links of an endpoint, not counting the link the event is about.
+    author: tricl test suite
+
+metaparameters:
+    A0: 0.3     # base establishment attempt rate
+    AL: 0.4     # additional establishment attempt rate per link of the source (outgoing leg)
+    K: 0.5      # additional establishment attempt rate per common neighbour (angle)
+    BE: 0.2     # base establishment success probunits
+    BL: -0.3    # establishment success probunits per link of the target (incoming leg)
+    D: 0.6      # base termination attempt rate
+    DL: 0.2     # additional termination attempt rate per other link of the source (outgoing leg)
+    BT: 0.4     # termination success probunits per other link of the target (incoming leg)
+    BK: -0.5    # termination success probunits per common neighbour (angle)
+
+limits:
+    t: 40
+
+options:
+    seed: 1
+
+entities:
+    user: 4
+
+relationship types:
+    knows: symmetric
+
+dynamics:
+    [user, knows, user]:
+        establish:
+            attempt:
+                base: A0
+                [~, knows, user]: AL
+                [~, knows, user, knows, ~]: K
+            success:
+                base: BE
+                [user, knows, ~]: BL
+        terminate:
+            attempt:
+                base: D
+                [~, knows, user]: DL
+            success:
+                [user, knows, ~]: BT
+                [~, knows, user, knows, ~]: BK

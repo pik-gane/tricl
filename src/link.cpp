@@ -10,6 +10,7 @@
 #include "event.h"
 #include "gexf.h"
 #include "link.h"
+#include "legs.h"
 
 /** \returns whether link currently exists.
  */
@@ -37,6 +38,9 @@ void add_link (tricllink& l)
     // update counts:
     lt2n[{et1, rat13, et3}]++;
     n_links++;
+
+    // update leg influences:
+    on_link_change(l, +1);
 }
 
 /** delete a link.
@@ -57,6 +61,9 @@ void delete_link (tricllink& l)
     // update counts:
     lt2n[{et1, rat13, et3}]--;
     n_links--;
+
+    // update leg influences:
+    on_link_change(l, -1);
 }
 
 /** perform an event that generates a random link during installation.

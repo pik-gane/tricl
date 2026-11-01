@@ -225,7 +225,7 @@ inline void _schedule_event (
     {
         // the summary event's effective rate uses the base success probability units
         // (the actual success of an attempt is tested later in pop_next_event):
-        er = evd_->effective_rate = effective_rate(ar, spu, left_tail, right_tail, scale);
+        er = evd_->effective_rate = evtid_is_leg_summary[evt_id] ? leg_summary_T(evt_id) : effective_rate(ar, spu, left_tail, right_tail, scale);
         assert (er < INFINITY);
         add_effective_rate(er);
         // NOTE: in update_adjacent_events, particular events must get update total effective rate properly as the difference to this!
@@ -332,6 +332,10 @@ inline void reschedule_event (event& ev, event_data* evd_, int evt_id)
     _schedule_event(ev, evd_, evt_id);
     if (debug) verify_data_consistency();
 }
+
+void add_leg_contributions (int evt_id, entity e1, relationship_or_action_type rat13, entity e3, event_data& evd_ref);
+
+int compute_event_data (int evt_id, entity e1, relationship_or_action_type rat13, entity e3, event_data& evd_ref);
 
 void add_event (event& ev);
 

@@ -277,6 +277,157 @@ def replay_consistency_test(binary, workdir):
     return "ok (" + "; ".join(results) + ")"
 
 
+def legs_exact_test(binary, workdir):
+    """Compare long simulations of two small models with leg influences with their exact stationary distributions,
+    computed independently from the rules (legs count the links of an endpoint, not counting the event's own link;
+    for a symmetric relationship type, both directed events of a pair have their own rates)."""
+    import itertools
+    import numpy as np
+    sys.path.insert(0, os.path.join(ROOT, "python"))
+    from tricl_macro import sigmoid
+    f = lambda pu: sigmoid(pu, 1.0, 1.0)
+
+    def sym_rates(state, p):  # state: frozenset of unordered pairs of 4 entities
+        n = 4
+        deg = [sum(1 for e in state if i in e) for i in range(n)]
+        nb = [set(j for e in state if i in e for j in e if j != i) for i in range(n)]
+        out = {}
+        for i, j in itertools.combinations(range(n), 2):
+            e = frozenset((i, j))
+            r = 0.0
+            for a, b in ((i, j), (j, i)):
+                cn = len(nb[a] & nb[b])
+                if e in state:
+                    r += (p["D"] + p["DL"] * (deg[a] - 1)) * f(p["BT"] * (deg[b] - 1) + p["BK"] * cn)
+                else:
+                    r += (p["A0"] + p["AL"] * deg[a] + p["K"] * cn) * f(p["BE"] + p["BL"] * deg[b])
+            out[state ^ {e}] = out.get(state ^ {e}, 0.0) + r
+        return out, 2 * len(state)
+
+    def dir_rates(state, p):  # state: frozenset of ordered pairs (i follows j) of 3 entities
+        n = 3
+        outdeg = [sum(1 for (a, b) in state if a == i) for i in range(n)]
+        indeg = [sum(1 for (a, b) in state if b == i) for i in range(n)]
+        out = {}
+        for i, j in itertools.permutations(range(n), 2):
+            if (i, j) in state:
+                r = (p["D"] + p["DL"] * (indeg[j] - 1)) * f(p["BT"] * (outdeg[i] - 1))
+            else:
+                paths = sum(1 for k in range(n) if k not in (i, j) and (i, k) in state and (k, j) in state)
+                r = (p["A0"] + p["AL"] * indeg[j] + p["K"] * paths) * f(p["BL"] * outdeg[i])
+            out[state ^ {(i, j)}] = r
+        return out, len(state)
+
+    def stationary_moments(units, rates, p):
+        states = [frozenset(c) for k in range(len(units) + 1) for c in itertools.combinations(units, k)]
+        index = {s: i for i, s in enumerate(states)}
+        Q = np.zeros((len(states), len(states)))
+        counts = np.zeros(len(states))
+        for s in states:
+            out, counts[index[s]] = rates(s, p)
+            for t, r in out.items():
+                Q[index[s], index[t]] += r
+                Q[index[s], index[s]] -= r
+        A = np.vstack([Q.T, np.ones(len(states))])
+        pi = np.linalg.lstsq(A, np.concatenate([np.zeros(len(states)), [1.0]]), rcond=None)[0]
+        return float(pi @ counts), float(pi @ counts ** 2)
+
+    results = []
+    cases = [("legs_symmetric.yaml", [frozenset(c) for c in itertools.combinations(range(4), 2)], sym_rates, "user knows user",
+              {"A0": 0.3, "AL": 0.4, "K": 0.5, "BE": 0.2, "BL": -0.3, "D": 0.6, "DL": 0.2, "BT": 0.4, "BK": -0.5}),
+             ("legs_directed.yaml", list(itertools.permutations(range(3), 2)), dir_rates, "user follows user",
+              {"A0": 0.2, "AL": 0.5, "K": 0.3, "BL": -0.4, "D": 0.5, "DL": 0.3, "BT": 0.3})]
+    for name, units, rates, column, p in cases:
+        m1, m2 = stationary_moments(units, rates, p)
+        cwd = tempfile.mkdtemp(prefix="tricl_", dir=workdir)
+        samples = []
+        for seed in range(1, 5):
+            stats = os.path.join(cwd, "stats%d.csv" % seed)
+            code, out, err, secs = run_tricl(binary, os.path.join(ROOT, "tests", "configs", name),
+                                             ["--quiet", "--seed", str(seed), "--max-t", "5000", "--stats-out", stats], cwd)
+            if code != 0:
+                raise Failure("%s: exit code %d\n%s" % (name, code, err[-1000:]))
+            with open(stats) as fh:
+                rows = list(csv.DictReader(fh))
+            samples += [float(r[column]) for r in rows[100:]]  # (skip a burn-in)
+        x = np.array(samples)
+        nb = len(x) // 100
+        z = []
+        for y, m in ((x, m1), (x ** 2, m2)):
+            batches = y[:nb * 100].reshape(nb, 100).mean(axis=1)
+            z.append((batches.mean() - m) / (batches.std(ddof=1) / math.sqrt(nb)))
+        if max(abs(v) for v in z) > 4:
+            raise Failure("%s: simulated mean and second moment of the link count %.4f, %.4f differ from the exact values %.4f, %.4f (z = %.2f, %.2f)"
+                          % (name, x.mean(), (x ** 2).mean(), m1, m2, z[0], z[1]))
+        results.append("%s: mean links %.3f vs exact %.3f, z = %.2f, %.2f" % (name.replace(".yaml", ""), x.mean(), m1, z[0], z[1]))
+    return "ok (" + "; ".join(results) + ")"
+
+def generic_gradient_test(binary, workdir, config_name, values, max_t=None):
+    """Simulate with --grad, replay the events with --grad (log-likelihood and gradient must agree), and check the
+    gradient w.r.t. every metaparameter against finite differences of the replayed log-likelihood
+    (the metaparameters enter the coefficients via the Jacobian obtained from --dump-parameters)."""
+    config = os.path.join(ROOT, "tests", "configs", config_name)
+    cwd = tempfile.mkdtemp(prefix="tricl_", dir=workdir)
+    events_file = os.path.join(cwd, "events.csv")
+    extra = ["--max-t", str(max_t)] if max_t else []
+    code, out, err, secs = run_tricl(binary, config, ["--summary", "--grad", "--seed", "2", "--events-out", events_file] + extra, cwd)
+    if code != 0:
+        raise Failure("%s: simulation exit code %d\n%s" % (config_name, code, err[-1000:]))
+    sim = parse_summary(out)
+    code, out, err, secs = run_tricl(binary, config, ["--summary", "--grad", "--events-in", events_file] + extra, cwd)
+    if code != 0:
+        raise Failure("%s: replay exit code %d\n%s" % (config_name, code, err[-1000:]))
+    rep = parse_summary(out)
+    if rep["events"] != sim["events"] or not close(rep["logl"], sim["logl"]):
+        raise Failure("%s: replay (%d events, logl %.12f) differs from simulation (%d events, logl %.12f)"
+                      % (config_name, rep["events"], rep["logl"], sim["events"], sim["logl"]))
+    for label, g in sim["gradient"].items():
+        if not close(rep["gradient"][label], g):
+            raise Failure("%s: replay gradient %r = %r differs from simulation %r" % (config_name, label, rep["gradient"][label], g))
+    worst = 0.0
+    for m, v in values.items():
+        h = 1e-4 * max(1.0, abs(v))
+        logls, coefs = [], []
+        for x in (v + h, v - h):
+            code, out, err, secs = run_tricl(binary, config, ["--summary", "--events-in", events_file, "--" + m, repr(x)] + extra, cwd)
+            if code != 0:
+                raise Failure("%s: replay with --%s %r: exit code %d\n%s" % (config_name, m, x, code, err[-1000:]))
+            logls.append(parse_summary(out)["logl"])
+            code, out, err, secs = run_tricl(binary, config, ["--dump-parameters", "--" + m, repr(x)], cwd)
+            coefs.append(parse_summary(out)["parameters"])
+        fd = (logls[0] - logls[1]) / (2 * h)
+        an = sum(rep["gradient"][label] * (coefs[0][label] - coefs[1][label]) / (2 * h) for label in rep["gradient"])
+        if not abs(fd - an) <= 1e-5 * max(1.0, abs(an)):
+            raise Failure("%s: d logl / d %s: analytic %.10f, finite difference %.10f" % (config_name, m, an, fd))
+        worst = max(worst, abs(fd - an))
+    return "%s: %d events, logl %.4f, %d metaparameters, max. |analytic - finite difference| %.1e" % (
+        config_name.replace(".yaml", ""), sim["events"], sim["logl"], len(values), worst)
+
+
+def legs_gradient_test(binary, workdir):
+    """Replay and gradient checks for models with leg influences."""
+    r1 = generic_gradient_test(binary, workdir, "legs_symmetric.yaml",
+                               {"A0": 0.3, "AL": 0.4, "K": 0.5, "BE": 0.2, "BL": -0.3, "D": 0.6, "DL": 0.2, "BT": 0.4, "BK": -0.5}, max_t=200)
+    r2 = generic_gradient_test(binary, workdir, "legs_directed.yaml",
+                               {"A0": 0.2, "AL": 0.5, "K": 0.3, "BL": -0.4, "D": 0.5, "DL": 0.3, "BT": 0.3}, max_t=200)
+    # a larger model in --debug mode, where every rate, the total rate and all leg data are recomputed after every event:
+    config = os.path.join(ROOT, "tests", "configs", "legs_large.yaml")
+    cwd = tempfile.mkdtemp(prefix="tricl_", dir=workdir)
+    events_file = os.path.join(cwd, "events.csv")
+    code, out, err, secs = run_tricl(binary, config, ["--debug", "--max-t", "15", "--events-out", events_file], cwd)
+    if code != 0:
+        raise Failure("legs_large.yaml in --debug mode: exit code %d\n%s" % (code, (out + err)[-2000:]))
+    code, out, err, secs = run_tricl(binary, config, ["--summary", "--max-t", "15"], cwd)
+    sim = parse_summary(out)
+    code, out, err, secs = run_tricl(binary, config, ["--summary", "--max-t", "15", "--events-in", events_file], cwd)
+    if code != 0:
+        raise Failure("legs_large.yaml replay: exit code %d\n%s" % (code, err[-1000:]))
+    rep = parse_summary(out)
+    if rep["events"] != sim["events"] or not close(rep["logl"], sim["logl"]):
+        raise Failure("legs_large.yaml: replay (%d events, logl %.12f) differs from simulation (%d events, logl %.12f)"
+                      % (rep["events"], rep["logl"], sim["events"], sim["logl"]))
+    return "ok (%s; %s; legs_large: %d events checked in debug mode and replayed)" % (r1, r2, sim["events"])
+
 def fit_test(binary, workdir):
     """Run the Python maximum-likelihood driver on simulated data of the three-entity model."""
     sys.path.insert(0, os.path.join(ROOT, "python"))
@@ -590,6 +741,8 @@ def main():
     tests.append(("exact log-likelihood", lambda: exact_logl_test(binary, workdir)))
     tests.append(("replay and gradient", lambda: gradient_test(binary, workdir)))
     tests.append(("replay of example configs", lambda: replay_consistency_test(binary, workdir)))
+    tests.append(("leg influences: exact stationary distributions", lambda: legs_exact_test(binary, workdir)))
+    tests.append(("leg influences: replay and gradient", lambda: legs_gradient_test(binary, workdir)))
     tests.append(("maximum-likelihood fit", lambda: fit_test(binary, workdir)))
     tests.append(("rdf import and export", lambda: rdf_test(binary, workdir)))
     tests.append(("macroscopic approximation", lambda: macro_test(binary, workdir)))

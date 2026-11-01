@@ -10,6 +10,7 @@
 #include "entity.h"
 #include "link.h"
 #include "event.h"
+#include "legs.h"
 #include "graphviz.h"
 #include "gexf.h"
 #include "init.h"
@@ -132,9 +133,9 @@ void init_types ()
         double left_tail = evtid2left_tail[id] = evt_param(evt2left_tail, evt, 1.0),
                right_tail = evtid2right_tail[id] = evt_param(evt2right_tail, evt, 1.0),
                scale = evtid2scale[id] = tail2scale(left_tail) + tail2scale(right_tail);
-        if ((evt.ec == EC_EST) && (ar1 > 0.0)) {
-            // this event type has a summary event for its spontaneous occurrence:
-            evtid2summary_single_er[id] = effective_rate(ar1, spu0, left_tail, right_tail, scale);
+        if (evt.ec != EC_TERM) {
+            // this event type may have a summary event for its spontaneous occurrence (see init_legs()):
+            evtid2summary_single_er[id] = (ar1 > 0.0) ? effective_rate(ar1, spu0, left_tail, right_tail, scale) : 0.0;
             // compile maximal success units. if no influences can increase the success units,
             // this equals the base_probunits, otherwise it is infinite:
             probunits max_spu = spu0;
@@ -153,13 +154,11 @@ void init_types ()
     inflt_delta_probunits.assign((size_t) n_evt_ids * n_at_slots, 0.0);
     any_leg_influences = false;
     for (auto& [inflt, ar] : inflt2attempt_rate) {
-        assert (!( inflt.evt.ec == EC_EST && ( inflt.at.rat12 == NO_RAT || inflt.at.rat23 == NO_RAT ) ));
         int id = evt_id_of(inflt.evt.ec, inflt.evt.et1, inflt.evt.rat13, inflt.evt.et3);
         if (id >= 0) inflt_attempt_rate[inflt_index(id, inflt.at.rat12, inflt.at.et2, inflt.at.rat23)] = ar;
         if (((inflt.at.rat12 == NO_RAT) || (inflt.at.rat23 == NO_RAT)) && (ar != 0.0)) any_leg_influences = true;
     }
     for (auto& [inflt, spu] : inflt2delta_probunits) {
-        assert (!( inflt.evt.ec == EC_EST && ( inflt.at.rat12 == NO_RAT || inflt.at.rat23 == NO_RAT ) ));
         int id = evt_id_of(inflt.evt.ec, inflt.evt.et1, inflt.evt.rat13, inflt.evt.et3);
         if (id >= 0) inflt_delta_probunits[inflt_index(id, inflt.at.rat12, inflt.at.et2, inflt.at.rat23)] = spu;
         if (((inflt.at.rat12 == NO_RAT) || (inflt.at.rat23 == NO_RAT)) && (spu != 0.0)) any_leg_influences = true;
@@ -212,7 +211,9 @@ void init_types ()
             angle_type at = { .rat12 = (relationship_or_action_type) (slot / (n_et_slots * n_rat_slots)),
                               .et2 = (entity_type) ((slot / n_rat_slots) % n_et_slots),
                               .rat23 = (relationship_or_action_type) (slot % n_rat_slots) };
-            string at_label = rat2label[at.rat12] + " " + et2label[at.et2] + " " + rat2label[at.rat23];
+            string at_label = (at.rat23 == NO_RAT) ? "outgoing leg " + rat2label[at.rat12] + " " + et2label[at.et2]
+                            : (at.rat12 == NO_RAT) ? "incoming leg " + et2label[at.et2] + " " + rat2label[at.rat23]
+                            : rat2label[at.rat12] + " " + et2label[at.et2] + " " + rat2label[at.rat23];
             influence_type inflt = { .evt = evt, .at = at };
             if (inflt2attempt_rate.count(inflt) > 0) {
                 evtid2infl_attempt_param[id][j] = params.size();
@@ -307,18 +308,19 @@ void init_events ()
             int evt_id = evt_id_of(EC_EST, et1, rat13, et3);
             if (evt_id < 0) continue;
             auto ar1 = evtid2base_attempt_rate[evt_id];
-            if (ar1 > 0) {
+            if (evtid2summary[evt_id]) {
                 event summary_ev = { .ec = EC_EST,
                         .e1 = (entity)-et1, // in spontaneous events, fields e1 and e3 are used to store entity types with negative sign
                         .rat13 = rat13,
                         .e3 = (entity)-et3 };
                 if (verbose) cout << "  " << et2label[et1] << " " << rat2label[rat13] << " " << et2label[et3] << endl;
-                rate ar_all = ar1 * et2n[et1] * et2n[et3];
+                rate ar_all = evtid_is_leg_summary[evt_id] ? leg_summary_channel_total(evt_id) : ar1 * et2n[et1] * et2n[et3];
                 event_data summary_evd = {};
                 summary_evd.attempt_rate = ar_all;  // finite, see config validation
                 add_probunits_contribution(&summary_evd, evtid2base_probunits[evt_id]);
                 summary_evd.t = -INFINITY;
                 ev2data[summary_ev] = summary_evd;
+                init_leg_summary(evt_id, summary_ev);
                 schedule_event(summary_ev, &ev2data[summary_ev], evt_id);
                 // (the gradient contributions of the summary event are registered once here since its rate never changes)
                 register_summary_share_gradient(evt_id, (double) et2n[et1] * et2n[et3]);
@@ -416,7 +418,7 @@ void init_links ()
     std::fill(grad_event_terms.begin(), grad_event_terms.end(), 0.0);
     std::fill(grad_exposure.begin(), grad_exposure.end(), 0.0);
 
-    if (debug) verify_angle_consistency();
+    if (debug) verify_angle_consistency(true);
     if (!quiet) cout << "  ...done."<< endl;
 }
 
@@ -437,6 +439,7 @@ void init ()
     init_entities();
     init_relationship_or_action_types();
     init_types();
+    init_legs();
     init_events();
     init_links();
     open_events_out();  // only after initial links, so that only simulated events are written
