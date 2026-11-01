@@ -14,6 +14,19 @@
   Open items for the author are listed below.
 * Read `CLAUDE.md` for the paper's LaTeX source conventions (one sentence per source line, enforced in CI).
 
+## Added on 2026-11-01 (later the same day)
+
+* Leg influences (degree dependence) and action types with acts and decaying impacts (Hawkes-type dynamics) are
+  implemented and tested (`src/legs.*`, `src/actions.*`; README sections on dynamics; tests "leg influences" and
+  "actions with decaying impacts"). Simulation, likelihood and gradient are exact (thinning, quadrature, histograms
+  of degree vectors for summary events; the impact threshold of an action type is part of the model).
+* The author wants a research paper instead of the software paper (the existing `paper/` is not to be edited).
+  A plan is in `PAPER_PLAN.md` in the working directory (deliberately not committed): SocioPatterns high-school
+  contacts, Markov models with network context vs. a non-Markovian aging model, time-rescaling goodness of fit,
+  automatically generated pair closure. The author's feedback: avoid applications without clear Markov dynamics
+  (ATOP), compare with a competing model, use a higher-order closure.
+* Network access has changed: Netzschleuder (networks.skewed.de), Zenodo, SNAP, figshare and CRAN are reachable now.
+
 ## What the branch contains
 
 See the PR description and the change log at the end of `README.md`. In short:
