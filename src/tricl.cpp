@@ -200,6 +200,7 @@
 #include "config.h"
 #include "init.h"
 #include "simulate.h"
+#include "forced.h"
 #include "replay.h"
 #include "finish.h"
 #include "debugging.h"
@@ -222,6 +223,7 @@ int main (int argc, char *argv[])
             return 0;
         }
         init();
+        read_forced_events();
         if (debug) verify_data_consistency();
         if (dump_model)
         {

@@ -256,6 +256,8 @@ struct event_data
     int slot = -1;                     ///< Leaf slot of the event in the rate tree (see schedule.h), or -1
     int imm = -1;                      ///< Index of the event in immediate_events (if its rate is infinite), or -1
     bool tv = false;                   ///< Whether the event is scheduled with a time-varying rate (see actions.h); then effective_rate is an upper bound
+    double comp = 0;                   ///< Integral of the event's rate since it was added (its compensator, for time-rescaling residuals), up to t_comp
+    timepoint t_comp = 0;              ///< Time up to which comp has been accumulated (for events with constant rate since their last scheduling)
 };
 
 /** Time-varying data of an event with decaying influences (angles involving actions, see actions.h).

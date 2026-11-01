@@ -246,6 +246,7 @@ inline void _schedule_event (
     }
     else if (ar < INFINITY)
     {
+        evd_->t_comp = current_t;
         er = evd_->effective_rate = effective_rate(ar, spu, left_tail, right_tail, scale);
         assert (er < INFINITY);
         add_effective_rate(er);
@@ -329,6 +330,7 @@ inline void unschedule_event (event& ev, event_data* evd_, int evt_id)
     bool is_summary = event_is_summary(ev);
     if (any_actions && !is_summary) settle(ev, evd_, evt_id);  // (accumulates the integral of a time-varying rate)
     if (!evd_->tv) {
+        if (!is_summary && (evd_->effective_rate < INFINITY)) evd_->comp += evd_->effective_rate * (current_t - evd_->t_comp);
         subtract_effective_rate(evd_->effective_rate, !is_summary);
         // (the gradient contributions of a summary event never change, so they are only registered once in init_events)
         if (!is_summary) register_event_rate_gradient(evd_, evt_id, -1);
@@ -349,6 +351,8 @@ inline void reschedule_event (event& ev, event_data* evd_, int evt_id)
 void add_leg_contributions (int evt_id, entity e1, relationship_or_action_type rat13, entity e3, event_data& evd_ref);
 
 int compute_event_data (int evt_id, entity e1, relationship_or_action_type rat13, entity e3, event_data& evd_ref, tv_data* tvd = nullptr, bool* has_decaying = nullptr);
+
+extern double last_removed_comp;
 
 void add_event (event& ev);
 

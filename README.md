@@ -398,6 +398,19 @@ until the next update, and a drawn event happens with probability rate / bound),
 in the log-likelihood is computed by Gauss-Legendre quadrature whenever they change. Coefficients of angles that
 involve actions must be finite. Acts appear as ``act`` in the event files written by ``--events-out`` and read by
 ``--events-in``; actions are not written to gexf files or the link interval file.
+
+An action type can be **triggered** by a relationship type: with ``triggered by: [meets, establish]`` (or
+``terminate``) in its declaration, an act happens whenever such a link is established (terminated), so that the
+decaying impact encodes the time since contacts started (ended) as Markovian memory. Acts triggered in this way add
+nothing to the log-likelihood.
+
+**Forced events** (``--forced-in FILE.csv``, same columns as event files) are exogenous events of link types without
+dynamics, e.g. a timetable encoded as links of all agents to a hub entity ``break`` that rates depend on through
+legs. They are applied at their times in simulation and replay, are not written to the events output, and add
+nothing to the log-likelihood (which is conditional on them). ``--residuals-out FILE.csv`` writes, for every
+termination event, the integrated hazard of the link since it was established (summed over both directions for
+symmetric types); under the model these are independent unit exponential variables (time-rescaling theorem), which
+gives a goodness-of-fit test also for time-varying rates.
 Success probability units ``pu`` are converted into a success probability by a sigmoidal function with two tail indices
 ``σ0`` (left tail) and ``σ1`` (right tail):
 ```

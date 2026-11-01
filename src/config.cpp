@@ -17,6 +17,8 @@
 #include "global_variables.h"
 #include "entity.h"
 #include "io.h"
+#include "actions.h"
+#include "forced.h"
 
 cxxopts::Options options("tricl", "a generic network-based social simulation model");  ///< Holds all command line options
 
@@ -286,6 +288,8 @@ void read_config (
             ("logl", "only output the final log-likelihood", cxxopts::value<bool>())
             ("summary", "output a one-line JSON summary of the final state", cxxopts::value<bool>())
             ("events-out", "csv file to write all performed events to (overrides files:events)", cxxopts::value<string>()->default_value(""))
+            ("residuals-out", "csv file to write the integrated rate (compensator) of every termination event since its link was established to, for time-rescaling goodness-of-fit tests", cxxopts::value<string>()->default_value(""))
+            ("forced-in", "csv file of forced (exogenous) events of link types without dynamics, applied at their times in simulation and replay without contribution to the log-likelihood", cxxopts::value<string>()->default_value(""))
             ("events-in", "csv file with events to replay instead of simulating (columns t,event,source,relationship,target), for computing their log-likelihood", cxxopts::value<string>()->default_value(""))
             ("grad", "also compute the gradient of the log-likelihood w.r.t. all model parameters (output with --summary)", cxxopts::value<bool>())
             ("dump-parameters", "only output the model parameters and their current values as JSON and exit", cxxopts::value<bool>())
@@ -355,6 +359,8 @@ void read_config (
     seed = cmdlineopts["seed"].as<unsigned>();
     events_out_filename = cmdlineopts["events-out"].as<string>();
     events_in_filename = cmdlineopts["events-in"].as<string>();
+    forced_in_filename = cmdlineopts["forced-in"].as<string>();
+    residuals_out_filename = cmdlineopts["residuals-out"].as<string>();
     scheduling_enabled = (events_in_filename == "");  // replaying needs no schedule and no random numbers
     stats_out_filename = cmdlineopts["stats-out"].as<string>();
     stats_every = cmdlineopts["stats-every"].as<double>();
@@ -571,11 +577,21 @@ void read_config (
             } else if (n2.IsMap()) {
                 for (YAML::const_iterator it2 = n2.begin(); it2 != n2.end(); ++it2) {
                     auto key = it2->first.as<string>();
-                    if ((key != "inverse") && (key != "decay") && (key != "threshold")) throw "keys of action types can be 'inverse', 'decay' and 'threshold'";
+                    if ((key != "inverse") && (key != "decay") && (key != "threshold") && (key != "triggered by")) throw "keys of action types can be 'inverse', 'decay', 'threshold' and 'triggered by'";
                 }
                 ratlabel2 = n2["inverse"] ? n2["inverse"].as<string>() : "";
                 if (n2["decay"]) decay = parse_double(n2["decay"].as<string>());
                 if (n2["threshold"]) threshold = parse_double(n2["threshold"].as<string>());
+                if (n2["triggered by"]) {
+                    // acts of this type happen whenever a link of a relationship type is established or terminated:
+                    auto tb = n2["triggered by"];
+                    if (!(tb.IsSequence() && (tb.size() == 2))) throw "'triggered by' must be [<relationship type>, establish or terminate]";
+                    auto r = lookup_rat(tb[0].as<string>());
+                    if (r_is_action_type[r] || (r == RT_ID)) throw "'triggered by' needs a relationship type";
+                    auto w = tb[1].as<string>();
+                    if ((w != "establish") && (w != "terminate")) throw "'triggered by' must be [<relationship type>, establish or terminate]";
+                    rat2triggered[r].push_back({ rat1, (w == "establish") ? EC_EST : EC_TERM });
+                }
             } else throw "field values under 'action types' must be strings or maps";
             if (!((decay > 0.0) && (decay < INFINITY))) throw "the decay rate of an action type must be positive and finite";
             if (!((threshold > 0.0) && (threshold < 1.0))) throw "the impact threshold of an action type must be between 0 and 1";

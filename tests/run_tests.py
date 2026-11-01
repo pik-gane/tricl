@@ -362,14 +362,14 @@ def legs_exact_test(binary, workdir):
         results.append("%s: mean links %.3f vs exact %.3f, z = %.2f, %.2f" % (name.replace(".yaml", ""), x.mean(), m1, z[0], z[1]))
     return "ok (" + "; ".join(results) + ")"
 
-def generic_gradient_test(binary, workdir, config_name, values, max_t=None):
+def generic_gradient_test(binary, workdir, config_name, values, max_t=None, more=None):
     """Simulate with --grad, replay the events with --grad (log-likelihood and gradient must agree), and check the
     gradient w.r.t. every metaparameter against finite differences of the replayed log-likelihood
     (the metaparameters enter the coefficients via the Jacobian obtained from --dump-parameters)."""
     config = os.path.join(ROOT, "tests", "configs", config_name)
     cwd = tempfile.mkdtemp(prefix="tricl_", dir=workdir)
     events_file = os.path.join(cwd, "events.csv")
-    extra = (["--max-t", str(max_t)] if max_t else []) + ["--seed", "2"]  # (the seed also fixes random initial links)
+    extra = (["--max-t", str(max_t)] if max_t else []) + ["--seed", "2"] + (more or [])  # (the seed also fixes random initial links)
     code, out, err, secs = run_tricl(binary, config, ["--summary", "--grad", "--events-out", events_file] + extra, cwd)
     if code != 0:
         raise Failure("%s: simulation exit code %d\n%s" % (config_name, code, err[-1000:]))
@@ -489,6 +489,39 @@ def actions_test(binary, workdir):
     r2 = generic_gradient_test(binary, workdir, "actions_large.yaml",
                                {"M0": 0.01, "MK": 0.03, "MS": 0.2, "ML": 0.01, "KE": 0.03, "KT": 0.05, "KD": 0.5, "KB": -0.3})
     return "ok (Hawkes: %d acts, logl %.6f as computed independently, mean act count z = %.2f; %s; %s)" % (sim["events"], logl, z, r1, r2)
+
+def forced_triggered_test(binary, workdir):
+    """Forced events (a timetable), acts triggered by establishment events, and time-rescaling residuals:
+    debug mode, replay and gradient, and the residuals of simulated terminations against the unit exponential."""
+    from scipy import stats
+    config = os.path.join(ROOT, "tests", "configs", "forced_triggered.yaml")
+    cwd = tempfile.mkdtemp(prefix="tricl_", dir=workdir)
+    ent = os.path.join(cwd, "entities.csv")
+    run_tricl(binary, config, ["--quiet", "--max-t", "0.1", "--entities-out", ent], cwd)
+    with open(ent) as fh:
+        students = [r["label"] for r in csv.DictReader(fh) if r["type"] == "student"]
+    forced = os.path.join(cwd, "forced.csv")
+    with open(forced, "w") as fh:
+        fh.write("t,event,source,relationship,target\n")
+        for k in range(0, 2000, 30):  # breaks from 20 to 30 every 30 time units
+            for st in students: fh.write("%d,establish,%s,is in,break\n" % (k + 20, st))
+            for st in students: fh.write("%d,terminate,%s,is in,break\n" % (k + 30, st))
+    code, out, err, secs = run_tricl(binary, config, ["--debug", "--forced-in", forced, "--max-t", "60"], cwd)
+    if code != 0:
+        raise Failure("forced_triggered.yaml in --debug mode: exit code %d\n%s" % (code, (out + err)[-2000:]))
+    r1 = generic_gradient_test(binary, workdir, "forced_triggered.yaml",
+                               {"A": 0.02, "AB": 0.2, "AT": 0.05, "D": 1.0, "BS": -1.0, "BT": -0.1}, max_t=150, more=["--forced-in", forced])
+    res = os.path.join(cwd, "residuals.csv")
+    code, out, err, secs = run_tricl(binary, config, ["--quiet", "--forced-in", forced, "--max-t", "1500", "--residuals-out", res], cwd)
+    if code != 0:
+        raise Failure("forced_triggered.yaml with --residuals-out: exit code %d\n%s" % (code, err[-1000:]))
+    with open(res) as fh:
+        x = [float(r["compensator"]) for r in csv.DictReader(fh)]
+    ks = stats.kstest(x, "expon")
+    if ks.pvalue < 1e-3:
+        raise Failure("time-rescaling residuals of simulated terminations are not unit exponential (n = %d, mean %.3f, KS p = %.2g)" % (len(x), sum(x) / len(x), ks.pvalue))
+    return "ok (%s; residuals of %d terminations: mean %.3f, KS p = %.2f)" % (r1, len(x), sum(x) / len(x), ks.pvalue)
+
 
 def fit_test(binary, workdir):
     """Run the Python maximum-likelihood driver on simulated data of the three-entity model."""
@@ -806,6 +839,7 @@ def main():
     tests.append(("leg influences: exact stationary distributions", lambda: legs_exact_test(binary, workdir)))
     tests.append(("leg influences: replay and gradient", lambda: legs_gradient_test(binary, workdir)))
     tests.append(("actions with decaying impacts", lambda: actions_test(binary, workdir)))
+    tests.append(("forced events, triggered acts, residuals", lambda: forced_triggered_test(binary, workdir)))
     tests.append(("maximum-likelihood fit", lambda: fit_test(binary, workdir)))
     tests.append(("rdf import and export", lambda: rdf_test(binary, workdir)))
     tests.append(("macroscopic approximation", lambda: macro_test(binary, workdir)))

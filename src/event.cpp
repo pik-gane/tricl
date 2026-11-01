@@ -20,6 +20,7 @@
 #include "event.h"
 #include "legs.h"
 #include "actions.h"
+#include "forced.h"
 
 /** Add the contributions of all influencing legs of an event (not counting the link the event is about) to its data.
  */
@@ -179,6 +180,8 @@ void add_event (
     else if (debug) cout << "     not adding impossible event: " << ev << endl;
 }
 
+double last_removed_comp = 0;  ///< Compensator (integrated rate since it was added) of the last removed event, for time-rescaling residuals
+
 /** Remove a scheduled event.
  */
 void remove_event (
@@ -192,11 +195,13 @@ void remove_event (
         settle(ev, evd_, evt_id_of(ev.ec, e2et[ev.e1], ev.rat13, e2et[ev.e3]));  // (accumulates the integral of the time-varying rate)
     }
     if (!evd_->tv) {
+        if (evd_->effective_rate < INFINITY) evd_->comp += evd_->effective_rate * (current_t - evd_->t_comp);
         subtract_effective_rate(evd_->effective_rate);
         if (compute_gradient && !event_is_summary(ev)) {
             register_event_rate_gradient(evd_, evt_id_of(ev.ec, e2et[ev.e1], ev.rat13, e2et[ev.e3]), -1);
         }
     }
+    last_removed_comp = evd_->comp;
     if (any_actions) ev2tv.erase(ev);
 
     if (debug) cout << "        removed event: " << ev << endl;
@@ -331,8 +336,11 @@ void perform_event (
     if (verbose) cout << "  log-likelihoods: this event " << logl << ", total " << cumulative_logl << endl;
     if (debug) cout << "   total er " << total_finite_effective_rate << " + " << n_infinite_effective_rates << " * inf" << endl;
 
-    // output event if requested:
-    write_event_out(ev);
+    // output event if requested (forced events are not written, since they are input):
+    if (!performing_forced) write_event_out(ev);
+    // integrated termination hazard of the link since it was established, for time-rescaling residuals
+    // (for symmetric and inverse types, the hazard of the mirrored event is added below):
+    double comp = last_removed_comp;
 
     if (ec == EC_ACT)
     {
@@ -367,7 +375,9 @@ void perform_event (
         // if scheduled, unschedule it; if it is an establishment event covered by a summary event,
         // remove its share from the total effective rate (since the pair will be linked now):
         if (debug) cout << " unscheduling companion event: " << companion_ev << endl;
+        bool companion_scheduled = (ev2data.count(companion_ev) > 0);
         conditionally_remove_event(companion_ev);
+        if (companion_scheduled) comp += last_removed_comp;
 
         // since companion event happens with probability one, it adds no log-likelihood
 
@@ -389,6 +399,9 @@ void perform_event (
         // FINALLY update all adjacent events (including the reverse event) to reflect the change:
         update_adjacent_events(companion_ev);
     }
+    if ((ec == EC_TERM) && !performing_forced && (er < INFINITY)) write_residual_out(ev, comp);
+    // acts triggered by this event (see actions.h):
+    if (any_actions) perform_triggered_acts(ec, e1, rat13, e3);
     if (debug)
     {
 //        dump_links();
@@ -426,7 +439,7 @@ void advance_time (timepoint t)
 void finish_time ()
 {
     if (max_t < INFINITY) {
-        if (any_actions) process_expiries_until(max_t);
+        if (any_deterministic_events()) process_deterministic_until(max_t);
         advance_time(max_t);
     }
     if (any_actions) settle_all();
@@ -458,11 +471,11 @@ bool pop_next_event ()
         else
         {
             rate total = schedule.total();
-            // actions may expire before the next event (at deterministic times, see actions.h):
-            timepoint tx = any_actions ? next_expiry() : INFINITY;
+            // forced events and expiries of actions may happen before the next event (at deterministic times, see forced.h):
+            timepoint tx = any_deterministic_events() ? next_deterministic_time() : INFINITY;
             if (!(total > 0) && (tx < max_t))
             {
-                process_expiries_until(tx);
+                process_deterministic_until(tx);
                 continue;
             }
             if (!(total > 0))  // no events can happen any more --> model has converged
@@ -475,8 +488,8 @@ bool pop_next_event ()
             timepoint dt = exponential(random_variable) / total;
             if ((tx <= current_t + dt) && (tx < max_t))
             {
-                // the action expires first; the waiting time is memoryless, so draw it anew afterwards:
-                process_expiries_until(tx);
+                // the deterministic event happens first; the waiting time is memoryless, so draw it anew afterwards:
+                process_deterministic_until(tx);
                 continue;
             }
             if (!(current_t + dt < max_t))

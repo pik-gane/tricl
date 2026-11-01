@@ -65,7 +65,7 @@ void init_actions ()
 {
     rat_is_action.assign(n_rat_slots, 0);
     for (auto& [rat, a] : r_is_action_type) if (a && (rat < (relationship_or_action_type) n_rat_slots)) rat_is_action[rat] = 1;
-    any_actions = !initial_impacts.empty();
+    any_actions = !initial_impacts.empty() || !rat2triggered.empty();
     evtid2infl_decay.assign(n_evt_ids, {});
     for (int id = 0; id < n_evt_ids; id++) {
         if (rat_is_action[evtid2evt[id].rat13]) any_actions = true;
@@ -212,6 +212,7 @@ void settle (const event& ev, event_data* evd_, int evt_id)
             }
         }
         cumulative_logl -= integral;
+        evd_->comp += integral;  // (for time-rescaling residuals)
         if (g) for (size_t k = 0; k < grad_exposure.size(); k++) grad_exposure[k] += g[k];
     }
     for (size_t j = 0; j < dec.size(); j++) if (dec[j] > 0) tv.W[j] *= exp(- dec[j] * L);
@@ -278,11 +279,27 @@ static void remove_action (const tricllink& l)
     update_adjacent_angles(l.e1, l.rat13, l.e3, -1, -I);
 }
 
+unordered_map<relationship_or_action_type, vector<pair<relationship_or_action_type, event_class>>> rat2triggered;
+
+/** Perform the acts triggered by an establishment or termination event (they add no log-likelihood). */
+void perform_triggered_acts (event_class ec, entity e1, relationship_or_action_type rat13, entity e3)
+{
+    auto it = rat2triggered.find(rat13);
+    if (it == rat2triggered.end()) return;
+    for (auto& [a, tec] : it->second) if (tec == ec) act_on_link({ e1, a, e3 }, 1.0);
+}
+
 void process_expiries_until (timepoint t)
 {
-    while (true) {
+    while (next_expiry() <= t) process_one_expiry();
+}
+
+/** Process the next expiry of an action (whose time must be >= the current time). */
+void process_one_expiry ()
+{
+    {
+        if (!(next_expiry() < INFINITY)) return;
         timepoint tx = next_expiry();
-        if (!(tx <= t)) break;
         auto x = expiries.top();
         expiries.pop();
         advance_time(max(current_t, tx));

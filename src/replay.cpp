@@ -23,6 +23,7 @@
 #include "event.h"
 #include "legs.h"
 #include "actions.h"
+#include "forced.h"
 #include "io.h"
 #include "debugging.h"
 #include "replay.h"
@@ -97,8 +98,13 @@ void replay ()
         }
         else
         {
-            if (any_actions) process_expiries_until(t);  // actions that expire before the event (at deterministic times)
-            advance_time(t);  // accumulates the log-probability that nothing happened in between
+            if (any_deterministic_events()) process_deterministic_until(t);  // forced events and expiries of actions before the event
+            if (n_infinite_effective_rates > 0) {
+                // a forced event triggered immediate events, which must come next in the file:
+                if (t > current_t) throw impossible("an immediate event is pending at t=" + to_string(current_t) + " but the next event in the file happens later", line);
+            } else {
+                advance_time(t);  // accumulates the log-probability that nothing happened in between
+            }
         }
 
         // determine the event's current rate and unregister it, as pop_next_event() would do:

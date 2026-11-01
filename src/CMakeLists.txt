@@ -10,6 +10,7 @@ add_library(tricl_core STATIC
     link.cpp
     legs.cpp
     actions.cpp
+    forced.cpp
 #    angle.cpp  # currently empty
     event.cpp
     config.cpp

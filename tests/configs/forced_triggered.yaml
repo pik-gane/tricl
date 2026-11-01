@@ -1,0 +1,53 @@
+metadata:
+    name: contacts with a timetable (forced events) and memory of contact starts (triggered acts)
+    description: >
+        Used by tests/run_tests.py: students meet; links to the hub "break" are forced events (a timetable) that
+        raise the meeting rate through a leg; every new contact triggers an act of "started", whose decaying impact
+        lowers the termination rate of young contacts (Markovian aging). Checks: debug mode, replay of simulated
+        events, gradient, and time-rescaling residuals of terminations against the unit exponential distribution.
+    author: tricl test suite
+
+metaparameters:
+    A: 0.02     # base contact formation attempt rate
+    AB: 0.2     # additional formation attempt rate during breaks (leg to the hub "break")
+    AT: 0.05    # additional formation attempt rate per common contact
+    D: 1.0      # termination attempt rate
+    BS: -1.0    # termination success probunits per unit impact of the contact's start
+    BT: -0.1    # termination success probunits per common contact
+
+limits:
+    t: 100
+
+options:
+    seed: 1
+
+entities:
+    student: 12
+    break:
+        - break
+
+relationship types:
+    meets: symmetric
+    is in: ~
+
+action types:
+    started:
+        inverse: symmetric
+        decay: 0.5
+        threshold: 0.01
+        triggered by: [meets, establish]
+
+dynamics:
+    [student, meets, student]:
+        establish:
+            attempt:
+                base: A
+                [~, is in, break]: AB
+                [~, meets, student, meets, ~]: AT
+            success: inf
+        terminate:
+            attempt: D
+            success:
+                tails: 0
+                [~, started, student, =, ~]: BS
+                [~, meets, student, meets, ~]: BT

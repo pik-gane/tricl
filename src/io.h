@@ -26,6 +26,9 @@ void open_events_out ();
 
 void write_event_out (const event& ev);
 
+extern string residuals_out_filename;
+void write_residual_out (const event& ev, double comp);
+
 void close_events_out ();
 
 void open_links_out ();

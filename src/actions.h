@@ -50,6 +50,9 @@ void add_tv_event_log_gradient (const event& ev, const event_data* evd_, int evt
 timepoint next_expiry ();
 void process_expiries_until (timepoint t);
 void act_on_link (const tricllink& l, double amount);
+void process_one_expiry ();
+extern unordered_map<relationship_or_action_type, vector<pair<relationship_or_action_type, event_class>>> rat2triggered;  ///< Action types whose acts are triggered by establishment or termination events of a relationship type
+void perform_triggered_acts (event_class ec, entity e1, relationship_or_action_type rat13, entity e3);
 void add_initial_actions ();
 
 #endif

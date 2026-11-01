@@ -279,11 +279,32 @@ void write_event_out (const event& ev)
             << "," << csv_quote(e2label[ev.e3]) << "\n";
 }
 
+// output of time-rescaling residuals:
+string residuals_out_filename = "";
+ofstream residuals_out;
+
+/** Write the integrated rate of a termination event since its link was established (its compensator; under the
+ *  model, these are independent unit exponential variables, which gives a goodness-of-fit test by time rescaling).
+ */
+void write_residual_out (const event& ev, double comp)
+{
+    if (residuals_out_filename == "") return;
+    if (!residuals_out.is_open()) {
+        residuals_out.open(residuals_out_filename);
+        if (!residuals_out.good()) throw "cannot open residuals output file \"" + residuals_out_filename + "\"";
+        residuals_out << std::setprecision(17) << "t,event,source,relationship,target,compensator" << endl;
+    }
+    residuals_out << current_t << "," << ((ev.ec == EC_EST) ? "establish" : (ev.ec == EC_TERM) ? "terminate" : "act")
+            << "," << csv_quote(e2label[ev.e1]) << "," << csv_quote(rat2label[ev.rat13]) << "," << csv_quote(e2label[ev.e3])
+            << "," << comp << "\n";
+}
+
 /** Close the csv file for performed events (if open).
  */
 void close_events_out ()
 {
     if (events_out.is_open()) events_out.close();
+    if (residuals_out.is_open()) residuals_out.close();
 }
 
 // output of the time intervals of all links to a csv file (the "temporal network"):
