@@ -1,0 +1,62 @@
+\section{Likelihood and estimation}\label{sec:inference}
+
+\subsection{Log-likelihood of an event sequence}
+Let $(t_i, \ell_i, \tau_i)_{i=1}^m$ be a fully observed sequence of events in an observation window
+$[0, T]$, starting from a known initial network. Between events the network is constant, so the total
+rate $\Lambda(t) = \sum_{\text{possible events}} \lambda$ is piecewise constant, and the log-likelihood
+of the sequence under parameters $\theta$ is
+\begin{equation}\label{eq:logl}
+  L(\theta) = \sum_{i:\ \lambda_i < \infty} \log \lambda_{\tau_i}(\ell_i, t_i^-; \theta)
+  \;-\; \int_0^T \Lambda(t; \theta)\,dt
+  \;+\; \sum_{i:\ \lambda_i = \infty} \log \frac{1}{m_i},
+\end{equation}
+where the last sum runs over immediate events and $m_i$ is the number of immediate events pending
+when event $i$ happened (their order is uniformly random). The integral is a sum of
+$\Lambda \times$ waiting time over the inter-event intervals and the final interval up to $T$.
+\tricl\ maintains $\Lambda$ incrementally, recomputes it exactly every $2^{16}$ events against
+floating-point drift, and accumulates~\eqref{eq:logl} during simulation. In \emph{replay mode}
+(option \ttt{--events-in}) it reads an event sequence from a csv file instead of drawing events,
+applies them in order, checks that each is possible under the model, and reports $L(\theta)$. Replay
+draws no random numbers.
+
+\subsection{Gradient}
+By~\eqref{eq:rate}, $\lambda$ is linear in the attempt-rate coefficients and depends on the
+probability-unit coefficients through $f$. With $n_k$ the angle counts of an event,
+\begin{align*}
+\frac{\partial L}{\partial a_{\tau k}} &= \sum_{i:\ \tau_i = \tau} \frac{n_k(\ell_i)}{A_i}
+   - \int_0^T \sum_{\ell} n_k(\ell, t)\, f(B_\ell(t))\,dt, \\
+\frac{\partial L}{\partial b_{\tau k}} &= \sum_{i:\ \tau_i = \tau} \frac{n_k(\ell_i) f'(B_i)}{f(B_i)}
+   - \int_0^T \sum_{\ell} n_k(\ell, t)\, A_\ell(t)\, f'(B_\ell(t))\,dt,
+\end{align*}
+with sums over the possible events $\ell$ of type $\tau$ (and $n_k \equiv 1$ for the basic coefficients
+$a^0_\tau, b^0_\tau$). The integrands are ``exposures'' that \tricl\ maintains like the total rate, so
+the full gradient costs about as much as the likelihood itself (option \ttt{--grad}). Metaparameters
+enter the coefficients through expressions; the Python driver \ttt{tricl\_fit.py} maps the gradient to
+metaparameters by the chain rule, with the Jacobian from finite differences of the parsed
+coefficients, and maximises $L$ with L-BFGS-B \citep{byrd1995}. Standard errors come from the observed
+information, the negative Hessian obtained by finite differences of the analytic gradient.
+
+For fixed probability units, $L$ is concave in the attempt rates (a sum of logarithms of linear
+functions minus a linear function). In the probability units it is not concave in general, because $f$
+is sigmoidal; Section~\ref{sec:application} shows a case where the profile likelihood is not unimodal. Two identifiability
+limits are structural: for an event type without any varying angle count only the product
+$a^0_\tau f(b^0_\tau)$ is identified; and an angle type's attempt-rate and probability-unit coefficients
+are separately identified only if its count varies enough across events.
+
+\subsection{Parameter recovery}
+We simulated the three-entity model of the test suite (triangle closure: establishment attempts at
+rate $A + K\,n$ for $n$ common neighbours, termination attempts at rate $D$ with probability units
+$B_0 + B_K n$) for \RecoveryT\ time units and \RecoverySeeds\ seeds and re-estimated $A$, $K$, $D$ and
+$B_K$ from each event sequence, starting away from the true values (about \RecoveryEvents\ events per sequence).
+Table~\ref{tab:recovery} shows estimates centred on the true values, estimated standard errors of
+the size of the spread across seeds (within about 30\%), and coverage of the nominal 95\% intervals
+between \RecoveryCovMin\ and \RecoveryCovMax, consistent with 95\% given \RecoverySeeds\ sequences.
+
+\begin{table}[t]
+\centering
+\caption{Parameter recovery: true values, mean and standard deviation of the estimates over
+\RecoverySeeds\ simulated event sequences, mean estimated standard error, and the share of sequences
+whose 95\% interval (estimate $\pm 1.96$ standard errors) contains the true value.}
+\label{tab:recovery}
+\input{generated/table-recovery}
+\end{table}

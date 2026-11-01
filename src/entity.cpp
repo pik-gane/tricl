@@ -34,6 +34,10 @@ entity add_entity (
     label2e[elabel] = e;
 
     // register identity relation:
+    if ((size_t) e >= e2outs.size()) {
+        e2outs.resize(e + 1);
+        e2ins.resize(e + 1);
+    }
     e2outs[e] = { { .rat_out = RT_ID, .e_target = e } };
     e2ins[e]  = { { .e_source = e, .rat_in = RT_ID } };
 

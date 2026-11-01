@@ -1,0 +1,25 @@
+% Notation and listing style.
+\newcommand{\tricl}{\textsf{tricl}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\expit}{\operatorname{expit}}
+\newcommand{\ttt}[1]{\texttt{#1}}
+
+\definecolor{codegray}{HTML}{52514E}
+\lstdefinelanguage{yaml}{
+  keywords={},
+  comment=[l]{\#},
+  morestring=[b]",
+}
+\lstset{
+  basicstyle=\ttfamily\small,
+  commentstyle=\color{codegray}\itshape,
+  columns=fullflexible,
+  keepspaces=true,
+  frame=lines,
+  framesep=4pt,
+  xleftmargin=1em,
+  aboveskip=8pt,
+  belowskip=8pt,
+  literate={~}{{\textasciitilde}}1,
+}

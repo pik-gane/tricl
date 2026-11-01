@@ -1,0 +1,18 @@
+# Used by tests/run_tests.py: the initial links file does not exist,
+# which must produce a clear error message naming the file.
+metadata:
+    name: config with a missing csv file
+limits:
+    t: 1
+entities:
+    thing: 0
+relationship types:
+    knows: symmetric
+initial links:
+    "this_file_does_not_exist.csv":
+        type: [thing, knows, thing]
+        cols: [0, 1]
+dynamics:
+    [thing, knows, thing]:
+        establish:
+            attempt: 1

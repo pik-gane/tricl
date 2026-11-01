@@ -44,34 +44,32 @@ inline void add_or_delete_angle (
     n_angles += ((e1 == e2) || (e2 == e3) || (e3 == e1)) ? 0 : (ec_angle == EC_EST) ? 1 : -1;
 
     // iterate through all possible source-target relationship or action types:
-    for (auto& rat13 : ets2relations[{ et1, et3 }])
+    for (auto& rat13 : ets2rats[(int) et1 * n_et_slots + (int) et3])
     {
         bool link13_exists = (e2outs[e1].count({ .rat_out = rat13, .e_target = e3 }) > 0);
 
         // construct the type of the corresponding event whose data might need an update:
         event_class ec13 = link13_exists ? EC_TERM : EC_EST;
-        event_type evt = { .ec=ec13, et1, rat13, et3 };
         if (debug) cout << "     possibly updating event: " << ec2label[ec13] <<  " \"" << e2label[e1] << " " << rat2label[rat13] << " " << e2label[e3] << "\"" << endl;
 
         // only continue if the event type can happen at all:
-        if (possible_evts.count(evt) > 0)
+        int evt_id = evt_id_of(ec13, et1, rat13, et3);
+        if (evt_id >= 0)
         {
             event ev = { .ec=ec13, e1, rat13, e3 };
-            if (debug) cout << "      event type " << evt << " has a base success prob. of "
-                    << probunits2probability(evt2base_probunits.at(evt), evt2left_tail.at(evt), evt2right_tail.at(evt)) << endl;
+            if (debug) cout << "      event type " << evtid2evt[evt_id] << " has a base success prob. of "
+                    << probunits2probability(evtid2base_probunits[evt_id], evtid2left_tail[evt_id], evtid2right_tail[evt_id], evtid2scale[evt_id]) << endl;
 
             // get influence of angle on event:
-            influence_type inflt = { .evt = evt, .at = { rat12, et2, rat23 } };
-            auto dar = _inflt2attempt_rate[INFLT(inflt)];
-            auto dspu = _inflt2delta_probunits[INFLT(inflt)];
+            int idx = inflt_index(evt_id, rat12, et2, rat23);
+            int j = evtid_at2infl[idx];
 
             // only continue if influence is nonzero:
-            if (COUNT_ALL_ANGLES || (dar != 0.0) || (dspu != 0.0))
+            if (j >= 0)
             {
+                auto dar = inflt_attempt_rate[idx];
+                auto dspu = inflt_delta_probunits[idx];
                 if (debug) cout << "       angle may influence attempt or success" << endl;
-                auto ar0 = evt2base_attempt_rate.at(evt);
-                auto spu0 = evt2base_probunits.at(evt);
-                auto left_tail = evt2left_tail.at(evt), right_tail = evt2right_tail.at(evt);
                 if (ec_angle == EC_EST)  // angle is added:
                 {
                     if (ev2data.count(ev) == 0)  // event is not already scheduled
@@ -80,43 +78,55 @@ inline void add_or_delete_angle (
                         if (ec13 != EC_TERM)  // event is ALSO covered by a summary event
                         {
                             // subtract that part covered by the summary event from the total effective rate:
-                            subtract_effective_rate(summary_evt2single_effective_rate[evt]);
+                            subtract_summary_shares(evt_id, 1);
                         }
-                        auto evd_ = &ev2data[ev];  // generates a new event_data object
+                        auto evd_ = &ev2data[ev];  // generates a new (zero-initialised) event_data object
                         evd_->n_angles = 1;
-                        evd_->attempt_rate = ar0 + dar;
-                        evd_->success_probunits = spu0 + dspu;
-                        schedule_event(ev, evd_, left_tail, right_tail);
+                        evd_->n_infl[j] = 1;
+                        add_attempt_contribution(evd_, evtid2base_attempt_rate[evt_id]);
+                        add_attempt_contribution(evd_, dar);
+                        add_probunits_contribution(evd_, evtid2base_probunits[evt_id]);
+                        add_probunits_contribution(evd_, dspu);
+                        schedule_event(ev, evd_, evt_id);
                     }
                     else  // event is already scheduled
                     {
                         if (debug) cout << "        event will be rescheduled" << endl;
                         auto evd_ = &(ev2data.at(ev));
+                        // unregister the event's rate and gradient contributions BEFORE modifying its data:
+                        unschedule_event(ev, evd_, evt_id);
                         evd_->n_angles += 1;
-                        evd_->attempt_rate += dar;
-                        evd_->success_probunits += dspu;
-                        reschedule_event(ev, evd_, left_tail, right_tail);
+                        evd_->n_infl[j] += 1;
+                        add_attempt_contribution(evd_, dar);
+                        add_probunits_contribution(evd_, dspu);
+                        _schedule_event(ev, evd_, evt_id);
+                        if (debug) verify_data_consistency();
                     }
                 }
                 else  // angle is removed
                 {
                     auto evd_ = &(ev2data.at(ev));
                     assert (evd_->n_angles > 0);  // since angle must have been added earlier to be removed now
+                    assert (evd_->n_infl[j] > 0);
+                    // unregister the event's rate and gradient contributions BEFORE modifying its data:
+                    unschedule_event(ev, evd_, evt_id);  // event must have been scheduled earlier when angle was added
                     evd_->n_angles -= 1;
-                    evd_->attempt_rate = max(0.0, evd_->attempt_rate - dar);
-                    evd_->success_probunits -= dspu;
+                    evd_->n_infl[j] -= 1;
+                    remove_attempt_contribution(evd_, dar);
+                    remove_probunits_contribution(evd_, dspu);
                     if ((ec13 != EC_TERM) && (evd_->n_angles == 0))  // only spontaneous non-termination event is left:
                     {
                         if (debug) cout << "        last angle was removed, so event will be removed because it is covered by a summary event" << endl;
                         // remove specific event:
-                        remove_event(ev, evd_);  // event must have been scheduled earlier when angle was added
+                        ev2data.erase(ev);
                         // add that part covered by the summary event to the total effective rate:
-                        add_effective_rate(summary_evt2single_effective_rate[evt]);
+                        add_summary_shares(evt_id, 1);
                     }
                     else
                     {
                         if (debug) cout << "        event will be rescheduled" << endl;
-                        reschedule_event(ev, evd_, left_tail, right_tail);  // event must have been scheduled earlier when angle was added
+                        _schedule_event(ev, evd_, evt_id);
+                        if (debug) verify_data_consistency();
                     }
                 }
             }
@@ -128,115 +138,88 @@ inline void add_or_delete_angle (
     }
 }
 
+/** Advance an iterator over a range of legs sorted by their "other" entity
+ *  to the first leg whose other entity is >= key, using galloping (exponential + binary) search.
+ *
+ *  Precondition: it != end and e2of(*it) < key.
+ *
+ *  This makes the intersection of a small leg set with a large one (e.g. of a hub entity
+ *  that encodes a state and is linked to all agents) cost O(small * log(large)) instead of O(large).
+ */
+template <class It, class E2Of>
+inline It advance_legs_to (It it, It end, entity key, E2Of e2of)
+{
+    size_t n = end - it, step = 1, pos = 0;  // invariant: e2of(it[pos]) < key
+    while ((pos + step < n) && (e2of(it[pos + step]) < key)) {
+        pos += step;
+        step *= 2;
+    }
+    // now the answer lies in (pos, min(pos + step, n)]:
+    size_t lo = pos + 1, hi = min(pos + step, n);
+    while (lo < hi) {
+        size_t mid = lo + (hi - lo) / 2;
+        if (e2of(it[mid]) < key) lo = mid + 1; else hi = mid;
+    }
+    return it + lo;
+}
+
 /** Compare each \ref outleg of e1 with each \ref inleg of e3 to find each \ref angle from e1 to e3.
  *
  *  This is one of the performance bottleneck functions
- *  since it is called by \ref add_or_delete_angle().
- *  It uses a large share of the model's CPU time.
+ *  since it is called by \ref add_event() for every event that is added.
  *
- *  (code was adapted from adapted from set_intersection template)
+ *  Both leg sets are sorted by the middle entity e2 (see the comparison operators of \ref inleg and \ref outleg),
+ *  so the angles can be found by a merge-like intersection, in which the iterator over the larger set
+ *  is advanced by galloping search (see \ref advance_legs_to()).
  *
- *  \returns a vector of found angles
+ *  The found angles are appended to the caller-provided buffer (which is cleared first) in the order of
+ *  increasing e2, and for each e2 ordered by inleg first and outleg second.
+ *  (This order determines the summation order of floating point contributions and must not be changed
+ *  without regenerating the regression test references.)
  */
-inline angle_vec get_angles (
+inline void get_angles (
         const entity e1,         ///< [in] source entity
         const outleg_set& out1,  ///< [in] set of outlegs of source entity
         const inleg_set& in3,    ///< [in] set of inlegs of target entity
-        const entity e3          ///< [in] target entity
+        const entity e3,         ///< [in] target entity
+        angle_vec& result        ///< [out] buffer to store the found angles in (reused between calls to avoid allocations)
         )
 {
-    // allocate mem for result:
-    angle_vec result(max(out1.size(), in3.size()) * n_rats * n_rats);
-    // work with pointers (iterators):
-    auto out1_it = out1.begin();
-    auto in3_it = in3.begin();
-    auto result_it = result.begin();
-    /** Algorithm:
-    *  ----------
-    *  The two sequences are sorted by e2 (since std::set is an ordered datatype and operator< for legs was implemented accordingly).
-    *  Pseudocode:
-    *
-    *      put blockstart = out1.end().
-    *      repeat:
-    *        if out1.e2 < in3.e2, advance out1.
-    *        else if out1.e2 > in3.e2:
-    *          advance in3.
-    *          if blockstart != out1.end():
-    *            if in3.e2 == previous in3.e2, rewind out2 to blockstart
-    *            else put blockstart = out1.end().
-    *        else out1.e2 == in3.e2:
-    *          if blockstart == out1.end(), remember out1 position as blockstart
-    *          store found angle
-    *          advance out1
-    */
-    auto out1end = out1.end(), blockstart = out1end;
-    auto in3end = in3.end();
-    if (out1_it != out1end) {
-        entity last_e2 = out1_it->e_target;
-        while (in3_it != in3end)
+    result.clear();
+    auto o = out1.begin(), oend = out1.end();
+    auto i = in3.begin(), iend = in3.end();
+    auto oe2 = [](const outleg& l) { return l.e_target; };
+    auto ie2 = [](const inleg& l) { return l.e_source; };
+    while ((o != oend) && (i != iend))
+    {
+        entity eo = o->e_target, ei = i->e_source;
+        if (eo < ei)
         {
-            if (out1_it == out1end)
-            {
-                if (blockstart == out1end)
-                {
-                    break;
-                }
-                else
-                {
-                    ++in3_it;
-                    if (in3_it == in3end) {
-                        break;
-                    }
-                    if (in3_it->e_source == last_e2)
-                    {
-                        out1_it = blockstart;
-                    }
-                    else
-                    {
-                        break;
-                    }
-                }
-            }
-            if (debug) cout << "         checking: " << rat2label[out1_it->rat_out] << " " << e2label[out1_it->e_target] << ", "
-                  << e2label[in3_it->e_source] << " " << rat2label[in3_it->rat_in] << endl;
-            if (out1_it->e_target < in3_it->e_source)
-            {
-                ++out1_it;
-            }
-            else if (in3_it->e_source < out1_it->e_target)
-            {
-                ++in3_it;
-                if (in3_it == in3end) break;
-                if (blockstart != out1end)
-                {
-                    if (in3_it->e_source == last_e2)
-                    {
-                        out1_it = blockstart;
-                    }
-                    else
-                    {
-                        blockstart = out1end;
-                    }
+            o = advance_legs_to(o, oend, ei, oe2);
+        }
+        else if (ei < eo)
+        {
+            i = advance_legs_to(i, iend, eo, ie2);
+        }
+        else  // common middle entity e2 = eo = ei
+        {
+            // find the ends of the blocks of legs with this middle entity (at most n_rats legs each):
+            auto oblockend = o;
+            while ((oblockend != oend) && (oblockend->e_target == eo)) ++oblockend;
+            auto iblockend = i;
+            while ((iblockend != iend) && (iblockend->e_source == eo)) ++iblockend;
+            // store all combinations:
+            for (auto ii = i; ii != iblockend; ++ii) {
+                for (auto oo = o; oo != oblockend; ++oo) {
+                    result.push_back({ .rat12 = oo->rat_out, .e2 = eo, .rat23 = ii->rat_in });
+                    if (debug) cout << "      angle: " << e2label[e1] << " " << rat2label[oo->rat_out] << " "
+                          << e2label[eo] << " " << rat2label[ii->rat_in] << " " << e2label[e3] << endl;
                 }
             }
-            else
-            {
-                if (blockstart == out1end)
-                {
-                    blockstart = out1_it;
-                }
-                last_e2 = out1_it->e_target;
-                *result_it = { .rat12 = out1_it->rat_out, .e2 = last_e2, .rat23 = in3_it->rat_in };
-                if (debug) cout << "      angle: " << e2label[e1] << " " << rat2label[result_it->rat12] << " "
-                      << e2label[last_e2] << " " << rat2label[result_it->rat23] << " " << e2label[e3] << endl;
-                ++result_it;
-                ++out1_it;
-            }
+            o = oblockend;
+            i = iblockend;
         }
     }
-    // shorten result to actual length and return it:
-    result.resize(result_it - result.begin());
-    return result;
 }
 
 #endif

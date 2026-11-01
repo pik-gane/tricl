@@ -6,6 +6,10 @@
 // use header-only csv library:
 #include "3rdparty/rapidcsv.h"
 
+#include <iomanip>
+#include <chrono>
+#include <sstream>
+
 #include "global_variables.h"
 #include "entity.h"
 #include "event.h"
@@ -51,7 +55,7 @@ ostream& operator<< (ostream& os, const event& ev) {
 }
 
 ostream& operator<< (ostream& os, const event_data& evd) {
-    os << "na=" << evd.n_angles << " ar=" << evd.attempt_rate << " spu=" << evd.success_probunits << " er=" << evd.effective_rate << " t=" << evd.t;
+    os << "na=" << evd.n_angles << " ar=" << total_attempt_rate(&evd) << " spu=" << total_success_probunits(&evd) << " er=" << evd.effective_rate << " t=" << evd.t;
     return os;
 }
 
@@ -64,7 +68,9 @@ double avg_er_times_dt = 0;
 
 /** Output simple statistics for current model state to stdout.
  */
-void log_state ()
+void log_state (
+        bool final  ///< [in] whether this is the final state of the simulation
+        )
 {
     if (silent) return;
     if (debug) if (last_dt > 0) {  // TODO find out why this product is not 1 on average!
@@ -88,7 +94,12 @@ void log_state ()
         ;
     if (quiet)
     {
-        cout << fixed << n_events << ": logl " << cumulative_logl << ", er " << total_finite_effective_rate << ", ld " << ld << ", ad " << ad << ", q " << q << ".  t " << current_t << "\r";
+        // in quiet mode, the status line is only updated a few times per second (formatting it for every event is costly):
+        static auto last_output_time = std::chrono::steady_clock::now() - std::chrono::hours(1);
+        auto now = std::chrono::steady_clock::now();
+        if ((!final) && (now - last_output_time < std::chrono::milliseconds(200))) return;
+        last_output_time = now;
+        cout << fixed << n_events << ": logl " << cumulative_logl << ", er " << total_finite_effective_rate << ", ld " << ld << ", ad " << ad << ", q " << q << ".  t " << current_t << (final ? "\n" : "\r") << std::flush;
     }
     else if (lt2n.size() > 1)
     {
@@ -141,9 +152,13 @@ void read_links_csv (
         int e3_col,         ///< [in] no. of column containing e3 entity labels
         string e3_prefix,    ///< [in] prefix to prepend to e3 labels before storing them
         int et3_col,        ///< [in] no. of column containing et3 entity type labels (or -1 if et3_default is used instead)
-        entity_type et3_default  ///< [in] default entity-type for previously unregistered e3s (if -1, no new e3s are allowed or et3_col is used instead)
+        entity_type et3_default  ///< [in] default entity-type for previously unregistered e3s (if NO_ET, no new e3s are allowed or et3_col is used instead)
         )
 {
+    {
+        std::ifstream test(filename);
+        if (!test.good()) throw "cannot open initial links file \"" + filename + "\"";
+    }
     rapidcsv::Document doc(filename,
             rapidcsv::LabelParams(-1, -1), // access all rows and cols
             rapidcsv::SeparatorParams(delimiter)
@@ -156,6 +171,20 @@ void read_links_csv (
     if (et1_col > -1) et1labels = doc.GetColumn<string>(et1_col);
     if (rat13_col > -1) rat13labels = doc.GetColumn<string>(rat13_col);
     if (et3_col > -1) et3labels = doc.GetColumn<string>(et3_col);
+    // remove csv quoting ("..." with "" for a literal quote), which rapidcsv keeps in the values:
+    auto unquote = [](string& s) {
+        if ((s.size() >= 2) && (s.front() == '"') && (s.back() == '"')) {
+            string res;
+            for (size_t i = 1; i + 1 < s.size(); i++) {
+                if ((s[i] == '"') && (i + 2 < s.size()) && (s[i+1] == '"')) i++;
+                res += s[i];
+            }
+            s = res;
+        }
+    };
+    for (auto* col : { &e1labels, &e3labels, &et1labels, &rat13labels, &et3labels }) {
+        for (auto& s : *col) unquote(s);
+    }
     for (int row = skip_rows; row < min(nrows, skip_rows+max_rows); row++) {
         if (debug) cout << "row " << row << " " << e1labels[row] << " " << e3labels[row] << endl;
         auto e1label = e1_prefix + e1labels[row], e3label = e3_prefix + e3labels[row];
@@ -169,7 +198,7 @@ void read_links_csv (
                 if (label2et.count(et1labels[row])) et1 = label2et.at(et1labels[row]);
                 else throw "unknown et1 label " + et1labels[row];
             }
-            else if (et1_default != -1) et1 = et1_default;
+            else if (et1_default != NO_ET) et1 = et1_default;
             else throw "cannot determine entity type for " + e1label;
             e1 = add_entity(et1, e1label);
             if (verbose) cout << "  entity " << e1 << ": " << et2label.at(et1) << ": " << e1label << endl;
@@ -189,7 +218,7 @@ void read_links_csv (
                 if (label2et.count(et3labels[row])) et3 = label2et.at(et3labels[row]);
                 else throw "unknown et3 label " + et3labels[row];
             }
-            else if (et3_default != -1) et3 = et3_default;
+            else if (et3_default != NO_ET) et3 = et3_default;
             else throw "cannot determine entity type for " + e3label;
             e3 = add_entity(et3, e3label);
             if (verbose) cout << "  entity " << e3 << ": " << et2label.at(et3) << ": " << e3label << endl;
@@ -208,16 +237,287 @@ void read_links_csv (
     }
 }
 
+// output of performed events to a csv file:
+
+ofstream events_out;  ///< stream for the optional csv output of all performed events
+
+/** Quote a string for csv output if necessary.
+ */
+static string csv_quote (const string& s)
+{
+    if (s.find_first_of(",\"\n") == string::npos) return s;
+    string res = "\"";
+    for (char c : s) {
+        if (c == '"') res += "\"\""; else res += c;
+    }
+    return res + "\"";
+}
+
+/** Open the csv file for performed events (if requested) and write its header.
+ *
+ *  Columns: model time, event class ("establish" or "terminate"), source entity label,
+ *  relationship type label, target entity label.
+ *  Companion events for inverse relationship types are not written since they are implied.
+ */
+void open_events_out ()
+{
+    if (events_out_filename == "") return;
+    events_out.open(events_out_filename);
+    if (!events_out.good()) throw "cannot open events output file \"" + events_out_filename + "\"";
+    events_out << std::setprecision(17) << "t,event,source,relationship,target" << endl;
+}
+
+/** Write a performed event to the csv file (if open).
+ */
+void write_event_out (const event& ev)
+{
+    if (!events_out.is_open()) return;
+    events_out << current_t
+            << "," << ((ev.ec == EC_EST) ? "establish" : (ev.ec == EC_TERM) ? "terminate" : "act")
+            << "," << csv_quote(e2label[ev.e1])
+            << "," << csv_quote(rat2label[ev.rat13])
+            << "," << csv_quote(e2label[ev.e3]) << "\n";
+}
+
+/** Close the csv file for performed events (if open).
+ */
+void close_events_out ()
+{
+    if (events_out.is_open()) events_out.close();
+}
+
+// output of the time intervals of all links to a csv file (the "temporal network"):
+
+ofstream links_out;  ///< stream for the optional csv output of link intervals
+
+/** Open the csv file for link intervals (if requested) and write its header.
+ *
+ *  Columns: source entity label, relationship type label, target entity label,
+ *  start and end of the time interval during which the link existed.
+ *  A row is written whenever a link is terminated, and at the end of the run for all links still existing
+ *  (with the final model time as end). Every directed link is written, so symmetric relationship types give
+ *  two rows per pair of entities (one per direction), except links of relationship types that were only declared
+ *  as the inverse of another type (they are implied by the rows of that type).
+ */
+void open_links_out ()
+{
+    if (links_out_filename == "") return;
+    links_out.open(links_out_filename);
+    if (!links_out.good()) throw "cannot open links output file \"" + links_out_filename + "\"";
+    links_out << std::setprecision(17) << "source,relationship,target,start,end" << endl;
+}
+
+/** Write the time interval of a link to the csv file (if open).
+ */
+void write_link_out (const tricllink& l, timepoint start, timepoint end)
+{
+    if (!links_out.is_open()) return;
+    if (inverse_only_rats.count(l.rat13) > 0) return;
+    links_out << csv_quote(e2label[l.e1]) << "," << csv_quote(rat2label[l.rat13]) << "," << csv_quote(e2label[l.e3])
+              << "," << start << "," << end << "\n";
+}
+
+/** Close the csv file for link intervals (if open).
+ */
+void close_links_out ()
+{
+    if (links_out.is_open()) links_out.close();
+}
+
+/** Write all entities with their labels and types to a csv file (if requested).
+ *
+ *  Columns: entity id (the node id used in gexf output), label, entity type label.
+ */
+void write_entities_out ()
+{
+    if (entities_out_filename == "") return;
+    ofstream entities_out(entities_out_filename);
+    if (!entities_out.good()) throw "cannot open entities output file \"" + entities_out_filename + "\"";
+    entities_out << "id,label,type" << endl;
+    for (entity e = 1; e <= max_e; e++) {
+        if (es.count(e) == 0) continue;
+        entities_out << e << "," << csv_quote(e2label[e]) << "," << csv_quote(et2label[e2et[e]]) << "\n";
+    }
+    entities_out.close();
+}
+
+/** Format a number for JSON output (infinities as in Python's json module).
+ */
+static string json_number (double x)
+{
+    if (x == INFINITY) return "Infinity";
+    if (x == -INFINITY) return "-Infinity";
+    if (x != x) return "NaN";
+    std::ostringstream os;
+    os << std::setprecision(17) << x;
+    return os.str();
+}
+
+/** Escape a string for JSON output.
+ */
+static string json_string (const string& s)
+{
+    string res = "\"";
+    for (char c : s) {
+        if ((c == '"') || (c == '\\')) { res += '\\'; res += c; }
+        else if (c == '\n') res += "\\n";
+        else res += c;
+    }
+    return res + "\"";
+}
+
+/** Output the model parameters as a JSON object (label: value).
+ */
+static void output_parameters_object ()
+{
+    cout << "{";
+    for (size_t k = 0; k < params.size(); k++) {
+        cout << (k > 0 ? ", " : "") << json_string(params[k].label) << ": " << json_number(params[k].value);
+    }
+    cout << "}";
+}
+
+/** Output a one-line JSON summary of the final state to stdout.
+ */
+void output_json_summary ()
+{
+    cout << std::setprecision(17)
+         << "{\"events\": " << n_events
+         << ", \"t\": " << json_number(current_t)
+         << ", \"logl\": " << json_number(cumulative_logl)
+         << ", \"links\": " << n_links
+         << ", \"angles\": " << n_angles
+         << ", \"total_rate\": " << json_number(total_finite_effective_rate)
+         << ", \"seed\": " << seed;
+    if (compute_gradient) {
+        cout << ", \"gradient\": {";
+        for (size_t k = 0; k < params.size(); k++) {
+            cout << (k > 0 ? ", " : "") << json_string(params[k].label) << ": " << json_number(grad_event_terms[k] - grad_exposure[k]);
+        }
+        cout << "}";
+    }
+    cout << ", \"parameters\": ";
+    output_parameters_object();
+    cout << "}" << endl;
+}
+
+/** Output the model parameters as a one-line JSON object to stdout (for --dump-parameters).
+ */
+void output_parameters_json ()
+{
+    cout << "{\"parameters\": ";
+    output_parameters_object();
+    cout << "}" << endl;
+}
+
+/** Output the model structure as JSON to stdout (for --dump-model):
+ *  entity types with their numbers of entities, relationship types with their inverses,
+ *  link types with their current (initial) numbers of links, and the possible event types
+ *  with base rates, tail indices and influences.
+ */
+void output_model_json ()
+{
+    cout << "{\"entity_types\": {";
+    bool first = true;
+    for (auto& [et, l] : et2label) {
+        cout << (first ? "" : ", ") << json_string(l) << ": " << et2n[et];
+        first = false;
+    }
+    cout << "}, \"relationship_types\": {";
+    first = true;
+    for (auto& [rat, l] : rat2label) {
+        if (rat == RT_ID) continue;
+        auto inv = rat2inv.count(rat) ? rat2inv.at(rat) : NO_RAT;
+        cout << (first ? "" : ", ") << json_string(l) << ": {\"inverse\": " << ((inv == NO_RAT) ? string("null") : json_string(rat2label[inv])) << "}";
+        first = false;
+    }
+    cout << "}, \"link_types\": [";
+    first = true;
+    for (auto& [lt, n] : lt2n) {
+        cout << (first ? "" : ", ") << "{\"source\": " << json_string(et2label[lt.et1]) << ", \"relationship\": " << json_string(rat2label[lt.rat13])
+             << ", \"target\": " << json_string(et2label[lt.et3]) << ", \"links\": " << n << "}";
+        first = false;
+    }
+    cout << "], \"event_types\": [";
+    for (int id = 0; id < n_evt_ids; id++) {
+        auto& evt = evtid2evt[id];
+        cout << (id > 0 ? ", " : "") << "{\"class\": " << json_string((evt.ec == EC_EST) ? "establish" : (evt.ec == EC_TERM) ? "terminate" : "act")
+             << ", \"source\": " << json_string(et2label[evt.et1]) << ", \"relationship\": " << json_string(rat2label[evt.rat13])
+             << ", \"target\": " << json_string(et2label[evt.et3])
+             << ", \"base_attempt\": " << json_number(evtid2base_attempt_rate[id])
+             << ", \"base_probunits\": " << json_number(evtid2base_probunits[id])
+             << ", \"left_tail\": " << json_number(evtid2left_tail[id]) << ", \"right_tail\": " << json_number(evtid2right_tail[id])
+             << ", \"influences\": [";
+        for (size_t j = 0; j < evtid2infl_slots[id].size(); j++) {
+            int slot = evtid2infl_slots[id][j];
+            auto rat12 = (relationship_or_action_type) (slot / (n_et_slots * n_rat_slots));
+            auto et2 = (entity_type) ((slot / n_rat_slots) % n_et_slots);
+            auto rat23 = (relationship_or_action_type) (slot % n_rat_slots);
+            cout << (j > 0 ? ", " : "") << "{\"rat12\": " << json_string(rat2label[rat12]) << ", \"et2\": " << json_string(et2label[et2])
+                 << ", \"rat23\": " << json_string(rat2label[rat23])
+                 << ", \"attempt\": " << json_number(inflt_attempt_rate[(size_t) id * n_at_slots + slot])
+                 << ", \"probunits\": " << json_number(inflt_delta_probunits[(size_t) id * n_at_slots + slot]) << "}";
+        }
+        cout << "]}";
+    }
+    cout << "], \"t_max\": " << json_number(max_t) << ", \"events_max\": " << ((max_n_events == LONG_MAX) ? string("null") : to_string(max_n_events))
+         << ", \"seed\": " << seed << "}" << endl;
+}
+
+// output of link counts by link type at regular model time intervals:
+
+ofstream stats_out;          ///< stream for the optional csv output of link counts
+timepoint next_stats_t = 0;  ///< model time of the next row to write
+vector<link_type> stats_link_types;  ///< the link types in column order
+
+/** Open the stats csv file (if requested) and write its header.
+ */
+void open_stats_out ()
+{
+    if (stats_out_filename == "") return;
+    stats_out.open(stats_out_filename);
+    if (!stats_out.good()) throw "cannot open stats output file \"" + stats_out_filename + "\"";
+    stats_out << std::setprecision(17) << "t";
+    stats_link_types.clear();
+    for (auto& [lt, n] : lt2n) {
+        stats_link_types.push_back(lt);
+        stats_out << "," << csv_quote(et2label[lt.et1] + " " + rat2label[lt.rat13] + " " + et2label[lt.et3]);
+    }
+    stats_out << ",links,angles" << endl;
+    next_stats_t = 0;
+}
+
+/** Write rows for all grid time points up to (and including) t, using the current state
+ *  (which is the state that holds from the last event until t).
+ */
+void write_stats_until (timepoint t)
+{
+    if (!stats_out.is_open()) return;
+    while (next_stats_t <= t) {
+        stats_out << next_stats_t;
+        for (auto& lt : stats_link_types) stats_out << "," << lt2n[lt];
+        stats_out << "," << n_links << "," << n_angles << "\n";
+        next_stats_t += stats_every;
+    }
+}
+
+/** Close the stats csv file (if open).
+ */
+void close_stats_out ()
+{
+    if (stats_out.is_open()) stats_out.close();
+}
+
 /** (for debugging purposes)
  */
 void dump_links () {
     cout << "e2outs:" << endl;
-    for (auto& [e1, outs1] : e2outs) {
-        for (auto& l : outs1) cout << " " << e2label[e1] << " " << rat2label[l.rat_out] << " " << e2label[l.e_target] << endl;
+    for (entity e1 = 1; e1 <= max_e; e1++) {
+        for (auto& l : e2outs[e1]) cout << " " << e2label[e1] << " " << rat2label[l.rat_out] << " " << e2label[l.e_target] << endl;
     }
     cout << "e2ins:" << endl;
-    for (auto& [e3, ins3] : e2ins) {
-        for (auto& l : ins3) cout << " " << e2label[l.e_source] << " " << rat2label[l.rat_in] << " " << e2label[e3] << endl;
+    for (entity e3 = 1; e3 <= max_e; e3++) {
+        for (auto& l : e2ins[e3]) cout << " " << e2label[l.e_source] << " " << rat2label[l.rat_in] << " " << e2label[e3] << endl;
     }
 }
 
@@ -226,8 +526,7 @@ void dump_links () {
 void dump_data ()
 {
     dump_links();
-    cout << "t2be:" << endl;
-    for (auto& [t, ev] : t2ev) cout << " " << t << ": " << ev << endl;
+    cout << "schedule: total rate " << schedule.total() << ", " << schedule.size() << " events in the rate tree, " << immediate_events.size() << " immediate" << endl;
     cout << "ev2data:" << endl;
     for (auto& [ev2, evd2] : ev2data) cout << " " << ev2 << ": " << evd2 << endl;
 }

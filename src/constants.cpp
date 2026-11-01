@@ -26,8 +26,11 @@ namespace tricl {
  */
 event_data sure_evd = {
         .n_angles = 0,
-        .attempt_rate = INFINITY,
-        .success_probunits = INFINITY,
+        .attempt_rate = 0,
+        .n_inf_attempt = 1,        // infinite attempt rate
+        .success_probunits = 0,
+        .n_pos_inf_probunits = 1,  // certain success
+        .n_neg_inf_probunits = 0,
         .effective_rate = INFINITY,
         .t = -INFINITY
 };

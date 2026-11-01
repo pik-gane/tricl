@@ -20,26 +20,23 @@
  *
  * Some data (which is accessed most often) is instead kept in vectors
  * whose indices are either entities (which are ints)
- * or integer hash values of influence types (constructed via the macro INFLT).
+ * or dense ids of event types and slots of angle types
+ * (see evt_id_of() and at_slot() in global_variables.h, set up in init_types()).
  *
- * All hashs are constructed as logical ORs of properly shifted ids,
- * hence valid ids are restricted by the respective numbers of bits reserved
- * for this id in the hash.
- *
- * This hash construction is governed by the bit size macros
- * #E_BITS, #ET_BITS, and #RAT_BITS,
- * which could be adapted in dependence on system architecture,
- * but must fulfil the following constraints:
- *   2 + 2 * #E_BITS + #RAT_BITS <= no. of bits in size_t (32 or 64)
- *   2^#E_BITS + 2^(6 + 3 * #RAT_BITS + 3 * #ET_BITS) <= available memory bytes
+ * All hashs are constructed as logical XORs of properly shifted ids.
+ * The bit size macros #E_BITS, #ET_BITS, and #RAT_BITS only govern this hash construction
+ * (ids exceeding the reserved number of bits merely cause more hash collisions),
+ * except that #E_BITS also limits the number of entities via the array \ref e2et.
+ * The constraint 2 + 2 * #E_BITS + #RAT_BITS <= no. of bits in size_t should hold.
  */
 
-// the following choices seem adequate for 64 bit system and >= 1 GB available memory:
 #define E_BITS 20   ///< No. of bits used for entities --> max. 1 mio. entities
-#define ET_BITS 4   ///< No. of bits used for entity types --> max. 16 entity types
-#define RAT_BITS 4  ///< No. of bits used for relationship or action types --> max. 16 relationship or action types
+#define ET_BITS 4   ///< No. of bits reserved for entity types in hashs
+#define RAT_BITS 4  ///< No. of bits reserved for relationship or action types in hashs
 
 #define MAX_N_E ((1<<E_BITS)-1)  ///< resulting max. no. of entities
+
+#define MAX_INFL_PER_EVT 12  ///< Max. no. of angle types that may influence one event type (per-event angle counts are stored in a fixed-size array)
 
 
 // commonly used includes are all included here:
@@ -130,6 +127,7 @@ typedef size_t relationship_or_action_type;  ///< >= 1
 
 #define NO_RAT 0  ///< Missing value for relationship or action type, used in angles to encode legs
 #define RT_ID 1   ///< Relationship type for identity relationship "=", always present
+#define NO_ET 0   ///< Missing value for entity type (actual entity types are >= 1)
 
 
 // complex types:
@@ -236,25 +234,27 @@ struct event_type
     }
 };
 
-enum schedule_class {
-    SC_NOW,     ///< Events that happen immediately after the current event
-    SC_SOONER,  ///< Events that are sooner on average and stored in a tree-type container
-    SC_LATER,   ///< Events that are later on average and stored in a hash-table-type container
-    SC_NEVER,   ///< Events that happen after max simulation time
-};
-
 /** For performance reasons, the mutable data of an \ref event is stored in a separate struct.
  *
  *  These structs appear as values in a map whose key is the corresponding event.
+ *
+ *  Infinite contributions to the attempt rate or the success probability units
+ *  are not added to the floating point sums (inf - inf would be NaN when a contribution is removed again)
+ *  but counted separately. Use total_attempt_rate() and total_success_probunits() to get the effective values.
  */
 struct event_data
 {
-    int n_angles = 0;              ///< Current no. of angles influencing this event
-    rate attempt_rate;             ///< Current attempt rate of this event
-    probunits success_probunits;   ///< Current success probunits of this event
-    rate effective_rate;           ///< Current effective rate of this event
-    timepoint t = -INFINITY;       ///< When this event would next happen if the system state does not chance in between
-    schedule_class sc = SC_LATER;  ///< Schedule class of the event
+    int n_angles = 0;                  ///< Current no. of angles influencing this event
+    unsigned short n_infl[MAX_INFL_PER_EVT] = {};  ///< Current no. of adjacent angles by influence index of the event type (see evtid2infl_slots), needed for gradients
+    rate attempt_rate = 0;             ///< Sum of all finite contributions to the attempt rate of this event
+    int n_inf_attempt = 0;             ///< No. of infinite contributions to the attempt rate (if > 0, the attempt rate is infinite)
+    probunits success_probunits = 0;   ///< Sum of all finite contributions to the success probunits of this event
+    int n_pos_inf_probunits = 0;       ///< No. of +inf contributions to the success probunits (if > 0 and no -inf contributions, success is certain)
+    int n_neg_inf_probunits = 0;       ///< No. of -inf contributions to the success probunits (if > 0, success is impossible)
+    rate effective_rate = 0;           ///< Current effective rate of this event
+    timepoint t = -INFINITY;           ///< -inf if the event is not scheduled, otherwise inf (simulation and replay) or the time of the event while it is performed
+    int slot = -1;                     ///< Leaf slot of the event in the rate tree (see schedule.h), or -1
+    int imm = -1;                      ///< Index of the event in immediate_events (if its rate is infinite), or -1
 };
 
 /** An inleg represents a leg "incoming" to a target entity.
@@ -436,13 +436,13 @@ template <> struct std::hash<angle_type> {
     }
 };
 
-#define INFLT(inflt) ((size_t)inflt.evt.ec ^ ((size_t)inflt.evt.et1 << 2) ^ ((size_t)inflt.evt.rat13 << (2+ET_BITS)) ^ ((size_t)inflt.evt.et3 << (2+ET_BITS+RAT_BITS)) ^ ((size_t)inflt.at.rat12 << (2+2*ET_BITS+RAT_BITS)) ^ ((size_t)inflt.at.et2 << (2+2*ET_BITS+2*RAT_BITS)) ^ ((size_t)inflt.at.rat23 << (2+3*ET_BITS+2*RAT_BITS)))
-#define MAX_N_INFLT (1 << (2+3*ET_BITS+3*RAT_BITS))
 /** Construct an integer hash for use in maps and sets by adding bit-shifted atteributes:
  */
 template <> struct std::hash<influence_type> {
     inline size_t operator()(const influence_type& inflt) const {
-        return (INFLT(inflt));
+        return ((size_t)inflt.evt.ec ^ ((size_t)inflt.evt.et1 << 2) ^ ((size_t)inflt.evt.rat13 << (2+ET_BITS))
+                ^ ((size_t)inflt.evt.et3 << (2+ET_BITS+RAT_BITS)) ^ ((size_t)inflt.at.rat12 << (2+2*ET_BITS+RAT_BITS))
+                ^ ((size_t)inflt.at.et2 << (2+2*ET_BITS+2*RAT_BITS)) ^ ((size_t)inflt.at.rat23 << (2+3*ET_BITS+2*RAT_BITS)));
     }
 };
 /** Construct an integer hash for use in maps and sets by adding bit-shifted atteributes:

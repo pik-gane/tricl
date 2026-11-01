@@ -1,0 +1,17 @@
+# Used by tests/run_tests.py: the expression for metaparameter y uses an undefined symbol,
+# which must produce a clear error message instead of silently becoming NaN.
+metadata:
+    name: config with a bad expression
+limits:
+    t: 1
+metaparameters:
+    x: 2
+    y: 2 * undefined_symbol
+entities:
+    thing: 2
+relationship types:
+    knows: symmetric
+dynamics:
+    [thing, knows, thing]:
+        establish:
+            attempt: y

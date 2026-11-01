@@ -1,0 +1,37 @@
+metadata:
+    name: two entities, one symmetric relationship, constant rates
+    description: >
+        Used by tests/run_tests.py to check the log-likelihood computation against an exact formula.
+        While the two entities are unlinked, each of the two directed establishment events
+        (a knows b, b knows a) has rate A = 0.7, so the total rate is 2A = 1.4 and each of them
+        contributes log(0.7) when it happens. While linked, each of the two directed termination
+        events has rate D * expit(0) = 1.3 * 0.5 = 0.65, so the total rate is 1.3 and a
+        termination contributes log(0.65). The exact log-likelihood of a trajectory is the sum over
+        events of log(rate of the event) minus (total rate before the event) * (waiting time),
+        minus (final total rate) * (remaining time until the time limit).
+    author: tricl test suite
+
+limits:
+    t: 50
+
+options:
+    seed: 1
+
+entities:
+    thing:
+        - a
+        - b
+
+relationship types:
+    knows: symmetric
+
+dynamics:
+    [thing, knows, thing]:
+        establish:
+            attempt: 0.7
+            success: inf
+        terminate:
+            attempt: 1.3
+            success:
+                tails: 0
+                base: 0

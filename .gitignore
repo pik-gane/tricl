@@ -36,3 +36,14 @@
 *.app
 /build/
 /doc/
+# Python
+__pycache__/
+*.pyc
+
+# paper build products and downloaded raw data
+paper/*.aux
+paper/*.log
+paper/*.bbl
+paper/*.blg
+paper/*.out
+paper/data/atop_raw/

@@ -34,7 +34,6 @@
  * - add actions
  *
  * simulation options:
- * - as an alternative to tmax and max_n_events, add max_wall
  * - add a particle filtering mode
  *
  * network theory stuff:
@@ -48,11 +47,9 @@
  * - add auxiliaries: identifier: expression
  *
  * optimization:
- * - replace (ordered) map t2ev by unordered_map plus additional variable next_t as described in https://www.geeksforgeeks.org/design-a-stack-to-retrieve-original-elements-and-return-the-minimum-element-in-o1-time-and-o1-space/?ref=rp
- * - use const args as much as possible in inner loops (?)
- * - inline most called functions
- * - speed up probability2probunits by precomputing probability for events with constant success probability
- * - think of partial parallelization
+ * - bulk initialisation of the initial links (currently each initial link is performed as an event)
+ * - special-case the sigmoid for tail index 1 (its default) to avoid pow()
+ * - ensembles of runs are embarrassingly parallel; a single trajectory is not worth parallelising
  *
  * input/output:
  * - include metadata into gexf files
@@ -64,12 +61,9 @@
  * - support prespecified positions in visualization, see here: <https://github.com/gephi/gephi/issues/2038>
  * - support entity type detection from columns in csv file
  *
- * model estimation:
- * - add command line options --events=events.csv, --logl and --grad
- * - if given, read lines from events.csv rather than pop_next_event
- * - if --logl, accumulate loglikelhood instead of scheduling and write only logl to stdout
- * - if --grad, also accumulate and output gradient w.r.t. metaparameters
- * - write python template script for estimating metaparameters by max.likelihood method, using scipy.optimize
+ * model estimation (see replay.cpp and python/tricl_fit.py for what exists):
+ * - estimation from partially observed data (snapshots) via simulated method of moments or data augmentation
+ * - allow estimating influence parameters starting from zero (angles without effect are currently not tracked)
  *
  * Terminology
  * ===========
@@ -206,6 +200,7 @@
 #include "config.h"
 #include "init.h"
 #include "simulate.h"
+#include "replay.h"
 #include "finish.h"
 #include "debugging.h"
 //#include "pfilter.h"
@@ -220,13 +215,32 @@ int main (int argc, char *argv[])
 
         // stuff before simulation:
         read_config(argc, argv);
+        if (dump_parameters)
+        {
+            init_parameters_only();
+            output_parameters_json();
+            return 0;
+        }
         init();
         if (debug) verify_data_consistency();
-
-        // actual simulation:
-        while (true)
+        if (dump_model)
         {
-            if (!step()) break;
+            output_model_json();
+            return 0;
+        }
+
+        if (events_in_filename != "")
+        {
+            // replay given events and compute their log-likelihood:
+            replay();
+        }
+        else
+        {
+            // actual simulation:
+            while (true)
+            {
+                if (!step()) break;
+            }
         }
 
         // stuff after simulation:
@@ -234,7 +248,18 @@ int main (int argc, char *argv[])
     }
     catch (const char* msg)
     {
-      cerr << "ERROR: exiting with message: " << msg << endl;
+        cerr << "ERROR: exiting with message: " << msg << endl;
+        return 1;
+    }
+    catch (const string& msg)
+    {
+        cerr << "ERROR: exiting with message: " << msg << endl;
+        return 1;
+    }
+    catch (const std::exception& e)
+    {
+        cerr << "ERROR: exiting with message: " << e.what() << endl;
+        return 1;
     }
     return 0;
 }

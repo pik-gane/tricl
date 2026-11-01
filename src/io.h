@@ -20,7 +20,33 @@ ostream& operator<< (ostream& os, const event_data& evd);
 
 using tricl::operator<<;
 
-void log_state ();
+void log_state (bool final = false);
+
+void open_events_out ();
+
+void write_event_out (const event& ev);
+
+void close_events_out ();
+
+void open_links_out ();
+
+void write_link_out (const tricllink& l, timepoint start, timepoint end);
+
+void close_links_out ();
+
+void write_entities_out ();
+
+void output_json_summary ();
+
+void output_parameters_json ();
+
+void output_model_json ();
+
+void open_stats_out ();
+
+void write_stats_until (timepoint t);
+
+void close_stats_out ();
 
 void read_links_csv (
         string filename,

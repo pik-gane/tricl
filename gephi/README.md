@@ -1,5 +1,10 @@
-Producing a video with Gephi and ffmpeg
-=======================================
+Producing a video with Gephi and ffmpeg (legacy)
+================================================
+Note: the recommended way to make movies is now ``python/tricl_movie.py``, which reads the interval list written by
+``tricl --links-out`` and ``--entities-out`` and renders frames with a stable layout without Gephi (see README.md).
+The Gephi workflow below still works with the gexf output.
+
+
 0. in Gephi, install the Scripting Plugin <https://github.com/gephi/gephi/wiki/Scripting-Plugin>
 1. copy "first.py" and "second.sh" to a fresh directory, cd to that directory, start Gephi from there
 2. in Gephi: 

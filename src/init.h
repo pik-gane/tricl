@@ -4,4 +4,6 @@
 
 void init ();
 
+void init_parameters_only ();
+
 #endif

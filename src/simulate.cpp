@@ -5,7 +5,13 @@
 
 #include "global_variables.h"
 #include "event.h"
+#include "debugging.h"
 #include "simulate.h"
+
+#include <chrono>
+
+#define CHECK_WALL_TIME_EVERY 64  ///< No. of events after which the wall-clock time limit is checked
+#define RECOMPUTE_TOTAL_ER_EVERY 65536  ///< No. of events after which the total effective rate is recomputed exactly to remove floating point drift
 
 /** Perform next step.
  *
@@ -13,10 +19,25 @@
  */
 bool step ()
 {
+    static const auto start = std::chrono::steady_clock::now();
+    if ((max_wall_seconds < INFINITY) && (n_events % CHECK_WALL_TIME_EVERY == 0)
+            && (std::chrono::duration<double>(std::chrono::steady_clock::now() - start).count() > max_wall_seconds)) {
+        wall_time_exceeded = true;
+        return false;
+    }
     if ((n_events < max_n_events) && pop_next_event()) {
         ++n_events;
+        write_stats_until(current_t);  // (the state before the event holds until current_t)
         perform_event(current_ev, current_evd_);
-        if (debug) cout << " " << t2ev.size() << " events on stack" << endl << endl;
+        if (debug) cout << " " << ev2data.size() << " events scheduled" << endl << endl;
+        if (n_events % RECOMPUTE_TOTAL_ER_EVERY == 0) {
+            // remove floating point drift from the incrementally maintained total effective rate:
+            rate exact = compute_total_finite_er();
+            if (fabs(exact - total_finite_effective_rate) > 1e-6 * max(1.0, fabs(exact)))
+                cerr << "WARNING: total effective rate " << total_finite_effective_rate << " deviates from exact value " << exact
+                     << " after " << n_events << " events. Please report this as a bug." << endl;
+            total_finite_effective_rate = max(0.0, exact);
+        }
         return true;
     } else {
         return false;

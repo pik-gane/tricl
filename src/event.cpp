@@ -32,63 +32,68 @@ void add_event (
 {
     auto ec = ev.ec; auto e1 = ev.e1, e3 = ev.e3; auto rat13 = ev.rat13;
     auto et1 = e2et[e1], et3 = e2et[e3];
-    event_type evt = { .ec=ec, et1, rat13, et3 };
 
     assert ((rat13 != RT_ID) && (e1 != e3));
 
     // only continue if event can happen at all:
-    if (possible_evts.count(evt) > 0) {
+    int evt_id = evt_id_of(ec, et1, rat13, et3);
+    if (evt_id >= 0) {
         // find and store attempt rate and success probunits by looping through all adjacent legs and angles
 
         if (debug) cout << "     adding event: " << ev << endl;
 
+        // accumulate attempt rate and success probunits in a fresh event data object
+        // (infinite contributions are counted separately, see event_data):
+        event_data evd = {};
+
         // base values:
-        rate ar = evt2base_attempt_rate[evt];
-        probunits spu = evt2base_probunits[evt];
+        add_attempt_contribution(&evd, evtid2base_attempt_rate[evt_id]);
+        add_probunits_contribution(&evd, evtid2base_probunits[evt_id]);
 
-        // outlegs:
-        auto outs1 = e2outs[e1];
-        for (auto& l : outs1) {
-            auto rat12 = l.rat_out;
-            auto e2 = l.e_target;
-            influence_type inflt = { .evt = evt, .at = { .rat12 = rat12, .et2 = e2et[e2], .rat23 = NO_RAT } };
-            ar += _inflt2attempt_rate[INFLT(inflt)];
-            spu += _inflt2delta_probunits[INFLT(inflt)];
-        }
+        const auto& outs1 = e2outs[e1];
+        const auto& ins3 = e2ins[e3];
 
-        // inlegs (similarly):
-        auto ins3 = e2ins[e3];
-        for (auto& l : ins3) {
-            auto e2 = l.e_source;
-            auto rat23 = l.rat_in;
-            influence_type inflt = { .evt = evt, .at = { .rat12 = NO_RAT, .et2 = e2et[e2], .rat23 = rat23 } };
-            ar += _inflt2attempt_rate[INFLT(inflt)];
-            spu += _inflt2delta_probunits[INFLT(inflt)];
+        // legs (only if any leg influences are configured at all, since hub entities may have very many legs):
+        if (any_leg_influences)
+        {
+            // outlegs:
+            for (auto& l : outs1) {
+                int idx = inflt_index(evt_id, l.rat_out, e2et[l.e_target], NO_RAT);
+                add_attempt_contribution(&evd, inflt_attempt_rate[idx]);
+                add_probunits_contribution(&evd, inflt_delta_probunits[idx]);
+            }
+
+            // inlegs (similarly):
+            for (auto& l : ins3) {
+                int idx = inflt_index(evt_id, NO_RAT, e2et[l.e_source], l.rat_in);
+                add_attempt_contribution(&evd, inflt_attempt_rate[idx]);
+                add_probunits_contribution(&evd, inflt_delta_probunits[idx]);
+            }
         }
 
         // angles:
         int na = 0; // number of influencing angles
-        angle_vec angles = get_angles(e1, outs1, ins3, e3);
+        static angle_vec angles;  // reused buffer to avoid allocations
+        get_angles(e1, outs1, ins3, e3, angles);
         for (auto a_it = angles.begin(); a_it != angles.end(); a_it++) {
-            influence_type inflt = {
-                    .evt = evt,
-                    .at = { .rat12 = a_it->rat12, .et2 = e2et[a_it->e2], .rat23 = a_it->rat23 }
-            };
             if (debug) cout << "      influences of angle \"" << e2label[e1] << " " << rat2label[a_it->rat12] << " " << e2label[a_it->e2] << " " << rat2label[a_it->rat23] << " " << e2label[e3] << "\":" << endl;
 
             // get influence of angle on event:
-            auto dar = _inflt2attempt_rate[INFLT(inflt)];
-            auto dspu = _inflt2delta_probunits[INFLT(inflt)];
-            if (COUNT_ALL_ANGLES || (dar != 0.0) || (dspu != 0.0)) { // angle can influence event
+            int idx = inflt_index(evt_id, a_it->rat12, e2et[a_it->e2], a_it->rat23);
+            int j = evtid_at2infl[idx];
+            if (j >= 0) { // angle can influence event
+                auto dar = inflt_attempt_rate[idx];
+                auto dspu = inflt_delta_probunits[idx];
                 // count this angle:
                 na++;
+                evd.n_infl[j]++;
                 if (debug) {
                     if (dar != 0.0) cout << "       on attempt rate:" << dar << endl;
                     if (dspu != 0.0) cout << "       on success probunit:" << dspu << endl;
                 }
                 // add its influence:
-                ar += dar;
-                spu += dspu;
+                add_attempt_contribution(&evd, dar);
+                add_probunits_contribution(&evd, dspu);
             }
             else if (debug) cout << "       none" << endl;
         }
@@ -100,17 +105,20 @@ void add_event (
             assert (ev2data.count(ev) == 0);
 
             // register its data, at first with t=-inf (will be set upon scheduling):
-            ev2data[ev] = { .n_angles = na, .attempt_rate = max(0.0, ar), .success_probunits = spu, .t = -INFINITY };
-            if (debug) cout << "      attempt rate " << ar << ", success prob. " << probunits2probability(spu, evt2left_tail.at(evt), evt2right_tail.at(evt)) << endl;
+            evd.n_angles = na;
+            evd.t = -INFINITY;
+            ev2data[ev] = evd;
+            if (debug) cout << "      attempt rate " << total_attempt_rate(&evd) << ", success prob. "
+                    << probunits2probability(total_success_probunits(&evd), evtid2left_tail[evt_id], evtid2right_tail[evt_id], evtid2scale[evt_id]) << endl;
             // now schedule it:
-            schedule_event(ev, &ev2data[ev], evt2left_tail.at(evt), evt2right_tail.at(evt));
+            schedule_event(ev, &ev2data[ev], evt_id);
 
             if (debug) { verify_data_consistency(); verify_angle_consistency(); }
         }
         else {
             if (debug) cout << "      covered by summary event, not scheduled separately" << endl;
             // only add effective rate of addition via summary event:
-            add_effective_rate(summary_evt2single_effective_rate.at(evt));
+            add_summary_shares(evt_id, 1);
         }
     }
     else if (debug) cout << "     not adding impossible event: " << ev << endl;
@@ -125,12 +133,16 @@ void remove_event (
 {
     assert (event_is_scheduled(ev, evd_));
 
-    // keep t2ev and ev2data consistent:
-    t2ev.erase(evd_->t); ev2data.erase(ev);
-
     subtract_effective_rate(evd_->effective_rate);
+    if (compute_gradient && !event_is_summary(ev)) {
+        register_event_rate_gradient(evd_, evt_id_of(ev.ec, e2et[ev.e1], ev.rat13, e2et[ev.e3]), -1);
+    }
 
-    if (debug) cout << "        removed event: " << ev << " scheduled at " << evd_->t << endl;
+    if (debug) cout << "        removed event: " << ev << endl;
+
+    // keep the schedule and ev2data consistent (evd_ is invalid afterwards!):
+    _remove_from_schedule(ev, evd_);
+    ev2data.erase(ev);
 }
 
 /** Remove event if scheduled and adjust total effective rate (!).
@@ -146,9 +158,9 @@ void conditionally_remove_event(
     }
     else if (ev.ec != EC_TERM)  // event is not scheduled by covered by summary event
     {
-        event_type evt = {.ec=ev.ec, e2et[ev.e1], ev.rat13, e2et[ev.e3]};
         // need to adjust effective rate:
-        subtract_effective_rate(summary_evt2single_effective_rate[evt]);
+        int evt_id = evt_id_of(ev.ec, e2et[ev.e1], ev.rat13, e2et[ev.e3]);
+        if (evt_id >= 0) subtract_summary_shares(evt_id, 1);
     }
 }
 
@@ -176,7 +188,8 @@ void update_adjacent_events (
     // source and target entity of the event are e1 and e2 for these angles:
     e1 = ea; rat12 = rab; e2 = eb;
     et1 = e2et[e1]; et2 = e2et[e2];
-    auto outlegs = e2outs[eb]; // these legs then provide rat23 and e3 of the angles
+    // (references are safe here since add_or_delete_angle does not modify the leg sets)
+    const auto& outlegs = e2outs[eb]; // these legs then provide rat23 and e3 of the angles
     for (auto& l : outlegs) {
         rat23 = l.rat_out; e3 = l.e_target; et3 = e2et[e3];
         if (e1 != e3) { // since we allow no self-links except identity
@@ -189,7 +202,7 @@ void update_adjacent_events (
     // source and target entity of the event are e2 and e3 for these angles:
     e2 = ea; rat23 = rab; e3 = eb;
     et2 = e2et[e2]; et3 = e2et[e3];
-    auto inlegs = e2ins[ea]; // these legs then provide e1 and rat12 of the angles
+    const auto& inlegs = e2ins[ea]; // these legs then provide e1 and rat12 of the angles
     for (auto& l : inlegs) {
         e1 = l.e_source; rat12 = l.rat_in; et1 = e2et[e1];
         if (e1 != e3) { // since we allow no self-links except identity
@@ -235,17 +248,25 @@ void perform_event (
     assert (rat13 != RT_ID);
     tricllink l = { e1, rat13, e3 };
 
-    // compute and store log-likelihood of next event happening at current_t and being current_t:
-    rate er = evd_->effective_rate,
-            last_total_er = total_effective_rate() + er;  // since er has already been subtracted in pop_next_event
+    // compute and store the log-likelihood contribution of this event being the one that happens now.
+    // (the log-probability of no event happening in between has already been accumulated by advance_time(),
+    // and the effective rate of this event and its count in n_infinite_effective_rates
+    // have already been subtracted in pop_next_event)
+    rate er = evd_->effective_rate;
     assert (er > 0);
     double logl = (er >= INFINITY)
-            ? -log(n_infinite_effective_rates)  // log prob. of this immediate event being chosen from all immediate events
-            : -last_total_er * last_dt               // log probability density of next event occurring exactly at t
-              + log(er) - log(last_total_er);        // + log probability of that event being this event
+            // immediate event: log probability of this event being chosen from all currently pending immediate events:
+            ? -log(n_infinite_effective_rates + 1)
+            // finite-rate event: log of the joint density of the waiting time and the identity of the event
+            // is log(total_er * exp(-total_er * dt) * er / total_er) = log(er) - total_er * dt,
+            // of which the second term has been accumulated by advance_time():
+            : log(er);
     cumulative_logl += logl;
-    if (verbose) cout << "  log-likelihoods: this " << logl << ", total " << cumulative_logl << endl;
+    if (verbose) cout << "  log-likelihoods: this event " << logl << ", total " << cumulative_logl << endl;
     if (debug) cout << "   total er " << total_finite_effective_rate << " + " << n_infinite_effective_rates << " * inf" << endl;
+
+    // output event if requested:
+    write_event_out(ev);
 
     // FIRST add the reverse event, so that its n_angles will reflect the situation before the change:
     add_reverse_event(ev);
@@ -267,13 +288,10 @@ void perform_event (
         event companion_ev = { .ec = ec, .e1 = e3, .rat13 = rat31, .e3 = e1 };
         tricllink inv_l = { .e1 = e3, .rat13 = rat31, .e3 = e1 }; // inverse link
 
-        // if scheduled, unschedule it:
-        if (ev2data.count(companion_ev) == 1)
-        {
-            if (debug) cout << " unscheduling companion event: " << companion_ev << endl;
-            auto companion_evd_ = &ev2data.at(companion_ev);
-            remove_event(companion_ev, companion_evd_);
-        }
+        // if scheduled, unschedule it; if it is an establishment event covered by a summary event,
+        // remove its share from the total effective rate (since the pair will be linked now):
+        if (debug) cout << " unscheduling companion event: " << companion_ev << endl;
+        conditionally_remove_event(companion_ev);
 
         // since companion event happens with probability one, it adds no log-likelihood
 
@@ -302,9 +320,43 @@ void perform_event (
     }
 }
 
-/** Find the next occurring event.
+/** Advance model time to a later time point and accumulate the log-probability
+ *  that no event happened in between (the state, and hence the total rate, is constant in between).
  *
- *  Basically, find the minimum-time entry in the ordered map of scheduled events.
+ *  Note that this is also called for time points of summary event attempts that turn out to be unsuccessful,
+ *  since those are artefacts of the simulation algorithm and not model events.
+ */
+void advance_time (timepoint t)
+{
+    assert (t >= current_t);
+    assert (n_infinite_effective_rates == 0);  // otherwise an immediate event would be pending
+    timepoint dt = t - current_t;
+    if (total_finite_effective_rate > 0) {
+        double logl = - total_finite_effective_rate * dt;
+        cumulative_logl += logl;
+        if (verbose) cout << "  log-likelihood of no event from t=" << current_t << " to t=" << t << ": " << logl << ", total " << cumulative_logl << endl;
+    }
+    if (compute_gradient && (dt > 0)) {
+        for (size_t k = 0; k < grad_rate.size(); k++) grad_exposure[k] += grad_rate[k] * dt;
+    }
+    current_t = t;
+}
+
+/** Forward to the end of the simulation time (if that is finite),
+ *  accumulating the log-probability that no further event happens until then.
+ *
+ *  Called when the simulation ends because no further event happens before max_t.
+ */
+void finish_time ()
+{
+    if (max_t < INFINITY) advance_time(max_t);
+}
+
+/** Find the next occurring event by the direct method.
+ *
+ *  If immediate events are pending, one of them is chosen uniformly at random and happens right now.
+ *  Otherwise the waiting time until the next event is drawn from the exponential distribution with the total
+ *  rate of the schedule, and the event is chosen with probability proportional to its rate.
  *  (If that is a summary event, draw entities for it at random and check whether it succeeds;
  *  if it doesn't succeed, repeat.)
  *
@@ -316,42 +368,34 @@ bool pop_next_event ()
     bool found = false;
     while ((!found) && (current_t < max_t))  // we may need several attempts to find an event that actually occurs...
     {
-
-        // get handle of earliest next scheduled event:
-        auto tev_handle = t2ev.begin();
-        if (tev_handle == t2ev.end())  // no events are scheduled --> model has converged
+        event ev;
+        if (!immediate_events.empty())  // some event is happening "right now"; all such events occur in random order
         {
-            log_state();
-            // jump to end of simulation:
-            current_t = max_t;
-            return false;
-        }
-
-        // get corresponding timepoint:
-        timepoint t = tev_handle->first;
-        if (t >= max_t)  // no events before max_t are scheduled
-        {
-            if (!quiet)
-            {
-                if (t < INFINITY) cout << "next event would happen after time limit at t=" << t << endl;
-                else cout << "no further events are scheduled." << endl;
-            }
-            // jump to end:
-            current_t = max_t;
-            return false;
-        }
-
-        // get the corresponding event:
-        event ev = tev_handle->second;
-        if (t > current_t)  // event is not happening "right now"
-        {
-            // advance model time to time of event:
-            last_dt = t - current_t;
-            current_t = t;
-        }
-        else  // event is happening "right now" and was scheduled formally for a past time to ensure a random order of those events
-        {
+            size_t i = (size_t) (uniform(random_variable) * immediate_events.size());
+            ev = immediate_events[min(i, immediate_events.size() - 1)];
             last_dt = 0;
+        }
+        else
+        {
+            rate total = schedule.total();
+            if (!(total > 0))  // no events can happen any more --> model has converged
+            {
+                if (!quiet) cout << "no further events can happen." << endl;
+                log_state();
+                finish_time();
+                return false;
+            }
+            timepoint dt = exponential(random_variable) / total;
+            if (!(current_t + dt < max_t))
+            {
+                if (!quiet) cout << "next event would happen after time limit at t=" << current_t + dt << endl;
+                finish_time();
+                return false;
+            }
+            // advance model time to the time of the event and choose it:
+            last_dt = dt;
+            advance_time(current_t + dt);
+            ev = schedule.pick(uniform(random_variable) * total);
         }
 
         if (event_is_summary(ev))  // event is a summary event, so has only types specified and needs to be tested for success
@@ -369,7 +413,8 @@ bool pop_next_event ()
 
             auto rat13 = summary_ev.rat13;
             tricllink l = { e1, rat13, e3 };
-            event_type evt = { .ec = EC_EST, et1, rat13, et3 };
+            int evt_id = evt_id_of(EC_EST, et1, rat13, et3);
+            assert (evt_id >= 0);
 
             if (link_exists(l))
             {
@@ -385,35 +430,34 @@ bool pop_next_event ()
                 if (ev2data.count(actual_ev) > 0)  // the event was scheduled separately since it is influenced by at least one angle
                 {
                     // --> don't perform it now.
-                    if (verbose) cout << "at t=" << current_t << " " << actual_ev << " is scheduled separately at t=" << ev2data.at(actual_ev).t << ", so not performed now." << endl;
+                    if (verbose) cout << "at t=" << current_t << " " << actual_ev << " is scheduled separately, so not performed now." << endl;
                 }
                 else  // event not scheduled separately (but may still be influenced by legs!)
                 {
                     // compile success units:
-                    auto spu = evt2base_probunits.at(evt);
-                    // outlegs:
-                    for (auto& l : e2outs[e1])
+                    event_data tmp_evd = {};
+                    add_probunits_contribution(&tmp_evd, evtid2base_probunits[evt_id]);
+                    if (any_leg_influences)  // (hub entities may have very many legs, so only loop if necessary)
                     {
-                        auto rat12 = l.rat_out;
-                        auto e2 = l.e_target;
-                        influence_type inflt = { .evt = evt, .at = { .rat12 = rat12, .et2 = e2et[e2], .rat23 = NO_RAT } };
-                        if (inflt2delta_probunits.count(inflt) > 0) spu += inflt2delta_probunits.at(inflt);
+                        // outlegs:
+                        for (auto& l : e2outs[e1])
+                        {
+                            add_probunits_contribution(&tmp_evd, inflt_delta_probunits[inflt_index(evt_id, l.rat_out, e2et[l.e_target], NO_RAT)]);
+                        }
+                        // inlegs:
+                        for (auto& l : e2ins[e3])
+                        {
+                            add_probunits_contribution(&tmp_evd, inflt_delta_probunits[inflt_index(evt_id, NO_RAT, e2et[l.e_source], l.rat_in)]);
+                        }
                     }
-                    // inlegs:
-                    for (auto& l : e2ins[e3])
-                    {
-                        auto e2 = l.e_source;
-                        auto rat23 = l.rat_in;
-                        influence_type inflt = { .evt = evt, .at = { .rat12 = NO_RAT, .et2 = e2et[e2], .rat23 = rat23 } };
-                        if (inflt2delta_probunits.count(inflt) > 0) spu += inflt2delta_probunits.at(inflt);
-                    }
-                    // since the scheduling rate already contained the factor ev2max_sp[ev],
+                    auto spu = total_success_probunits(&tmp_evd);
+                    // since the scheduling rate already contained the factor evtid2summary_max_success_probability,
                     // we need to divide the success probability by it here:
                     probability
                         success_probability =
-                            probunits2probability(spu, evt2left_tail.at(evt), evt2right_tail.at(evt)),
+                            probunits2probability(spu, evtid2left_tail[evt_id], evtid2right_tail[evt_id], evtid2scale[evt_id]),
                         conditional_success_probability =
-                            success_probability / summary_ev2max_success_probability[ev];
+                            success_probability / evtid2summary_max_success_probability[evt_id];
                     // check if event succeeds:
                     if (uniform(random_variable) < conditional_success_probability)  // success
                     {
@@ -421,21 +465,20 @@ bool pop_next_event ()
                         // compute actual effective rate of this particular event:
                         rate actual_er = summary_evd.attempt_rate / et2n[et1] / et2n[et3]
                                          * success_probability;
-                        // construct event data with proper effective rate for actual event:
-                        event_data actual_evd_ = {
-                                .n_angles = 0,  // unimportant, will not be used by perform_event
-                                .attempt_rate = INFINITY,  // unimportant, will not be used by perform_event
-                                .success_probunits = INFINITY,  // unimportant, will not be used by perform_event
-                                .effective_rate = actual_er,  // this is the only important entry!
-                                .t = current_t  // unimportant, will not be used by perform_event
-                        };
+                        // construct event data with proper effective rate for actual event
+                        // (the effective rate is the only entry used by perform_event):
+                        static event_data actual_evd;
+                        actual_evd = {};
+                        actual_evd.effective_rate = actual_er;
+                        actual_evd.t = current_t;
                         // register event as current event:
                         current_ev = actual_ev;
-                        current_evd_ = &actual_evd_;
+                        current_evd_ = &actual_evd;
                         log_state();
                         found = true;
+                        add_summary_event_log_gradient(evt_id);
                         // adjust effective rate because summary addition event does no longer cover this pair:
-                        subtract_effective_rate(summary_evt2single_effective_rate.at(evt));
+                        subtract_summary_shares(evt_id, 1);
                         // but don't remove the summary event
                     }
                     else
@@ -445,16 +488,20 @@ bool pop_next_event ()
                 }
             }
             // set next_occurrence of this summary event:
-            reschedule_event(summary_ev, &ev2data.at(summary_ev), evt2left_tail.at(evt), evt2right_tail.at(evt));
+            reschedule_event(summary_ev, &ev2data.at(summary_ev), evt_id);
         }
         else  // event is particular (has specific entities)
         {
             // register event as current event:
             current_ev = ev;
             log_state();
-            auto evd_ = current_evd_ = &ev2data.at(ev);
+            // copy its data, since remove_event invalidates the stored data:
+            static event_data popped_evd;
+            popped_evd = ev2data.at(ev);
+            current_evd_ = &popped_evd;
+            add_event_log_gradient(&popped_evd, evt_id_of(ev.ec, e2et[ev.e1], ev.rat13, e2et[ev.e3]));
             // remove it from all relevant data:
-            remove_event(ev, evd_);
+            remove_event(ev, &ev2data.at(ev));
             found = true;
         }
     }

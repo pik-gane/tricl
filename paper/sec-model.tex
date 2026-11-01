@@ -1,0 +1,94 @@
+\section{Model class}\label{sec:model}
+
+\subsection{State}
+A \tricl\ model has a finite set of \emph{entities}, each of one \emph{entity type}, and a finite set
+of \emph{relationship types}. The state at time $t$ is a set $G(t)$ of \emph{links}
+$\ell = (e_1, r, e_3)$, each a directed edge of relationship type $r$ from entity $e_1$ to entity
+$e_3 \neq e_1$. A relationship type may be declared \emph{symmetric} (e.g.\ \ttt{knows}) or have a
+named \emph{inverse} (\ttt{follows}/\ttt{is followed by}); then every link implies its mirrored link,
+and the two are established and terminated together. A built-in identity relationship ``='' links
+every entity to itself and never changes; it lets rules refer to an existing link between the two
+entities, or to a link of one of them to a third entity of a given kind, with the same syntax as to
+two-paths. The \emph{link type} of $\ell$ is the triple
+(type of $e_1$, $r$, type of $e_3$).
+
+\subsection{Events and rates}
+An \emph{event} establishes a link that does not exist or terminates one that exists. For a candidate
+link $\ell = (e_1, r, e_3)$, an \emph{angle} is a two-path
+$e_1 \xrightarrow{r_{12}} e_2 \xrightarrow{r_{23}} e_3$ in $G(t)$ with $r_{12}, r_{23}$ including the
+identity relationship; its \emph{angle type} is $(r_{12}, \text{type of } e_2, r_{23})$. For every event
+type $\tau$ (establish or terminate, link type), the configuration file specifies a basic attempt rate
+$a^0_\tau \ge 0$, basic success \emph{probability units} $b^0_\tau \in \R \cup \{\pm\infty\}$,
+and for any angle type $k$ an additional attempt rate $a_{\tau k}$ and additional probability units
+$b_{\tau k}$ contributed by each adjacent angle of that type. With $n_k(\ell, t)$ the number of
+angles of type $k$ adjacent to $\ell$ at time $t$, the event happens at rate
+\begin{equation}\label{eq:rate}
+  \lambda_\tau(\ell, t) = A \cdot f(B), \qquad
+  A = a^0_\tau + \sum_k a_{\tau k}\, n_k(\ell,t), \qquad
+  B = b^0_\tau + \sum_k b_{\tau k}\, n_k(\ell,t),
+\end{equation}
+i.e.\ attempts occur at the rate $A$ and succeed with probability $f(B)$. Coefficients may be
+expressions of named \emph{metaparameters}, which can be overridden on the command line and are the
+parameters estimated in Section~\ref{sec:inference}. Infinite coefficients encode logic: a
+contribution $-\infty$ to $B$ makes the event impossible, and an infinite attempt rate with positive
+success probability makes it \emph{immediate}; all pending immediate events are performed, in a
+uniformly random order, before time advances. Immediate events implement state machines: if an
+agent acquires a link \ttt{is infectious for} to the entity \ttt{covid-19}, the rule ``terminate
+\ttt{is susceptible to} immediately when the angle \ttt{is infectious for}, \ttt{covid-19}, = exists''
+removes its previous state.
+
+\subsection{The sigmoid}
+The success probability is a sigmoid $f$ of the probability units with two \emph{tail indices}
+$\sigma_0, \sigma_1 \ge 0$ that set how fast it approaches $0$ and $1$:
+\begin{gather}
+  f(B) = \tfrac12 T_{\sigma_0}(-v) + \tfrac12 - \tfrac12 T_{\sigma_1}(v), \qquad
+  v = \frac{4B}{k(\sigma_0) + k(\sigma_1)}, \label{eq:sigmoid}\\
+  T_\sigma(x) = \bigl(1 + \sigma \ln(1 + e^{x})\bigr)^{-1/\sigma}, \quad T_0(x) = \frac{1}{1+e^{x}},
+  \qquad k(\sigma) = (1 + \sigma\ln 2)^{-1-1/\sigma}, \quad k(0) = \tfrac12. \nonumber
+\end{gather}
+$T_\sigma$ replaces the exponential tail of the logistic function by the $q$-exponential
+$(1 + \sigma y)^{-1/\sigma}$ of $y = \ln(1+e^{x})$ \citep{tsallis1988}. For $\sigma > 0$ the tail
+decays like $|B|^{-1/\sigma}$, for $\sigma = 0$ exponentially. Since $k(\sigma) = -2T'_\sigma(0)$, $f$ has
+slope $1$ at $B = 0$ for all tail indices, so that near zero, probability units are differences of
+probabilities. $f$ is strictly increasing, continuous in the tail indices, and equals
+$\expit(4B)$ for $\sigma_0 = \sigma_1 = 0$. Heavy tails (the default is $\sigma_0 = \sigma_1 = 1$) keep
+rare events possible when many angles push the probability units far from zero.
+
+\subsection{A model file}
+The following excerpt is the dynamics of a model of triadic closure with triangle stabilisation in
+three blocks of 100 entities (the \ttt{parameters\_3blocks} example):
+\begin{lstlisting}[language=yaml]
+relationship types:
+  knows: symmetric
+dynamics:
+  [user, knows, user]:
+    establish:
+      attempt:
+        basic: 0.001                       # spontaneous linking
+        [~, knows, user, knows, ~]: 0.01   # per common acquaintance
+      success:
+        basic: .inf                        # attempts always succeed
+    terminate:
+      attempt:
+        basic: 10.0                        # fast decay attempts ...
+      success:
+        [~, knows, user, knows, ~]: -0.3   # ... less successful in triangles
+\end{lstlisting}
+\noindent The angle type \ttt{[\~{}, knows, user, knows, \~{}]} counts common acquaintances. Further
+sections of the file declare entity types and numbers, named entities, and initial links, which can
+be listed, read from csv files, or drawn from random graph models (Erd\H{o}s--R\'enyi, block models,
+random geometric graphs).
+
+\subsection{Expressiveness}
+Entity states are links to auxiliary ``hub'' entities: an agent is active if it has the link
+\ttt{is}~\ttt{active}. A rule on the angle (agent, \ttt{knows}, agent, \ttt{is}, \ttt{active}) then
+depends on the number of active neighbours, which yields threshold models
+\citep{granovetter1978,wiedermann2020} (Figure~\ref{fig:frames}) and contact processes; angles through
+``='' make rates depend on an entity's own state, which yields compartmental epidemic models on
+adaptive networks \citep{gross2006}, including social distancing as termination of contacts with
+infectious agents. Structural balance dynamics \citep{heider1946,antal2005} needs two
+relationship types \ttt{likes} and \ttt{dislikes} and four angle rules. Well-mixed interactions are
+angles through a hub to which all entities are linked. What is outside the class: rates that depend
+on structures beyond two-paths (e.g.\ on cycles of length four) and rates that depend on time or on
+the history of the process. Rules on single links of one endpoint (``legs'', which would make rates
+depend on degrees) are part of the configuration syntax but rejected by the current version.
