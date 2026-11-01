@@ -1,0 +1,41 @@
+\hypertarget{structtricl_1_1outleg}{}\section{tricl\+:\+:outleg Struct Reference}
+\label{structtricl_1_1outleg}\index{tricl\+::outleg@{tricl\+::outleg}}
+
+
+An outleg represents a leg \char`\"{}outgoing\char`\"{} from a source entity.  
+
+
+
+
+{\ttfamily \#include $<$data\+\_\+model.\+h$>$}
+
+\subsection*{Data Fields}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{structtricl_1_1outleg_a126702ea981b412b0536b34457e92f45}\label{structtricl_1_1outleg_a126702ea981b412b0536b34457e92f45}} 
+\hyperlink{namespacetricl_a2d01894944fb58a8fedc0912a48d13f8}{relationship\+\_\+or\+\_\+action\+\_\+type} \hyperlink{structtricl_1_1outleg_a126702ea981b412b0536b34457e92f45}{rat\+\_\+out}
+\begin{DoxyCompactList}\small\item\em Plays a similar role as {\ttfamily rat12} in an angle. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{structtricl_1_1outleg_a7329dd10bd2213695049e0b816ab34ce}\label{structtricl_1_1outleg_a7329dd10bd2213695049e0b816ab34ce}} 
+\hyperlink{namespacetricl_a57273122278e8b301844e2a2e1f0742f}{entity} \hyperlink{structtricl_1_1outleg_a7329dd10bd2213695049e0b816ab34ce}{e\+\_\+target}
+\begin{DoxyCompactList}\small\item\em Target entity of the leg. Plays a similar role as {\ttfamily e2} in an angle. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Friends}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{structtricl_1_1outleg_a925572d2a4bc56d312134f995f7790a5}\label{structtricl_1_1outleg_a925572d2a4bc56d312134f995f7790a5}} 
+bool {\bfseries operator==} (const \hyperlink{structtricl_1_1outleg}{outleg} \&left, const \hyperlink{structtricl_1_1outleg}{outleg} \&right)
+\item 
+\mbox{\Hypertarget{structtricl_1_1outleg_a594b6be76b1271da95305f64d3f28f52}\label{structtricl_1_1outleg_a594b6be76b1271da95305f64d3f28f52}} 
+bool {\bfseries operator$<$} (const \hyperlink{structtricl_1_1outleg}{outleg} \&left, const \hyperlink{structtricl_1_1outleg}{outleg} \&right)
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+An outleg represents a leg \char`\"{}outgoing\char`\"{} from a source entity. 
+
+When an outleg is used, the source entity is clear from the context, hence it is not named itself in the outleg but only the target entity and relationship or action type are stored.
+
+Outlegs may influence the attempt rate or success probability of \char`\"{}adjacent\char`\"{} events (events with the same source entity). 
+
+The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+src/\hyperlink{data__model_8h}{data\+\_\+model.\+h}\end{DoxyCompactItemize}

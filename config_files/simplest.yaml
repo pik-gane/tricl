@@ -1,0 +1,54 @@
+metadata:
+  name: simplest
+  description: 
+    N entities of one type connected by a unique symmetric relationship type,
+    slow spontaneous linking,
+    linking due to angles (triangle closure),
+    and spontaneous unlinking 
+  author: Jobst Heitzig
+  date: 11 June 2021
+  email: heitzig@pik-potsdam.de
+
+files:
+  gexf: simplest.gexf.gz
+  diagram prefix: simplest
+
+limits:
+  t: 1000 #60
+  events: 10000000
+  
+options:
+  quiet: false
+  verbose: false
+  debug: false
+
+metaparameters:
+  N: 100 #1000
+#  epsilon: 0.0001
+#  theta: 1.0
+  
+entities:
+  user: N
+
+relationship types:
+  knows: symmetric  # indicates this is a symmetric (undirected) relationship
+
+#initial links: 
+#  random:
+#    [user, knows, user]:  # [entity type, relationship type, entity type]
+#      within: 1/N/N
+
+dynamics:  # all values default to 0.0
+  [user, knows, user]:
+    establish:
+      attempt:  # rates
+        basic: 0.001 #0.0001 #epsilon  # basic occurrence rate of links
+        [~, knows, user, knows, ~]: 0.5 #theta  # rate of triangle closure
+      success:  # probability units, will be translated into probability by sigmoid function.
+        basic: 0.0  # infinity -> success probability is 1.0
+    terminate:
+      attempt:
+        basic: 1.0  # basic decay rate of links
+      success:  # probability units, will be translated into probability by sigmoid function.
+        basic: 0.0  # infinity -> success probability is 1.0
+

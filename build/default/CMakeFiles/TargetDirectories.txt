@@ -1,0 +1,5 @@
+/home/heitzig/git/tricl/build/default/CMakeFiles/rebuild_cache.dir
+/home/heitzig/git/tricl/build/default/CMakeFiles/edit_cache.dir
+/home/heitzig/git/tricl/build/default/src/CMakeFiles/rebuild_cache.dir
+/home/heitzig/git/tricl/build/default/src/CMakeFiles/tricl.dir
+/home/heitzig/git/tricl/build/default/src/CMakeFiles/edit_cache.dir

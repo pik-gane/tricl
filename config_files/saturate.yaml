@@ -1,0 +1,55 @@
+metadata:
+  name: saturate
+  description: 
+    N entities of one type connected by a unique symmetric relationship type,
+    linking/unlinking ratio very small if few or many common nbs, 
+    maximal for 8 common nbs.
+  author: Jobst Heitzig
+  date: 14 January 2022
+  email: heitzig@pik-potsdam.de
+
+files:
+  gexf: saturate.gexf.gz
+  diagram prefix: saturate
+
+limits:
+  t: 1000
+  events: 100000
+  
+options:
+  quiet: false
+  verbose: false
+  debug: false
+
+metaparameters:
+  N: 1000
+
+entities:
+  user: N
+
+relationship types:
+  knows: symmetric  # indicates this is a symmetric (undirected) relationship
+
+initial links: 
+  random:
+    [user, knows, user]:  # [entity type, relationship type, entity type]
+#      probability: 0.09
+      blocks: 20
+      within: 1
+      between: 0
+
+dynamics:  # all values default to 0.0
+  [user, knows, user]:
+    establish:
+      attempt:  # rates
+        basic: 1 
+      success:  # probability units, will be translated into probability by sigmoid function.
+        tails: 0  # exponential tails
+        basic: -5 # -6
+        [~, knows, user, knows, ~]: 10 # 1
+    terminate:
+      attempt:
+        basic: 1
+        [~, knows, user, knows, ~]: 0.1
+      success:  # probability units, will be translated into probability by sigmoid function.
+        basic: inf

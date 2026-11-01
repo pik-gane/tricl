@@ -12,10 +12,10 @@ metadata:
   email: heitzig@pik-potsdam.de
 
 files:
-  gexf: 3blocks.gexf
+  gexf: 3blocks.gexf.gz
 
 limits:
-  t: 20.0
+  t: 5.0
 
 options:
   quiet: false
@@ -23,41 +23,29 @@ options:
   debug: false
 
 entities:
-  user:
-    n: 300
-    labels:  # of some of the entities (optional)
-      - Alice
-      - Bob
-      - Celia
+  user: 300
 
 relationship types:
   knows: symmetric  # indicates this is a symmetric (undirected) relationship
-#  follows: is followed by  # this would indicate an asymmetric (directed) relationship
 
 initial links: 
-  named:
-    - [Alice, knows, Bob]  # [entity, relationship type, entity]
   random:
     [user, knows, user]:  # [entity type, relationship type, entity type]
       blocks: 3  # -> block model
       within: 1.0  # link prob. in a block, defaults to 1.0
       between: 0.0  # link prob. between blocks, defaults to 0.0
-#    [user, follows, user]:
-#      dimension: 2  # -> random geometric graph
-#      decay: 3.5  # rate of exponential decay of link probability with euclidean distance
-#    [user, knows, used]:
-#      density: 0.01  # -> simple random graph
 
 dynamics:  # all values default to 0.0
   [user, knows, user]:
     establish:
       attempt:  # rates
-        basic: 0.001  # basic occurrence rate of links
+        basic: 0.0005  # basic occurrence rate of links
         [~, knows, user, knows, ~]: 0.01  # rate of triangle closure
       success:  # probability units, will be translated into probability by sigmoid function.
-        basic: .inf  # infinity -> success probability is 1.0
+        basic: inf  # infinity -> success probability is 1.0
     terminate:
       attempt:
         basic: 10.0  # basic decay rate of links
       success:  # basic probability units = 0.0 --> basic probability = 0.5
         [~, knows, user, knows, ~]: -0.3  # triangles make decay less likely
+

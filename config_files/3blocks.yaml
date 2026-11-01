@@ -1,0 +1,53 @@
+metadata:
+  name: 3blocks
+  description: 
+    300 entities of one type,
+    in 3 disjoint blocks fully connected by a unique symmetric relationship type,
+    slow spontaneous linking,
+    medium-speed linking due to angles (triangle closure),
+    and fast spontaneous unlinking hampered by angles (triangle stabilization),
+    leading to metastable clusters which eventually merge. 
+  author: Jobst Heitzig
+  date: 30 March 2020
+  email: heitzig@pik-potsdam.de
+
+files:
+  gexf: 3blocks.gexf.gz
+  diagram prefix: 3blocks
+
+limits:
+  t: 1000
+  events: 50000
+  
+options:
+  quiet: false
+  verbose: false
+  debug: false
+
+entities:
+  user: 300
+
+relationship types:
+  knows: symmetric  # indicates this is a symmetric (undirected) relationship
+
+initial links: 
+  random:
+    [user, knows, user]:  # [entity type, relationship type, entity type]
+      blocks: 3  # -> block model
+      within: 1.0  # link prob. in a block, defaults to 1.0
+      between: 0.0  # link prob. between blocks, defaults to 0.0
+
+dynamics:  # all values default to 0.0
+  [user, knows, user]:
+    establish:
+      attempt:  # rates
+        basic: 0.001  # basic occurrence rate of links
+        [~, knows, user, knows, ~]: 0.007  # rate of triangle closure
+      success:  # probability units, will be translated into probability by sigmoid function.
+        basic: inf  # infinity -> success probability is 1.0
+    terminate:
+      attempt:
+        basic: 10.0  # basic decay rate of links
+      success:  # basic probability units = 0.0 --> basic probability = 0.5
+        [~, knows, user, knows, ~]: -0.3  # triangles make decay less likely
+

@@ -1,0 +1,222 @@
+log4j:WARN No appenders could be found for logger (com.spotify.docker.client.DockerConfigReader).
+log4j:WARN Please initialize the log4j system properly.
+Apr 24, 2020 2:32:53 PM org.glassfish.grizzly.nio.NIOTransport start
+INFO: Adjusting kernel thread pool to max size 9 to handle configured number of SelectorRunners
+Apr 24, 2020 2:32:53 PM org.glassfish.grizzly.http.server.NetworkListener start
+INFO: Started listener bound to [127.0.0.1:38359]
+Apr 24, 2020 2:32:53 PM org.glassfish.grizzly.http.server.HttpServer start
+INFO: [HttpServer] Started.
+Apr 24, 2020 2:32:53 PM org.glassfish.tyrus.server.Server start
+INFO: WebSocket Registered apps: URLs all start with ws://127.0.0.1:38359
+Apr 24, 2020 2:32:53 PM org.glassfish.tyrus.server.Server start
+INFO: WebSocket server started.
+2020-04-24 14:32:54.028:INFO::Worker-0: Initialize: Logging initialized @11165ms
+
+(Eclipse:1467): Gtk-WARNING **: 14:33:09.315: Negative content width -1 (allocation 1, extents 1x1) while allocating gadget (node scrolledwindow, owner GtkScrolledWindow)
+
+(Eclipse:1467): Gtk-CRITICAL **: 14:33:15.076: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkScrollbar
+
+(Eclipse:1467): Gtk-CRITICAL **: 14:33:27.046: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkScrollbar
+
+(Eclipse:1467): Gtk-CRITICAL **: 14:33:27.049: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkScrollbar
+
+(Eclipse:1467): Gtk-CRITICAL **: 14:33:27.050: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkScrollbar
+
+(Eclipse:1467): Gtk-CRITICAL **: 14:33:27.076: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkScrollbar
+
+(Eclipse:1467): Gtk-CRITICAL **: 14:33:27.077: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkScrollbar
+
+(Eclipse:1467): Gtk-CRITICAL **: 14:33:27.084: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkScrollbar
+
+(Eclipse:1467): Gtk-CRITICAL **: 14:33:27.086: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkScrollbar
+
+(Eclipse:1467): Gtk-CRITICAL **: 14:33:27.087: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkScrollbar
+
+(Eclipse:1467): Gtk-CRITICAL **: 14:33:27.408: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkScrollbar
+
+(Eclipse:1467): Gtk-CRITICAL **: 14:33:27.410: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkScrollbar
+
+(Eclipse:1467): Gtk-CRITICAL **: 14:33:27.415: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkScrollbar
+
+(Eclipse:1467): Gtk-CRITICAL **: 14:33:27.417: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkScrollbar
+
+(Eclipse:1467): Gtk-CRITICAL **: 14:33:27.419: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkScrollbar
+
+(Eclipse:1467): Gtk-CRITICAL **: 14:33:27.465: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkScrollbar
+
+(Eclipse:1467): Gtk-CRITICAL **: 14:33:27.466: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkScrollbar
+
+(Eclipse:1467): Gtk-CRITICAL **: 14:33:27.471: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkScrollbar
+
+(Eclipse:1467): Gtk-CRITICAL **: 14:33:27.474: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkScrollbar
+
+(Eclipse:1467): Gtk-CRITICAL **: 14:33:27.476: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkScrollbar
+
+(Eclipse:1467): Gtk-CRITICAL **: 14:33:27.512: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkScrollbar
+
+(Eclipse:1467): Gtk-CRITICAL **: 14:33:27.513: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkScrollbar
+
+(Eclipse:1467): Gtk-CRITICAL **: 14:33:27.516: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkScrollbar
+
+(Eclipse:1467): Gtk-CRITICAL **: 14:33:27.517: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkScrollbar
+
+(Eclipse:1467): Gtk-CRITICAL **: 14:33:27.543: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkScrollbar
+
+(Eclipse:1467): Gtk-CRITICAL **: 14:33:27.544: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkScrollbar
+
+(Eclipse:1467): Gtk-CRITICAL **: 14:33:27.546: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkScrollbar
+
+(Eclipse:1467): Gtk-CRITICAL **: 14:33:27.547: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkScrollbar
+
+(Eclipse:1467): Gtk-CRITICAL **: 14:33:27.576: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkScrollbar
+
+(Eclipse:1467): Gtk-CRITICAL **: 14:33:27.577: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkScrollbar
+
+(Eclipse:1467): Gtk-WARNING **: 14:33:54.031: Negative content width -1 (allocation 1, extents 1x1) while allocating gadget (node scrolledwindow, owner GtkScrolledWindow)
+
+(Eclipse:1467): Gtk-CRITICAL **: 14:34:22.732: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkScrollbar
+Apr 24, 2020 2:35:05 PM org.glassfish.grizzly.http.server.NetworkListener shutdownNow
+INFO: Stopped listener bound to [127.0.0.1:38359]
+Apr 24, 2020 2:35:05 PM org.glassfish.tyrus.server.Server stop
+INFO: Websocket Server stopped.
+log4j:WARN No appenders could be found for logger (com.spotify.docker.client.DockerConfigReader).
+log4j:WARN Please initialize the log4j system properly.
+log4j:WARN No appenders could be found for logger (com.spotify.docker.client.DockerConfigReader).
+log4j:WARN Please initialize the log4j system properly.
+
+(Eclipse:2510): Gtk-CRITICAL **: 17:49:55.749: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkScrollbar
+
+(Eclipse:2510): Gtk-CRITICAL **: 17:49:55.751: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkScrollbar
+
+(Eclipse:2510): Gtk-CRITICAL **: 17:49:55.759: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkScrollbar
+
+(Eclipse:2510): Gtk-CRITICAL **: 17:49:55.806: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkScrollbar
+
+(Eclipse:2510): Gtk-CRITICAL **: 17:49:55.824: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkScrollbar
+
+(Eclipse:2510): Gtk-CRITICAL **: 17:49:55.847: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkScrollbar
+
+(Eclipse:2510): Gtk-CRITICAL **: 17:49:55.869: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkScrollbar
+
+(Eclipse:2510): Gtk-CRITICAL **: 17:49:55.887: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkScrollbar
+
+(Eclipse:2510): Gtk-CRITICAL **: 17:49:55.899: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkScrollbar
+
+(Eclipse:2510): Gtk-CRITICAL **: 17:49:55.913: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkScrollbar
+
+(Eclipse:2510): Gtk-CRITICAL **: 17:49:55.929: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkScrollbar
+
+(Eclipse:2510): Gtk-CRITICAL **: 17:49:55.947: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkScrollbar
+
+(Eclipse:2510): Gtk-CRITICAL **: 17:49:55.963: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkScrollbar
+
+(Eclipse:2510): Gtk-CRITICAL **: 17:49:55.973: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkScrollbar
+
+(Eclipse:2510): Gtk-CRITICAL **: 17:49:55.990: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkScrollbar
+
+(Eclipse:2510): Gtk-CRITICAL **: 17:49:56.006: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkScrollbar
+
+(Eclipse:2510): Gtk-CRITICAL **: 17:49:56.022: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkScrollbar
+
+(Eclipse:2510): Gtk-CRITICAL **: 17:49:56.038: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkScrollbar
+
+(Eclipse:2510): Gtk-CRITICAL **: 11:29:22.620: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkScrollbar
+
+(Eclipse:2510): Gtk-CRITICAL **: 11:29:22.623: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkScrollbar
+
+(Eclipse:2510): Gtk-CRITICAL **: 11:29:22.630: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkScrollbar
+
+(Eclipse:2510): Gtk-CRITICAL **: 11:29:22.649: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkScrollbar
+
+(Eclipse:2510): Gtk-CRITICAL **: 11:29:22.666: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkScrollbar
+
+(Eclipse:2510): Gtk-CRITICAL **: 11:29:22.690: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkScrollbar
+
+(Eclipse:2510): Gtk-CRITICAL **: 11:29:22.703: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkScrollbar
+
+(Eclipse:2510): Gtk-CRITICAL **: 11:29:22.721: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkScrollbar
+
+(Eclipse:2510): Gtk-CRITICAL **: 11:29:22.737: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkScrollbar
+
+(Eclipse:2510): Gtk-CRITICAL **: 11:29:22.752: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkScrollbar
+
+(Eclipse:2510): Gtk-CRITICAL **: 11:29:22.769: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkScrollbar
+
+(Eclipse:2510): Gtk-CRITICAL **: 11:29:22.785: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkScrollbar
+
+(Eclipse:2510): Gtk-CRITICAL **: 11:29:22.802: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkScrollbar
+
+(Eclipse:2510): Gtk-CRITICAL **: 11:29:22.819: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkScrollbar
+
+(Eclipse:2510): Gtk-CRITICAL **: 11:29:22.845: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkScrollbar
+
+(Eclipse:2510): Gtk-CRITICAL **: 11:29:22.876: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkScrollbar
+
+(Eclipse:2510): Gtk-CRITICAL **: 11:29:22.912: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkScrollbar
+
+(Eclipse:2510): Gtk-CRITICAL **: 11:54:05.869: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkScrollbar
+
+(Eclipse:2510): Gtk-CRITICAL **: 11:54:05.871: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkScrollbar
+
+(Eclipse:2510): Gtk-CRITICAL **: 11:54:05.877: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkScrollbar
+
+(Eclipse:2510): Gtk-CRITICAL **: 11:54:05.907: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkScrollbar
+
+(Eclipse:2510): Gtk-CRITICAL **: 11:54:05.922: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkScrollbar
+
+(Eclipse:2510): Gtk-CRITICAL **: 11:54:05.934: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkScrollbar
+
+(Eclipse:2510): Gtk-CRITICAL **: 11:54:05.951: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkScrollbar
+
+(Eclipse:2510): Gtk-CRITICAL **: 11:54:05.967: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkScrollbar
+
+(Eclipse:2510): Gtk-CRITICAL **: 11:54:05.982: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkScrollbar
+
+(Eclipse:2510): Gtk-CRITICAL **: 12:21:48.620: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkScrollbar
+
+(Eclipse:2510): Gtk-CRITICAL **: 12:21:48.622: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkScrollbar
+
+(Eclipse:2510): Gtk-CRITICAL **: 12:21:48.632: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkScrollbar
+
+(Eclipse:2510): Gtk-CRITICAL **: 12:21:48.657: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkScrollbar
+
+(Eclipse:2510): Gtk-CRITICAL **: 12:21:48.664: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkScrollbar
+
+(Eclipse:2510): Gtk-CRITICAL **: 12:21:48.681: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkScrollbar
+
+(Eclipse:2510): Gtk-CRITICAL **: 12:21:48.691: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkScrollbar
+
+(Eclipse:2510): Gtk-CRITICAL **: 12:21:48.703: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkScrollbar
+
+(Eclipse:2510): Gtk-CRITICAL **: 12:21:48.714: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkScrollbar
+
+(Eclipse:2510): Gtk-CRITICAL **: 12:21:48.724: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkScrollbar
+
+(Eclipse:2510): Gtk-CRITICAL **: 12:21:48.735: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkScrollbar
+
+(Eclipse:2510): Gtk-CRITICAL **: 12:21:48.746: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkScrollbar
+
+(Eclipse:2510): Gtk-CRITICAL **: 12:21:48.757: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkScrollbar
+
+(Eclipse:2510): Gtk-CRITICAL **: 12:21:48.768: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkScrollbar
+
+(Eclipse:2510): Gtk-CRITICAL **: 12:21:48.781: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkScrollbar
+
+(Eclipse:2510): Gtk-CRITICAL **: 12:21:48.800: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkScrollbar
+
+(Eclipse:2510): Gtk-CRITICAL **: 12:21:48.821: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkScrollbar
+
+(Eclipse:2510): Gtk-CRITICAL **: 12:21:48.841: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkScrollbar
+
+(Eclipse:2510): Gtk-CRITICAL **: 12:21:48.861: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkScrollbar
+log4j:WARN No appenders could be found for logger (com.spotify.docker.client.DockerConfigReader).
+log4j:WARN Please initialize the log4j system properly.
+
+** (evince:18132): WARNING **: 18:38:55.691: No offset found for match "b" at page 3 after processing 53 results
+
+
+** (evince:18132): WARNING **: 18:38:55.727: No offset found for match "b" at page 4 after processing 5 results
+
+
+** (evince:18132): WARNING **: 19:04:46.406: No offset found for match "ev" at page 57 after processing 0 results
+

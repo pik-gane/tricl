@@ -185,7 +185,13 @@ void init_events ()
                 // adjust effective rate because equal entities won't be linked:
                 if (et1 == et3)
                 {
-                    subtract_effective_rate(ar1 * et2n[et1]);
+                    // compute base effective rate using base success probability units:
+                    rate er = effective_rate(
+                        ar1 * et2n[et1], 
+                        ev2data[summary_ev].success_probunits, 
+                        left_tail, right_tail);
+                    assert (er < INFINITY);
+                    subtract_effective_rate(er);
                 }
             }
         }

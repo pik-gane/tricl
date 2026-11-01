@@ -6,11 +6,20 @@ metadata:
     email: heitzig@pik-potsdam.de
 
 files:
-    gexf: si.gexf
+    gexf: si.gexf.gz
+    diagram prefix: si
+
+metaparameters:  
+    # will be substituted for their values 
+    # in expressions occurring in the rest of the config file
+
+    N: 1000   # total numbers of agents
+    external_rate: 0.001
+    transmission_rate: 0.1
 
 limits:
-    t: .inf
-    events: 5000
+    t: 1000
+    events: 100000
 
 options:
     quiet: false
@@ -20,11 +29,11 @@ options:
 entities:
     infected:
         - infected  # this entity represents the state of being infected and has its own entity type
-    agent: 1000
+    agent: N
 
 relationship types:
     regularly meets: symmetric  # the social tie that enables mutual infection
-    is: ~  # used in "<agent> is infected"
+    is: ~  # used in "agent is infected"
 
 initial links: 
   random:
@@ -38,11 +47,11 @@ dynamics:  # all values default to 0.0 (only tail indices default to 1.0)
             attempt:
                 basic: 1.0  # the recovery rate sets the time scale
             success: 
-                basic: .inf
+                basic: inf
         establish:  # infection
             attempt:
-                basic: 0.001  # rare initial infection from outside the network
-                [agent, regularly meets, agent, is, infected]: 0.1  # VARY: transmission rate
+                basic: external_rate  # rare initial infection from outside the network
+                [agent, regularly meets, agent, is, infected]: transmission_rate
             success:
-                basic: .inf
+                basic: inf
 

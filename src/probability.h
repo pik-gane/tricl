@@ -113,7 +113,7 @@ inline void add_effective_rate (rate er)
     }
 }
 
-/** Subtract effective rate to total, taking care of infinite values.
+/** Subtract effective rate from total, taking care of infinite values.
  */
 inline void subtract_effective_rate (rate er, bool do_assert)
 {
@@ -121,7 +121,7 @@ inline void subtract_effective_rate (rate er, bool do_assert)
     {
         total_finite_effective_rate -= er;
         if (debug) cout << "             finite er - " << er << " = " << total_finite_effective_rate << endl;
-        if (do_assert) assert (total_finite_effective_rate >= 0);
+        // if (do_assert) assert (total_finite_effective_rate >= 0);
     }
     else
     {

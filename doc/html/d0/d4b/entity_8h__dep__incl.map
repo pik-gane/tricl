@@ -1,0 +1,7 @@
+<map id="src/entity.h" name="src/entity.h">
+<area shape="rect" id="node2" href="$df/d59/config_8cpp.html" title="Handling of configuration files. " alt="" coords="5,80,109,107"/>
+<area shape="rect" id="node3" href="$d9/ddd/entity_8cpp.html" title="Handling of entities. " alt="" coords="133,80,235,107"/>
+<area shape="rect" id="node4" href="$df/d1b/event_8cpp.html" title="Non&#45;performance&#45;critical handling of events. " alt="" coords="259,80,360,107"/>
+<area shape="rect" id="node5" href="$d0/dc9/init_8cpp.html" title="Do initialization tasks before simulation, after configuration. " alt="" coords="385,80,471,107"/>
+<area shape="rect" id="node6" href="$d5/d5a/io_8cpp.html" title="Handling of input/output other than gexf and graphviz. " alt="" coords="495,80,574,107"/>
+</map>

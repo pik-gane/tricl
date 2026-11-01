@@ -1,0 +1,19 @@
+<map id="src/global_variables.h" name="src/global_variables.h">
+<area shape="rect" id="node2" href="$da/dac/angle_8h.html" title="Performance&#45;critical inline functions for handling of angles. " alt="" coords="130,229,217,256"/>
+<area shape="rect" id="node3" href="$db/d82/debugging_8cpp.html" title="Some stuff only needed for debugging. " alt="" coords="5,304,133,331"/>
+<area shape="rect" id="node4" href="$df/d1b/event_8cpp.html" title="Non&#45;performance&#45;critical handling of events. " alt="" coords="204,304,305,331"/>
+<area shape="rect" id="node5" href="$d5/d87/probability_8h.html" title="Inline functions dealing with probabilities. " alt="" coords="327,80,441,107"/>
+<area shape="rect" id="node7" href="$d0/dc9/init_8cpp.html" title="Do initialization tasks before simulation, after configuration. " alt="" coords="293,229,379,256"/>
+<area shape="rect" id="node8" href="$d5/d5a/io_8cpp.html" title="Handling of input/output other than gexf and graphviz. " alt="" coords="455,229,534,256"/>
+<area shape="rect" id="node9" href="$d2/d41/link_8cpp.html" title="Handling of links. " alt="" coords="610,229,699,256"/>
+<area shape="rect" id="node10" href="$de/d8c/simulate_8cpp.html" title="Run the actual simulation. " alt="" coords="723,229,842,256"/>
+<area shape="rect" id="node12" href="$df/d59/config_8cpp.html" title="Handling of configuration files. " alt="" coords="867,229,971,256"/>
+<area shape="rect" id="node13" href="$d9/ddd/entity_8cpp.html" title="Handling of entities. " alt="" coords="995,229,1096,256"/>
+<area shape="rect" id="node14" href="$dc/d04/probability_8cpp.html" title="Additional functions dealing with probabilities. " alt="" coords="679,155,807,181"/>
+<area shape="rect" id="node15" href="$d2/d2f/finish_8cpp.html" title="Do stuff at end of the simulation. " alt="" coords="1034,80,1134,107"/>
+<area shape="rect" id="node16" href="$d5/d61/gexf_8cpp.html" title="Handling of gexf and gexf.gz temporal graph output files. " alt="" coords="1158,80,1253,107"/>
+<area shape="rect" id="node17" href="$d3/dcb/graphviz_8cpp.html" title="Generate some overview diagrams using graphviz. " alt="" coords="1277,80,1395,107"/>
+<area shape="rect" id="node18" href="$d2/d27/tricl_8cpp.html" title="TriCl, a generic model of social dynamics. " alt="" coords="1420,80,1511,107"/>
+<area shape="rect" id="node6" href="$dd/d20/event_8h.html" title="Performance&#45;critical inline functions for handling of events. " alt="" coords="354,155,441,181"/>
+<area shape="rect" id="node11" href="$d8/d83/entity_8h.html" title="Performance&#45;critical inline functions for handling of entities. " alt="" coords="517,155,603,181"/>
+</map>
