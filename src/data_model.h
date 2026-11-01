@@ -390,49 +390,49 @@ using namespace tricl;
  */
 template <> struct std::hash<entity_type_pair> {
     inline size_t operator()(const entity_type_pair& etp) const {
-        return (etp.et1 ^ (etp.et3 << ET_BITS));
+        return ((size_t)etp.et1 ^ ((size_t)etp.et3 << ET_BITS));
     }
 };
 /** Construct an integer hash for use in maps and sets by adding bit-shifted atteributes:
  */
 template <> struct std::hash<link_type> {
     inline size_t operator()(const link_type& lt) const {
-        return (lt.et1 ^ (lt.rat13 << ET_BITS) ^ (lt.et3 << (ET_BITS+RAT_BITS)));
+        return ((size_t)lt.et1 ^ ((size_t)lt.rat13 << ET_BITS) ^ ((size_t)lt.et3 << (ET_BITS+RAT_BITS)));
     }
 };
 /** Construct an integer hash for use in maps and sets by adding bit-shifted atteributes:
  */
 template <> struct std::hash<event_type> {
     inline size_t operator()(const event_type& evt) const {
-        return (evt.ec ^ (evt.et1 << 2) ^ (evt.rat13 << (2+ET_BITS)) ^ (evt.et3 << (2+ET_BITS+RAT_BITS)));
+        return ((size_t)evt.ec ^ ((size_t)evt.et1 << 2) ^ ((size_t)evt.rat13 << (2+ET_BITS)) ^ ((size_t)evt.et3 << (2+ET_BITS+RAT_BITS)));
     }
 };
 /** Construct an integer hash for use in maps and sets by adding bit-shifted atteributes:
  */
 template <> struct std::hash<inleg> {
     inline size_t operator()(const inleg& l) const {
-        return (l.e_source ^ (l.rat_in << E_BITS));
+        return ((size_t)l.e_source ^ ((size_t)l.rat_in << E_BITS));
     }
 };
 /** Construct an integer hash for use in maps and sets by adding bit-shifted atteributes:
  */
 template <> struct std::hash<outleg> {
     inline size_t operator()(const outleg& l) const {
-        return (l.e_target ^ (l.rat_out << E_BITS));
+        return ((size_t)l.e_target ^ ((size_t)l.rat_out << E_BITS));
     }
 };
 /** Construct an integer hash for use in maps and sets by adding bit-shifted atteributes:
  */
 template <> struct std::hash<angle> {
     inline size_t operator()(const angle& a) const {
-        return (a.rat12 ^ (a.e2 << RAT_BITS) ^ (a.rat23 << (RAT_BITS+E_BITS)));
+        return ((size_t)a.rat12 ^ ((size_t)a.e2 << RAT_BITS) ^ ((size_t)a.rat23 << (RAT_BITS+E_BITS)));
     }
 };
 /** Construct an integer hash for use in maps and sets by adding bit-shifted atteributes:
  */
 template <> struct std::hash<angle_type> {
     inline size_t operator()(const angle_type& at) const {
-        return (at.rat12 ^ (at.et2 << RAT_BITS) ^ (at.rat23 << (RAT_BITS+ET_BITS)));
+        return ((size_t)at.rat12 ^ ((size_t)at.et2 << RAT_BITS) ^ ((size_t)at.rat23 << (RAT_BITS+ET_BITS)));
     }
 };
 
@@ -449,14 +449,14 @@ template <> struct std::hash<influence_type> {
  */
 template <> struct std::hash<tricllink> {
     inline size_t operator()(const tricllink& l) const {
-        return (l.e1 ^ (l.rat13 << E_BITS) ^ (l.e3 << (E_BITS+RAT_BITS)));
+        return ((size_t)l.e1 ^ ((size_t)l.rat13 << E_BITS) ^ ((size_t)l.e3 << (E_BITS+RAT_BITS)));
     }
 };
 /** Construct an integer hash for use in maps and sets by adding bit-shifted atteributes:
  */
 template <> struct std::hash<event> {
     inline size_t operator()(const event& ev) const {
-        return (ev.ec ^ (ev.e1 << 2) ^ (ev.e3 << (2+E_BITS)) ^ (ev.rat13 << (2+E_BITS+E_BITS)));
+        return ((size_t)ev.ec ^ ((size_t)ev.e1 << 2) ^ ((size_t)ev.e3 << (2+E_BITS)) ^ ((size_t)ev.rat13 << (2+E_BITS+E_BITS)));
     }
 };
 
