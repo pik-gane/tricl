@@ -10,8 +10,8 @@
   latest head of PR #10**, and fix whatever is red.
 * Test suite: `python3 tests/run_tests.py` (18 tests, all passing). Regression references in
   `tests/reference.json` are specific to libstdc++'s random number generator.
-* Paper: `paper/` holds a draft for Physical Review E (REVTeX 4.2, 8 pages, `paper/main.pdf`). Open items for
-  the author are listed below.
+* Paper: `paper/` holds a draft for Physical Review E (REVTeX 4.2, 11 pages including appendices, `paper/main.pdf`).
+  Open items for the author are listed below.
 * Read `CLAUDE.md` for the paper's LaTeX source conventions (one sentence per source line, enforced in CI).
 
 ## What the branch contains
@@ -45,6 +45,11 @@ See the PR description and the change log at the end of `README.md`. In short:
   verified; the statement is in `paper/endmatter.tex`. The APS pages block automated access (Cloudflare);
   the policy was read from search results quoting the APS page and from a Research Information news item of
   18 June 2026. The author should read the policy page once in a browser before submitting.
+* Appendices A–E (`paper/sec-appendix.tex`, added 2026-11-01) prove the paper's mathematical claims: sigmoid
+  properties, exactness of the summary-event thinning, the log-likelihood with immediate events (and the
+  direction-label issue of symmetric/inverse types), sufficient statistics/gradient/concavity/identifiability, and
+  exactness of the mean-field equation without angle influences. Lean formalization was discussed and deferred.
+  The author should check the proofs.
 * **Open items for the author:** insert model names and versions at `[MODELS]` in `paper/endmatter.tex`
   (repository files must not contain model identifiers written by Claude); confirm the AI-use statement (in
   particular "reviewed the changes and the text"); acknowledgments and funding; author list and affiliation
@@ -62,7 +67,8 @@ See the PR description and the change log at the end of `README.md`. In short:
 ## Key results (for quick reference)
 
 * Alliance fit (ATOP v5.1 defense pledges, 1816–2018, 217 states, 4514 events): a common ally raises the
-  formation rate about 58-fold; dissolution hazard 0.054/yr without common allies; dropping the ally-of-ally
+  formation rate about 58-fold; pact dissolution hazard 0.108/yr without common allies (2 d0, since both directed
+  links of a symmetric pair are possible events; corrected from 0.054 on 2026-11-01); dropping the ally-of-ally
   term costs 9314 log-likelihood units. The profile likelihood in b1 rises again towards a plateau as
   b1 → −∞ (891 units below the maximum), so fits must start at positive b1 (the generated config does).
 * Parameter recovery (three-entity model, 40 sequences): coverage of 95% intervals 0.90–1.00.

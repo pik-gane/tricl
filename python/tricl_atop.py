@@ -29,11 +29,14 @@ Model (per pledge type T, all rates per year):
             success: inf
         terminate:
             attempt:
-                base: d0_T                              # dissolution attempt rate (success 1/2 without common allies)
+                base: d0_T                              # dissolution attempt rate per direction (success 1/2 without common allies)
             success:
                 tails: 0
                 [~, T, state, T, ~]: -b1_T              # each common ally lowers the success probability units
     [state, is in, system]: entry rate `entry` per non-member state, exit rate `exit` per member state
+
+Since T is symmetric, both directed links of a pair are possible events with these rates, so a pair of member states
+forms a pact at the rate 2 (a0_T + a1_T k) and a pact dissolves at the hazard 2 d0_T expit(-4 b1_T k) for k common allies.
 
 Events of the same year are applied in the order terminations, exits, entries, formations, and formations of the
 same year in the order of the state codes (a multilateral treaty appears as many simultaneous dyadic events, so
@@ -235,12 +238,12 @@ def build(alliances, states, out_dir, pledges=("defense",), first_year=1816, las
                   "    [state, %s, state]:" % p,
                   "        establish:",
                   "            attempt:",
-                  "                [~, is in, system, contains, ~]: a0_%s  # spontaneous formation rate per pair of member states" % p,
+                  "                [~, is in, system, contains, ~]: a0_%s  # spontaneous formation rate per pair of member states and direction (the pair rate is twice this)" % p,
                   "                [~, %s, state, %s, ~]: a1_%s  # additional rate per common ally" % (p, p, p),
                   "            success: inf",
                   "        terminate:",
                   "            attempt:",
-                  "                base: d0_%s  # dissolution attempt rate; success probability 1/2 without common allies" % p,
+                  "                base: d0_%s  # dissolution attempt rate per direction; success probability 1/2 without common allies" % p,
                   "            success:",
                   "                tails: 0",
                   "                [~, %s, state, %s, ~]: -b1_%s  # each common ally lowers the success probability units" % (p, p, p)]

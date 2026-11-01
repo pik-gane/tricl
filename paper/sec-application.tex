@@ -11,7 +11,7 @@ The model has six metaparameters:
 [state, defense, state]:
   establish:
     attempt:
-      [~, is in, system, contains, ~]: a0  # per pair
+      [~, is in, system, contains, ~]: a0  # per direction
       [~, defense, state, defense, ~]: a1  # per ally
     success: inf
   terminate:
@@ -25,6 +25,7 @@ The model has six metaparameters:
 \end{minipage}
 \noindent Formation thus needs both states to be members (the angle through the hub), and its rate
 grows linearly in the number of common allies; dissolution attempts succeed with probability $\expit(-4 b_1 k)$ for $k$ common allies.
+Since \ttt{defense} is symmetric, both directed links of a pair are possible events with these rates, so a pair of member states forms a pact at the rate $2(a_0 + a_1 k)$ and a pact dissolves at the hazard $2 d_0 \expit(-4 b_1 k)$ (Sec.~\ref{sec:model}).
 
 Two features of the data need a convention.
 Pledges are recorded per year, so events of the same year are simultaneous; we order them as terminations, exits, entries, formations, and formations by state codes.
@@ -33,13 +34,13 @@ With a random order of the events within a year, the estimates change by the amo
 
 \subsection{Results}
 Table~\ref{tab:atop} reports the maximum-likelihood estimates.
-A pair of member states without a common ally forms a pact at a rate of $\AtopAzero$ per year; each common ally adds $\AtopAone$, so that one common ally raises the formation rate about \AtopFormationRatio-fold.
-The dissolution hazard is $d_0\,\expit(-4 b_1 k)$: \AtopHazZero\ per year without common allies (a mean pact duration of \AtopLifeZero\ years), \AtopHazFive\ with five and \AtopHazTwentySix\ with 26, the size of NATO in 2004 (Fig.~\ref{fig:atop}, right).
+A pair of member states without a common ally forms a pact at a rate of $2a_0 = \AtopPairAzero$ per year; each common ally adds $2a_1 = \AtopPairAone$, so that one common ally raises the formation rate about \AtopFormationRatio-fold.
+The dissolution hazard is $2 d_0\,\expit(-4 b_1 k)$: \AtopHazZero\ per year without common allies (a mean pact duration of \AtopLifeZero\ years), \AtopHazFive\ with five and \AtopHazTwentySix\ with 26, the size of NATO in 2004 (Fig.~\ref{fig:atop}, right).
 Both effects are strongly supported: removing the ally-of-ally term from the formation rule lowers the maximal log-likelihood by \AtopDropAone, removing the stabilization term by \AtopDropBone.
 With a random order of the simultaneous events, $a_0$ changes by \AtopShuffleAzero\%, $a_1$ by \AtopShuffleAone\% and $b_1$ by \AtopShuffleBone\%, so the formation effect partly reflects treaty-level events, which a model with an explicit treaty entity type could separate.
 
 The profile log-likelihood of $b_1$ (Fig.~\ref{fig:atop}, middle) is not unimodal. Below a local minimum at small negative values it rises again towards a plateau as $b_1 \to -\infty$, where any common ally makes every dissolution attempt succeed; the plateau lies about \AtopProfileGap\ log-likelihood units below the maximum.
-An optimiser started at negative values drifts towards the plateau, which illustrates the non-concavity in the probability units noted in Sec.~\ref{sec:inference}; the generated model therefore starts the fit at a positive value.
+An optimizer started at negative values drifts towards the plateau, which illustrates the non-concavity in the probability units noted in Sec.~\ref{sec:inference}; the generated model therefore starts the fit at a positive value.
 A likelihood evaluation of the \AtopEvents\ events takes about \AtopEvalSeconds\ seconds, a complete fit with standard errors about a minute.
 
 \begin{table*}[t]

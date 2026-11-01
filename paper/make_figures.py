@@ -171,7 +171,10 @@ def table_and_fig_atop():
     a0, a1, d0, b1 = est["a0_defense"], est["a1_defense"], est["d0_defense"], est["b1_defense"]
     num("AtopAzero", fmt_sig(a0, 3)); num("AtopAone", fmt_sig(a1, 3))
     num("AtopFormationRatio", "%d" % round((a0 + a1) / a0))
-    haz = lambda k: d0 * expit(-4 * b1 * k)
+    # defense is symmetric: both directed links of a pair are possible events with these rates, so a pair forms a
+    # pact at twice the rate and a pact dissolves at twice the hazard (paper/sec-appendix.tex, likelihood section):
+    num("AtopPairAzero", fmt_sig(2 * a0, 3)); num("AtopPairAone", fmt_sig(2 * a1, 3))
+    haz = lambda k: 2 * d0 * expit(-4 * b1 * k)
     num("AtopHazZero", "%.3f" % haz(0)); num("AtopHazFive", "%.3f" % haz(5)); num("AtopHazTwentySix", "%.4f" % haz(26))
     num("AtopLifeZero", "%.0f" % (1 / haz(0)))
     logl = full["logl"]
@@ -182,9 +185,9 @@ def table_and_fig_atop():
     for key, name in (("a0_defense", "AtopShuffleAzero"), ("a1_defense", "AtopShuffleAone"), ("b1_defense", "AtopShuffleBone")):
         num(name, "%.0f" % (100 * abs(shuf["estimates"][key] - est[key]) / est[key]))
 
-    labels = [("a0_defense", "$a_0$", "formation rate per pair of member states"),
-              ("a1_defense", "$a_1$", "additional formation rate per common ally"),
-              ("d0_defense", "$d_0$", "dissolution attempt rate"),
+    labels = [("a0_defense", "$a_0$", "formation rate per pair of member states and direction"),
+              ("a1_defense", "$a_1$", "additional rate per common ally and direction"),
+              ("d0_defense", "$d_0$", "dissolution attempt rate per direction"),
               ("b1_defense", "$b_1$", "probability units per common ally (dissolution)"),
               ("entry", "entry", "entry rate of states"), ("exit", "exit", "exit rate of states")]
     lines = [r"\begin{ruledtabular}", r"\begin{tabular}{llrr}", r"parameter & meaning & estimate & s.e. \\", r"\colrule"]

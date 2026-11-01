@@ -140,6 +140,8 @@ void replay ()
     if ((max_t < INFINITY) && (n_events < max_n_events))
     {
         if (max_t < current_t) throw "the time limit limits:t lies before the last event in " + events_in_filename;
+        // pending immediate events would have happened before the time limit, so they must be in the file:
+        if (n_infinite_effective_rates > 0) throw "the event sequence in " + events_in_filename + " is impossible under the model: it ends while an immediate event is pending";
         finish_time();
     }
     if (!quiet) cout << "...REPLAY FINISHED after " << n_events << " events." << endl;

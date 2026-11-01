@@ -110,6 +110,41 @@ int main ()
         check(near_abs(probunits2probability(0, t, t), 0.5, 1e-14), buf);
     }
 
+    // the statements proved in the appendix of the paper (paper/sec-appendix.tex, Proposition 1):
+    for (double l : tail_grid) {
+        // k(sigma) = -2 T'_sigma(0) = (1 + sigma ln 2)^(-1-1/sigma) lies in (0, 1/2] and decreases in sigma:
+        double k = 4 * tail2scale(l);
+        std::snprintf(buf, sizeof buf, "k(%g) = -2 T'(0) in (0, 1/2]", l);
+        check(near_rel(k, 2 * tail_term_slope(l, 0), 1e-14) && k > 0 && k <= 0.5 && 4 * tail2scale(l + 0.1) < k, buf);
+        for (double r : tail_grid) {
+            double scale = tail2scale(l) + tail2scale(r), c = 1 / scale;
+            // value at zero: f(0) = 1/2 + (T_l(0) - T_r(0)) / 2 with T_sigma(0) = 2^(-phi(sigma ln 2)) in [1/2, 1):
+            double f0 = 0.5 + (tail_term(l, 0) - tail_term(r, 0)) / 2;
+            std::snprintf(buf, sizeof buf, "f(0) for tails (%g,%g)", l, r);
+            check(near_abs(probunits2probability(0, l, r, scale), f0, 1e-15) && f0 > 0.25 && f0 < 0.75
+                  && ((l > r) == (f0 > 0.5)) && ((l == r) == (f0 == 0.5)), buf);
+            // swapping the tail indices mirrors the function: f_{l,r}(-B) = 1 - f_{r,l}(B):
+            for (double pu = -20; pu <= 20; pu += 0.5) {
+                std::snprintf(buf, sizeof buf, "mirror symmetry for tails (%g,%g) at pu=%g", l, r, pu);
+                check(near_abs(probunits2probability(-pu, l, r, scale), 1 - probunits2probability(pu, r, l, scale), 1e-14), buf);
+            }
+            // tail asymptotics: f(B) ~ (sigma_0 c |B|)^(-1/sigma_0) / 2 for sigma_0 > 0, ~ exp(-c |B|) for sigma_0 = 0,
+            // and the same for 1 - f(B) with sigma_1 as B -> +inf (checked at |B| = 1e4 / 50 resp.):
+            double big = 1e4, f_low, f_up_compl, low, up;
+            if (l > 0) { f_low = probunits2probability(-big, l, r, scale); low = std::pow(l * c * big, -1 / l) / 2; }
+            else { f_low = probunits2probability(-50 * scale, l, r, scale); low = std::exp(-50.0); }
+            if (r > 0) { f_up_compl = (tail_term_complement(l, -big * c) + tail_term(r, big * c)) / 2; up = std::pow(r * c * big, -1 / r) / 2; }
+            else { f_up_compl = (tail_term_complement(l, -50) + tail_term(r, 50)) / 2; up = std::exp(-50.0); }
+            std::snprintf(buf, sizeof buf, "tail asymptotics for tails (%g,%g): %g vs %g, %g vs %g", l, r, f_low, low, f_up_compl, up);
+            check(near_rel(f_low, low, (l > 0) ? 0.02 + l / 100 : 1e-6) && near_rel(f_up_compl, up, (r > 0) ? 0.02 + r / 100 : 1e-6), buf);
+        }
+    }
+    // joint continuity in the tail indices at zero:
+    for (double pu = -10; pu <= 10; pu += 0.5) {
+        std::snprintf(buf, sizeof buf, "continuity in both tail indices at (0,0), pu=%g", pu);
+        check(near_abs(probunits2probability(pu, 1e-7, 2e-7), probunits2probability(pu, 0, 0), 1e-5), buf);
+    }
+
     std::printf("%d of %d checks passed\n", n_checks - n_failed, n_checks);
     return n_failed ? 1 : 0;
 }

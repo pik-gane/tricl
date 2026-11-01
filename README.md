@@ -149,24 +149,25 @@ shipped in the R package `peacesciencer` (downloaded from its GitHub repository;
 run of years in which a pair of states has a defense pledge becomes one link interval of a symmetric relationship
 type ``defense``; membership of a state in the international system is a link ``[state, is in, system]`` to a hub
 entity, so that "both states are members" is the angle ``[~, is in, system, contains, ~]``. The model has six
-metaparameters: formation attempts at rate ``a0`` per pair of member states plus ``a1`` per common defense ally
-(the angle ``[~, defense, state, defense, ~]``), dissolution attempts at rate ``d0`` with success probability units
+metaparameters: formation attempts at rate ``a0`` per pair of member states and direction plus ``a1`` per common defense
+ally (the angle ``[~, defense, state, defense, ~]``), dissolution attempts at rate ``d0`` per direction with success probability units
 ``-b1`` per common ally (``tails: 0``), and entry and exit rates of states. Data: 217 states, 1816-2018, 3000 pact
 intervals (1707 still in effect in 2018), 4514 events. Maximum-likelihood estimates (standard errors from the
 observed information; the whole fit takes about a minute):
 
 | parameter | estimate | meaning |
 |---|---|---|
-| ``a0`` | 1.78e-4 ± 0.08e-4 /yr | formation rate per pair of member states without common allies |
-| ``a1`` | 1.02e-2 ± 0.02e-2 /yr | additional formation rate per common defense ally |
-| ``d0`` | 0.108 ± 0.005 /yr | dissolution attempt rate |
+| ``a0`` | 1.78e-4 ± 0.08e-4 /yr | formation rate per pair of member states and direction without common allies |
+| ``a1`` | 1.02e-2 ± 0.02e-2 /yr | additional formation rate per common defense ally and direction |
+| ``d0`` | 0.108 ± 0.005 /yr | dissolution attempt rate per direction |
 | ``b1`` | 0.037 ± 0.001 | probability units by which each common ally lowers the dissolution success |
 | ``entry``, ``exit`` | 0.0081 ± 0.0005, 0.0031 ± 0.0004 /yr | entry and exit rates of states |
 
-So a pair with one common ally forms a pact about 58 times as fast as a pair without, and the dissolution hazard
-``d0 · expit(-4 b1 k)`` falls from 0.054/yr without common allies (a mean lifetime of 18 years) to 0.035/yr with
-five, 0.020/yr with ten and 0.002/yr with 26 (the size of NATO). Dropping the ally-of-ally term lowers the
-log-likelihood from -20841 to -30155, dropping the stabilisation term to -21618. Two cautions: the likelihood in
+Since ``defense`` is symmetric, both directed links of a pair are possible events with these rates, so the rates of
+a pair are twice the per-direction rates. So a pair with one common ally forms a pact about 58 times as fast as a pair
+without, and the dissolution hazard ``2 d0 · expit(-4 b1 k)`` falls from 0.108/yr without common allies (a mean
+lifetime of 9 years) to 0.070/yr with five, 0.040/yr with ten and 0.004/yr with 26 (the size of NATO). Dropping the ally-of-ally term lowers the
+log-likelihood from -20841 to -30155, dropping the stabilization term to -21618. Two cautions: the likelihood in
 ``b1`` has a second, much worse local maximum at negative values (a saturated sigmoid), so the fit must start near
 the optimum (the generated config does; ``tricl_fit.py`` from other start values can end there); and a multilateral
 treaty appears as many simultaneous dyadic events, whose order within a year is a convention (by state codes;

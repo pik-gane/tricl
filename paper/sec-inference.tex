@@ -10,7 +10,8 @@ Between events the network is constant, so the total rate $\Lambda(t) = \sum_{\t
   &+ \sum_{i:\ \lambda_i = \infty} \log \frac{1}{m_i},
 \end{split}
 \end{equation}
-where the last sum runs over immediate events and $m_i$ is the number of immediate events pending when event $i$ happened (their order is uniformly random).
+where the last sum runs over immediate events and $m_i$ is the number of immediate events pending when event $i$ happened (their order is uniformly random; Appendix~\ref{app:likelihood} derives Eq.~\eqref{eq:logl}).
+For symmetric and inverse relationship types, $L$ treats the direction of each event as observed; when the rules are invariant under reversal, the likelihood without directions differs from $L$ only by a constant (Appendix~\ref{app:likelihood}).
 The integral is a sum of $\Lambda \times$ waiting time over the inter-event intervals and the final interval up to $T$.
 \tricl\ maintains $\Lambda$ incrementally, recomputes it exactly every $2^{16}$ events against floating-point drift, and accumulates Eq.~\eqref{eq:logl} during simulation.
 In \emph{replay mode} (option \ttt{--events-in}) it reads an event sequence from a csv file instead of drawing events, applies them in order, checks that each is possible under the model, and reports $L(\theta)$.
@@ -33,7 +34,7 @@ Metaparameters enter the coefficients through expressions; the Python driver \tt
 Standard errors come from the observed information, the negative Hessian obtained by finite differences of the analytic gradient.
 
 For fixed probability units, $L$ is concave in the attempt rates (a sum of logarithms of linear functions minus a linear function).
-In the probability units it is not concave in general, because $f$ is sigmoidal; Sec.~\ref{sec:application} shows a case where the profile likelihood is not unimodal. Two identifiability limits are structural: for an event type without any varying angle count only the product $a^0_\tau f(b^0_\tau)$ is identified; and an angle type's attempt-rate and probability-unit coefficients are separately identified only if its count varies enough across events.
+In the probability units it is not concave in general, because $f$ is sigmoidal; Sec.~\ref{sec:application} shows a case where the profile likelihood is not unimodal. Identifiability has a structural limit: $L$ depends on the coefficients of an event type only through its rates at the vectors of angle counts that occur in the data (Appendix~\ref{app:structure}), so for an event type whose rate depends on no angle count only the product $a^0_\tau f(b^0_\tau)$ is identified, and an angle type's attempt-rate and probability-unit coefficients are separately identified only if its count takes enough different values.
 
 \subsection{Parameter recovery}
 We simulated the three-entity model of the test suite (triangle closure: establishment attempts at rate $A + K\,n$ for $n$ common neighbors, termination attempts at rate $D$ with probability units $B_0 + B_K n$) for \RecoveryT\ time units and \RecoverySeeds\ seeds and re-estimated $A$, $K$, $D$ and $B_K$ from each event sequence, starting away from the true values (about \RecoveryEvents\ events per sequence).

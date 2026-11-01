@@ -9,9 +9,9 @@ The number of possible events grows quadratically with the number of entities, b
   Their rates are the leaves of a complete binary \emph{sum tree}, whose inner nodes hold the sums of their children.
   Updating a rate costs $O(\log n)$ for $n$ scheduled events; the root holds the total, and choosing an event with probability proportional to its rate is a descent from the root.
 \item \emph{Summary events}, one per type of spontaneous establishment, which stand for all pairs of entities of the two types.
-  A summary event's leaf holds the upper bound $a^0_\tau p^{\max}_\tau N_1 N_3$, with $N_1, N_3$ the numbers of entities of the two types and $p^{\max}_\tau$ the largest success probability a covered pair can have.
+  A summary event's leaf holds the upper bound $a^0_\tau p^{\max}_\tau N_1 N_3$, with $N_1, N_3$ the numbers of entities of the two types and $p^{\max}_\tau$ an upper bound to the success probability of a covered pair.
   When it is chosen, a pair is drawn uniformly; the attempt is discarded if the pair is identical, already linked or scheduled individually, and otherwise succeeds with probability $f(B)/p^{\max}_\tau$.
-  This is thinning in the sense of \citet{lewis1979}: proposals arrive at the upper-bound rate and are accepted with the ratio of the true to the bounding rate, which yields exactly the true rate for every pair.
+  This is thinning in the sense of \citet{lewis1979}: proposals arrive at the upper-bound rate and are accepted with the ratio of the true to the bounding rate, which yields exactly the true rate for every pair (Appendix~\ref{app:thinning}).
 \item \emph{Immediate events} (infinite rates) are kept in a separate list.
   While it is not empty, one of its events is drawn uniformly and performed without advancing time.
 \end{itemize}

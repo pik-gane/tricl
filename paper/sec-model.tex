@@ -21,6 +21,7 @@ With $n_k(\ell, t)$ the number of angles of type $k$ adjacent to $\ell$ at time 
 \end{aligned}
 \end{equation}
 i.e.\ attempts occur at the rate $A$ and succeed with probability $f(B)$.
+For a symmetric or inverse relationship type, a link and its mirrored link are two possible events with their own rates by Eq.~\eqref{eq:rate} that cause the same change, so the pair is linked or unlinked at the sum of the two rates, i.e.\ at twice the rate of Eq.~\eqref{eq:rate} if the rules are invariant under reversal (Appendix~\ref{app:likelihood}).
 Coefficients may be expressions of named \emph{metaparameters}, which can be overridden on the command line and are the parameters estimated in Sec.~\ref{sec:inference}.
 Infinite coefficients encode logic: a contribution $-\infty$ to $B$ makes the event impossible, and an infinite attempt rate with positive success probability makes it \emph{immediate}; all pending immediate events are performed, in a uniformly random order, before time advances.
 Immediate events implement state machines: if an agent acquires a link \ttt{is infectious for} to the entity \ttt{covid-19}, the rule ``terminate \ttt{is susceptible to} immediately when the angle \ttt{is infectious for}, \ttt{covid-19}, = exists'' removes its previous state.
@@ -37,7 +38,8 @@ The success probability is a sigmoid $f$ of the probability units with two \emph
 \end{equation}
 $T_\sigma$ replaces the exponential tail of the logistic function by the $q$-exponential $(1 + \sigma y)^{-1/\sigma}$ of $y = \ln(1+e^{x})$ \citep{tsallis1988}.
 For $\sigma > 0$ the tail decays like $|B|^{-1/\sigma}$, for $\sigma = 0$ exponentially.
-Since $k(\sigma) = -2T'_\sigma(0)$, $f$ has slope $1$ at $B = 0$ for all tail indices, so that near zero, probability units are differences of probabilities. $f$ is strictly increasing, continuous in the tail indices, and equals $\expit(4B)$ for $\sigma_0 = \sigma_1 = 0$.
+Since $k(\sigma) = -2T'_\sigma(0)$, $f$ has slope $1$ at $B = 0$ for all tail indices, so that near zero, probability units are differences of probabilities.
+The sigmoid is strictly increasing, continuous in the tail indices, equals $\expit(4B)$ for $\sigma_0 = \sigma_1 = 0$, and satisfies $f(-B) = 1 - f(B)$ for $\sigma_0 = \sigma_1$; for unequal tail indices, $f(0)$ lies between $1/4$ and $3/4$ but differs from $1/2$ (Appendix~\ref{app:sigmoid} proves these properties).
 Heavy tails (the default is $\sigma_0 = \sigma_1 = 1$) keep rare events possible when many angles push the probability units far from zero.
 
 \subsection{A model file}
