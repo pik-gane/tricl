@@ -20,6 +20,9 @@ data from the peacesciencer repository into `paper/data/atop_raw/`. `--only NAME
 
 ## Rules
 
+* LaTeX source conventions: one sentence per source line (also in captions), `\citet` instead of
+  written author names, APS abbreviations, few paragraph breaks (details in `../CLAUDE.md`). Enforce with
+  `python3 paper/tools/rewrap.py FILE...`; `--check` is run in CI.
 * Every number in the text comes from `generated/numbers.tex`, every table from `generated/`;
   never edit generated files by hand, rerun the scripts.
 * References: only entries checked against Crossref (`refs.bib`; checked 2026-11-01).

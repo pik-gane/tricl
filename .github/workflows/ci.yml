@@ -29,6 +29,10 @@ jobs:
       - name: Run tests
         run: python3 tests/run_tests.py --bin build/src/tricl
 
+      - name: Check the paper's LaTeX source conventions (one sentence per line)
+        if: matrix.build_type == 'Release'
+        run: python3 paper/tools/rewrap.py --check paper/main.tex paper/sec-*.tex paper/endmatter.tex
+
       - name: Run an example with --debug consistency checks (Debug build only)
         if: matrix.build_type == 'Debug'
         run: |

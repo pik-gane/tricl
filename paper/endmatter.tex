@@ -1,35 +1,22 @@
 \section*{Code and data availability}
-\tricl\ is free software under the GNU General Public License v3 at
-\url{https://github.com/pik-gane/tricl}. The scripts in its directory \texttt{paper/} regenerate every
-figure, table and number of this paper from the code and from public data.
+\tricl\ is free software under the GNU General Public License v3 at \url{https://github.com/pik-gane/tricl}.
+The scripts in its directory \texttt{paper/} regenerate every figure, table and number of this paper from the code and from public data.
 
 % Disclosure required by the APS policy on AI tools (updated June 2026): tool name and version, how the
 % AI assisted, how the author directed it, and how the output was verified.
 % TODO (author): insert the model names and versions at [MODELS] and confirm the statement.
 \section*{Use of AI tools}
-\emph{Tools.} This work used Anthropic's Claude Code (cloud sessions, September--November 2026) with the
-models [MODELS], including parallel sub-agents of the same models.
+\emph{Tools.} This work used Anthropic's Claude Code (cloud sessions, September--November 2026) with the models [MODELS], including parallel sub-agents of the same models.
 
-\emph{Substantive use.} Under the author's direction, the AI system wrote most of the changes in the
-current version of \tricl: the bug fixes in the likelihood and the rate bookkeeping, the performance
-work and the sum-tree scheduler, the new form of the sigmoid (after the author's specification), the
-replay mode with analytic gradients, and the Python tools for estimation, parameter recovery, the
-mean-field approximation, RDF conversion, movies and the alliance data, together with their tests. It
-ran the simulations, fits and benchmarks reported here, wrote the scripts producing the figures and
-tables, searched and checked the literature, and drafted the text of this paper.
+\emph{Substantive use.} Under the author's direction, the AI system wrote most of the changes in the current version of \tricl: the bug fixes in the likelihood and the rate bookkeeping, the performance work and the sum-tree scheduler, the new form of the sigmoid (after the author's specification), the replay mode with analytic gradients, and the Python tools for estimation, parameter recovery, the mean-field approximation, RDF conversion, movies and the alliance data, together with their tests.
+It ran the simulations, fits and benchmarks reported here, wrote the scripts producing the figures and tables, searched and checked the literature, and drafted the text of this paper.
 
-\emph{Assistive use.} Copy-editing, consistency checks between text, code and generated numbers, and
-checking of bibliographic data against Crossref.
+\emph{Assistive use.} Copy-editing, consistency checks between text, code and generated numbers, and checking of bibliographic data against Crossref.
 
-\emph{Direction and verification.} The author designed the model class and wrote the original simulator,
-commissioned and approved a written development plan and its order of work, specified the sigmoid, chose the
-application and the analyses, and reviewed the changes and the text. The code is verified by an automated
-test suite run in continuous integration: the log-likelihood against a closed form, analytic gradients
-against finite differences, replayed against simulated log-likelihoods, the statistics of the new
-scheduler against the previous one, and parameter recovery from simulated data
-(Secs.~\ref{sec:simulation} and \ref{sec:inference}). Every number, table and figure in the paper is
-produced by scripts from the code and the public data, so that it can be regenerated and checked. The
-author takes full responsibility for the content of the paper.
+\emph{Direction and verification.} The author designed the model class and wrote the original simulator, commissioned and approved a written development plan and its order of work, specified the sigmoid, chose the application and the analyses, and reviewed the changes and the text.
+The code is verified by an automated test suite run in continuous integration: the log-likelihood against a closed form, analytic gradients against finite differences, replayed against simulated log-likelihoods, the statistics of the new scheduler against the previous one, and parameter recovery from simulated data (Secs.~\ref{sec:simulation} and \ref{sec:inference}).
+Every number, table and figure in the paper is produced by scripts from the code and the public data, so that it can be regenerated and checked.
+The author takes full responsibility for the content of the paper.
 
 \begin{acknowledgments}
 % TODO (author): funding (and whether the sponsor was involved), thanks.

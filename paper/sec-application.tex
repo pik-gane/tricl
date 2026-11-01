@@ -1,15 +1,11 @@
 \section{Application: military alliances 1816--2018}\label{sec:application}
 
 \subsection{Data and model}
-The Alliance Treaty Obligations and Provisions project \citep{leeds2002} records for every pair of
-states and year whether an alliance with a defense pledge was in effect; we use version 5.1 as
-distributed with the R package \texttt{peacesciencer} \citep{miller2022}, together with the Correlates
-of War list of state system members (version 2016). Every maximal run of consecutive years in which
-a pair has a defense pledge becomes one interval of a symmetric link \ttt{defense}, established at
-the start of its first year and terminated at the start of the year after its last one. Membership
-of a state in the international system is a link \ttt{[state, is in, system]} to a single hub
-entity. This gives \AtopStates\ states, \AtopIntervals\ pact intervals (\AtopCensored\ still in effect
-in 2018) and \AtopEvents\ events (Fig.~\ref{fig:atop}, left). The model has six metaparameters:
+The Alliance Treaty Obligations and Provisions project \citep{leeds2002} records for every pair of states and year whether an alliance with a defense pledge was in effect; we use version 5.1 as distributed with the R package \texttt{peacesciencer} \citep{miller2022}, together with the Correlates of War list of state system members (version 2016).
+Every maximal run of consecutive years in which a pair has a defense pledge becomes one interval of a symmetric link \ttt{defense}, established at the start of its first year and terminated at the start of the year after its last one.
+Membership of a state in the international system is a link \ttt{[state, is in, system]} to a single hub entity.
+This gives \AtopStates\ states, \AtopIntervals\ pact intervals (\AtopCensored\ still in effect in 2018) and \AtopEvents\ events (Fig.~\ref{fig:atop}, left).
+The model has six metaparameters:
 \par\noindent\begin{minipage}{\linewidth}
 \begin{lstlisting}[language=yaml]
 [state, defense, state]:
@@ -28,48 +24,36 @@ in 2018) and \AtopEvents\ events (Fig.~\ref{fig:atop}, left). The model has six 
 \end{lstlisting}
 \end{minipage}
 \noindent Formation thus needs both states to be members (the angle through the hub), and its rate
-grows linearly in the number of common allies; dissolution attempts succeed with probability
-$\expit(-4 b_1 k)$ for $k$ common allies.
+grows linearly in the number of common allies; dissolution attempts succeed with probability $\expit(-4 b_1 k)$ for $k$ common allies.
 
-Two features of the data need a convention. Pledges are recorded per year, so events of the same
-year are simultaneous; we order them as terminations, exits, entries, formations, and formations by
-state codes. And a multilateral treaty appears as many dyadic events in one year, so that the later
-ones already see the earlier ones as common allies. With a random order of the events within a year,
-the estimates change by the amounts discussed below.
+Two features of the data need a convention.
+Pledges are recorded per year, so events of the same year are simultaneous; we order them as terminations, exits, entries, formations, and formations by state codes.
+And a multilateral treaty appears as many dyadic events in one year, so that the later ones already see the earlier ones as common allies.
+With a random order of the events within a year, the estimates change by the amounts discussed below.
 
 \subsection{Results}
-Table~\ref{tab:atop} reports the maximum-likelihood estimates. A pair of member states without a
-common ally forms a pact at a rate of $\AtopAzero$ per year; each common ally adds $\AtopAone$, so
-that one common ally raises the formation rate about \AtopFormationRatio-fold. The dissolution hazard
-is $d_0\,\expit(-4 b_1 k)$: \AtopHazZero\ per year without common allies (a mean pact duration of
-\AtopLifeZero\ years), \AtopHazFive\ with five and \AtopHazTwentySix\ with 26, the size of NATO in 2004
-(Fig.~\ref{fig:atop}, right). Both effects are strongly supported: removing the ally-of-ally term
-from the formation rule lowers the maximal log-likelihood by \AtopDropAone, removing the
-stabilization term by \AtopDropBone. With a random order of the simultaneous events, $a_0$ changes by
-\AtopShuffleAzero\%, $a_1$ by \AtopShuffleAone\% and $b_1$ by \AtopShuffleBone\%, so the formation
-effect partly reflects treaty-level events, which a model with an explicit treaty entity type could
-separate.
+Table~\ref{tab:atop} reports the maximum-likelihood estimates.
+A pair of member states without a common ally forms a pact at a rate of $\AtopAzero$ per year; each common ally adds $\AtopAone$, so that one common ally raises the formation rate about \AtopFormationRatio-fold.
+The dissolution hazard is $d_0\,\expit(-4 b_1 k)$: \AtopHazZero\ per year without common allies (a mean pact duration of \AtopLifeZero\ years), \AtopHazFive\ with five and \AtopHazTwentySix\ with 26, the size of NATO in 2004 (Fig.~\ref{fig:atop}, right).
+Both effects are strongly supported: removing the ally-of-ally term from the formation rule lowers the maximal log-likelihood by \AtopDropAone, removing the stabilization term by \AtopDropBone.
+With a random order of the simultaneous events, $a_0$ changes by \AtopShuffleAzero\%, $a_1$ by \AtopShuffleAone\% and $b_1$ by \AtopShuffleBone\%, so the formation effect partly reflects treaty-level events, which a model with an explicit treaty entity type could separate.
 
-The profile log-likelihood of $b_1$ (Fig.~\ref{fig:atop}, middle) is not unimodal. Below a local
-minimum at small negative values it rises again towards a plateau as $b_1 \to -\infty$, where any
-common ally makes every dissolution attempt succeed; the plateau lies about \AtopProfileGap\
-log-likelihood units below the maximum. An optimiser started at negative values drifts towards the
-plateau, which illustrates the non-concavity in the probability units noted in
-Sec.~\ref{sec:inference}; the generated model therefore starts the fit at a positive value. A likelihood evaluation of the \AtopEvents\ events takes about
-\AtopEvalSeconds\ seconds, a complete fit with standard errors about a minute.
+The profile log-likelihood of $b_1$ (Fig.~\ref{fig:atop}, middle) is not unimodal. Below a local minimum at small negative values it rises again towards a plateau as $b_1 \to -\infty$, where any common ally makes every dissolution attempt succeed; the plateau lies about \AtopProfileGap\ log-likelihood units below the maximum.
+An optimiser started at negative values drifts towards the plateau, which illustrates the non-concavity in the probability units noted in Sec.~\ref{sec:inference}; the generated model therefore starts the fit at a positive value.
+A likelihood evaluation of the \AtopEvents\ events takes about \AtopEvalSeconds\ seconds, a complete fit with standard errors about a minute.
 
 \begin{table*}[t]
-\caption{Maximum-likelihood estimates for the alliance model (standard errors from the observed
-information). Rates per year.}
+\caption{Maximum-likelihood estimates for the alliance model (standard errors from the observed information).
+Rates per year.}
 \label{tab:atop}
 \input{generated/table-atop}
 \end{table*}
 
 \begin{figure*}[t]
 \includegraphics[width=\textwidth]{generated/fig-atop}
-\caption{Defense pacts between states. Left: number of pairs of states with a defense pledge in
-effect, per year. Middle: profile log-likelihood of the stabilization parameter $b_1$ (all other
-parameters re-estimated), relative to its maximum (symmetric-log horizontal axis).
+\caption{Defense pacts between states.
+Left: number of pairs of states with a defense pledge in effect, per year.
+Middle: profile log-likelihood of the stabilization parameter $b_1$ (all other parameters re-estimated), relative to its maximum (symmetric-log horizontal axis).
 Right: estimated dissolution hazard as a function of the number of common allies.}
 \label{fig:atop}
 \end{figure*}
