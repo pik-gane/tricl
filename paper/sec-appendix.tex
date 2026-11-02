@@ -1,179 +1,63 @@
 \appendix
 
-\section{Properties of the sigmoid}\label{app:sigmoid}
-For $\sigma, y \ge 0$ let
-\begin{equation}\label{eq:g}
-  h_\sigma(y) = \int_0^y \frac{dz}{1 + \sigma z}, \qquad g_\sigma(y) = e^{-h_\sigma(y)},
-\end{equation}
-so that $g_\sigma(y) = (1 + \sigma y)^{-1/\sigma}$ for $\sigma > 0$ and $g_0(y) = e^{-y}$.
-In terms of the $q$-exponential $e_q(u) = [1 + (1-q)u]^{1/(1-q)}$ of \citet{tsallis1988}, $g_\sigma(y) = e_{1+\sigma}(-y)$.
-With the softplus function $s(x) = \ln(1 + e^x)$, whose derivative is $s'(x) = \expit(x) = 1/(1 + e^{-x})$, the functions of Eq.~\eqref{eq:sigmoid} are $T_\sigma = g_\sigma \circ s$ and $k(\sigma) = g_\sigma(\ln 2)/(1 + \sigma \ln 2)$, for $\sigma = 0$ as well as for $\sigma > 0$.
-We write $c = 4/[k(\sigma_0) + k(\sigma_1)]$, so that $v = cB$, write $f_{\sigma_0\sigma_1}$ for $f$ when the tail indices matter, and write $F(B) \simeq G(B)$ if $F(B)/G(B) \to 1$.
-
-\begin{lemma}\label{lem:g}
-The function $h_\sigma(y)$ is continuous in $(\sigma, y) \in [0, \infty)^2$, smooth in $y$ with $\partial_y h_\sigma(y) = 1/(1 + \sigma y)$, unbounded in $y$, and, for $y > 0$, strictly decreasing in $\sigma$.
-It equals $y\,\varphi(\sigma y)$ with $\varphi(u) = \int_0^1 d\tau/(1 + u\tau)$, which is continuous, strictly decreasing, and takes values in $(0, 1]$.
-Consequently, $g_\sigma$ decreases strictly from $g_\sigma(0) = 1$ towards $0$, $g_\sigma'(y) = -g_\sigma(y)/(1 + \sigma y)$, and $1 - g_\sigma(y) \simeq y$ for $y \to 0$.
-\end{lemma}
-
-\begin{proof}
-The integrand $1/(1 + \sigma z)$ is positive, continuous in $(\sigma, z)$ and, for $z > 0$, strictly decreasing in $\sigma$, which gives continuity, the derivative and the monotonicity in $\sigma$.
-Unboundedness follows from $h_\sigma(y) = \ln(1 + \sigma y)/\sigma$ for $\sigma > 0$ and $h_0(y) = y$.
-The substitution $z = y\tau$ gives $h_\sigma(y) = y\,\varphi(\sigma y)$, and the properties of $\varphi$ are those of its integrand.
-The statements on $g_\sigma$ follow from $g_\sigma(0) = 1$ and $g_\sigma'(0) = -1$.
-\end{proof}
-
-\begin{proposition}\label{prop:sigmoid}
-For all tail indices $\sigma_0, \sigma_1 \ge 0$, the following holds.
-\begin{itemize}
-\item[(a)] The sigmoid $f$ is smooth, $0 < f(B) < 1$, $f(B) \to 0$ for $B \to -\infty$, and $f(B) \to 1$ for $B \to \infty$.
-\item[(b)] The tail term has the derivative $T_\sigma'(x) = -\expit(x)\, g_\sigma(s(x))/[1 + \sigma s(x)] < 0$, hence $k(\sigma) = -2T_\sigma'(0)$, and $k$ decreases strictly from $k(0) = 1/2$ towards $0$ as $\sigma$ increases.
-\item[(c)] The derivative of the sigmoid is $f'(B) = \frac{c}{2}\,[-T_{\sigma_0}'(-v) - T_{\sigma_1}'(v)] > 0$, and $f'(0) = 1$.
-\item[(d)] Exchanging the tail indices mirrors the sigmoid: $f_{\sigma_0\sigma_1}(-B) = 1 - f_{\sigma_1\sigma_0}(B)$.
-  In particular, $f(-B) = 1 - f(B)$ and $f(0) = 1/2$ if $\sigma_0 = \sigma_1$.
-  In general, $f(0) = \frac12 + \frac12\bigl(2^{-\varphi(\sigma_0 \ln 2)} - 2^{-\varphi(\sigma_1 \ln 2)}\bigr)$, which lies in $(1/4, 3/4)$ and exceeds $1/2$ if and only if $\sigma_0 > \sigma_1$.
-\item[(e)] For $B \to -\infty$, $f(B) \simeq \frac12 (\sigma_0 c |B|)^{-1/\sigma_0}$ if $\sigma_0 > 0$, and $f(B) \simeq e^{-c|B|}$ if $\sigma_0 = 0$.
-  For $B \to \infty$, the same holds for $1 - f(B)$ with $\sigma_1$ in place of $\sigma_0$.
-\item[(f)] If $\sigma_0 = \sigma_1 = 0$, then $f(B) = \expit(4B)$.
-\item[(g)] The sigmoid $f$ and its derivative $f'$ are continuous in $(\sigma_0, \sigma_1, B) \in [0, \infty)^2 \times \R$, including at vanishing tail indices.
-\end{itemize}
-\end{proposition}
-
-\begin{proof}
-(a) The softplus function maps $\R$ onto $(0, \infty)$, and by Lemma~\ref{lem:g} $g_\sigma$ maps $(0, \infty)$ into $(0, 1)$, so both summands $\frac12 T_{\sigma_0}(-v)$ and $\frac12[1 - T_{\sigma_1}(v)]$ of $f$ lie in $(0, 1/2)$.
-As $x \to -\infty$, $s(x) \to 0$ and $T_\sigma(x) \to 1$; as $x \to \infty$, $s(x) \to \infty$ and $T_\sigma(x) \to 0$ because $h_\sigma$ is unbounded.
-Both summands therefore tend to $0$ for $B \to -\infty$ and to $1/2$ for $B \to \infty$.
-Smoothness holds because $f$ is a composition of smooth functions.
-
-(b) The chain rule and Lemma~\ref{lem:g} give $T_\sigma'$.
-With $s(0) = \ln 2$ and $\expit(0) = 1/2$, $-2T_\sigma'(0) = g_\sigma(\ln 2)/(1 + \sigma \ln 2) = k(\sigma)$, and $k(0) = 1/2$.
-With $y = \ln 2$, $\ln k(\sigma) = -h_\sigma(y) - \ln(1 + \sigma y)$, so $\frac{d}{d\sigma} \ln k(\sigma) = \int_0^y \frac{z\,dz}{(1 + \sigma z)^2} - \frac{y}{1 + \sigma y}$.
-Since $z/(1 + \sigma z) \le y/(1 + \sigma y)$ for $z \le y$, the integral is at most $\frac{y}{1 + \sigma y} h_\sigma(y) \le \frac{y^2}{1 + \sigma y}$, which is smaller than $\frac{y}{1 + \sigma y}$ because $y < 1$.
-Hence $k$ is strictly decreasing, and $k(\sigma) \le (1 + \sigma \ln 2)^{-1} \to 0$.
-
-(c) The chain rule with $dv/dB = c$ gives $f'$, which is positive by (b).
-At $B = 0$, $f'(0) = \frac{c}{2}\,\frac{k(\sigma_0) + k(\sigma_1)}{2} = 1$.
-
-(d) Since $c$ is symmetric in the tail indices, $f_{\sigma_0\sigma_1}(-B) = \frac12 T_{\sigma_0}(v) + \frac12 - \frac12 T_{\sigma_1}(-v) = 1 - f_{\sigma_1\sigma_0}(B)$.
-At $B = 0$, $f(0) = \frac12 + \frac12[T_{\sigma_0}(0) - T_{\sigma_1}(0)]$ with $T_\sigma(0) = g_\sigma(\ln 2) = 2^{-\varphi(\sigma \ln 2)}$, which by Lemma~\ref{lem:g} lies in $[1/2, 1)$ and is strictly increasing in $\sigma$.
-
-(e) As $x \to \infty$, $s(x) = x + \ln(1 + e^{-x}) = x + o(1)$, so that $T_\sigma(x) = [1 + \sigma s(x)]^{-1/\sigma} \simeq (\sigma x)^{-1/\sigma}$ for $\sigma > 0$ and $T_0(x) = e^{-s(x)} \simeq e^{-x}$.
-Moreover, $s(-x) = \ln(1 + e^{-x}) \simeq e^{-x}$, so that $1 - T_\sigma(-x) \simeq e^{-x}$ for all $\sigma$ by Lemma~\ref{lem:g}.
-For $B \to -\infty$, $x = c|B|$ and $f(B) = \frac12 T_{\sigma_0}(x) + \frac12[1 - T_{\sigma_1}(-x)]$, whose second summand is $\simeq \frac12 e^{-x}$.
-If $\sigma_0 > 0$, the first summand is $\simeq \frac12 (\sigma_0 x)^{-1/\sigma_0}$ and dominates the second; if $\sigma_0 = 0$, it is $\simeq \frac12 e^{-x}$ as well.
-The statement for $B \to \infty$ follows with (d).
-
-(f) Here $c = 4$ and $T_0(x) = 1/(1 + e^x) = \expit(-x)$, so that $f(B) = \frac12 \expit(4B) + \frac12[1 - \expit(-4B)] = \expit(4B)$.
-
-(g) By Lemma~\ref{lem:g}, $g_\sigma(y)$ and $g_\sigma'(y)$ are continuous in $(\sigma, y)$, hence so are $T_\sigma(x)$, $T_\sigma'(x)$ and the positive function $k(\sigma)$, and therefore $c$, $v$, $f$ and $f'$.
-\end{proof}
-
-\noindent \tricl\ evaluates $f$ as $\frac12\{T_{\sigma_0}(-v) + [1 - T_{\sigma_1}(v)]\}$ with the complement computed directly, which by (e) avoids cancellation for small probabilities.
-The test suite checks (b)--(g) numerically.
-
-\section{Exactness of the simulation with summary events}\label{app:thinning}
-Fix a state $x$ without pending immediate events, and let $\mathcal{F}(x)$ be the set of possible events with positive finite rates $\lambda_e = \lambda_e(x)$ and $\Lambda = \sum_{e \in \mathcal{F}(x)} \lambda_e$ their total rate.
-Every $e \in \mathcal{F}(x)$ is either scheduled individually or is the establishment of a link of a type $\tau$ with $a^0_\tau > 0$ between an ordered pair in the set $C_\tau(x)$ of covered pairs: distinct entities of the two types, not linked by the relationship type of $\tau$, and without adjacent angles of a type that influences $\tau$.
-For a covered pair, $A = a^0_\tau$ and $B = b^0_\tau$ in Eq.~\eqref{eq:rate} (rules on single links are rejected by the current version), so that $\lambda_e = a^0_\tau f(b^0_\tau)$.
-The sum tree holds the weight $w_e = \lambda_e$ of every individually scheduled event and the weight $W_\tau = a^0_\tau p^{\max}_\tau N_1 N_3$ of every summary event, where $p^{\max}_\tau$ is $f(b^0_\tau)$ if no rule of $\tau$ has positive probability units and $1$ otherwise, so that $p^{\max}_\tau \ge f(b^0_\tau)$.
-Let $W$ be the total weight.
-An attempt waits an exponentially distributed time with rate $W$ and chooses an entry with probability proportional to its weight; an individual event is performed, while a summary event draws an ordered pair uniformly from the $N_1 N_3$ pairs of the two types and performs the establishment with probability $f(b^0_\tau)/p^{\max}_\tau$ if the pair is in $C_\tau(x)$, and otherwise does nothing.
-
-\begin{proposition}\label{prop:thinning}
-The state changes produced by this algorithm form the continuous-time Markov chain with the rates of Eq.~\eqref{eq:rate}: from $x$, the waiting time until the next change is exponentially distributed with rate $\Lambda$, the change is $e$ with probability $\lambda_e/\Lambda$, and the two are independent.
-\end{proposition}
-
-\begin{proof}
-An attempt performs a given individually scheduled event with probability $\lambda_e/W$, and a given covered pair of type $\tau$ with probability $\frac{W_\tau}{W} \cdot \frac{1}{N_1 N_3} \cdot \frac{f(b^0_\tau)}{p^{\max}_\tau} = \frac{\lambda_e}{W}$; with the remaining probability $1 - \Lambda/W \ge 0$ it does nothing.
-Attempts that do nothing leave the state and hence all weights unchanged, so as long as the state is $x$ the attempts form a Poisson process with rate $W$ whose points are independently marked with these probabilities.
-By the thinning theorem for Poisson processes \citep{lewis1979}, the attempts performing $e$ form independent Poisson processes with rates $\lambda_e$, $e \in \mathcal{F}(x)$.
-The first state change is thus the first point of these independent processes, which happens after an exponentially distributed time with rate $\Lambda$ and is $e$ with probability $\lambda_e/\Lambda$, independently of the time.
-After a change, the algorithm continues with new independent random numbers from the new state, so the claim follows by induction over the changes.
-\end{proof}
-
-\noindent The direct method without summary events \citep{gillespie1977} is the special case $W = \Lambda$.
-During the simulation, \tricl\ adds $-\Lambda(x)\,\Delta t$ to the log-likelihood for the waiting time $\Delta t$ before every attempt, including those that do nothing, and $\ln \lambda_e$ for every performed finite-rate event.
-Since $x$ is constant between changes, the accumulated sum equals Eq.~\eqref{eq:logl} for the simulated sequence, and the attempts that do nothing do not enter it otherwise.
-
 \section{The log-likelihood}\label{app:likelihood}
-Let $\mathcal{I}(x)$ be the set of immediate events in state $x$, i.e.\ of possible events with infinite attempt rate and probability units larger than $-\infty$.
-The process performs a uniformly drawn event of $\mathcal{I}(x)$ without advancing time as long as $\mathcal{I}(x)$ is not empty, and otherwise evolves as in Appendix~\ref{app:thinning}.
-We assume that every cascade of immediate events ends after finitely many events, as it otherwise would not define a process.
-An observation consists of the initial state $x_0$ and the events $e_1, \dots, e_m$ in $[0, T]$ at times $0 \le t_1 \le \dots \le t_m \le T$; $x_i$ is the state after event $i$, $t_0 = 0$, $x(t) = x_i$ for $t_i \le t < t_{i+1}$ (with $t_{m+1} = T$), and $i$ is called immediate if $e_i \in \mathcal{I}(x_{i-1})$.
-The observation is \emph{admissible} if every immediate event happens at the time of its predecessor ($t_i = t_{i-1}$), every non-immediate event $e_i$ is in $\mathcal{F}(x_{i-1})$ and happens when no immediate event is pending ($\mathcal{I}(x_{i-1}) = \emptyset$), and no immediate event is pending at the end ($\mathcal{I}(x_m) = \emptyset$); replay mode reports observations that are not admissible as impossible.
+Let $x(t)$ be the state at time $t$: the set of links, and the impact $I_a(t)$ of every existing action $a$.
+Between events, impacts decay deterministically, $I_a(t) = I_a(t_0)\,e^{-\delta_a (t - t_0)}$, and an action ceases to exist when its impact reaches its threshold, at a deterministic time.
+Forced events happen at given times, and triggered acts happen together with the contact events that trigger them.
+All other events are random with rates $\lambda_e(x(t))$ that depend on the links and, through angles weighted by impacts, continuously on time.
+Let $\Lambda(t)$ be their total rate.
 
 \begin{proposition}\label{prop:likelihood}
-The probability density of an admissible observation with respect to the counting measure on event sequences and the Lebesgue measure on the times of the non-immediate events is
+Given the initial state and the forced events, the probability density of a sequence of random events $e_1, \dots, e_m$ at times $t_1 < \dots < t_m$ in $[0, T]$ is
 \begin{equation*}
-\begin{split}
-  p ={}& \prod_{i \text{ not immediate}} \lambda_{e_i}(x_{i-1}) \prod_{i \text{ immediate}} \frac{1}{|\mathcal{I}(x_{i-1})|} \\
-  &\times \exp\Bigl(-\int_0^T \Lambda(x(t))\,dt\Bigr),
-\end{split}
+  p = \prod_{i=1}^m \lambda_{e_i}(x(t_i^-)) \, \exp\Bigl(-\int_0^T \Lambda(t)\,dt\Bigr),
 \end{equation*}
-and the density of an observation that is not admissible is zero, so that $\ln p$ is Eq.~\eqref{eq:logl} with $m_i = |\mathcal{I}(x_{i-1})|$.
+and its logarithm is Eq.~\eqref{eq:logl}.
 \end{proposition}
 
 \begin{proof}
-By the Markov property, the density factorizes into the conditional densities of each event given the observation up to its predecessor, times the conditional probability of no further event in $(t_m, T]$.
-If $\mathcal{I}(x_{i-1})$ is not empty, the next event happens at time $t_{i-1}$ and is $e_i$ with probability $1/|\mathcal{I}(x_{i-1})|$.
-Otherwise, by Proposition~\ref{prop:thinning}, the joint density of its time and identity is $\Lambda e^{-\Lambda (t_i - t_{i-1})} \cdot \lambda_{e_i}/\Lambda = \lambda_{e_i} e^{-\Lambda (t_i - t_{i-1})}$ with $\Lambda = \Lambda(x_{i-1})$.
-The probability of no event in $(t_m, T]$ is $e^{-\Lambda(x_m)(T - t_m)}$.
-Intervals after immediate events have length zero, and the exponents add up to the integral because $x(t)$ is constant between events.
-Any other observation requires an event that has probability zero given its past.
+Between the times of random events, forced events, and expiries of actions, the state changes only deterministically, so the process is a point process with the stochastic intensity $\Lambda(t)$ with respect to its history, and an event at time $t$ is $e$ with probability $\lambda_e(x(t^-))/\Lambda(t)$.
+The density of a point process with intensity $\Lambda$ is $\prod_i \Lambda(t_i) \exp(-\int_0^T \Lambda\,dt)$, and multiplying by the probabilities of the identities gives $p$.
+Forced events and expiries happen at times determined by the past and the given input, and triggered acts with probability one, so they add no factors.
 \end{proof}
 
-\noindent For a symmetric relationship type, or one with an inverse, the events $e = (e_1, r, e_3)$ and $\bar e = (e_3, \bar r, e_1)$, with $\bar r$ the inverse of $r$ ($\bar r = r$ if $r$ is symmetric), cause the same change of the network.
-Both are possible events with their own rates by Eq.~\eqref{eq:rate}, so the change happens at the rate $\lambda_e + \lambda_{\bar e}$, and Proposition~\ref{prop:likelihood} is the likelihood of the event sequence including the label which of the two happened (in replay mode, the direction written in the event file).
-If the labels are not observed, the likelihood of the unlabeled sequence replaces $\lambda_{e_i}$ by $\lambda_{e_i} + \lambda_{\bar e_i}$ and $1/m_i$ by the share of labels of the change among the pending immediate events, so that, apart from the terms of immediate events, its logarithm is $L + \sum_i \ln(1 + \lambda_{\bar e_i}/\lambda_{e_i})$.
-This differs from $L$ by a constant, and maximum-likelihood estimates, likelihood ratios and standard errors are the same, if for every type of such events either $\lambda_e = \lambda_{\bar e}$ in all states (the constant is then $\ln 2$ per event of this type, immediate or not) or $\lambda_{\bar e} = 0$ in all states with the observed events labeled by $e$ (the constant is then $0$).
-Both cases occur in the model of Sec.~\ref{sec:application}: the rules of \ttt{defense} are invariant under reversal, because they involve only the symmetric type \ttt{defense} and the mutually inverse types \ttt{is in} and \ttt{contains}, and membership events have rules only for \ttt{is in}.
+\noindent \tricl\ computes the integral event by event: the rate of an event changes deterministically between its updates, and when an event is updated or removed, the integral of its rate since its last update is added by Gauss--Legendre quadrature (eight nodes on pieces of length at most $1/\delta_{\max}$, where $\delta_{\max}$ is the largest decay rate of its weighted angles, which gives a relative accuracy of about $10^{-13}$).
+The gradient is accumulated in the same way.
+For the symmetric relationship type of contacts, the two directions $e = (i, j)$ and $\bar e = (j, i)$ of a pair are two possible events that cause the same change; Proposition~\ref{prop:likelihood} is the likelihood of the sequence with the recorded direction of each event, and the likelihood without directions replaces $\lambda_{e_i}$ by $\lambda_{e_i} + \lambda_{\bar e_i}$.
+Since all models in this paper have $\lambda_e = \lambda_{\bar e}$ in every state, the two log-likelihoods differ by the constant $m \ln 2$, and estimates, likelihood differences and standard errors are the same.
+The competing model C1 is implemented with the same convention.
 
-\section{Structure of the log-likelihood}\label{app:structure}
-Let the estimated parameters $\theta$ be finite coefficients of Eq.~\eqref{eq:rate}, with all infinite coefficients fixed, so that the sets $\mathcal{I}(x)$ and the last sum in Eq.~\eqref{eq:logl} do not depend on $\theta$.
-For an event type $\tau$ with influencing angle types $k = 1, \dots, K_\tau$ and a vector $n \in \mathbb{N}^{K_\tau}$ of angle counts, let $A_\tau(n) = a^0_\tau + \sum_k a_{\tau k} n_k$, $B_\tau(n) = b^0_\tau + \sum_k b_{\tau k} n_k$ and $\lambda_\tau(n) = A_\tau(n) f(B_\tau(n))$.
-Let $D_\tau(n)$ be the number of non-immediate events of type $\tau$ with angle counts $n$ in the observation, and $E_\tau(n) = \int_0^T M_\tau(n, t)\,dt$ the exposure, where $M_\tau(n, t)$ is the number of possible non-immediate events of type $\tau$ with angle counts $n$ at time $t$.
+\section{Exactness of the simulation}\label{app:thinning}
+The sum tree of rates holds, for every individually scheduled event $e$, a weight $w_e \ge \lambda_e(x(s))$ for all times $s$ until its next update: for constant rates $w_e = \lambda_e$, and for rates with decaying impacts $w_e = \bar A f(\bar B)$, with $\bar A$ the attempt rate at the last update (attempt coefficients are non-negative, so the attempt rate decreases as impacts decay) and $\bar B$ the probability units at the last update with all negative contributions of decaying angles omitted.
+Pairs without adjacent angles are covered by one entry per event type, whose weight is an upper bound of the sum of their rates; an attempt of this entry draws a pair through a channel chosen proportionally to its attempt rate (a uniformly random pair, or a uniformly random link of a leg type and a uniformly random partner) and is accepted with the ratio of the pair's success probability to an upper bound.
+Let $W$ be the total weight.
 
-\begin{proposition}\label{prop:structure}
-The log-likelihood is
+\begin{proposition}\label{prop:thinning}
+If an attempt waits an exponential time with rate $W$, chooses an entry proportionally to its weight, performs a chosen individually scheduled event $e$ with probability $\lambda_e(x(t))/w_e$ (and otherwise refreshes its weight at time $t$), and processes forced events and expiries when their times are reached before the next attempt, then the produced events have the law of the process of Proposition~\ref{prop:likelihood}.
+\end{proposition}
+
+\begin{proof}
+Between updates, the attempts form a Poisson process of rate $W$ whose points are independently marked; an attempt at time $t$ produces event $e$ with probability $\lambda_e(x(t))/W$, both for individually scheduled events and for covered pairs, since the channel probabilities and acceptance ratios multiply to $\lambda_e/W$.
+By the thinning theorem \citep{lewis1979,ogata1981}, the produced events form a point process with intensity $\lambda_e(x(t))$ for each $e$, as long as $w_e \ge \lambda_e(x(s))$ on the interval, which holds by construction.
+Refreshing a weight after a rejected attempt and processing deterministic events changes the bounds and the state only at stopping times, after which the argument applies anew with fresh exponential waiting times (the waiting time is memoryless).
+\end{proof}
+
+\section{Time-rescaling residuals}\label{app:residuals}
+Under a correct model, the termination of a contact between $i$ and $j$ that started at time $s$ has the hazard $h(t) = \lambda_{(i,j)}(x(t)) + \lambda_{(j,i)}(x(t))$ given the path, so that $\Lambda = \int_s^{s+\tau} h(t)\,dt$, with $\tau$ the duration, is a unit exponential variable, and these variables are independent across contacts \citep{brown2002}.
+\tricl\ accumulates the integrated rate of every termination event from the time it is added (when the contact starts) to its occurrence, including time-varying rates, and adds the integral of the mirrored event of the same pair.
+Contacts still in progress at the end of a day are not included, which slightly favors short durations; the effect is small, since few contacts are in progress at 17:00.
+
+\section{Pair closure}\label{app:closure}
+For a class with $N$ students and $M = N(N-1)/2$ pairs, let $L_c$ be the number of pairs with marks $c$ in contact (out of $M_c$), $L = \sum_c L_c$, $U = M - L$, and $Z$ and $O$ the sums of the numbers $n$ of common contacts over pairs in contact and not in contact.
+Since every two-path is counted once in $Z + O$, $\sum_i d_i (d_i - 1) = 2(Z + O)$ for the numbers of contacts $d_i$.
+The closure assumes that, for a pair in contact, $n \sim \mathrm{Poisson}(Z/L)$ and the other contacts of the two students beyond the common ones are Poisson with mean $2 b_1$, $b_1 = (Z + O)/L - Z/L$ (the mean number of other contacts of an endpoint of a contact, $\sum_i d_i(d_i - 1)/\sum_i d_i$, minus the common ones), and for a pair not in contact $n \sim \mathrm{Poisson}(O/U)$ with $b_0 = [\sum_i d_i (N - 1 - d_i)]/(2U) - O/U$.
+With $\lambda^{\pm}_c(n, m)$ the pair rates of formation and termination (both directions) for a pair with marks $c$, $n$ common contacts and $m$ other contacts of its endpoints, and $\langle \cdot \rangle_0$, $\langle \cdot \rangle_1$ the expectations under these distributions,
 \begin{equation*}
-  L(\theta) = \sum_\tau \sum_n \bigl[D_\tau(n) \ln \lambda_\tau(n; \theta) - E_\tau(n)\, \lambda_\tau(n; \theta)\bigr] + C,
+\begin{aligned}
+  \dot L_c &= (M_c - L_c) \langle \lambda^+_c \rangle_0 - L_c \langle \lambda^-_c \rangle_1, \\
+  \dot Z &= \textstyle\sum_c \bigl[(M_c - L_c) \langle 3 n \lambda^+_c \rangle_0 - L_c \langle 3 n \lambda^-_c \rangle_1\bigr], \\
+  \dot O &= \textstyle\sum_c \bigl[(M_c - L_c) \langle (m - n) \lambda^+_c \rangle_0 - L_c \langle (m - n) \lambda^-_c \rangle_1\bigr],
+\end{aligned}
 \end{equation*}
-with $C$ independent of $\theta$.
-Consequently, the following holds.
-\begin{itemize}
-\item[(a)] The gradient is given by the formulas of Sec.~\ref{sec:inference}.
-\item[(b)] For fixed probability-unit coefficients, $L$ is concave in the attempt-rate coefficients on the set where it is finite, and strictly concave if for every $\tau$ the vectors $(1, n)$ with $D_\tau(n) > 0$ span $\R^{K_\tau + 1}$.
-\item[(c)] The log-likelihood depends on the coefficients of $\tau$ only through the rates $\lambda_\tau(n)$ at the count vectors $n$ in $S_\tau = \{n : D_\tau(n) + E_\tau(n) > 0\}$.
-  Coefficients are therefore identified only if the map from the coefficients of $\tau$ to $(\lambda_\tau(n))_{n \in S_\tau}$ is injective; in particular, at most $|S_\tau|$ functions of them are identified.
-\item[(d)] Without restrictions on the rates $\lambda_\tau(n)$, $n \in S_\tau$, the log-likelihood is maximal at $\hat\lambda_\tau(n) = D_\tau(n)/E_\tau(n)$.
-\end{itemize}
-\end{proposition}
-
-\begin{proof}
-In Eq.~\eqref{eq:logl}, the term of every non-immediate event depends on its type and angle counts only, which gives the first sum.
-The total rate is $\Lambda(t) = \sum_\tau \sum_n M_\tau(n, t)\,\lambda_\tau(n)$, so that $\int_0^T \Lambda\,dt = \sum_\tau \sum_n E_\tau(n)\,\lambda_\tau(n)$.
-The immediate events contribute $C$.
-(a) follows by differentiating with $\partial \lambda_\tau(n)/\partial a_{\tau k} = n_k f(B_\tau(n))$ and $\partial \lambda_\tau(n)/\partial b_{\tau k} = n_k A_\tau(n) f'(B_\tau(n))$ (and $n_k = 1$ for the basic coefficients), and by $\sum_n E_\tau(n)\, g(n) = \int_0^T \sum_\ell g(n(\ell, t))\,dt$ for every function $g$ of the counts.
-(b) For fixed probability units, $\lambda_\tau(n) = f(B_\tau(n))\,(1, n) \cdot \alpha_\tau$ with $\alpha_\tau = (a^0_\tau, a_{\tau 1}, \dots)$ and a nonnegative factor $f(B_\tau(n))$; the logarithm of a nonnegative affine function is concave, and strictly so along directions in which the function is not constant.
-(c) follows from the representation of $L$, since every $\lambda_\tau(n)$ with $n \notin S_\tau$ has zero weight.
-(d) Each summand $D \ln \lambda - E \lambda$ is maximal at $\lambda = D/E$.
-\end{proof}
-
-\noindent For an event type whose rate depends on no angle count, $S_\tau$ has the single element $n = 0$, and only $\lambda_\tau(0) = a^0_\tau f(b^0_\tau)$ is identified; for one angle type with counts $0, \dots, K$, the four coefficients $a^0_\tau, a_{\tau 1}, b^0_\tau, b_{\tau 1}$ need at least four counts in $S_\tau$.
-The maximum in (d) is an upper bound to $L$ for every parametric model and thus a reference for goodness of fit.
-The concavity in (b) refers to the coefficients; metaparameters that enter them nonlinearly need not preserve it.
-
-\section{Exactness of the mean-field equation without angle influences}\label{app:meanfield}
-\begin{proposition}\label{prop:meanfield}
-If no event type is influenced by any angle type, including angles through the identity relationship, and all basic attempt rates are finite, then the expected numbers of links $\E n_L(t)$ solve Eq.~\eqref{eq:mf} as generated by \ttt{tricl\_macro.py}, and $n_L(t)/P_L \to \E n_L(t)/P_L$ in probability for every $t$ as the number $P_L$ of ordered pairs of entities of the two types grows.
-\end{proposition}
-
-\begin{proof}
-Without angle influences, the rate of every event depends only on its type, and every event changes only the links between its two entities.
-For a link type $L = (\alpha, r, \gamma)$ and an ordered pair of entities of types $\alpha$ and $\gamma$, the indicator $X(t)$ of the link is therefore a two-state Markov chain, independent of the chains of all pairs that do not consist of the same two entities, which switches on at the rate $\lambda^{\text{est}} = \lambda^{\text{est}}_L + \lambda^{\text{est}}_{\bar L}$ and off at the rate $\lambda^{\text{term}} = \lambda^{\text{term}}_L + \lambda^{\text{term}}_{\bar L}$, where $\bar L = (\gamma, \bar r, \alpha)$ is the mirrored link type of a symmetric or inverse relationship type and the second rates are absent otherwise.
-Hence $\frac{d}{dt} \E X = \lambda^{\text{est}} (1 - \E X) - \lambda^{\text{term}} \E X$, and summing over the pairs gives $\frac{d}{dt} \E n_L = \lambda^{\text{est}} (P_L - \E n_L) - \lambda^{\text{term}} \E n_L$.
-Without influences, the averages in Eq.~\eqref{eq:mf} are the rates themselves.
-\ttt{tricl\_macro.py} adds the flows of the event types $L$ and $\bar L$ to both $n_L$ and $n_{\bar L}$, which are equal, as are $P_L$ and $P_{\bar L}$; for $L = \bar L$ (a symmetric type between entities of the same type), it adds the flow of $L$ twice, because $n_L$ counts both directed links of every linked pair and every unordered pair has two possible events.
-In all cases, this is the equation above.
-Since $n_L(t)$ is a sum of independent terms, one per unordered pair of entities, each bounded by $2$ and each covering at least one ordered pair, its variance is at most $P_L$, and Chebyshev's inequality gives the convergence; it is the special case of the law of large numbers of \citet{kurtz1970} for the birth--death process $n_L$.
-\end{proof}
+since a new contact with $n$ common contacts turns its own $n$ open two-paths into closed ones and adds two closed two-paths for each common contact ($\Delta Z = 3n$), and adds one open two-path for each other contact of its endpoints ($\Delta O = m - n$), and the termination of a contact reverses these changes.
+The simple closure replaces the conditional distributions by the same Poisson distributions for both states, with means $(N - 2)\rho^2$ and $(N - 2)\rho$, $\rho = L/M$.

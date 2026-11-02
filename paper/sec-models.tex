@@ -1,0 +1,34 @@
+\section{Models}\label{sec:models}
+
+\subsection{Model class}
+All Markovian models are rule sets of one class, in which a state is a set of typed links between typed entities and every link is established and terminated at rates that depend on the configuration around it.
+For a candidate link $\ell$ between students $i$ and $j$, the rate is
+\begin{equation}\label{eq:rate}
+  \lambda(\ell, t) = A\, \expit\bigl(4 B(\ell, t)\bigr), \qquad B = b_0 + \sum_k b_k\, n_k(\ell, t),
+\end{equation}
+where $A$ is a ceiling rate, $\expit(x) = 1/(1 + e^{-x})$, and the $n_k$ count configurations of type $k$ adjacent to $\ell$: \emph{angles}, i.e.\ two-paths $i \to m \to j$ of given relationship types (common current contacts, being in the same class, or, through the identity relationship, a friendship of the pair itself), and \emph{legs}, i.e.\ links of one endpoint of given types (the current contacts of $i$ or of $j$, or the link of $i$ to the hub entity of the current hour).
+As long as $\expit(4B)$ is small, the rate is log-linear in the counts, $\lambda \approx A e^{4B}$, as in relational event models.
+Contacts are links of a symmetric relationship type, so that the two directions of a pair are two candidate events with equal rates, and a pair forms or ends a contact at twice the rate of Eq.~\eqref{eq:rate}.
+We use $A = 1$ per minute for formation and $A = 6$ per minute for termination, ceilings that are reached only for pairs with very strong positive effects.
+
+Memory enters through \emph{actions}: links whose \emph{impact} jumps by one at every act and decays exponentially at a rate $\delta$, and which cease to exist when the impact falls below a threshold (here 0.01, a part of the model definition).
+An act of the action type \ttt{started}$_\delta$ happens whenever a contact starts, and one of \ttt{ended}$_\delta$ whenever a contact ends, so that the impact of the pair's own action, $e^{-\delta \tau}$ summed over its recent starts or ends, encodes the time $\tau$ since these events.
+An angle through an action counts with its impact instead of one, so that $b_k$ times the impact of \ttt{started}$_\delta$ in the termination rate makes the ending hazard depend on the age of the contact, and the corresponding term with \ttt{ended}$_\delta$ in the formation rate makes the re-formation rate depend on the time since the last contact of the pair.
+With several decay rates, these terms approximate an arbitrary dependence on the age by a sum of exponentials, while the process remains Markovian in the extended state of links and impacts.
+
+\subsection{Model hierarchy}
+All models include the timetable (a base value and effects of the hour, the change of rooms and the morning break, separately for formation and termination).
+\begin{itemize}
+\item[M0] Timetable only.
+\item[M1] M0 plus static context: same class, Facebook friendship, survey friendship in either direction.
+\item[M2] M1 plus network context: the number of common current contacts (triadic closure and group stabilization) and the numbers of current contacts of both students (not counting the pair's own contact).
+\item[M4, M6] M1 plus memory: met on an earlier day, and the impacts of \ttt{started}$_\delta$ (in termination) and \ttt{ended}$_\delta$ (in formation) for $\delta \in \{0.5, 0.05\}$ per minute (M4) or $\delta \in \{2, 0.5, 0.1, 0.02\}$ per minute (M6).
+\item[M3, M5] M2 plus the memory terms of M4 and M6, respectively.
+\end{itemize}
+Every effect enters both directions of a pair with the same coefficient, so that the rates are invariant under exchanging $i$ and $j$; then the log-likelihood of the event sequence with recorded directions differs from the one without by a constant (App.~\ref{app:likelihood}).
+
+\subsection{Competing model: intrinsic aging}
+The competing model C1 has the timetable and static context of M1, met on an earlier day, and an intrinsic aging of the form of \citet{zhao2011} and \citet{starnini2013} at the level of pairs: the probability units of termination contain $\beta_T \ln(1 + \tau/\tau_0)$ with $\tau$ the age of the contact, and those of formation contain $\beta_F \ln(1 + \sigma/\tau_0)$ with $\sigma$ the time since the pair's last contact ended (or a separate constant if the pair has not met that day), so that far from saturation the rates are power laws $(1 + \tau/\tau_0)^{4\beta_T}$ and $(1 + \sigma/\tau_0)^{4\beta_F}$.
+These rates depend on ages that are not part of the network state, so C1 is not Markovian in it.
+C1 has no network context; its likelihood is computed by a separate implementation with the same conventions, which agrees with \tricl\ to $10^{-12}$ when the aging terms are switched off.
+The scale $\tau_0$ is chosen among $\{1/3, 1, 3\}$ minutes by the training likelihood (best: \ConeAgeScale\ minutes).

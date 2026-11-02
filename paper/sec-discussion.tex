@@ -1,16 +1,15 @@
 \section{Discussion}\label{sec:discussion}
 
-\paragraph{Relation to other model families.} Stochastic actor-oriented models \citep{snijders2001,snijders2010,snijders2017} describe network change by actors who reconsider one outgoing tie at a time according to an objective function, and are estimated from panel data by the method of moments or by likelihood-based methods with data augmentation \citep{koskinen2007}.
-Relational event models \citep{butts2008} and dynamic network actor models \citep{stadtfeld2017} model sequences of time-stamped interactions with rates that depend on statistics of the past.
-\tricl\ is tie-oriented rather than actor-oriented: each potential link has its own establishment and termination rates, which depend on the current two-path structure.
-It shares with relational event models the exact likelihood of a fully observed event sequence, and with the adaptive-network literature \citep{gross2008} the coupling of states and ties, which it expresses within the same rule language through hub entities.
-Its distinctive features are typed multi-relational networks with symmetric and inverse relationship types, models as configuration files, immediate events for state logic, and the derivation of simulation, likelihood and mean-field equations from the same file.
-The interval output of a run is a temporal network \citep{holme2012} in the edge-list form that temporal-network software reads, and a mapping to the Resource Description Framework (entity types as classes, relationship types as properties, symmetric and inverse types as their OWL counterparts, link intervals as annotated triples) lets \tricl\ import typed graphs from knowledge bases and export trajectories to them.
+The memory of face-to-face contact dynamics is not primarily a property of the surrounding network.
+Static context (classes, friendships) is the largest single source of predictability, but among the dynamic explanations, decaying traces of a pair's own recent contacts improve the prediction of held-out days about \GainMemoryAlone\ log-likelihood units per event, network context only \GainNetwork, and network context absorbs only \MemoryAbsorbed\% of the memory effect.
+At the same time, the memory does not require intrinsic aging outside the network state: traces on four time scales, which keep the process Markovian in an extended state, predict the held-out days better than power-law aging.
+A part of the short-term memory reflects the definition of contacts from sensor records, since merging longer gaps reduces it (Sec.~\ref{sec:sensitivity}); this is a caveat for all models of such data, including the aging models whose motivation is the broad distribution of durations.
 
-\paragraph{Limitations.} Estimation requires a complete event sequence, including the timing of events.
-Most network data are snapshots or panels; for them the likelihood is an integral over unobserved paths, which needs simulation-based methods such as data augmentation or the method of simulated moments, both of which the fast simulator makes feasible but which are not implemented yet.
-The rule language covers two-path dependence only, and the coefficients do not depend on time; rules on single links of one endpoint (degree dependence) are part of the syntax but not yet supported.
-The mean-field closure ignores correlations between links (Sec.~\ref{sec:macro}).
-In the application, the yearly resolution and the dyadic coding of multilateral treaties make the formation effect partly a property of treaties rather than of pairs.
+The instability of the fitted network models is a second result with wider implications.
+Likelihood fits of rates that grow with common contacts and current contacts are well determined by the sparse configurations that are observed, but the process they define is degenerate.
+Simulation studies with such fitted models would therefore show runaway group formation, and predictive checks by simulation, not only by likelihood and residuals, are necessary for network-feedback models.
+The pair closure is a cheap diagnostic of this degeneracy, which the standard closure misses; it is generated from the same rule set and could be used as a constraint during estimation.
+A representation that bounds group sizes, e.g.\ contacts as joint membership in group entities whose join and leave rates depend on the group size, removes the unbounded feedback by construction; we pursue this in ongoing work, together with a comparison of the predicted distributions of durations and group sizes by simulation.
 
-\paragraph{Outlook.} Next steps are higher-order (pair and triple) closures generated in the same way, estimation from snapshot data, rules on single links, and applications with event-level data, e.g.\ online follow networks and scientific collaboration, where the typed relationships (co-authorship, citation, shared affiliation) are central.
+The comparison was possible because all Markovian models are rule sets of one model class for which \tricl\ computes exact likelihoods, gradients and residuals, including rates that decay between events, exogenous forced events, and acts triggered by contact events.
+The same machinery applies to other multi-relational temporal networks with fully observed event sequences, such as communication and co-location data, where decaying impacts of calls and messages and their coupling to co-location can be compared in the same way.

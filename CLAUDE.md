@@ -13,8 +13,8 @@ LaTeX source conventions (taken over from the responsibility_theory project; enf
 * Not too many paragraph breaks.
 * American spelling (APS house style), REVTeX 4.2 from the official APS template (`aps,pre,reprint`).
 * Every number in the text comes from `paper/generated/numbers.tex`, every table and figure from
-  `paper/generated/`, produced by `paper/make_figures.py` from `paper/data/` (`paper/make_data.py`);
-  never edit generated files by hand.
+  `paper/generated/`, produced by `paper/make_figures.py` from the study results in `study/results/` (scripts in
+  `study/`, see `study/README.md`); never edit generated files by hand.
 * References only from entries checked against Crossref (`paper/refs.bib`).
 * Claims about the code must match the code.
 * The AI-use statement (`paper/endmatter.tex`) follows the APS policy on AI tools; model names and versions

@@ -1,47 +1,21 @@
-\section{Likelihood and estimation}\label{sec:inference}
+\section{Inference and evaluation}\label{sec:inference}
 
-\subsection{Log-likelihood of an event sequence}
-Let $(t_i, \ell_i, \tau_i)_{i=1}^m$ be a fully observed sequence of events in an observation window $[0, T]$, starting from a known initial network.
-Between events the network is constant, so the total rate $\Lambda(t) = \sum_{\text{possible events}} \lambda$ is piecewise constant, and the log-likelihood of the sequence under parameters $\theta$ is
+\subsection{Exact log-likelihood}
+For a fully observed sequence of events in a window $[0, T]$, the log-likelihood is
 \begin{equation}\label{eq:logl}
-\begin{split}
-  L(\theta) ={}& \sum_{i:\ \lambda_i < \infty} \log \lambda_{\tau_i}(\ell_i, t_i^-; \theta)
-  - \int_0^T \Lambda(t; \theta)\,dt \\
-  &+ \sum_{i:\ \lambda_i = \infty} \log \frac{1}{m_i},
-\end{split}
+  L(\theta) = \sum_i \ln \lambda_{\tau_i}(\ell_i, t_i^-; \theta) - \int_0^T \Lambda(t; \theta)\,dt,
 \end{equation}
-where the last sum runs over immediate events and $m_i$ is the number of immediate events pending when event $i$ happened (their order is uniformly random; Appendix~\ref{app:likelihood} derives Eq.~\eqref{eq:logl}).
-For symmetric and inverse relationship types, $L$ treats the direction of each event as observed; when the rules are invariant under reversal, the likelihood without directions differs from $L$ only by a constant (Appendix~\ref{app:likelihood}).
-The integral is a sum of $\Lambda \times$ waiting time over the inter-event intervals and the final interval up to $T$.
-\tricl\ maintains $\Lambda$ incrementally, recomputes it exactly every $2^{16}$ events against floating-point drift, and accumulates Eq.~\eqref{eq:logl} during simulation.
-In \emph{replay mode} (option \ttt{--events-in}) it reads an event sequence from a csv file instead of drawing events, applies them in order, checks that each is possible under the model, and reports $L(\theta)$.
-Replay draws no random numbers.
+where $\Lambda$ is the total rate of all possible events.
+\tricl\ maintains $\Lambda$ incrementally during a replay of the observed events, including the pairs without any adjacent angle, whose rates depend only on the degrees of their endpoints and which are summed through histograms of degree vectors.
+Rates with decaying impacts vary continuously between events; their integrals are accumulated per event by Gauss--Legendre quadrature whenever the event's rate is updated (App.~\ref{app:likelihood}).
+Forced events and acts triggered by contact events add no terms, so that $L$ is conditional on the timetable.
+\tricl\ also computes the gradient of $L$ with respect to all coefficients, and we maximize $L$ with L-BFGS-B \citep{byrd1995}, summing over the training days, which are independent observation windows (the network is empty at the start of each day).
 
-\subsection{Gradient}
-By Eq.~\eqref{eq:rate}, $\lambda$ is linear in the attempt-rate coefficients and depends on the probability-unit coefficients through $f$.
-With $n_k$ the angle counts of an event,
-\begin{widetext}
-\begin{align*}
-\frac{\partial L}{\partial a_{\tau k}} &= \sum_{i:\ \tau_i = \tau} \frac{n_k(\ell_i)}{A_i}
-   - \int_0^T \sum_{\ell} n_k(\ell, t)\, f(B_\ell(t))\,dt, \\
-\frac{\partial L}{\partial b_{\tau k}} &= \sum_{i:\ \tau_i = \tau} \frac{n_k(\ell_i) f'(B_i)}{f(B_i)}
-   - \int_0^T \sum_{\ell} n_k(\ell, t)\, A_\ell(t)\, f'(B_\ell(t))\,dt,
-\end{align*}
-\end{widetext}
-with sums over the possible events $\ell$ of type $\tau$ (and $n_k \equiv 1$ for the basic coefficients $a^0_\tau, b^0_\tau$).
-The integrands are ``exposures'' that \tricl\ maintains like the total rate, so the full gradient costs about as much as the likelihood itself (option \ttt{--grad}).
-Metaparameters enter the coefficients through expressions; the Python driver \ttt{tricl\_fit.py} maps the gradient to metaparameters by the chain rule, with the Jacobian from finite differences of the parsed coefficients, and maximizes $L$ with L-BFGS-B \citep{byrd1995}.
-Standard errors come from the observed information, the negative Hessian obtained by finite differences of the analytic gradient.
+\subsection{Held-out likelihood and time rescaling}
+We compare models by their log-likelihood on the held-out days, evaluated at the estimates from the training days, which penalizes overfitting directly.
+As a goodness-of-fit test, we use the time-rescaling theorem \citep{brown2002}: if the model is correct, the integrated termination hazard $\Lambda$ of each contact from its start to its end is a unit exponential variable, independently across contacts.
+\tricl\ outputs these integrals for the observed contacts, summed over both directions of a pair and including time-varying rates; we report the Kolmogorov--Smirnov distance of their distribution from the unit exponential distribution.
+On simulated data from a known model with impacts and a timetable, the integrals are indeed unit exponential variables (a test of the implementation).
 
-For fixed probability units, $L$ is concave in the attempt rates (a sum of logarithms of linear functions minus a linear function).
-In the probability units it is not concave in general, because $f$ is sigmoidal; Sec.~\ref{sec:application} shows a case where the profile likelihood is not unimodal. Identifiability has a structural limit: $L$ depends on the coefficients of an event type only through its rates at the vectors of angle counts that occur in the data (Appendix~\ref{app:structure}), so for an event type whose rate depends on no angle count only the product $a^0_\tau f(b^0_\tau)$ is identified, and an angle type's attempt-rate and probability-unit coefficients are separately identified only if its count takes enough different values.
-
-\subsection{Parameter recovery}
-We simulated the three-entity model of the test suite (triangle closure: establishment attempts at rate $A + K\,n$ for $n$ common neighbors, termination attempts at rate $D$ with probability units $B_0 + B_K n$) for \RecoveryT\ time units and \RecoverySeeds\ seeds and re-estimated $A$, $K$, $D$ and $B_K$ from each event sequence, starting away from the true values (about \RecoveryEvents\ events per sequence).
-Table~\ref{tab:recovery} shows estimates centered on the true values, estimated standard errors of the size of the spread across seeds (within about 30\%), and coverage of the nominal 95\% intervals between \RecoveryCovMin\ and \RecoveryCovMax, consistent with 95\% given \RecoverySeeds\ sequences.
-
-\begin{table}[t]
-\caption{Parameter recovery: true values, mean and standard deviation of the estimates over \RecoverySeeds\ simulated event sequences, mean estimated standard error, and the share of sequences whose 95\% interval (estimate $\pm 1.96$ standard errors) contains the true value.}
-\label{tab:recovery}
-\input{generated/table-recovery}
-\end{table}
+\subsection{Simulation}
+\tricl\ simulates the models exactly with the direct method over a sum tree of rates; events with decaying rates are simulated by thinning \citep{lewis1979,ogata1981}, with upper bounds that are valid until the next update of each event, and forced events and the expiry of actions are processed at their times (App.~\ref{app:thinning}).

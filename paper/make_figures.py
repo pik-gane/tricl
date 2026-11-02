@@ -1,275 +1,249 @@
 #!/usr/bin/env python3
-"""Make the figures, tables and the numbers quoted in the text of the paper from paper/data/.
+"""Generate every figure, table and number of the paper from the study results.
 
-Usage (from the repository root, after paper/make_data.py):
+Usage (after the study scripts in study/ have been run, see study/README.md):
     python3 paper/make_figures.py
 
-Writes paper/generated/: fig-frames.pdf, fig-macro.pdf, fig-atop.pdf, table-benchmark.tex,
-table-recovery.tex, table-atop.tex and numbers.tex (LaTeX macros for every number quoted in the text).
-Never edit the generated files by hand.
+Reads study/results/*.json, study/results/residual_samples.npz, study/results/closure_M2.json and the event
+files in study/data; writes paper/generated/: numbers.tex (one macro per number used in the text), table-*.tex,
+fig-*.pdf. Never edit the generated files by hand.
 """
-
 import csv
 import json
-import math
 import os
-import re
-import statistics
-import subprocess
-import time
 
+import numpy as np
 import matplotlib
 matplotlib.use("Agg")
-import matplotlib.pyplot as plt  # noqa: E402
-import matplotlib.image as mpimg  # noqa: E402
+import matplotlib.pyplot as plt
 
-ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-DATA = os.path.join(ROOT, "paper", "data")
-GEN = os.path.join(ROOT, "paper", "generated")
-BIN = os.path.join(ROOT, "build", "src", "tricl")
+HERE = os.path.dirname(os.path.abspath(__file__))
+ROOT = os.path.dirname(HERE)
+S = os.path.join(ROOT, "study")
+RES = os.path.join(S, "results")
+GEN = os.path.join(HERE, "generated")
+NUMBERS = {}
+C = {"data": "black", "M1": "#9aa5b1", "M2": "#4c78a8", "M6": "#b279a2", "M5": "#e45756", "C1": "#54a24b", "simple": "#4c78a8", "pair": "#e45756", "sim": "#f58518"}
+plt.rcParams.update({"font.size": 8, "axes.linewidth": 0.6})
 
-# validated categorical palette (light mode) and ink colours
-C1, C2, C3 = "#2a78d6", "#eb6834", "#1baf7a"
-INK, INK2, MUTED, GRID = "#0b0b0b", "#52514e", "#898781", "#e1e0d9"
-
-plt.rcParams.update({
-    "font.family": "sans-serif", "font.size": 8, "axes.labelsize": 8, "axes.titlesize": 9,
-    "axes.edgecolor": "#c3c2b7", "axes.labelcolor": INK2, "xtick.color": INK2, "ytick.color": INK2,
-    "axes.spines.top": False, "axes.spines.right": False, "axes.grid": True, "grid.color": GRID,
-    "grid.linewidth": 0.6, "lines.linewidth": 1.5, "legend.frameon": False, "legend.fontsize": 7.5,
-    "text.color": INK, "pdf.fonttype": 42,
-})
-
-numbers = {}
+LABEL = {"M0": "M0", "M1": "M1", "M2": "M2", "M4": "M4", "M3": "M3", "M6": "M6", "M5": "M5", "C1": "C1"}
+DESC = {"M0": "timetable", "M1": "M0 + static context", "M2": "M1 + network",
+        "M4": "M1 + memory (2)", "M3": "M2 + memory (2)",
+        "M6": "M1 + memory (4)", "M5": "M2 + memory (4)", "C1": "M1 + power-law aging"}
 
 
 def num(name, value):
-    numbers[name] = value
+    NUMBERS[name] = value
 
 
-def fmt_sig(x, digits=2):
-    """Format with the given number of significant digits, in LaTeX notation."""
-    if x == 0:
-        return "0"
-    e = int(math.floor(math.log10(abs(x))))
-    if -3 <= e <= 3:
-        d = max(0, digits - 1 - e)
-        return ("%.*f" % (d, x))
-    m = x / 10 ** e
-    return r"%.*f\times 10^{%d}" % (digits - 1, m, e)
+def fmt(x, d=0):
+    s = ("{:,.%df}" % d).format(x)
+    return s.replace(",", "\\,").replace("-", "$-$")
 
 
-def expit(x):
-    return 1 / (1 + math.exp(-x))
+def load(name, tag=""):
+    p = os.path.join(RES, "fit_%s%s.json" % (name, tag))
+    return json.load(open(p)) if os.path.exists(p) else None
 
 
-# ---------------------------------------------------------------- frames
-
-def fig_frames():
-    fdir = os.path.join(DATA, "frames")
-    files = sorted(f for f in os.listdir(fdir) if f.endswith(".png"))
-    fig, axes = plt.subplots(1, len(files), figsize=(7.2, 2.5))
-    for ax, f in zip(axes, files):
-        ax.imshow(mpimg.imread(os.path.join(fdir, f)))
-        ax.axis("off")
-    fig.subplots_adjust(left=0, right=1, top=1, bottom=0, wspace=0.02)
-    fig.savefig(os.path.join(GEN, "fig-frames.pdf"))
-    plt.close(fig)
-
-
-# ---------------------------------------------------------------- mean field
-
-def read_macro(name, link_type):
-    rows = [r for r in csv.DictReader(open(os.path.join(DATA, "macro_%s.csv" % name))) if r["link type"] == link_type]
-    t = [float(r["t"]) for r in rows]
-    return t, [float(r["ode"]) for r in rows], [float(r["sim_mean"]) for r in rows], [float(r["sim_sd"]) for r in rows]
+def contacts(day, data="data"):
+    """(start, end or None) of all contacts of a day."""
+    start, out = {}, []
+    with open(os.path.join(S, data, "events_%d.csv" % day)) as fh:
+        for r in csv.DictReader(fh):
+            p = (r["source"], r["target"])
+            if r["event"] == "establish":
+                start[p] = float(r["t"])
+            else:
+                out.append((start.pop(p), float(r["t"])))
+    return out
 
 
-def fig_macro():
-    cases = [("linear", "agent is active", "agents in state 1", "linear switching"),
-             ("si", "agent is infected", "infected agents", "infection on a geometric graph"),
-             ("granovetter", "c-agent is active", "active contingent agents", "threshold model")]
-    fig, axes = plt.subplots(1, 3, figsize=(7.2, 2.3))
-    for ax, (name, lt, ylabel, title) in zip(axes, cases):
-        t, ode, m, sd = read_macro(name, lt)
-        ax.fill_between(t, [a - b for a, b in zip(m, sd)], [a + b for a, b in zip(m, sd)], color=C2, alpha=0.12, linewidth=0)
-        ax.plot(t, m, "o", color=C2, markersize=3.5, markeredgecolor="white", markeredgewidth=0.6, label="simulation")
-        ax.plot(t, ode, "-", color=C1, label="mean field")
-        ax.set_title(title, color=INK, loc="left")
-        ax.set_xlabel("time")
-        ax.set_ylabel(ylabel)
-        ax.set_ylim(bottom=0)
-        if name == "si":
-            num("MacroSiOde", "%.0f" % ode[-1]); num("MacroSiSim", "%.0f" % m[-1])
-        if name == "granovetter":
-            num("MacroGranOde", "%.0f" % ode[-1]); num("MacroGranSim", "%.0f" % m[-1])
-    axes[0].legend(loc="lower right")
-    fig.tight_layout()
-    fig.savefig(os.path.join(GEN, "fig-macro.pdf"))
-    plt.close(fig)
+def data_numbers():
+    info = json.load(open(os.path.join(S, "data", "data.json")))["info"]
+    info120 = json.load(open(os.path.join(S, "data_gap120", "data.json")))["info"]
+    num("Students", "%d" % info["students"])
+    num("Classes", "%d" % len(info["classes"]))
+    num("Contacts", fmt(info["contacts_total"]))
+    num("ContactsGapLong", fmt(info120["contacts_total"]))
+    num("FragmentShare", "%d" % round(100 * (1 - info120["contacts_total"] / info["contacts_total"])))
+    data = json.load(open(os.path.join(S, "data", "data.json")))
+    cls = dict(data["static"]["class"])
+    within = total = 0
+    durs = []
+    for d in (2, 3, 4, 5, 6):
+        with open(os.path.join(S, "data", "events_%d.csv" % d)) as fh:
+            for r in csv.DictReader(fh):
+                if r["event"] == "establish":
+                    total += 1
+                    within += cls[r["source"]] == cls[r["target"]]
+        durs += [e - s for s, e in contacts(d)]
+    durs = np.array(durs)
+    num("WithinClassShare", "%d" % round(100 * within / total))
+    num("MedianDuration", "%.1f" % np.median(durs))
+    num("ShareLongContacts", "%.1f" % (100 * np.mean(durs >= 10)))
+    num("Facebook", fmt(len(data["static"]["facebook"])))
+    num("Survey", fmt(len(data["static"]["survey"])))
+    return durs
 
 
-# ---------------------------------------------------------------- recovery
-
-def table_recovery():
-    d = json.load(open(os.path.join(DATA, "recovery.json")))
-    true = d["true"]
-    res = d["results"]
-    names = list(true)
-    labels = {"A": "$A$", "K": "$K$", "D": "$D$", "BK": "$B_K$"}
-    lines = [r"\begin{ruledtabular}", r"\begin{tabular}{lrrrrr}",
-             r"parameter & true & mean est. & s.d.\ est. & mean s.e. & coverage \\", r"\colrule"]
-    covs = []
-    for n in names:
-        est = [r["estimates"][n] for r in res]
-        se = [r["se"][n] for r in res]
-        cov = sum(1 for e, s in zip(est, se) if abs(e - true[n]) <= 1.96 * s) / len(res)
-        covs.append(cov)
-        lines.append(r"%s & %.3g & %.3f & %.3f & %.3f & %.2f \\" % (labels.get(n, n), true[n], statistics.mean(est),
-                                                                 statistics.stdev(est), statistics.mean(se), cov))
-    lines += [r"\end{tabular}", r"\end{ruledtabular}"]
-    open(os.path.join(GEN, "table-recovery.tex"), "w").write("\n".join(lines) + "\n")
-    num("RecoverySeeds", str(len(res)))
-    num("RecoveryT", "400")
-    num("RecoveryCovMin", "%.2f" % min(covs))
-    num("RecoveryCovMax", "%.2f" % max(covs))
-    num("RecoveryEvents", "%d" % round(statistics.mean(r["events"] for r in res), -1))
-
-
-# ---------------------------------------------------------------- benchmark
-
-def table_benchmark():
-    rows = list(csv.DictReader(open(os.path.join(DATA, "benchmark.csv"))))
-    last = rows[-1]["timestamp"]
-    rows = [r for r in rows if r["timestamp"] == last]
-    names = {"helfmann N=100": ("Helfmann", "100"), "helfmann N=1000": ("Helfmann", "1\\,000"),
-             "helfmann N=10000": ("Helfmann", "10\\,000"), "3blocks N=300 (dense)": ("3-blocks (dense)", "300"),
-             "sir_sd N=1000": ("SIR with distancing", "1\\,000")}
-    lines = [r"\begin{ruledtabular}", r"\begin{tabular}{llrrr}",
-             r"model & agents & events & init. [s] & events/s \\", r"\colrule"]
-    for r in rows:
-        m, n = names.get(r["case"], (r["case"], ""))
-        rate = float(r["events_per_second"])
-        lines.append(r"%s & %s & %s & %.2f & %s \\" % (m, n, "{:,}".format(int(r["events"])).replace(",", "\\,"),
-                                                      float(r["init_seconds"]), "{:,}".format(int(round(rate, -2))).replace(",", "\\,")))
-    lines += [r"\end{tabular}", r"\end{ruledtabular}"]
-    open(os.path.join(GEN, "table-benchmark.tex"), "w").write("\n".join(lines) + "\n")
-
-
-# ---------------------------------------------------------------- alliances
-
-def table_and_fig_atop():
-    adir = os.path.join(DATA, "atop")
-    full = json.load(open(os.path.join(adir, "full.json")))
-    shuf = json.load(open(os.path.join(DATA, "atop", "shuffled.json")))
-    est, se = full["estimates"], full["standard_errors"]
-    info = open(os.path.join(adir, "build.log")).read()
-    m = re.search(r"(\d+) states, (\d+) initial links, (\d+) events, link intervals \{'defense': (\d+)\} \((\d+) censored", info)
-    num("AtopStates", m.group(1)); num("AtopEvents", "{:,}".format(int(m.group(3))).replace(",", "\\,"))
-    num("AtopIntervals", "{:,}".format(int(m.group(4))).replace(",", "\\,")); num("AtopCensored", "{:,}".format(int(m.group(5))).replace(",", "\\,"))
-
-    a0, a1, d0, b1 = est["a0_defense"], est["a1_defense"], est["d0_defense"], est["b1_defense"]
-    num("AtopAzero", fmt_sig(a0, 3)); num("AtopAone", fmt_sig(a1, 3))
-    num("AtopFormationRatio", "%d" % round((a0 + a1) / a0))
-    # defense is symmetric: both directed links of a pair are possible events with these rates, so a pair forms a
-    # pact at twice the rate and a pact dissolves at twice the hazard (paper/sec-appendix.tex, likelihood section):
-    num("AtopPairAzero", fmt_sig(2 * a0, 3)); num("AtopPairAone", fmt_sig(2 * a1, 3))
-    haz = lambda k: 2 * d0 * expit(-4 * b1 * k)
-    num("AtopHazZero", "%.3f" % haz(0)); num("AtopHazFive", "%.3f" % haz(5)); num("AtopHazTwentySix", "%.4f" % haz(26))
-    num("AtopLifeZero", "%.0f" % (1 / haz(0)))
-    logl = full["logl"]
-    no_a1 = json.load(open(os.path.join(adir, "no_a1.json")))["logl"]
-    no_b1 = json.load(open(os.path.join(adir, "no_b1.json")))["logl"]
-    num("AtopDropAone", "{:,.0f}".format(logl - no_a1).replace(",", "\\,"))
-    num("AtopDropBone", "{:,.0f}".format(logl - no_b1).replace(",", "\\,"))
-    for key, name in (("a0_defense", "AtopShuffleAzero"), ("a1_defense", "AtopShuffleAone"), ("b1_defense", "AtopShuffleBone")):
-        num(name, "%.0f" % (100 * abs(shuf["estimates"][key] - est[key]) / est[key]))
-
-    labels = [("a0_defense", "$a_0$", "formation rate per pair of member states and direction"),
-              ("a1_defense", "$a_1$", "additional rate per common ally and direction"),
-              ("d0_defense", "$d_0$", "dissolution attempt rate per direction"),
-              ("b1_defense", "$b_1$", "probability units per common ally (dissolution)"),
-              ("entry", "entry", "entry rate of states"), ("exit", "exit", "exit rate of states")]
-    lines = [r"\begin{ruledtabular}", r"\begin{tabular}{llrr}", r"parameter & meaning & estimate & s.e. \\", r"\colrule"]
-    for k, sym, meaning in labels:
-        lines.append(r"%s & %s & $%s$ & $%s$ \\" % (sym, meaning, fmt_sig(est[k], 3), fmt_sig(se[k], 2)))
-    lines += [r"\colrule", r"\multicolumn{2}{l}{log-likelihood} & \multicolumn{2}{r}{$%s$} \\" % ("{:,.1f}".format(logl).replace(",", "\\,")),
-              r"\end{tabular}", r"\end{ruledtabular}"]
-    open(os.path.join(GEN, "table-atop.tex"), "w").write("\n".join(lines) + "\n")
-
-    # profile
-    prof = [(float(r["b1"]), float(r["logl"])) for r in csv.DictReader(open(os.path.join(adir, "profile_b1.csv")))]
-    plateau = min(prof, key=lambda p: p[0])[1]
-    num("AtopProfileGap", "{:,.0f}".format(logl - plateau).replace(",", "\\,"))
-
-    # pacts in effect per year
-    model = open(os.path.join(adir, "model.yaml")).read()
-    n = len(re.findall(r"- \[[^,]+, defense, [^\]]+\]", model))
-    by_year = {}
-    for r in csv.DictReader(open(os.path.join(adir, "events.csv"))):
-        if r["relationship"] != "defense":
+def table_fits():
+    rows = []
+    resid = json.load(open(os.path.join(RES, "residuals.json")))
+    base = load("M1")
+    for m in ["M0", "M1", "M2", "M4", "M3", "M6", "M5", "C1"]:
+        r = load(m)
+        if r is None:
             continue
-        y = 1816 + int(float(r["t"]))
-        by_year[y] = by_year.get(y, 0) + (1 if r["event"] == "establish" else -1)
-    years, counts = list(range(1816, 2019)), []
-    for y in years:
-        n += by_year.get(y, 0)
-        counts.append(n)
+        per = (r["logl_test"] - base["logl_test"]) / r["events_test"]
+        rows.append("%s & %s & %d & %s & %s & %s & %.3f \\\\" % (m, DESC[m], r["n_params"], fmt(r["logl_train"]), fmt(r["logl_test"]),
+                                                               ("$%+.3f$" % per).replace("-", "-"), resid[m]["KS"]))
+    with open(os.path.join(GEN, "table-fits.tex"), "w") as fh:
+        fh.write("\\begin{ruledtabular}\n\\begin{tabular}{llrrrrr}\n")
+        fh.write("model & components & param. & $L$ (training) & $L$ (held out) & $\\Delta L$/event & KS \\\\\n\\colrule\n")
+        fh.write("\n".join(rows) + "\n\\end{tabular}\n\\end{ruledtabular}\n")
+    r1 = load("M1")
+    num("EventsTrain", fmt(r1["events_train"]))
+    num("EventsTest", fmt(r1["events_test"]))
+    g = {m: load(m)["logl_test"] for m in ["M0", "M1", "M2", "M4", "M3", "M6", "M5", "C1"]}
+    n = r1["events_test"]
+    num("GainStatic", "%.2f" % ((g["M1"] - g["M0"]) / n))
+    num("GainNetwork", "%.2f" % ((g["M2"] - g["M1"]) / n))
+    num("GainMemoryAlone", "%.2f" % ((g["M6"] - g["M1"]) / n))
+    num("GainMemoryWithNetwork", "%.2f" % ((g["M5"] - g["M2"]) / n))
+    num("GainNetworkWithMemory", "%.2f" % ((g["M5"] - g["M6"]) / n))
+    num("MemoryAbsorbed", "%d" % round(100 * (1 - (g["M5"] - g["M2"]) / (g["M6"] - g["M1"]))))
+    num("MfiveOverCone", fmt(g["M5"] - g["C1"]))
+    num("ConeOverMthree", fmt(g["C1"] - g["M3"]))
+    num("KSMone", "%.3f" % resid["M1"]["KS"])
+    num("KSMfive", "%.3f" % resid["M5"]["KS"])
+    num("KSCone", "%.3f" % resid["C1"]["KS"])
+    num("ConeAgeScale", "%.0f" % load("C1")["age0"])
 
-    # timing of one likelihood evaluation
-    times = []
-    for _ in range(3):
-        t0 = time.perf_counter()
-        subprocess.run([BIN, os.path.join(adir, "model.yaml"), "--events-in", os.path.join(adir, "events.csv"), "--summary"],
-                       capture_output=True, check=True, cwd=adir)
-        times.append(time.perf_counter() - t0)
-    num("AtopEvalSeconds", "%.2f" % min(times))
 
-    fig, axes = plt.subplots(1, 3, figsize=(7.2, 2.3))
+def table_estimates():
+    m5, c1 = load("M5"), load("C1")
+    rows = []
+    spec = [("F_cls", "same class"), ("F_fb", "Facebook friends"), ("F_svy", "survey friendship"),
+            ("F_tri", "common contact"), ("F_deg", "other current contact"), ("F_mb", "met on earlier day")]
+    spec_mem = [("d2", "2"), ("d05", "0.5"), ("d01", "0.1"), ("d002", "0.02")]
+    def cell(r, k):
+        if r is None or k not in r["estimates"]:
+            return "& "
+        return "$%.3f$ & $%.3f$" % (r["estimates"][k], r["standard_errors"][k])
+    for k, lab in spec:
+        rows.append("%s & %s & %s \\\\" % (lab, cell(m5, k), cell(m5, "T" + k[1:])))
+    for s, d in spec_mem:
+        rows.append("memory, $\\delta = %s$/min & %s & %s \\\\" % (d, cell(m5, "F_end_" + s), cell(m5, "T_start_" + s)))
+    with open(os.path.join(GEN, "table-estimates.tex"), "w") as fh:
+        fh.write("\\begin{ruledtabular}\n\\begin{tabular}{lrrrr}\n")
+        fh.write(" & \\multicolumn{2}{c}{formation} & \\multicolumn{2}{c}{termination} \\\\\neffect & estimate & s.e. & estimate & s.e. \\\\\n\\colrule\n")
+        fh.write("\n".join(rows) + "\n\\end{tabular}\n\\end{ruledtabular}\n")
+    e = m5["estimates"]
+    num("TriFactor", "%.0f" % np.exp(4 * e["F_tri"]))
+    num("ClassFactor", "%.0f" % np.exp(4 * e["F_cls"]))
+    num("ConeTermExponent", "$%.2f$" % (4 * c1["estimates"]["T_age"]))
+    num("ConeFormExponent", "$%.2f$" % (4 * c1["estimates"]["F_age"]))
+
+
+def table_sensitivity():
+    rows = []
+    base = load("M1", "_g120")
+    for m in ["M0", "M1", "M2", "M4", "M3", "C1"]:
+        r = load(m, "_g120")
+        if r is None:
+            continue
+        rows.append("%s & %s & %s & %s \\\\" % (m, fmt(r["logl_test"]), ("$%+.3f$" % ((r["logl_test"] - base["logl_test"]) / r["events_test"])),
+                                                  ("$%+.3f$" % ((load(m)["logl_test"] - load("M1")["logl_test"]) / load(m)["events_test"]))))
+    with open(os.path.join(GEN, "table-sensitivity.tex"), "w") as fh:
+        fh.write("\\begin{ruledtabular}\n\\begin{tabular}{lrrr}\n")
+        fh.write("model & $L$ (held out) & $\\Delta L$/event & $\\Delta L$/event, 40-s gaps \\\\\n\\colrule\n")
+        fh.write("\n".join(rows) + "\n\\end{tabular}\n\\end{ruledtabular}\n")
+    r = {m: load(m, "_g120") for m in ["M1", "M2", "M4"]}
+    n = r["M1"]["events_test"]
+    num("GainMemoryAloneLong", "%.2f" % ((r["M4"]["logl_test"] - r["M1"]["logl_test"]) / n))
+    num("GainNetworkLong", "%.2f" % ((r["M2"]["logl_test"] - r["M1"]["logl_test"]) / n))
+    n40 = load("M1")["events_test"]
+    num("GainMemoryAloneTwo", "%.2f" % ((load("M4")["logl_test"] - load("M1")["logl_test"]) / n40))
+
+
+def fig_data(durs):
+    fig, axes = plt.subplots(1, 2, figsize=(6.8, 2.3))
     ax = axes[0]
-    ax.plot(years, counts, color=C1)
-    ax.set_xlabel("year"); ax.set_ylabel("pairs with a defense pledge")
-    ax.set_ylim(bottom=0)
+    for d, ls in ((3, "-"), (4, "--"), (5, ":"), (6, "-.")):
+        st = np.array([s for s, e in contacts(d)])
+        h, edges = np.histogram(st, bins=np.arange(0, 541, 20))
+        ax.step(8 + edges[:-1] / 60, h / 20, where="post", ls=ls, lw=0.9, color="black", label=["Tue", "Wed", "Thu", "Fri"][d - 3])
+    ax.set_xlabel("time of day (h)"); ax.set_ylabel("contacts starting per minute"); ax.legend(fontsize=6, frameon=False)
     ax = axes[1]
-    bx = [p[0] for p in prof]; by = [p[1] - logl for p in prof]
-    ax.plot(bx, by, "-o", color=C1, markersize=3.5, markeredgecolor="white", markeredgewidth=0.6)
-    ax.plot([b1], [0], "o", color=C2, markersize=5, markeredgecolor="white", markeredgewidth=0.6, zorder=3)
-    ax.annotate(r"$\hat b_1$", (b1, 0), xytext=(6, -10), textcoords="offset points", color=INK2, fontsize=7.5)
-    ax.set_xscale("symlog", linthresh=0.01)
-    ax.set_xticks([-1, -0.1, -0.01, 0, 0.01, 0.1])
-    ax.set_xticklabels(["-1", "-0.1", "-0.01", "0", "0.01", "0.1"], fontsize=6.5)
-    ax.minorticks_off()
-    ax.set_xlabel(r"$b_1$"); ax.set_ylabel("profile log-likelihood")
-    ax = axes[2]
-    ks = list(range(0, 31))
-    ax.plot(ks, [haz(k) for k in ks], color=C1)
-    ax.set_xlabel("number of common allies"); ax.set_ylabel("dissolution hazard per year")
-    ax.set_ylim(bottom=0)
+    x = np.sort(durs); y = 1 - np.arange(len(x)) / len(x)
+    ax.loglog(x, y, color="black", lw=1.2, label="data")
+    lam = 1 / durs.mean()
+    xx = np.logspace(np.log10(x.min()), np.log10(x.max()), 100)
+    ax.loglog(xx, np.exp(-lam * xx), "k:", lw=0.8, label="exponential, same mean")
+    ax.set_ylim(1 / len(x), 1.2); ax.set_xlabel("contact duration (min)"); ax.set_ylabel("fraction of contacts $\\geq$ duration")
+    ax.legend(fontsize=6, frameon=False)
     fig.tight_layout()
-    fig.savefig(os.path.join(GEN, "fig-atop.pdf"))
+    fig.savefig(os.path.join(GEN, "fig-data.pdf"))
     plt.close(fig)
 
 
-def sigmoid_checks():
-    out = subprocess.run([os.path.join(ROOT, "build", "tests", "test_sigmoid")], capture_output=True, text=True).stdout
-    m = re.search(r"(\d+) of (\d+) checks passed", out)
-    num("TestSigmoidChecks", "{:,}".format(int(m.group(2))).replace(",", "\\,"))
+def fig_residuals():
+    R = np.load(os.path.join(RES, "residual_samples.npz"))
+    fig, ax = plt.subplots(figsize=(3.3, 2.6))
+    for m in ["M1", "M2", "M6", "M5", "C1"]:
+        u = np.sort(1 - np.exp(-R[m]))
+        ax.plot(np.linspace(0, 1, len(u)), u, color=C[m], lw=1, label="%s (%s)" % (m, DESC[m]))
+    ax.plot([0, 1], [0, 1], "k:", lw=0.8)
+    ax.set_xlabel("quantile of the uniform distribution"); ax.set_ylabel("rescaled contact duration $1 - e^{-\\Lambda}$")
+    ax.legend(fontsize=5.5, frameon=False, loc="upper left")
+    fig.tight_layout()
+    fig.savefig(os.path.join(GEN, "fig-residuals.pdf"))
+    plt.close(fig)
+
+
+def fig_closure():
+    p = os.path.join(RES, "closure_M2.json")
+    if not os.path.exists(p):
+        return
+    c = json.load(open(p))
+    g = np.array(c["grid"])
+    fig, ax = plt.subplots(figsize=(3.3, 2.5))
+    ax.semilogy(8 + g / 60, np.maximum(c["data"]["L"], 0.5), color="black", lw=1, label="data")
+    sim = np.array(c["simulation"]["L"])
+    ok = sim > 0
+    ax.semilogy(8 + g[ok] / 60, sim[ok], color=C["sim"], lw=1.2, label="simulation of fitted M2")
+    ax.semilogy(8 + g / 60, c["simple"]["L"], color=C["simple"], lw=1, ls="--", label="simple closure")
+    ax.semilogy(8 + g / 60, c["pair"]["L"], color=C["pair"], lw=1, label="pair closure")
+    ax.set_xlabel("time of day (h)"); ax.set_ylabel("contacts within classes")
+    ax.legend(fontsize=6, frameon=False)
+    fig.tight_layout()
+    fig.savefig(os.path.join(GEN, "fig-closure.pdf"))
+    plt.close(fig)
+    L = np.array(c["pair"]["L"]); Ls = np.array(c["simple"]["L"])
+    hi = 0.5 * max(L.max(), 1)
+    num("PairTipMinutes", "%.0f" % g[np.argmax(L > hi)])
+    num("SimTipMinutes", "%.0f" % g[np.argmax(sim > hi)])
+    num("SimpleTipMinutes", "%.0f" % g[np.argmax(Ls > hi)])
+    num("DataWithinContacts", "%.0f" % np.mean(c["data"]["L"]))
+    num("DenseWithinContacts", "%.0f" % L[-1])
 
 
 def main():
     os.makedirs(GEN, exist_ok=True)
-    fig_frames()
-    fig_macro()
-    table_recovery()
-    table_benchmark()
-    table_and_fig_atop()
-    sigmoid_checks()
-    with open(os.path.join(GEN, "numbers.tex"), "w") as f:
-        f.write("% generated by paper/make_figures.py -- do not edit\n")
-        for k, v in sorted(numbers.items()):
-            f.write("\\newcommand{\\%s}{%s}\n" % (k, ("\\ensuremath{%s}" % v) if "\\times" in v else v))
-    for k, v in sorted(numbers.items()):
-        print("%-22s %s" % (k, v))
+    durs = data_numbers()
+    table_fits()
+    table_estimates()
+    table_sensitivity()
+    fig_data(durs)
+    fig_residuals()
+    fig_closure()
+    with open(os.path.join(GEN, "numbers.tex"), "w") as fh:
+        fh.write("% generated by paper/make_figures.py -- do not edit\n")
+        for k in sorted(NUMBERS):
+            fh.write("\\newcommand{\\%s}{%s}\n" % (k, NUMBERS[k]))
+    for k in sorted(NUMBERS):
+        print("%-24s %s" % (k, NUMBERS[k]))
 
 
 if __name__ == "__main__":

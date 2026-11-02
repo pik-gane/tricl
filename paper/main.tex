@@ -17,7 +17,7 @@
 
 \begin{document}
 
-\title{Likelihood-based simulation and inference for typed multi-relational network dynamics}
+\title{How much of the memory of face-to-face contact dynamics is network context?}
 
 \author{Jobst Heitzig}
 \email[]{heitzig@pik-potsdam.de}
@@ -26,23 +26,25 @@
 \date{\today}
 
 \begin{abstract}
-Many social, economic and political systems are networks of several kinds of entities linked by several kinds of relationships that form and dissolve at rates depending on the surrounding network: friends of friends become friends, states ally with their allies' allies, agents adopt a behavior when enough contacts have adopted it.
-We present \tricl, an open-source simulator and inference engine for such dynamics.
-A model is a short configuration file that declares entity types, relationship types and rules saying how the attempt rate and the success probability of establishing or terminating a link depend on the numbers of adjacent two-paths of each type.
-States of entities and well-mixed interactions are expressed with the same rules through links to auxiliary entities.
-The resulting continuous-time Markov chain is simulated exactly with the direct method over a sum tree of event rates.
-Because every rule enters the rates explicitly, \tricl\ also computes the exact log-likelihood of an observed event sequence and its gradient with respect to all model parameters, which turns the simulator into a maximum-likelihood estimator, and it generates mean-field equations from the same file.
-We describe the model class and the algorithms, demonstrate parameter recovery and the mean-field approximation, and apply the method to the formation and dissolution of defense pacts between states from 1816 to 2018, where a common ally raises the rate of pact formation about \AtopFormationRatio-fold.
+Durations of face-to-face contacts and of the intervals between them are broadly distributed, which is usually explained by an intrinsic memory: the longer a contact lasts, the less likely it is to end.
+An alternative explanation is that the dynamics is Markovian in a richer state, in which the surrounding network (common contacts, the numbers of current contacts, friendships, classes) and decaying traces of recent interactions modulate the rates.
+We compare both explanations by exact likelihoods on the contacts of \Students\ students of a high school over five days (\Contacts\ contacts), using a simulator and inference engine for typed multi-relational network dynamics in which all candidate models are specified as rule sets.
+Models are fitted on three days and evaluated on two held-out days by their log-likelihood and by time-rescaling residuals.
+Memory dominates: decaying traces of recent contacts raise the held-out log-likelihood by \GainMemoryAlone\ per event, while network context adds \GainNetwork\ per event and absorbs only \MemoryAbsorbed\% of the memory effect.
+A Markovian model with traces on four time scales and network context outperforms a non-Markovian model with power-law aging on the held-out days.
+However, all fitted models with network feedback are dynamically unstable: simulated forward, the network becomes dense within minutes, whereas the data stay sparse.
+A pair closure generated from the same rules predicts this instability, which a standard mean-field closure misses by an order of magnitude in time.
+Likelihood fits of network feedback therefore need a representation that bounds group sizes.
 \end{abstract}
 
 \maketitle
 
 \input{sec-intro}
-\input{sec-model}
-\input{sec-simulation}
+\input{sec-data}
+\input{sec-models}
 \input{sec-inference}
-\input{sec-macro}
-\input{sec-application}
+\input{sec-results}
+\input{sec-closure}
 \input{sec-discussion}
 
 \input{endmatter}
