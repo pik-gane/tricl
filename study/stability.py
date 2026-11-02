@@ -130,7 +130,7 @@ if __name__ == "__main__":
         print(name, "with F_tri=0, F_deg=-0.2:", tipping_time(e2, data, obs), "%.1fs" % (time.time() - t0))
 
 
-def simulated_tipping(config, est, days=(5,), seeds=(1, 2), wall=300):
+def simulated_tipping(config, est, days=(5,), seeds=(1, 2), wall=300, max_events=60000):
     """Stability check by simulation: for each day and seed, simulate the model from an empty network with the
     day's timetable; returns the largest number of simultaneous contacts relative to the largest observed number,
     and whether any run tipped (exceeded FACTOR x the observed maximum, or did not finish within the wall time)."""
@@ -147,7 +147,7 @@ def simulated_tipping(config, est, days=(5,), seeds=(1, 2), wall=300):
         for s in seeds:
             sf = "/tmp/stab_%d_%d.csv" % (d, s)
             out = subprocess.run([fit.BIN, config, "--summary", "--forced-in", os.path.join(HERE, "data", "forced_%d.csv" % d), "--max-t", "540",
-                                  "--seed", str(s), "--max-wall", str(wall), "--max-events", "200000", "--stats-out", sf] + args, capture_output=True, text=True).stdout
+                                  "--seed", str(s), "--max-wall", str(wall), "--max-events", str(max_events), "--stats-out", sf] + args, capture_output=True, text=True).stdout
             summ = json.loads(out.strip().split("\n")[-1])
             mx = max(float(r["student meets student"]) / 2 for r in csv.DictReader(open(sf)))
             worst = max(worst, mx / mx_obs)
