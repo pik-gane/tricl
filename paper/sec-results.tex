@@ -43,6 +43,7 @@ A correct model lies on the diagonal.}
 Merging records with gaps of up to 120 seconds instead of 40 seconds into one contact reduces the number of contacts by a third and changes the size, but not the order, of the effects (Table~\ref{tab:sensitivity}).
 Memory still dominates, but its gain without network context falls from \GainMemoryAloneTwo\ to \GainMemoryAloneLong\ per event (two time scales, M4 over M1), so that a part of the short-term memory reflects contacts that are interrupted by detection failures rather than ended.
 Network context gains \GainNetworkLong\ per event with the longer gaps.
+The advantage of the aging model shrinks more: with the longer gaps, C1 gains \ConeLong\ per event over M1 and falls behind the Markovian model M3 with two memory time scales (\MthreeLong\ per event), so that a part of the apparent power-law aging also reflects interrupted contacts.
 
 \begin{table}[t]
 \caption{Sensitivity to the definition of contacts: held-out log-likelihood and improvement per event relative to M1 with gaps of up to 120 seconds merged into one contact, and the improvement per event with gaps of up to 40 seconds (Table~\ref{tab:fits}) for comparison.}

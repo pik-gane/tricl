@@ -163,6 +163,10 @@ def table_sensitivity():
     n = r["M1"]["events_test"]
     num("GainMemoryAloneLong", "%.2f" % ((r["M4"]["logl_test"] - r["M1"]["logl_test"]) / n))
     num("GainNetworkLong", "%.2f" % ((r["M2"]["logl_test"] - r["M1"]["logl_test"]) / n))
+    c1l, m3l = load("C1", "_g120"), load("M3", "_g120")
+    if c1l is not None and m3l is not None:
+        num("ConeLong", "%.2f" % ((c1l["logl_test"] - r["M1"]["logl_test"]) / n))
+        num("MthreeLong", "%.2f" % ((m3l["logl_test"] - r["M1"]["logl_test"]) / n))
     n40 = load("M1")["events_test"]
     num("GainMemoryAloneTwo", "%.2f" % ((load("M4")["logl_test"] - load("M1")["logl_test"]) / n40))
 
