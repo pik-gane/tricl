@@ -171,6 +171,28 @@ def table_sensitivity():
     num("GainMemoryAloneTwo", "%.2f" % ((load("M4")["logl_test"] - load("M1")["logl_test"]) / n40))
 
 
+def stability_numbers():
+    sc = json.load(open(os.path.join(RES, "stability_checks.json")))
+    s = load("M2s")
+    m2, m1 = load("M2"), load("M1")
+    n = s["events_test"]
+    num("StableFtri", "%.2f" % sc["chosen"]["F_tri"])
+    num("StableFtriFactor", "%.1f" % np.exp(4 * sc["chosen"]["F_tri"]))
+    num("ClosureOnlyBound", "%.2f" % 0.30)
+    num("ClosureOnlyRatio", "%.0f" % sc["closure_screen"]["simulation_with_only_F_tri_bound_0.300"]["max_ratio"])
+    num("SingleSeedBound", "%.3f" % sc["single_seed_bisection_F_deg_with_F_tri_0.473"]["largest_stable_bound"])
+    num("SingleSeedRatio", "%.0f" % sc["robust"]["results"]["0.046"]["max_ratio"])
+    num("StableRatio", "%.2f" % sc["robust"]["results"]["0.001"]["max_ratio"])
+    num("StablePrice", fmt(m2["logl_test"] - s["logl_test"]))
+    num("StablePricePerEvent", "%.2f" % ((m2["logl_test"] - s["logl_test"]) / n))
+    num("StableRetained", "%d" % round(100 * (s["logl_test"] - m1["logl_test"]) / (m2["logl_test"] - m1["logl_test"])))
+    num("StableFdegFree", "%.2f" % m2["estimates"]["F_deg"])
+    m5s = load("M5_stable")
+    if m5s is not None:
+        num("StableMfiveTest", fmt(m5s["logl_test"]))
+        num("StableMfiveOverCone", fmt(m5s["logl_test"] - load("C1")["logl_test"]))
+
+
 def fig_data(durs):
     fig, axes = plt.subplots(1, 2, figsize=(6.8, 2.3))
     ax = axes[0]
@@ -239,6 +261,7 @@ def main():
     table_fits()
     table_estimates()
     table_sensitivity()
+    stability_numbers()
     fig_data(durs)
     fig_residuals()
     fig_closure()

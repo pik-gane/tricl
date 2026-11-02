@@ -8,7 +8,7 @@ A part of the short-term memory reflects the definition of contacts from sensor 
 The instability of the fitted network models is a second result with wider implications.
 Likelihood fits of rates that grow with common contacts and current contacts are well determined by the sparse configurations that are observed, but the process they define is degenerate.
 Simulation studies with such fitted models would therefore show runaway group formation, and predictive checks by simulation, not only by likelihood and residuals, are necessary for network-feedback models.
-The pair closure is a cheap diagnostic of this degeneracy, which the standard closure misses; it is generated from the same rule set and could be used as a constraint during estimation.
+The pair closure is a cheap diagnostic of this degeneracy, which the standard closure misses, but it is too optimistic to replace simulations as a stability criterion, since it ignores fluctuations; constrained maximum likelihood with a simulation check yields a stable model that keeps \StableRetained\% of the network effect.
 A representation that bounds group sizes, e.g.\ contacts as joint membership in group entities whose join and leave rates depend on the group size, removes the unbounded feedback by construction; we pursue this in ongoing work, together with a comparison of the predicted distributions of durations and group sizes by simulation.
 
 The comparison was possible because all Markovian models are rule sets of one model class for which \tricl\ computes exact likelihoods, gradients and residuals, including rates that decay between events, exogenous forced events, and acts triggered by contact events.

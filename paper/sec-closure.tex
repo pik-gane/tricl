@@ -21,3 +21,12 @@ Triadic feedback acts through the correlation between a pair's state and its com
 \caption{Contacts within classes over a held-out day: data, simulations of the fitted network-context model M2 (mean of three runs, stopped when the network had become dense), and the simple and pair closures of the same model, all started from an empty network at 8:00 with the timetable as forced events.}
 \label{fig:closure}
 \end{figure}
+
+\subsection{Stability-constrained fit}
+A stable model with network context can be obtained by maximizing the likelihood under upper bounds on the destabilizing coefficients and checking the stability of each constrained fit.
+Bounding only the effect of common contacts on formation does not suffice: the fit then compensates through the effect of current contacts, and even with the bound \ClosureOnlyBound\ (instead of the free estimate) simulations reach \ClosureOnlyRatio\ times the largest observed number of simultaneous contacts, although the pair closure, which ignores fluctuations and contacts between classes, predicts no tipping already for the bound \StableFtri.
+With both effects bounded, the largest bound on the effect of current contacts for which single simulations on the training days stay sparse is \SingleSeedBound, but repeated simulations of the held-out days still tip occasionally (up to \SingleSeedRatio\ times the observed maximum), since stability near the boundary is a matter of fluctuations.
+With the bound zero (no positive effect of current contacts on formation, instead of the free estimate \StableFdegFree) and the bound \StableFtri\ on common contacts (each common contact multiplies the formation rate by at most \StableFtriFactor), all simulations stay sparse (at most \StableRatio\ times the observed maximum).
+This stable model costs \StablePrice\ log-likelihood units on the held-out days (\StablePricePerEvent\ per event) relative to the unconstrained M2 and retains \StableRetained\% of the improvement of network context over M1.
+Stability thus constrains how strongly the network context may reinforce itself, and the remaining network effect is a lower bound on what a stable Markovian description can attribute to it.
+

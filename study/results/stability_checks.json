@@ -1,0 +1,56 @@
+{
+ "note": "simulation checks (study/stability.py simulated_tipping): largest simultaneous contacts relative to the observed maximum; tipped = exceeded 3x the observed maximum or did not finish",
+ "closure_screen": {
+  "param": "F_tri",
+  "largest_stable_bound_by_pair_closure": 0.473,
+  "simulation_with_only_F_tri_bound_0.300": {
+   "max_ratio": 66.96,
+   "tipped": true,
+   "days": [
+    3,
+    4
+   ],
+   "seeds": [
+    1,
+    2
+   ]
+  }
+ },
+ "single_seed_bisection_F_deg_with_F_tri_0.473": {
+  "largest_stable_bound": 0.046
+ },
+ "robust": {
+  "days": [
+   5,
+   6
+  ],
+  "seeds": [
+   1,
+   2,
+   3
+  ],
+  "results": {
+   "0.046": {
+    "max_ratio": 22.93,
+    "tipped": true
+   },
+   "0.040": {
+    "max_ratio": 14.15,
+    "tipped": true
+   },
+   "0.027": {
+    "max_ratio": 6.28,
+    "tipped": true
+   },
+   "0.001": {
+    "max_ratio": 1.08,
+    "tipped": false
+   }
+  }
+ },
+ "chosen": {
+  "F_tri": 0.473,
+  "F_deg": 0.001,
+  "file": "fit_M2_F_tri0.473_F_deg0.001.json"
+ }
+}
