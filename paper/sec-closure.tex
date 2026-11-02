@@ -29,4 +29,5 @@ With both effects bounded, the largest bound on the effect of current contacts f
 With the bound zero (no positive effect of current contacts on formation, instead of the free estimate \StableFdegFree) and the bound \StableFtri\ on common contacts (each common contact multiplies the formation rate by at most \StableFtriFactor), all simulations stay sparse (at most \StableRatio\ times the observed maximum).
 This stable model costs \StablePrice\ log-likelihood units on the held-out days (\StablePricePerEvent\ per event) relative to the unconstrained M2 and retains \StableRetained\% of the improvement of network context over M1.
 Stability thus constrains how strongly the network context may reinforce itself, and the remaining network effect is a lower bound on what a stable Markovian description can attribute to it.
+With the same bounds, the model with network context and memory (M5) is still unstable, since recent contacts add a feedback of their own, and it falls short of C1 by \ConeOverBoundedMfive\ units on the held-out days.
 

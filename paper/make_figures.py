@@ -32,6 +32,10 @@ DESC = {"M0": "timetable", "M1": "M0 + static context", "M2": "M1 + network",
         "M6": "M1 + memory (4)", "M5": "M2 + memory (4)", "C1": "M1 + power-law aging"}
 
 
+# dynamical stability in simulations of the held-out days (study/stability.py; see the paper, Sec. VI):
+STABLE = {m: ("yes" if v["stable"] else "no") for m, v in json.load(open(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "study", "results", "stability_checks.json")))["models"].items() if m != "note"}
+
+
 def num(name, value):
     NUMBERS[name] = value
 
@@ -96,11 +100,11 @@ def table_fits():
         if r is None:
             continue
         per = (r["logl_test"] - base["logl_test"]) / r["events_test"]
-        rows.append("%s & %s & %d & %s & %s & %s & %.3f \\\\" % (m, DESC[m], r["n_params"], fmt(r["logl_train"]), fmt(r["logl_test"]),
-                                                               ("$%+.3f$" % per).replace("-", "-"), resid[m]["KS"]))
+        rows.append("%s & %s & %d & %s & %s & %s & %.3f & %s \\\\" % (m, DESC[m], r["n_params"], fmt(r["logl_train"]), fmt(r["logl_test"]),
+                                                               ("$%+.3f$" % per).replace("-", "-"), resid[m]["KS"], STABLE[m]))
     with open(os.path.join(GEN, "table-fits.tex"), "w") as fh:
-        fh.write("\\begin{ruledtabular}\n\\begin{tabular}{llrrrrr}\n")
-        fh.write("model & components & param. & $L$ (training) & $L$ (held out) & $\\Delta L$/event & KS \\\\\n\\colrule\n")
+        fh.write("\\begin{ruledtabular}\n\\begin{tabular}{llrrrrrc}\n")
+        fh.write("model & components & param. & $L$ (training) & $L$ (held out) & $\\Delta L$/event & KS & stable \\\\\n\\colrule\n")
         fh.write("\n".join(rows) + "\n\\end{tabular}\n\\end{ruledtabular}\n")
     r1 = load("M1")
     num("EventsTrain", fmt(r1["events_train"]))
@@ -189,8 +193,11 @@ def stability_numbers():
     num("StableFdegFree", "%.2f" % m2["estimates"]["F_deg"])
     m5s = load("M5_stable")
     if m5s is not None:
-        num("StableMfiveTest", fmt(m5s["logl_test"]))
-        num("StableMfiveOverCone", fmt(m5s["logl_test"] - load("C1")["logl_test"]))
+        num("BoundedMfiveTest", fmt(m5s["logl_test"]))
+        num("ConeOverBoundedMfive", fmt(load("C1")["logl_test"] - m5s["logl_test"]))
+    num("ConeOverMsix", fmt(load("C1")["logl_test"] - load("M6")["logl_test"]))
+    c1l, m4l, m1l = load("C1", "_g120"), load("M4", "_g120"), load("M1", "_g120")
+    num("ConeOverMfourLong", "%.2f" % ((c1l["logl_test"] - m4l["logl_test"]) / m1l["events_test"]))
 
 
 def fig_data(durs):

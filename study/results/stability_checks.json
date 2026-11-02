@@ -52,5 +52,49 @@
   "F_tri": 0.473,
   "F_deg": 0.001,
   "file": "fit_M2_F_tri0.473_F_deg0.001.json"
+ },
+ "models": {
+  "note": "simulations of held-out day 5 from an empty network (seed 1; for C1 the exact C1 simulator): largest number of simultaneous contacts; M0 has no feedback (rates depend on the timetable only)",
+  "M0": {
+   "stable": true,
+   "reason": "no feedback"
+  },
+  "M1": {
+   "stable": true,
+   "max_contacts": 92
+  },
+  "M4": {
+   "stable": true,
+   "max_contacts": 78
+  },
+  "M6": {
+   "stable": true,
+   "max_contacts": 80
+  },
+  "C1": {
+   "stable": true,
+   "max_contacts": 66
+  },
+  "M2": {
+   "stable": false,
+   "contacts_after_12_min": "about 15000 directed links"
+  },
+  "M3": {
+   "stable": false,
+   "max_contacts": 1734
+  },
+  "M5": {
+   "stable": false,
+   "max_contacts": 143,
+   "note": "tipped at minute 16"
+  },
+  "M5_bounded": {
+   "stable": false,
+   "max_ratio": 5.55,
+   "bounds": {
+    "F_tri": 0.473,
+    "F_deg": 0.001
+   }
+  }
  }
 }

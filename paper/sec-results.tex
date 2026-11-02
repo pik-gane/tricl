@@ -6,10 +6,10 @@ Static context improves the held-out log-likelihood by \GainStatic\ per event ov
 Network context adds \GainNetwork\ per event (M2 over M1).
 Memory adds \GainMemoryAlone\ per event without network context (M6 over M1) and \GainMemoryWithNetwork\ per event with it (M5 over M2), so that network context absorbs only \MemoryAbsorbed\% of the memory effect, while it still adds \GainNetworkWithMemory\ per event when memory is present (M5 over M6).
 With two time scales of memory, the Markovian model M3 falls short of the aging model C1 by \ConeOverMthree\ log-likelihood units on the held-out days; with four time scales, M5 exceeds C1 by \MfiveOverCone\ units.
-A Markovian description with network context and traces on several time scales therefore predicts held-out contacts at least as well as intrinsic power-law aging.
+A Markovian description with network context and traces on several time scales therefore predicts held-out contacts at least as well as intrinsic power-law aging; however, its network feedback is dynamically unstable (Sec.~\ref{sec:closure}), and among the stable models (last column of Table~\ref{tab:fits}) C1 predicts best, \ConeOverMsix\ units better than the Markovian memory model M6 without network context.
 
 \begin{table*}[t]
-\caption{Log-likelihoods $L$ on the training days (Monday to Wednesday) and the held-out days (Thursday and Friday), held-out improvement per event relative to M1, and the Kolmogorov--Smirnov distance (KS) of the time-rescaled contact durations on the held-out days from the unit exponential distribution (zero for a correct model).}
+\caption{Log-likelihoods $L$ on the training days (Monday to Wednesday) and the held-out days (Thursday and Friday), held-out improvement per event relative to M1, the Kolmogorov--Smirnov distance (KS) of the time-rescaled contact durations on the held-out days from the unit exponential distribution (zero for a correct model), and whether simulations of the fitted model stay sparse (Sec.~\ref{sec:closure}).}
 \label{tab:fits}
 \input{generated/table-fits}
 \end{table*}
@@ -43,7 +43,7 @@ A correct model lies on the diagonal.}
 Merging records with gaps of up to 120 seconds instead of 40 seconds into one contact reduces the number of contacts by a third and changes the size, but not the order, of the effects (Table~\ref{tab:sensitivity}).
 Memory still dominates, but its gain without network context falls from \GainMemoryAloneTwo\ to \GainMemoryAloneLong\ per event (two time scales, M4 over M1), so that a part of the short-term memory reflects contacts that are interrupted by detection failures rather than ended.
 Network context gains \GainNetworkLong\ per event with the longer gaps.
-The advantage of the aging model shrinks more: with the longer gaps, C1 gains \ConeLong\ per event over M1 and falls behind the Markovian model M3 with two memory time scales (\MthreeLong\ per event), so that a part of the apparent power-law aging also reflects interrupted contacts.
+The advantage of the aging model shrinks more: with the longer gaps, C1 gains \ConeLong\ per event over M1 and falls behind the Markovian model M3 with two memory time scales (\MthreeLong\ per event), so that a part of the apparent power-law aging also reflects interrupted contacts; it remains better than the stable Markovian model M4 by \ConeOverMfourLong\ per event.
 
 \begin{table}[t]
 \caption{Sensitivity to the definition of contacts: held-out log-likelihood and improvement per event relative to M1 with gaps of up to 120 seconds merged into one contact, and the improvement per event with gaps of up to 40 seconds (Table~\ref{tab:fits}) for comparison.}

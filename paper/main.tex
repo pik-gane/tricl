@@ -31,8 +31,7 @@ An alternative explanation is that the dynamics is Markovian in a richer state, 
 We compare both explanations by exact likelihoods on the contacts of \Students\ students of a high school over five days (\Contacts\ contacts), using a simulator and inference engine for typed multi-relational network dynamics in which all candidate models are specified as rule sets.
 Models are fitted on three days and evaluated on two held-out days by their log-likelihood and by time-rescaling residuals.
 Memory dominates: decaying traces of recent contacts raise the held-out log-likelihood by \GainMemoryAlone\ per event, while network context adds \GainNetwork\ per event and absorbs only \MemoryAbsorbed\% of the memory effect.
-A Markovian model with traces on four time scales and network context outperforms a non-Markovian model with power-law aging on the held-out days.
-However, all fitted models with network feedback are dynamically unstable: simulated forward, the network becomes dense within minutes, whereas the data stay sparse.
+A Markovian model with traces on four time scales and network context outperforms a non-Markovian model with power-law aging on the held-out days, but only with network feedback that is dynamically unstable; among stable models, power-law aging predicts best. However, all fitted models with network feedback are dynamically unstable: simulated forward, the network becomes dense within minutes, whereas the data stay sparse.
 A pair closure generated from the same rules predicts this instability, which a standard mean-field closure misses by an order of magnitude in time.
 Constraining the feedback to the stable region costs \StablePricePerEvent\ per held-out event and retains \StableRetained\% of the improvement by network context.
 \end{abstract}
