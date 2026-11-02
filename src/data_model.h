@@ -36,7 +36,7 @@
 
 #define MAX_N_E ((1<<E_BITS)-1)  ///< resulting max. no. of entities
 
-#define MAX_INFL_PER_EVT 12  ///< Max. no. of angle types that may influence one event type (per-event angle counts are stored in a fixed-size array)
+#define MAX_INFL_PER_EVT 24  ///< Max. no. of angle types that may influence one event type (per-event angle counts are stored in a fixed-size array)
 
 
 // commonly used includes are all included here:
