@@ -147,7 +147,7 @@ def simulated_tipping(config, est, days=(5,), seeds=(1, 2), wall=300):
         for s in seeds:
             sf = "/tmp/stab_%d_%d.csv" % (d, s)
             out = subprocess.run([fit.BIN, config, "--summary", "--forced-in", os.path.join(HERE, "data", "forced_%d.csv" % d), "--max-t", "540",
-                                  "--seed", str(s), "--max-wall", str(wall), "--stats-out", sf] + args, capture_output=True, text=True).stdout
+                                  "--seed", str(s), "--max-wall", str(wall), "--max-events", "200000", "--stats-out", sf] + args, capture_output=True, text=True).stdout
             summ = json.loads(out.strip().split("\n")[-1])
             mx = max(float(r["student meets student"]) / 2 for r in csv.DictReader(open(sf)))
             worst = max(worst, mx / mx_obs)
