@@ -88,16 +88,22 @@ def main():
     ap.add_argument("--train", type=int, nargs="+", default=[2, 3, 4])
     ap.add_argument("--test", type=int, nargs="+", default=[5, 6])
     ap.add_argument("--tag", default="")
+    ap.add_argument("--bound", nargs="*", default=[], help="upper bounds NAME=VALUE (e.g. F_tri=0.5) for a constrained fit")
+    ap.add_argument("--start", default="", help="results file to start from (default: the next smaller model)")
     args = ap.parse_args()
+    upper = {kv.split("=")[0]: float(kv.split("=")[1]) for kv in args.bound}
     obj = Objective(args.model, args.train)
     p = models.params(args.model)
     x0 = np.array([p[m][2] for m in obj.names])
     # start from the estimates of the next smaller model if available:
     prev = os.path.join(HERE, "results", "fit_M%d%s.json" % ({4: 1, 5: 3, 6: 4, 7: 1, 8: 6}.get(args.model, args.model - 1), args.tag))
+    if args.start:
+        prev = args.start
     if os.path.exists(prev):
         est = json.load(open(prev))["estimates"]
         x0 = np.array([est.get(m, x0[i]) for i, m in enumerate(obj.names)])
-    bounds = [(0.0, None) if m in models.ATTEMPT_PARAMS else (None, None) for m in obj.names]
+    bounds = [(0.0 if m in models.ATTEMPT_PARAMS else None, upper.get(m)) for m in obj.names]
+    x0 = np.array([min(x, upper.get(m, np.inf)) for x, m in zip(x0, obj.names)])
     r = minimize(obj.f, x0, jac=True, method="L-BFGS-B", bounds=bounds, options={"maxiter": 500, "gtol": 1e-5})
     L, g, n = obj.evaluate(r.x)
     # observed information by central finite differences of the analytic gradient:
