@@ -32,3 +32,10 @@ The competing model C1 has the timetable and static context of M1, met on an ear
 These rates depend on ages that are not part of the network state, so C1 is not Markovian in it.
 C1 has no network context; its likelihood is computed by a separate implementation with the same conventions, which agrees with \tricl\ to $10^{-12}$ when the aging terms are switched off.
 The scale $\tau_0$ is chosen among $\{1/3, 1, 3\}$ minutes by the training likelihood (best: \ConeAgeScale\ minutes).
+
+\subsection{Latent heterogeneity}
+In survival analysis, unobserved heterogeneity mimics aging: if some pairs have long contacts and others short ones, the hazard of the pooled contacts falls with duration although no pair's hazard does.
+We test this explanation with latent affinity classes of pairs, which can be thought of as hidden static relationship types: each pair belongs to one of $K$ classes, which add class-specific constants to the probability units of formation and termination and have prior probabilities $\pi_k$.
+For the models whose rates depend only on the pair's own history, the static context and the timetable (M6 and C1), the likelihood factorizes over pairs, and the marginal likelihood $\prod_{\text{pairs}} \sum_k \pi_k L_k(\text{pair})$ is exact; we maximize it with analytic gradients, and a separate implementation reproduces \tricl's log-likelihood of M6 when $K = 1$.
+On the held-out days, the class probabilities are either the prior ones or each pair's posterior probabilities given its training days.
+

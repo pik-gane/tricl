@@ -200,6 +200,37 @@ def stability_numbers():
     num("ConeOverMfourLong", "%.2f" % ((c1l["logl_test"] - m4l["logl_test"]) / m1l["events_test"]))
 
 
+def table_hetero():
+    """Latent pair classes (study/hetero.py): held-out log-likelihood with K classes for M6 and C1."""
+    rows = []
+    best = {}
+    for m in ("M6", "C1"):
+        base = load(m)
+        for K in (1, 2, 3, 4):
+            r = base if K == 1 else load("%s_K%d" % (m, K))
+            if r is None:
+                continue
+            lte_prior = r["logl_test"] if K == 1 else r["logl_test_prior"]
+            lte_post = r["logl_test"] if K == 1 else r["logl_test"]
+            rows.append("%s & %d & %d & %s & %s & %s \\\\" % (m, K, r["n_params"], fmt(r["logl_train"]), fmt(lte_prior),
+                                                       "--" if K == 1 else fmt(lte_post)))
+            best[(m, K)] = lte_prior
+    with open(os.path.join(GEN, "table-hetero.tex"), "w") as fh:
+        fh.write("\\begin{ruledtabular}\n\\begin{tabular}{lrrrrr}\n")
+        fh.write("model & $K$ & param. & $L$ (train) & $L$ (held out) & $L$ (posterior) \\\\\n\\colrule\n")
+        fh.write("\n".join(rows) + "\n\\end{tabular}\n\\end{ruledtabular}\n")
+    Kmax = max(K for (m, K) in best if m == "M6" and (("C1", K) in best))
+    num("HetKmax", "%d" % Kmax)
+    num("HetGainMsix", fmt(best[("M6", Kmax)] - best[("M6", 1)]))
+    num("HetGainCone", fmt(best[("C1", Kmax)] - best[("C1", 1)]))
+    num("HetGapNone", fmt(best[("C1", 1)] - best[("M6", 1)]))
+    num("HetGapK", fmt(best[("C1", Kmax)] - best[("M6", Kmax)]))
+    num("HetMsixOverConeNone", fmt(best[("M6", Kmax)] - best[("C1", 1)]))
+    rK = load("M6_K%d" % Kmax)
+    num("HetPosteriorLoss", fmt(rK["logl_test_prior"] - rK["logl_test"]))
+    num("HetSmallClass", "%d" % round(100 * min(rK["pi"])))
+
+
 def fig_data(durs):
     fig, axes = plt.subplots(1, 2, figsize=(6.8, 2.3))
     ax = axes[0]
@@ -269,6 +300,7 @@ def main():
     table_estimates()
     table_sensitivity()
     stability_numbers()
+    table_hetero()
     fig_data(durs)
     fig_residuals()
     fig_closure()
