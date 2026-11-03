@@ -52,9 +52,9 @@ The advantage of the aging model shrinks more: with the longer gaps, C1 gains \C
 \end{table}
 
 \subsection{Latent heterogeneity}\label{sec:heterogeneity}
-Latent affinity classes of pairs improve both pair-local models, but the Markovian memory model M6 gains about twice as much as the aging model C1: with $K = \HetKmax$ classes, the held-out log-likelihood rises by \HetGainMsix\ units for M6 and \HetGainCone\ units for C1 (Table~\ref{tab:hetero}).
+Latent affinity classes of pairs improve both pair-local models, but the Markovian memory model M6 gains considerably more than the aging model C1: with $K = \HetKmax$ classes, the held-out log-likelihood rises by \HetGainMsix\ units for M6 and \HetGainCone\ units for C1 (Table~\ref{tab:hetero}).
 The advantage of C1 over M6 therefore shrinks from \HetGapNone\ to \HetGapK\ units, and M6 with latent classes predicts the held-out days better than C1 without them (by \HetMsixOverConeNone\ units).
-A part of the apparent aging is thus unobserved heterogeneity of pairs, but not all of it.
+A part of the apparent aging is thus unobserved heterogeneity of pairs, but not all of it, since the remaining gap hardly changes between two and four classes.
 The classes are not persistent properties of pairs: using each pair's posterior class probabilities from the training days lowers the held-out log-likelihood (by \HetPosteriorLoss\ units for M6 with $K = \HetKmax$) compared with the prior probabilities, so the heterogeneity that matters varies from day to day.
 The smallest class comprises about \HetSmallClass\% of the pairs.
 
